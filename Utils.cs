@@ -3,17 +3,19 @@ using System.Text;
 
 public static class Utils
 {
-    public const float HalfPi = 1.570796326794897f;
+    public const float HalfPi = 1.57079637f;
 
-    public const float OneTau = 0.15915494309189535f;
+    public const float OneTau = 0.159154937f;
 
-    public const float One255 = 0.003921568627450980f;
+    public const float One255 = 0.003921569f;
 
-    public const float One360 = 0.002777777777777778f;
+    public const float One360 = 0.00277777785f;
 
-    public const float Pi = 3.141592653589793f;
+    public const float OneSix = 0.166666672f;
 
-    public const float Tau = 6.283185307179586f;
+    public const float Pi = 3.14159274f;
+
+    public const float Tau = 6.28318548f;
 
     public const float Epsilon = 0.000001f;
 
@@ -27,7 +29,7 @@ public static class Utils
         return (a != 0.0f ? 1 : 0) * (b != 0.0f ? 1 : 0);
     }
 
-    public static bool Approx (float a, float b, float tolerance = 0.000001f)
+    public static bool Approx (float a, float b, float tolerance = Utils.Epsilon)
     {
         float diff = b - a;
         return diff <= tolerance && diff >= -tolerance;
@@ -63,7 +65,12 @@ public static class Utils
 
     public static float Clamp (float v, float lb = 0.0f, float ub = 1.0f)
     {
-        return v<lb ? lb : v> ub ? ub : v;
+        return (v < lb) ? lb : (v > ub) ? ub : v;
+    }
+
+    public static float CopySign (float magnitude, float sign)
+    {
+        return Utils.Abs (magnitude) * Utils.Sign (sign);
     }
 
     public static float Cos (float radians)
@@ -101,9 +108,37 @@ public static class Utils
         return b == 0.0f ? a : a % b;
     }
 
+    public static float Lerp (float a, float b, float t = 0.5f)
+    {
+        if (t <= 0.0f) return a;
+        if (t >= 1.0f) return b;
+        return (1.0f - t) * a + t * b;
+    }
+
+    public static float LerpUnclamped (
+        float a,
+        float b,
+        float t = 0.5f)
+    {
+        return (1.0f - t) * a + t * b;
+    }
+
     public static float Log (float v)
     {
         return (float) Math.Log (v);
+    }
+
+    public static float Map (
+        float v,
+        float lbOrigin = -1.0f,
+        float ubOrigin = 1.0f,
+        float lbDest = 0.0f,
+        float ubDest = 1.0f)
+    {
+        float denom = ubOrigin - lbOrigin;
+        return denom == 0.0f ? lbDest :
+            lbDest + (ubDest - lbDest) *
+            ((v - lbOrigin) / denom);
     }
 
     public static float Max (float a, float b)
@@ -111,9 +146,19 @@ public static class Utils
         return a >= b ? a : a < b ? b : 0.0f;
     }
 
+    public static float Max (float a, float b, float c)
+    {
+        return Utils.Max (Utils.Max (a, b), c);
+    }
+
     public static float Min (float a, float b)
     {
         return a <= b ? a : a > b ? b : 0.0f;
+    }
+
+    public static float Min (float a, float b, float c)
+    {
+        return Utils.Min (Utils.Min (a, b), c);
     }
 
     public static float Mod (float a, float b)
@@ -148,9 +193,20 @@ public static class Utils
         return aBool + bBool - aBool * bBool;
     }
 
-    public static int Sign (float a)
+    public static float Pow (float a, float b)
     {
-        return a<0.0f ? -1 : a> 0.0f ? 1 : 0;
+        return (float) Math.Pow (a, b);
+    }
+
+    public static int Round (float a)
+    {
+        return (a < 0.0f) ? (int) (a - 0.5f) :
+            (a > 0.0f) ? (int) (a + 0.5f) : 0;
+    }
+
+    public static int Sign (float v)
+    {
+        return (v < 0.0f) ? -1 : (v > 0.0f) ? 1 : 0;
     }
 
     public static float Sqrt (float v)
@@ -175,79 +231,78 @@ public static class Utils
 
     public static int Xor (float a, float b)
     {
-        int aBool = a != 0.0f ? 1 : 0;
-        int bBool = b != 0.0f ? 1 : 0;
+        int aBool = (a != 0.0f) ? 1 : 0;
+        int bBool = (b != 0.0f) ? 1 : 0;
         return aBool + bBool - 2 * aBool * bBool;
     }
 
-    // public static string ToFixed(float value, int places)
-    // {
-    //     if (value != value) {
-    //      return "0.0";
-    //   }
+    public static string ToFixed (float v, int places = 7)
+    {
+        /*
+         * Dispense with value and places edge cases.
+         */
+        if (float.IsNaN (v)) return "0.0";
+        if (places < 0) return ((int) v).ToString ( );
+        if (places < 1) return ((float) ((int) v)).ToString ( );
+        if (v < float.MinValue || v > float.MaxValue)
+        {
+            return v.ToString ( );
+        }
 
-    //   if (places < 0) {
-    //      return Integer.ToString((int) value);
-    //   }
+        /*
+         * Find the sign, the unsigned value and the
+         * unsigned integral.
+         */
+        bool ltZero = v < 0.0f;
+        int sign = ltZero ? -1 : (v > 0.0f) ? 1 : 0;
+        float abs = ltZero ? -v : v;
+        int trunc = (int) abs;
+        int len = 0;
 
-    //   if (places < 1) {
-    //      return Float.ToString((int) value);
-    //   }
+        /*
+         * Start the string builder with the integral
+         * and the sign.
+         */
+        StringBuilder sb = new StringBuilder (16);
+        if (sign < 0)
+        {
+            sb.Append ('-').Append (trunc);
+            len = sb.Length - 1;
+        }
+        else
+        {
+            sb.Append (trunc);
+            len = sb.Length;
+        }
+        sb.Append ('.');
 
-    //   /* Value is too big. */
-    //   if (value <= -3.4028235E38f || value >= 3.4028235E38f) {
-    //      return Float.ToString(value);
-    //   }
+        /*
+         * Find the number of places left to work with after the
+         * integral. Any more than 9 and single-precision's
+         * inaccuracy would make the effort worthless.
+         *
+         * For numbers with a big integral, there may not be much
+         * left to work with, and so fewer than the requested
+         * number of places will be used.
+         */
+        int maxPlaces = 9 - len;
+        if (maxPlaces < 1) return v.ToString ( );
+        int vetPlaces = places < maxPlaces ?
+            places : maxPlaces;
 
-    //   /*
-    //    * Hard-coded values from FloatConsts class for fast
-    //    * absolute value and sign.
-    //    */
-    //   int raw = Float.FloatToRawIntBits(value);
-    //   float sign = Float.IntBitsToFloat(raw & -2147483648 | 1065353216);
-    //   float abs = Float.IntBitsToFloat(raw & 2147483647);
-    //   int trunc = (int) abs;
-    //   StringBuilder sb = new StringBuilder(16);
-
-    //   /*
-    //    * Append integral to StringBuilder.
-    //    */
-    //   int len = 0;
-    //   if (sign < 0.0f) {
-    //      sb.append('-').append(trunc);
-    //      len = sb.length() - 1;
-    //   } else {
-    //      sb.append(trunc);
-    //      len = sb.length();
-    //   }
-    //   sb.append('.');
-
-    //   /*
-    //    * Hard-coded limit on the number of worthwhile decimal
-    //    * places beyond which single precision is no longer worth
-    //    * representing accurately.
-    //    */
-    //   int maxPlaces = 9 - len;
-
-    //   /*
-    //    * The integral has so many digits that it has consumed the
-    //    * allotment. (Might be scientific notation?)
-    //    */
-    //   if (maxPlaces < 1) {
-    //      return Float.ToString(value);
-    //   }
-
-    //   int vetPlaces = places < maxPlaces ? places : maxPlaces;
-    //   float frac = abs - trunc;
-
-    //   /* Truncation. */
-    //   for (int i = 0; i < vetPlaces; ++i) {
-    //      frac *= 10.0f;
-    //      int tr = (int) frac;
-    //      frac -= tr;
-    //      sb.Append(tr);
-    //   }
-
-    //     return sb.toString();
-    // }
+        /* 
+         * Separate each digit by subtracting the truncation from
+         * the value (fract), then multiplying by 10 to shift the
+         * next digit past the decimal point.
+         */
+        float frac = abs - trunc;
+        for (int i = 0; i < vetPlaces; ++i)
+        {
+            frac *= 10.0f;
+            int tr = (int) frac;
+            frac -= tr;
+            sb.Append (tr);
+        }
+        return sb.ToString ( );
+    }
 }

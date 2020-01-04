@@ -2,12 +2,12 @@ using System;
 using System.Text;
 
 [Serializable]
-public struct Vec4 : IComparable<Vec4>
+public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
 {
-    public float x;
-    public float y;
-    public float z;
-    public float w;
+    public readonly float x;
+    public readonly float y;
+    public readonly float z;
+    public readonly float w;
 
     public float X
     {
@@ -16,10 +16,10 @@ public struct Vec4 : IComparable<Vec4>
             return this.x;
         }
 
-        set
-        {
-            this.x = value;
-        }
+        // set
+        // {
+        //     this.x = value;
+        // }
     }
 
     public float Y
@@ -29,10 +29,10 @@ public struct Vec4 : IComparable<Vec4>
             return this.y;
         }
 
-        set
-        {
-            this.y = value;
-        }
+        // set
+        // {
+        //     this.y = value;
+        // }
     }
 
     public float Z
@@ -42,10 +42,10 @@ public struct Vec4 : IComparable<Vec4>
             return this.z;
         }
 
-        set
-        {
-            this.z = value;
-        }
+        // set
+        // {
+        //     this.z = value;
+        // }
     }
 
     public float W
@@ -55,10 +55,10 @@ public struct Vec4 : IComparable<Vec4>
             return this.w;
         }
 
-        set
-        {
-            this.w = value;
-        }
+        // set
+        // {
+        //     this.w = value;
+        // }
     }
 
     public float this [int i]
@@ -84,28 +84,28 @@ public struct Vec4 : IComparable<Vec4>
             }
         }
 
-        set
-        {
-            switch (i)
-            {
-                case 0:
-                case -4:
-                    this.x = value;
-                    break;
-                case 1:
-                case -3:
-                    this.y = value;
-                    break;
-                case 2:
-                case -2:
-                    this.z = value;
-                    break;
-                case 3:
-                case -1:
-                    this.w = value;
-                    break;
-            }
-        }
+        // set
+        // {
+        //     switch (i)
+        //     {
+        //         case 0:
+        //         case -4:
+        //             this.x = value;
+        //             break;
+        //         case 1:
+        //         case -3:
+        //             this.y = value;
+        //             break;
+        //         case 2:
+        //         case -2:
+        //             this.z = value;
+        //             break;
+        //         case 3:
+        //         case -1:
+        //             this.w = value;
+        //             break;
+        //     }
+        // }
     }
 
     public Vec4 (float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f)
@@ -124,6 +124,26 @@ public struct Vec4 : IComparable<Vec4>
         this.w = w ? 1.0f : 0.0f;
     }
 
+    public override int GetHashCode ( )
+    {
+        unchecked
+        {
+            const int hashBase = -2128831035;
+            const int hashMul = 16777619;
+            int hash = hashBase;
+            hash = hash * hashMul ^ this.x.GetHashCode ( );
+            hash = hash * hashMul ^ this.y.GetHashCode ( );
+            hash = hash * hashMul ^ this.z.GetHashCode ( );
+            hash = hash * hashMul ^ this.w.GetHashCode ( );
+            return hash;
+        }
+    }
+
+    public override string ToString ( )
+    {
+        return ToString (4);
+    }
+
     public int CompareTo (Vec4 v)
     {
         return (this.w > v.w) ? 1 :
@@ -137,37 +157,74 @@ public struct Vec4 : IComparable<Vec4>
             0;
     }
 
-    public override string ToString ( )
+    public bool Equals (Vec4 v)
+    {
+        // return Vec4.Approx (this, v);
+
+        if (this.w.GetHashCode ( ) != v.w.GetHashCode ( ))
+        {
+            return false;
+        }
+
+        if (this.z.GetHashCode ( ) != v.z.GetHashCode ( ))
+        {
+            return false;
+        }
+
+        if (this.y.GetHashCode ( ) != v.y.GetHashCode ( ))
+        {
+            return false;
+        }
+
+        if (this.x.GetHashCode ( ) != v.x.GetHashCode ( ))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    // public Vec4 Reset ( )
+    // {
+    //     return this.Set (0.0f, 0.0f, 0.0f, 0.0f);
+    // }
+
+    // public Vec4 Set (float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f)
+    // {
+    //     this.x = x;
+    //     this.y = y;
+    //     this.z = z;
+    //     this.w = w;
+    //     return this;
+    // }
+
+    // public Vec4 Set (bool x = false, bool y = false, bool z = false, bool w = false)
+    // {
+    //     this.x = x ? 1.0f : 0.0f;
+    //     this.y = y ? 1.0f : 0.0f;
+    //     this.z = z ? 1.0f : 0.0f;
+    //     this.w = w ? 1.0f : 0.0f;
+    //     return this;
+    // }
+
+    public float[ ] ToArray ( )
+    {
+        return new float[ ] { this.x, this.y, this.z, this.w };
+    }
+
+    public string ToString (int places = 4)
     {
         return new StringBuilder ( )
             .Append ("{ x: ")
-            .Append (this.x)
+            .Append (Utils.ToFixed (this.x, places))
             .Append (", y: ")
-            .Append (this.y)
+            .Append (Utils.ToFixed (this.y, places))
             .Append (", z: ")
-            .Append (this.z)
+            .Append (Utils.ToFixed (this.z, places))
             .Append (", w: ")
-            .Append (this.w)
+            .Append (Utils.ToFixed (this.w, places))
             .Append (" }")
             .ToString ( );
-    }
-
-    public Vec4 Set (float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f)
-    {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.w = w;
-        return this;
-    }
-
-    public Vec4 Set (bool x = false, bool y = false, bool z = false, bool w = false)
-    {
-        this.x = x ? 1.0f : 0.0f;
-        this.y = y ? 1.0f : 0.0f;
-        this.z = z ? 1.0f : 0.0f;
-        this.w = w ? 1.0f : 0.0f;
-        return this;
     }
 
     public static implicit operator Vec4 (bool b)
@@ -351,15 +408,6 @@ public struct Vec4 : IComparable<Vec4>
             a.w - b.w);
     }
 
-    public static Vec4 Sign (Vec4 v)
-    {
-        return new Vec4 (
-            Utils.Sign (v.x),
-            Utils.Sign (v.y),
-            Utils.Sign (v.z),
-            Utils.Sign (v.w));
-    }
-
     public static Vec4 Abs (Vec4 v)
     {
         return new Vec4 (
@@ -367,6 +415,30 @@ public struct Vec4 : IComparable<Vec4>
             Utils.Abs (v.y),
             Utils.Abs (v.z),
             Utils.Abs (v.w));
+    }
+
+    public static bool All (Vec4 v)
+    {
+        return v.x != 0.0f &&
+            v.y != 0.0f &&
+            v.z != 0.0f &&
+            v.w != 0.0f;
+    }
+
+    public static bool Any (Vec4 v)
+    {
+        return v.x != 0.0f ||
+            v.y != 0.0f ||
+            v.z != 0.0f ||
+            v.w != 0.0f;
+    }
+
+    public static bool Approx (Vec4 a, Vec4 b, float tolerance = Utils.Epsilon)
+    {
+        return Utils.Approx (a.x, b.x, tolerance) &&
+            Utils.Approx (a.y, b.y, tolerance) &&
+            Utils.Approx (a.z, b.z, tolerance) &&
+            Utils.Approx (a.w, b.w, tolerance);
     }
 
     public static Vec4 Ceil (Vec4 v)
@@ -378,6 +450,29 @@ public struct Vec4 : IComparable<Vec4>
             Utils.Ceil (v.w));
     }
 
+    public static Vec4 Clamp (Vec4 v, float lb = 0.0f, float ub = 1.0f)
+    {
+        return new Vec4 (
+            Utils.Clamp (v.x, lb, ub),
+            Utils.Clamp (v.y, lb, ub),
+            Utils.Clamp (v.z, lb, ub),
+            Utils.Clamp (v.w, lb, ub));
+    }
+
+    public static Vec4 Clamp (Vec4 v, Vec4 lb, Vec4 ub)
+    {
+        return new Vec4 (
+            Utils.Clamp (v.x, lb.x, ub.x),
+            Utils.Clamp (v.y, lb.y, ub.y),
+            Utils.Clamp (v.z, lb.z, ub.z),
+            Utils.Clamp (v.w, lb.w, ub.w));
+    }
+
+    public static float Dot (Vec4 a, Vec4 b)
+    {
+        return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+    }
+
     public static Vec4 Floor (Vec4 v)
     {
         return new Vec4 (
@@ -385,24 +480,6 @@ public struct Vec4 : IComparable<Vec4>
             Utils.Floor (v.y),
             Utils.Floor (v.z),
             Utils.Floor (v.w));
-    }
-
-    public static Vec4 Trunc (Vec4 v)
-    {
-        return new Vec4 (
-            (int) v.x,
-            (int) v.y,
-            (int) v.z,
-            (int) v.w);
-    }
-
-    public static Vec4 Fract (Vec4 a)
-    {
-        return new Vec4 (
-            a.x - (int) a.x,
-            a.y - (int) a.y,
-            a.z - (int) a.z,
-            a.w - (int) a.w);
     }
 
     public static Vec4 Fmod (Vec4 a, Vec4 b)
@@ -414,22 +491,27 @@ public struct Vec4 : IComparable<Vec4>
             Utils.Fmod (a.w, b.w));
     }
 
-    public static Vec4 Mod (Vec4 a, Vec4 b)
+    public static Vec4 Fract (Vec4 a)
     {
         return new Vec4 (
-            Utils.Mod (a.x, b.x),
-            Utils.Mod (a.y, b.y),
-            Utils.Mod (a.z, b.z),
-            Utils.Mod (a.w, b.w));
+            a.x - (int) a.x,
+            a.y - (int) a.y,
+            a.z - (int) a.z,
+            a.w - (int) a.w);
     }
 
-    public static Vec4 Mod1 (Vec4 v)
+    public static float Mag (Vec4 v)
     {
-        return new Vec4 (
-            Utils.Mod1 (v.x),
-            Utils.Mod1 (v.y),
-            Utils.Mod1 (v.z),
-            Utils.Mod1 (v.w));
+        return Utils.Sqrt (
+            v.x * v.x +
+            v.y * v.y +
+            v.z * v.z +
+            v.w * v.w);
+    }
+
+    public static float MagSq (Vec4 v)
+    {
+        return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
     }
 
     public static Vec4 Max (Vec4 a, Vec4 b)
@@ -448,24 +530,6 @@ public struct Vec4 : IComparable<Vec4>
             Utils.Min (a.y, b.y),
             Utils.Min (a.z, b.z),
             Utils.Min (a.w, b.w));
-    }
-
-    public static Vec4 Clamp (Vec4 v, float lb = 0.0f, float ub = 0.0f)
-    {
-        return new Vec4 (
-            Utils.Clamp (v.x, lb, ub),
-            Utils.Clamp (v.y, lb, ub),
-            Utils.Clamp (v.z, lb, ub),
-            Utils.Clamp (v.w, lb, ub));
-    }
-
-    public static Vec4 Clamp (Vec4 v, Vec4 lb, Vec4 ub)
-    {
-        return new Vec4 (
-            Utils.Clamp (v.x, lb.x, ub.x),
-            Utils.Clamp (v.y, lb.y, ub.y),
-            Utils.Clamp (v.z, lb.z, ub.z),
-            Utils.Clamp (v.w, lb.w, ub.w));
     }
 
     public static Vec4 Mix (Vec4 a, Vec4 b, bool t)
@@ -492,28 +556,44 @@ public struct Vec4 : IComparable<Vec4>
             (1.0f - t.w) * a.w + t.w * b.w);
     }
 
-    public static float Dot (Vec4 a, Vec4 b)
+    public static Vec4 Mod (Vec4 a, Vec4 b)
     {
-        return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+        return new Vec4 (
+            Utils.Mod (a.x, b.x),
+            Utils.Mod (a.y, b.y),
+            Utils.Mod (a.z, b.z),
+            Utils.Mod (a.w, b.w));
     }
 
-    public static float Mag (Vec4 v)
+    public static Vec4 Mod1 (Vec4 v)
     {
-        return Utils.Sqrt (
-            v.x * v.x +
-            v.y * v.y +
-            v.z * v.z +
-            v.w * v.w);
+        return new Vec4 (
+            Utils.Mod1 (v.x),
+            Utils.Mod1 (v.y),
+            Utils.Mod1 (v.z),
+            Utils.Mod1 (v.w));
     }
 
-    public static float MagSq (Vec4 v)
+    public static bool None (Vec4 v)
     {
-        return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
+        return v.x == 0.0f &&
+            v.y == 0.0f &&
+            v.z == 0.0f &&
+            v.w == 0.0f;
     }
 
     public static Vec4 Normalize (Vec4 v)
     {
         return v / Vec4.Mag (v);
+    }
+
+    public static Vec4 Not (Vec4 v)
+    {
+        return new Vec4 (
+            v.x != 0.0f ? 0.0f : 1.0f,
+            v.y != 0.0f ? 0.0f : 1.0f,
+            v.z != 0.0f ? 0.0f : 1.0f,
+            v.w != 0.0f ? 0.0f : 1.0f);
     }
 
     public static Vec4 Reflect (Vec4 i, Vec4 n)
@@ -530,37 +610,31 @@ public struct Vec4 : IComparable<Vec4>
             (n * (eta * iDotN + Utils.Sqrt (k)));
     }
 
-    public static bool All (Vec4 v)
-    {
-        return v.x != 0.0f &&
-            v.y != 0.0f &&
-            v.z != 0.0f &&
-            v.w != 0.0f;
-    }
-
-    public static bool Any (Vec4 v)
-    {
-        return v.x != 0.0f ||
-            v.y != 0.0f ||
-            v.z != 0.0f ||
-            v.w != 0.0f;
-    }
-
-    public static bool None (Vec4 v)
-    {
-        return v.x == 0.0f &&
-            v.y == 0.0f &&
-            v.z == 0.0f &&
-            v.w == 0.0f;
-    }
-
-    public static Vec4 Not (Vec4 v)
+    public static Vec4 Round (Vec4 v)
     {
         return new Vec4 (
-            v.x != 0.0f ? 0.0f : 1.0f,
-            v.y != 0.0f ? 0.0f : 1.0f,
-            v.z != 0.0f ? 0.0f : 1.0f,
-            v.w != 0.0f ? 0.0f : 1.0f);
+            Utils.Round (v.x),
+            Utils.Round (v.y),
+            Utils.Round (v.z),
+            Utils.Round (v.w));
+    }
+
+    public static Vec4 Sign (Vec4 v)
+    {
+        return new Vec4 (
+            Utils.Sign (v.x),
+            Utils.Sign (v.y),
+            Utils.Sign (v.z),
+            Utils.Sign (v.w));
+    }
+
+    public static Vec4 Trunc (Vec4 v)
+    {
+        return new Vec4 (
+            (int) v.x,
+            (int) v.y,
+            (int) v.z,
+            (int) v.w);
     }
 
     public static Vec4 Back

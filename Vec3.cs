@@ -2,11 +2,11 @@
 using System.Text;
 
 [Serializable]
-public struct Vec3 : IComparable<Vec3>
+public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>
 {
-    public float x;
-    public float y;
-    public float z;
+    public readonly float x;
+    public readonly float y;
+    public readonly float z;
 
     public float X
     {
@@ -15,10 +15,10 @@ public struct Vec3 : IComparable<Vec3>
             return this.x;
         }
 
-        set
-        {
-            this.x = value;
-        }
+        // set
+        // {
+        //     this.x = value;
+        // }
     }
 
     public float Y
@@ -28,10 +28,10 @@ public struct Vec3 : IComparable<Vec3>
             return this.y;
         }
 
-        set
-        {
-            this.y = value;
-        }
+        // set
+        // {
+        //     this.y = value;
+        // }
     }
 
     public float Z
@@ -41,10 +41,10 @@ public struct Vec3 : IComparable<Vec3>
             return this.z;
         }
 
-        set
-        {
-            this.z = value;
-        }
+        // set
+        // {
+        //     this.z = value;
+        // }
     }
 
     public float this [int i]
@@ -67,24 +67,24 @@ public struct Vec3 : IComparable<Vec3>
             }
         }
 
-        set
-        {
-            switch (i)
-            {
-                case 0:
-                case -3:
-                    this.x = value;
-                    break;
-                case 1:
-                case -2:
-                    this.y = value;
-                    break;
-                case 2:
-                case -1:
-                    this.z = value;
-                    break;
-            }
-        }
+        // set
+        // {
+        //     switch (i)
+        //     {
+        //         case 0:
+        //         case -3:
+        //             this.x = value;
+        //             break;
+        //         case 1:
+        //         case -2:
+        //             this.y = value;
+        //             break;
+        //         case 2:
+        //         case -1:
+        //             this.z = value;
+        //             break;
+        //     }
+        // }
     }
 
     public Vec3 (float x = 0.0f, float y = 0.0f, float z = 0.0f)
@@ -101,6 +101,25 @@ public struct Vec3 : IComparable<Vec3>
         this.z = z ? 1.0f : 0.0f;
     }
 
+    public override int GetHashCode ( )
+    {
+        unchecked
+        {
+            const int hashBase = -2128831035;
+            const int hashMul = 16777619;
+            int hash = hashBase;
+            hash = hash * hashMul ^ this.x.GetHashCode ( );
+            hash = hash * hashMul ^ this.y.GetHashCode ( );
+            hash = hash * hashMul ^ this.z.GetHashCode ( );
+            return hash;
+        }
+    }
+
+    public override string ToString ( )
+    {
+        return ToString (4);
+    }
+
     public int CompareTo (Vec3 v)
     {
         return (this.z > v.z) ? 1 :
@@ -112,33 +131,65 @@ public struct Vec3 : IComparable<Vec3>
             0;
     }
 
-    public override string ToString ( )
+    public bool Equals (Vec3 v)
+    {
+        // return Vec3.Approx (this, v);
+
+        if (this.z.GetHashCode ( ) != v.z.GetHashCode ( ))
+        {
+            return false;
+        }
+
+        if (this.y.GetHashCode ( ) != v.y.GetHashCode ( ))
+        {
+            return false;
+        }
+
+        if (this.x.GetHashCode ( ) != v.x.GetHashCode ( ))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    // public Vec3 Reset ( )
+    // {
+    //     return this.Set (0.0f, 0.0f, 0.0f);
+    // }
+
+    // public Vec3 Set (float x = 0.0f, float y = 0.0f, float z = 0.0f)
+    // {
+    //     this.x = x;
+    //     this.y = y;
+    //     this.z = z;
+    //     return this;
+    // }
+
+    // public Vec3 Set (bool x = false, bool y = false, bool z = false)
+    // {
+    //     this.x = x ? 1.0f : 0.0f;
+    //     this.y = y ? 1.0f : 0.0f;
+    //     this.z = z ? 1.0f : 0.0f;
+    //     return this;
+    // }
+
+    public float[ ] ToArray ( )
+    {
+        return new float[ ] { this.x, this.y, this.z };
+    }
+
+    public string ToString (int places = 4)
     {
         return new StringBuilder ( )
             .Append ("{ x: ")
-            .Append (this.x)
+            .Append (Utils.ToFixed (this.x, places))
             .Append (", y: ")
-            .Append (this.y)
+            .Append (Utils.ToFixed (this.y, places))
             .Append (", z: ")
-            .Append (this.z)
+            .Append (Utils.ToFixed (this.z, places))
             .Append (" }")
             .ToString ( );
-    }
-
-    public Vec3 Set (float x = 0.0f, float y = 0.0f, float z = 0.0f)
-    {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        return this;
-    }
-
-    public Vec3 Set (bool x = false, bool y = false, bool z = false)
-    {
-        this.x = x ? 1.0f : 0.0f;
-        this.y = y ? 1.0f : 0.0f;
-        this.z = z ? 1.0f : 0.0f;
-        return this;
     }
 
     public static implicit operator Vec3 (bool b)
@@ -286,20 +337,38 @@ public struct Vec3 : IComparable<Vec3>
         return new Vec3 (a.x - b.x, a.y - b.y, a.z - b.z);
     }
 
-    public static Vec3 Sign (Vec3 v)
-    {
-        return new Vec3 (
-            Utils.Sign (v.x),
-            Utils.Sign (v.y),
-            Utils.Sign (v.z));
-    }
-
     public static Vec3 Abs (Vec3 v)
     {
         return new Vec3 (
             Utils.Abs (v.x),
             Utils.Abs (v.y),
             Utils.Abs (v.z));
+    }
+
+    public static bool All (Vec3 v)
+    {
+        return v.x != 0.0f &&
+            v.y != 0.0f &&
+            v.z != 0.0f;
+    }
+
+    public static bool Any (Vec3 v)
+    {
+        return v.x != 0.0f ||
+            v.y != 0.0f ||
+            v.z != 0.0f;
+    }
+
+    public static bool Approx (Vec3 a, Vec3 b, float tolerance = Utils.Epsilon)
+    {
+        return Utils.Approx (a.x, b.x, tolerance) &&
+            Utils.Approx (a.y, b.y, tolerance) &&
+            Utils.Approx (a.z, b.z, tolerance);
+    }
+
+    public static float Azimuth (Vec3 v)
+    {
+        return Utils.Atan2 (v.y, v.x);
     }
 
     public static Vec3 Ceil (Vec3 v)
@@ -310,25 +379,41 @@ public struct Vec3 : IComparable<Vec3>
             Utils.Ceil (v.z));
     }
 
+    public static Vec3 Clamp (Vec3 v, float lb = 0.0f, float ub = 1.0f)
+    {
+        return new Vec3 (
+            Utils.Clamp (v.x, lb, ub),
+            Utils.Clamp (v.y, lb, ub),
+            Utils.Clamp (v.z, lb, ub));
+    }
+
+    public static Vec3 Clamp (Vec3 v, Vec3 lb, Vec3 ub)
+    {
+        return new Vec3 (
+            Utils.Clamp (v.x, lb.x, ub.x),
+            Utils.Clamp (v.y, lb.y, ub.y),
+            Utils.Clamp (v.z, lb.z, ub.z));
+    }
+
+    public static Vec3 Cross (Vec3 a, Vec3 b)
+    {
+        return new Vec3 (
+            a.y * b.z - a.z * b.y,
+            a.z * b.x - a.x * b.z,
+            a.x * b.y - a.y * b.x);
+    }
+
+    public static float Dot (Vec3 a, Vec3 b)
+    {
+        return a.x * b.x + a.y * b.y + a.z * b.z;
+    }
+
     public static Vec3 Floor (Vec3 v)
     {
         return new Vec3 (
             Utils.Floor (v.x),
             Utils.Floor (v.y),
             Utils.Floor (v.z));
-    }
-
-    public static Vec3 Trunc (Vec3 v)
-    {
-        return new Vec3 ((int) v.x, (int) v.y, (int) v.z);
-    }
-
-    public static Vec3 Fract (Vec3 a)
-    {
-        return new Vec3 (
-            a.x - (int) a.x,
-            a.y - (int) a.y,
-            a.z - (int) a.z);
     }
 
     public static Vec3 Fmod (Vec3 a, Vec3 b)
@@ -339,20 +424,37 @@ public struct Vec3 : IComparable<Vec3>
             Utils.Fmod (a.z, b.z));
     }
 
-    public static Vec3 Mod (Vec3 a, Vec3 b)
+    public static Vec3 Fract (Vec3 a)
     {
         return new Vec3 (
-            Utils.Mod (a.x, b.x),
-            Utils.Mod (a.y, b.y),
-            Utils.Mod (a.z, b.z));
+            a.x - (int) a.x,
+            a.y - (int) a.y,
+            a.z - (int) a.z);
     }
 
-    public static Vec3 Mod1 (Vec3 v)
+    public static Vec3 FromSpherical (
+        float azimuth = 0.0f,
+        float inclination = 0.0f,
+        float radius = 1.0f)
     {
+        float rcp = radius * Utils.Cos (inclination);
         return new Vec3 (
-            Utils.Mod1 (v.x),
-            Utils.Mod1 (v.y),
-            Utils.Mod1 (v.z));
+            rcp * Utils.Cos (azimuth),
+            rcp * Utils.Sin (azimuth),
+            radius * -Utils.Sin (inclination));
+    }
+
+    public static float Mag (Vec3 v)
+    {
+        return Utils.Sqrt (
+            v.x * v.x +
+            v.y * v.y +
+            v.z * v.z);
+    }
+
+    public static float MagSq (Vec3 v)
+    {
+        return v.x * v.x + v.y * v.y + v.z * v.z;
     }
 
     public static Vec3 Max (Vec3 a, Vec3 b)
@@ -369,22 +471,6 @@ public struct Vec3 : IComparable<Vec3>
             Utils.Min (a.x, b.x),
             Utils.Min (a.y, b.y),
             Utils.Min (a.z, b.z));
-    }
-
-    public static Vec3 Clamp (Vec3 v, float lb = 0.0f, float ub = 0.0f)
-    {
-        return new Vec3 (
-            Utils.Clamp (v.x, lb, ub),
-            Utils.Clamp (v.y, lb, ub),
-            Utils.Clamp (v.z, lb, ub));
-    }
-
-    public static Vec3 Clamp (Vec3 v, Vec3 lb, Vec3 ub)
-    {
-        return new Vec3 (
-            Utils.Clamp (v.x, lb.x, ub.x),
-            Utils.Clamp (v.y, lb.y, ub.y),
-            Utils.Clamp (v.z, lb.z, ub.z));
     }
 
     public static Vec3 Mix (Vec3 a, Vec3 b, bool t)
@@ -409,35 +495,40 @@ public struct Vec3 : IComparable<Vec3>
             (1.0f - t.z) * a.z + t.z * b.z);
     }
 
-    public static Vec3 Cross (Vec3 a, Vec3 b)
+    public static Vec3 Mod (Vec3 a, Vec3 b)
     {
         return new Vec3 (
-            a.y * b.z - a.z * b.y,
-            a.z * b.x - a.x * b.z,
-            a.x * b.y - a.y * b.x);
+            Utils.Mod (a.x, b.x),
+            Utils.Mod (a.y, b.y),
+            Utils.Mod (a.z, b.z));
     }
 
-    public static float Dot (Vec3 a, Vec3 b)
+    public static Vec3 Mod1 (Vec3 v)
     {
-        return a.x * b.x + a.y * b.y + a.z * b.z;
+        return new Vec3 (
+            Utils.Mod1 (v.x),
+            Utils.Mod1 (v.y),
+            Utils.Mod1 (v.z));
     }
 
-    public static float Mag (Vec3 v)
+    public static bool None (Vec3 v)
     {
-        return Utils.Sqrt (
-            v.x * v.x +
-            v.y * v.y +
-            v.z * v.z);
-    }
-
-    public static float MagSq (Vec3 v)
-    {
-        return v.x * v.x + v.y * v.y + v.z * v.z;
+        return v.x == 0.0f &&
+            v.y == 0.0f &&
+            v.z == 0.0f;
     }
 
     public static Vec3 Normalize (Vec3 v)
     {
         return v / Vec3.Mag (v);
+    }
+
+    public static Vec3 Not (Vec3 v)
+    {
+        return new Vec3 (
+            v.x != 0.0f ? 0.0f : 1.0f,
+            v.y != 0.0f ? 0.0f : 1.0f,
+            v.z != 0.0f ? 0.0f : 1.0f);
     }
 
     public static Vec3 Reflect (Vec3 i, Vec3 n)
@@ -454,50 +545,25 @@ public struct Vec3 : IComparable<Vec3>
             (n * (eta * iDotN + Utils.Sqrt (k)));
     }
 
-    public static bool All (Vec3 v)
-    {
-        return v.x != 0.0f &&
-            v.y != 0.0f &&
-            v.z != 0.0f;
-    }
-
-    public static bool Any (Vec3 v)
-    {
-        return v.x != 0.0f ||
-            v.y != 0.0f ||
-            v.z != 0.0f;
-    }
-
-    public static float Azimuth (Vec3 v)
-    {
-        return Utils.Atan2 (v.y, v.x);
-    }
-
-    public static Vec3 FromSpherical (
-        float azimuth = 0.0f,
-        float inclination = 0.0f,
-        float radius = 1.0f)
-    {
-        float rcp = radius * Utils.Cos (inclination);
-        return new Vec3 (
-            rcp * Utils.Cos (azimuth),
-            rcp * Utils.Sin (azimuth),
-            radius * -Utils.Sin (inclination));
-    }
-
-    public static bool None (Vec3 v)
-    {
-        return v.x == 0.0f &&
-            v.y == 0.0f &&
-            v.z == 0.0f;
-    }
-
-    public static Vec3 Not (Vec3 v)
+    public static Vec3 Round (Vec3 v)
     {
         return new Vec3 (
-            v.x != 0.0f ? 0.0f : 1.0f,
-            v.y != 0.0f ? 0.0f : 1.0f,
-            v.z != 0.0f ? 0.0f : 1.0f);
+            Utils.Round (v.x),
+            Utils.Round (v.y),
+            Utils.Round (v.z));
+    }
+
+    public static Vec3 Sign (Vec3 v)
+    {
+        return new Vec3 (
+            Utils.Sign (v.x),
+            Utils.Sign (v.y),
+            Utils.Sign (v.z));
+    }
+
+    public static Vec3 Trunc (Vec3 v)
+    {
+        return new Vec3 ((int) v.x, (int) v.y, (int) v.z);
     }
 
     public static Vec3 Back
