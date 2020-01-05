@@ -1,37 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Text;
 
 [Serializable]
-public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>
+public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnumerable
 {
-    public readonly float real;
-    public readonly float imag;
+    private readonly float real;
+    private readonly float imag;
 
-    public float Real
-    {
-        get
-        {
-            return this.real;
-        }
-
-        // set
-        // {
-        //     this.real = value;
-        // }
-    }
-
-    public float Imag
-    {
-        get
-        {
-            return this.imag;
-        }
-
-        // set
-        // {
-        //     this.imag = value;
-        // }
-    }
+    public float Real { get { return this.real; } }
+    public float Imag { get { return this.imag; } }
 
     public float this [int i]
     {
@@ -49,27 +27,39 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>
                     return 0.0f;
             }
         }
-
-        // set
-        // {
-        //     switch (i)
-        //     {
-        //         case 0:
-        //         case -2:
-        //             this.real = value;
-        //             break;
-        //         case 1:
-        //         case -1:
-        //             this.imag = value;
-        //             break;
-        //     }
-        // }
     }
 
     public Complex (float real = 0.0f, float imag = 0.0f)
     {
         this.real = real;
         this.imag = imag;
+    }
+
+    public override bool Equals (object value)
+    {
+        if (Object.ReferenceEquals (this, value)) return true;
+        if (Object.ReferenceEquals (null, value)) return false;
+
+        if (value is Complex)
+        {
+            Complex z = (Complex) value;
+
+            // return Complex.Approx (this, z);
+
+            if (this.real.GetHashCode ( ) != z.real.GetHashCode ( ))
+            {
+                return false;
+            }
+
+            if (this.imag.GetHashCode ( ) != z.imag.GetHashCode ( ))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public override int GetHashCode ( )
@@ -116,17 +106,11 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>
         return true;
     }
 
-    // public Complex Reset ( )
-    // {
-    //     return this.Set (0.0f, 0.0f);
-    // }
-
-    // public Complex Set (float real = 0.0f, float imag = 0.0f)
-    // {
-    //     this.real = real;
-    //     this.imag = imag;
-    //     return this;
-    // }
+    public IEnumerator GetEnumerator ( )
+    {
+        yield return this.real;
+        yield return this.imag;
+    }
 
     public float[ ] ToArray ( )
     {
@@ -135,7 +119,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>
 
     public string ToString (int places = 4)
     {
-        return new StringBuilder ( )
+        return new StringBuilder (64)
             .Append ("{ real: ")
             .Append (Utils.ToFixed (this.real, places))
             .Append (", imag: ")
@@ -149,139 +133,151 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>
         return new Complex (s, 0.0f);
     }
 
-    public static implicit operator Vec2 (Complex z)
+    public static implicit operator Vec2 (in Complex z)
     {
         return new Vec2 (z.real, z.imag);
     }
 
-    public static implicit operator Complex (Vec2 v)
+    public static implicit operator Complex (in Vec2 v)
     {
         return new Complex (v.x, v.y);
     }
 
-    public static explicit operator float (Complex z)
+    public static explicit operator float (in Complex z)
     {
         return Complex.Abs (z);
     }
 
-    public static Complex operator * (Complex a, Complex b)
+    public static Complex operator * (in Complex a, in Complex b)
     {
         return new Complex (
             a.real * b.real - a.imag * b.imag,
             a.real * b.imag + a.imag * b.real);
     }
 
-    public static Complex operator * (Complex a, float b)
+    public static Complex operator * (in Complex a, float b)
     {
         return new Complex (a.real * b, a.imag * b);
     }
 
-    public static Complex operator * (float a, Complex b)
+    public static Complex operator * (float a, in Complex b)
     {
         return new Complex (a * b.real, a * b.imag);
     }
 
-    public static Complex operator / (Complex a, Complex b)
+    public static Complex operator / (in Complex a, in Complex b)
     {
         return a * Complex.Inverse (b);
     }
 
-    public static Complex operator / (Complex a, float b)
+    public static Complex operator / (in Complex a, float b)
     {
         if (b == 0.0f) return new Complex (0.0f, 0.0f);
         return new Complex (a.real / b, a.imag / b);
     }
 
-    public static Complex operator / (float a, Complex b)
+    public static Complex operator / (float a, in Complex b)
     {
         return a * Complex.Inverse (b);
     }
 
-    public static Complex operator + (Complex a, Complex b)
+    public static Complex operator + (in Complex a, in Complex b)
     {
         return new Complex (a.real + b.real, a.imag + b.imag);
     }
 
-    public static Complex operator + (Complex a, float b)
+    public static Complex operator + (in Complex a, float b)
     {
         return new Complex (a.real + b, a.imag);
     }
 
-    public static Complex operator + (float a, Complex b)
+    public static Complex operator + (float a, in Complex b)
     {
         return new Complex (a + b.real, b.imag);
     }
 
-    public static Complex operator - (Complex a, Complex b)
+    public static Complex operator - (in Complex a, in Complex b)
     {
         return new Complex (a.real - b.real, a.imag - b.imag);
     }
 
-    public static Complex operator - (Complex a, float b)
+    public static Complex operator - (in Complex a, float b)
     {
         return new Complex (a.real - b, a.imag);
     }
 
-    public static Complex operator - (float a, Complex b)
+    public static Complex operator - (float a, in Complex b)
     {
         return new Complex (a - b.real, -b.imag);
     }
 
-    public static float Abs (Complex z)
+    public static float Abs (in Complex z)
     {
         return Utils.Sqrt (z.real * z.real + z.imag * z.imag);
     }
 
-    public static float AbsSq (Complex z)
+    public static float AbsSq (in Complex z)
     {
         return z.real * z.real + z.imag * z.imag;
     }
 
-    public static bool Approx (Complex a, Complex b, float tolerance = Utils.Epsilon)
+    public static bool All (in Complex z)
+    {
+        return z.real != 0.0f && z.imag != 0.0f;
+    }
+
+    public static bool Any (in Complex z)
+    {
+        return z.real != 0.0f || z.imag != 0.0f;
+    }
+
+    public static bool Approx (in Complex a, in Complex b, float tolerance = Utils.Epsilon)
     {
         return Utils.Approx (a.real, b.real, tolerance) &&
             Utils.Approx (a.imag, b.imag, tolerance);
     }
 
-    public static Complex Conj (Complex z)
+    public static Complex Conj (in Complex z)
     {
         return new Complex (z.real, -z.imag);
     }
 
-    public static Complex Cos (Complex z)
+    public static Complex Cos (in Complex z)
     {
         return new Complex (
             Utils.Cos (z.real) * Utils.Cosh (z.imag), -Utils.Sin (z.real) * Utils.Sinh (z.imag));
     }
 
-    public static Complex Exp (Complex z)
+    public static Complex Exp (in Complex z)
     {
         return Complex.Rect (Utils.Exp (z.real), z.imag);
     }
 
-    public static Complex Inverse (Complex z)
+    public static Complex Inverse (in Complex z)
     {
         float absSq = z.real * z.real + z.imag * z.imag;
         if (absSq == 0.0f) return new Complex (0.0f, 0.0f);
         return new Complex (z.real / absSq, -z.imag / absSq);
     }
 
-    public static Complex Log (Complex z)
+    public static Complex Log (in Complex z)
     {
         return new Complex (
             Utils.Log (Complex.Abs (z)),
             Complex.Phase (z));
     }
 
-    public static Complex Mobius (
-        Complex a = new Complex ( ), Complex b = new Complex ( ),
-        Complex c = new Complex ( ), Complex d = new Complex ( ),
-        Complex z = new Complex ( ))
+    public static Complex Mobius (in Complex a = new Complex ( ), in Complex b = new Complex ( ), in Complex c = new Complex ( ), in Complex d = new Complex ( ), in Complex z = new Complex ( ))
     {
         return ((a * z) + b) / ((c * z) + d);
     }
 
-    public static float Phase (Complex z)
+    public static bool None (in Complex z)
+    {
+        return z.real == 0.0f && z.imag == 0.0f;
+    }
+
+    public static float Phase (in Complex z)
     {
         return Utils.Atan2 (z.imag, z.real);
     }
@@ -291,22 +287,22 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>
         return new Complex (r * Utils.Cos (phi), r * Utils.Sin (phi));
     }
 
-    public static Complex Pow (Complex a, Complex b)
+    public static Complex Pow (in Complex a, in Complex b)
     {
         return Complex.Exp (b * Complex.Log (a));
     }
 
-    public static Complex Pow (Complex a, float b)
+    public static Complex Pow (in Complex a, float b)
     {
         return Complex.Exp (b * Complex.Log (a));
     }
 
-    public static Complex Pow (float a, Complex b)
+    public static Complex Pow (float a, in Complex b)
     {
         return Complex.Exp (b * Complex.Log (a));
     }
 
-    public static Complex Sin (Complex z)
+    public static Complex Sin (in Complex z)
     {
         return new Complex (
             Utils.Sin (z.real) * Utils.Cosh (z.imag),

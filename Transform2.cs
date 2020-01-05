@@ -58,4 +58,29 @@ public class Transform2
         this.rotation = rotation;
         this.scale = scale;
     }
+
+    public Transform2 MoveBy(Vec2 v)
+    {
+        this.location += v;
+        return this;
+    }
+
+    public Transform2 MoveTo(Vec2 v, float step)
+    {
+        this.location = Vec2.Mix(this.location, v, step);
+        return this;
+    }
+
+    public Transform2 MoveTo(Vec2 v, Vec2 step, Func<Vec2, Vec2, Vec2, Vec2> Easing)
+    {
+        Vec2 t = Easing(this.location, v, step);
+        this.location = Vec2.Mix(this.location, v, t);
+        return this;
+    }
+
+    public Transform2 ScaleBy(Vec2 v)
+    {
+        this.scale += v;
+        return this;
+    }
 }

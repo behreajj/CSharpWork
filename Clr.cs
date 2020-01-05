@@ -1,65 +1,19 @@
 using System;
+using System.Collections;
 using System.Text;
 
 [Serializable]
-public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
+public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
 {
-    public readonly float r;
-    public readonly float g;
-    public readonly float b;
-    public readonly float a;
+    private readonly float _r;
+    private readonly float _g;
+    private readonly float _b;
+    private readonly float _a;
 
-    public float R
-    {
-        get
-        {
-            return this.r;
-        }
-
-        // set
-        // {
-        //     this.r = value;
-        // }
-    }
-
-    public float G
-    {
-        get
-        {
-            return this.g;
-        }
-
-        // set
-        // {
-        //     this.g = value;
-        // }
-    }
-
-    public float B
-    {
-        get
-        {
-            return this.b;
-        }
-
-        // set
-        // {
-        //     this.b = value;
-        // }
-    }
-
-    public float A
-    {
-        get
-        {
-            return this.a;
-        }
-
-        // set
-        // {
-        //     this.a = value;
-        // }
-    }
+    public float r { get { return this._r; } }
+    public float g { get { return this._g; } }
+    public float b { get { return this._b; } }
+    public float a { get { return this._a; } }
 
     public float this [int i]
     {
@@ -69,67 +23,58 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
             {
                 case 0:
                 case -4:
-                    return this.r;
+                    return this._r;
                 case 1:
                 case -3:
-                    return this.g;
+                    return this._g;
                 case 2:
                 case -2:
-                    return this.b;
+                    return this._b;
                 case 3:
                 case -1:
-                    return this.a;
+                    return this._a;
                 default:
                     return 0.0f;
             }
         }
-
-        // set
-        // {
-        //     switch (i)
-        //     {
-        //         case 0:
-        //         case -4:
-        //             this.r = value;
-        //             break;
-        //         case 1:
-        //         case -3:
-        //             this.g = value;
-        //             break;
-        //         case 2:
-        //         case -2:
-        //             this.b = value;
-        //             break;
-        //         case 3:
-        //         case -1:
-        //             this.a = value;
-        //             break;
-        //     }
-        // }
     }
 
     public Clr (byte r = 255, byte g = 255, byte b = 255, byte a = 255)
     {
-        this.r = r * Utils.One255;
-        this.g = g * Utils.One255;
-        this.b = b * Utils.One255;
-        this.a = a * Utils.One255;
+        this._r = r * Utils.One255;
+        this._g = g * Utils.One255;
+        this._b = b * Utils.One255;
+        this._a = a * Utils.One255;
     }
 
     public Clr (sbyte r = -1, sbyte g = -1, sbyte b = -1, sbyte a = -1)
     {
-        this.r = (((int) r) & 0xff) * Utils.One255;
-        this.g = (((int) g) & 0xff) * Utils.One255;
-        this.b = (((int) b) & 0xff) * Utils.One255;
-        this.a = (((int) a) & 0xff) * Utils.One255;
+        this._r = (((int) r) & 0xff) * Utils.One255;
+        this._g = (((int) g) & 0xff) * Utils.One255;
+        this._b = (((int) b) & 0xff) * Utils.One255;
+        this._a = (((int) a) & 0xff) * Utils.One255;
     }
 
     public Clr (float r = 1.0f, float g = 1.0f, float b = 1.0f, float a = 1.0f)
     {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
+        this._r = r;
+        this._g = g;
+        this._b = b;
+        this._a = a;
+    }
+
+    public override bool Equals (object value)
+    {
+        if (Object.ReferenceEquals (this, value)) return true;
+        if (Object.ReferenceEquals (null, value)) return false;
+
+        if (value is Clr)
+        {
+            Clr c = (Clr) value;
+            return ((int) this) == ((int) c);
+        }
+
+        return false;
     }
 
     public override int GetHashCode ( )
@@ -154,76 +99,52 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
 
     public bool Equals (Clr c)
     {
-        return ((int)this) == ((int)c);
+        return ((int) this) == ((int) c);
     }
 
-    // public Clr Reset ( )
-    // {
-    //     return this.Set (1.0f, 1.0f, 1.0f, 1.0f);
-    // }
-
-    // public Clr Set (byte r = 255, byte g = 255, byte b = 255, byte a = 255)
-    // {
-    //     this.r = r * Utils.One255;
-    //     this.g = g * Utils.One255;
-    //     this.b = b * Utils.One255;
-    //     this.a = a * Utils.One255;
-    //     return this;
-    // }
-
-    // public Clr Set (sbyte r = -1, sbyte g = -1, sbyte b = -1, sbyte a = -1)
-    // {
-    //     this.r = (((int) r) & 0xff) * Utils.One255;
-    //     this.g = (((int) g) & 0xff) * Utils.One255;
-    //     this.b = (((int) b) & 0xff) * Utils.One255;
-    //     this.a = (((int) a) & 0xff) * Utils.One255;
-    //     return this;
-    // }
-
-    // public Clr Set (float r = 1.0f, float g = 1.0f, float b = 1.0f, float a = 1.0f)
-    // {
-    //     this.r = r;
-    //     this.g = g;
-    //     this.b = b;
-    //     this.a = a;
-    //     return this;
-    // }
+    public IEnumerator GetEnumerator ( )
+    {
+        yield return this._r;
+        yield return this._g;
+        yield return this._b;
+        yield return this._a;
+    }
 
     public float[ ] ToArray ( )
     {
-        return new float[ ] { this.r, this.g, this.b, this.a };
+        return new float[ ] { this._r, this._g, this._b, this._a };
     }
 
     public string ToString (int places = 4)
     {
-        return new StringBuilder ( )
+        return new StringBuilder (96)
             .Append ("{ r: ")
-            .Append (Utils.ToFixed (this.r, places))
+            .Append (Utils.ToFixed (this._r, places))
             .Append (", g: ")
-            .Append (Utils.ToFixed (this.g, places))
+            .Append (Utils.ToFixed (this._g, places))
             .Append (", b: ")
-            .Append (Utils.ToFixed (this.b, places))
+            .Append (Utils.ToFixed (this._b, places))
             .Append (", a: ")
-            .Append (Utils.ToFixed (this.a, places))
+            .Append (Utils.ToFixed (this._a, places))
             .Append (" }")
             .ToString ( );
     }
 
-    public static implicit operator int (Clr c)
+    public static implicit operator int (in Clr c)
     {
-        return (int) (c.a * 0xff + 0.5f) << 0x18 |
-            (int) (c.r * 0xff + 0.5f) << 0x10 |
-            (int) (c.g * 0xff + 0.5f) << 0x8 |
-            (int) (c.b * 0xff + 0.5f);
+        return (int) (c._a * 0xff + 0.5f) << 0x18 |
+            (int) (c._r * 0xff + 0.5f) << 0x10 |
+            (int) (c._g * 0xff + 0.5f) << 0x8 |
+            (int) (c._b * 0xff + 0.5f);
     }
 
-    public static implicit operator uint (Clr c)
+    public static implicit operator uint (in Clr c)
     {
         int cint = (int) c;
         return (uint) cint;
     }
 
-    public static implicit operator long (Clr c)
+    public static implicit operator long (in Clr c)
     {
         int cint = (int) c;
         return ((long) cint) & 0xffffffffL;
@@ -273,144 +194,144 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         return new Clr (v, v, v, v);
     }
 
-    public static implicit operator Clr (Vec4 v)
+    public static implicit operator Clr (in Vec4 v)
     {
         return new Clr (v.x, v.y, v.z, v.w);
     }
 
-    public static implicit operator Vec4 (Clr c)
+    public static implicit operator Vec4 (in Clr c)
     {
-        return new Vec4 (c.r, c.g, c.b, c.a);
+        return new Vec4 (c._r, c._g, c._b, c._a);
     }
 
-    public static explicit operator float (Clr c)
+    public static explicit operator float (in Clr c)
     {
         return Clr.Luminance (c);
     }
 
-    public static Clr operator ~ (Clr c)
+    public static Clr operator ~ (in Clr c)
     {
         return ~((int) c);
     }
 
-    public static Clr operator & (Clr a, Clr b)
+    public static Clr operator & (in Clr a, in Clr b)
     {
         return ((int) a) & ((int) b);
     }
 
-    public static Clr operator & (Clr a, int b)
+    public static Clr operator & (in Clr a, int b)
     {
         return ((int) a) & b;
     }
 
-    public static Clr operator & (int a, Clr b)
+    public static Clr operator & (int a, in Clr b)
     {
         return a & ((int) b);
     }
 
-    public static Clr operator & (Clr a, long b)
+    public static Clr operator & (in Clr a, long b)
     {
         return ((long) a) & b;
     }
 
-    public static Clr operator & (long a, Clr b)
+    public static Clr operator & (long a, in Clr b)
     {
         return a & ((long) b);
     }
 
-    public static Clr operator | (Clr a, Clr b)
+    public static Clr operator | (in Clr a, in Clr b)
     {
         return ((int) a) | ((int) b);
     }
 
-    public static Clr operator | (Clr a, int b)
+    public static Clr operator | (in Clr a, int b)
     {
         return ((int) a) | b;
     }
 
-    public static Clr operator | (int a, Clr b)
+    public static Clr operator | (int a, in Clr b)
     {
         return a | ((int) b);
     }
 
-    public static Clr operator | (Clr a, long b)
+    public static Clr operator | (in Clr a, long b)
     {
         return ((long) a) | b;
     }
 
-    public static Clr operator | (long a, Clr b)
+    public static Clr operator | (long a, in Clr b)
     {
         return a | ((long) b);
     }
 
-    public static Clr operator ^ (Clr a, Clr b)
+    public static Clr operator ^ (in Clr a, in Clr b)
     {
         return ((int) a) ^ ((int) b);
     }
 
-    public static Clr operator ^ (Clr a, int b)
+    public static Clr operator ^ (in Clr a, int b)
     {
         return ((int) a) ^ b;
     }
 
-    public static Clr operator ^ (int a, Clr b)
+    public static Clr operator ^ (int a, in Clr b)
     {
         return a ^ ((int) b);
     }
 
-    public static Clr operator ^ (Clr a, long b)
+    public static Clr operator ^ (in Clr a, long b)
     {
         return ((long) a) ^ b;
     }
 
-    public static Clr operator ^ (long a, Clr b)
+    public static Clr operator ^ (long a, in Clr b)
     {
         return a ^ ((long) b);
     }
 
-    public static Clr operator << (Clr a, int b)
+    public static Clr operator << (in Clr a, int b)
     {
         return ((int) a) << b;
     }
 
-    public static Clr operator >> (Clr a, int b)
+    public static Clr operator >> (in Clr a, int b)
     {
         return ((int) a) >> b;
     }
 
-    public static Clr operator - (Clr c)
+    public static Clr operator - (in Clr c)
     {
         return new Clr (
-            Utils.Max (1.0f - c.r, 0.0f),
-            Utils.Max (1.0f - c.g, 0.0f),
-            Utils.Max (1.0f - c.b, 0.0f),
-            c.a);
+            Utils.Max (1.0f - c._r, 0.0f),
+            Utils.Max (1.0f - c._g, 0.0f),
+            Utils.Max (1.0f - c._b, 0.0f),
+            c._a);
     }
 
-    public static Clr operator * (Clr a, Clr b)
+    public static Clr operator * (in Clr a, in Clr b)
     {
         return new Clr (
-            Utils.Clamp (a.r * b.r, 0.0f, 1.0f),
-            Utils.Clamp (a.g * b.g, 0.0f, 1.0f),
-            Utils.Clamp (a.b * b.b, 0.0f, 1.0f),
-            Utils.Clamp (a.a, 0.0f, 1.0f));
+            Utils.Clamp (a._r * b._r, 0.0f, 1.0f),
+            Utils.Clamp (a._g * b._g, 0.0f, 1.0f),
+            Utils.Clamp (a._b * b._b, 0.0f, 1.0f),
+            Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
-    public static Clr operator * (Clr a, float b)
+    public static Clr operator * (in Clr a, float b)
     {
         return new Clr (
-            Utils.Clamp (a.r * b, 0.0f, 1.0f),
-            Utils.Clamp (a.g * b, 0.0f, 1.0f),
-            Utils.Clamp (a.b * b, 0.0f, 1.0f),
-            Utils.Clamp (a.a, 0.0f, 1.0f));
+            Utils.Clamp (a._r * b, 0.0f, 1.0f),
+            Utils.Clamp (a._g * b, 0.0f, 1.0f),
+            Utils.Clamp (a._b * b, 0.0f, 1.0f),
+            Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
-    public static Clr operator * (float a, Clr b)
+    public static Clr operator * (float a, in Clr b)
     {
         return new Clr (
-            Utils.Clamp (a * b.r, 0.0f, 1.0f),
-            Utils.Clamp (a * b.g, 0.0f, 1.0f),
-            Utils.Clamp (a * b.b, 0.0f, 1.0f),
+            Utils.Clamp (a * b._r, 0.0f, 1.0f),
+            Utils.Clamp (a * b._g, 0.0f, 1.0f),
+            Utils.Clamp (a * b._b, 0.0f, 1.0f),
             Utils.Clamp (a, 0.0f, 1.0f));
     }
 
@@ -424,32 +345,32 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     //     return ((Clr)a) * b;
     // }
 
-    public static Clr operator / (Clr a, Clr b)
+    public static Clr operator / (in Clr a, in Clr b)
     {
         return new Clr (
-            Utils.Clamp (Utils.Div (a.r, b.r), 0.0f, 1.0f),
-            Utils.Clamp (Utils.Div (a.g, b.g), 0.0f, 1.0f),
-            Utils.Clamp (Utils.Div (a.b, b.b), 0.0f, 1.0f),
-            Utils.Clamp (a.a, 0.0f, 1.0f));
+            Utils.Clamp (Utils.Div (a._r, b._r), 0.0f, 1.0f),
+            Utils.Clamp (Utils.Div (a._g, b._g), 0.0f, 1.0f),
+            Utils.Clamp (Utils.Div (a._b, b._b), 0.0f, 1.0f),
+            Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
-    public static Clr operator / (Clr a, float b)
+    public static Clr operator / (in Clr a, float b)
     {
         if (b == 0.0f) return Clr.White;
         float bInv = 1.0f / b;
         return new Clr (
-            Utils.Clamp (a.r * bInv, 0.0f, 1.0f),
-            Utils.Clamp (a.g * bInv, 0.0f, 1.0f),
-            Utils.Clamp (a.b * bInv, 0.0f, 1.0f),
-            Utils.Clamp (a.a, 0.0f, 1.0f));
+            Utils.Clamp (a._r * bInv, 0.0f, 1.0f),
+            Utils.Clamp (a._g * bInv, 0.0f, 1.0f),
+            Utils.Clamp (a._b * bInv, 0.0f, 1.0f),
+            Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
-    public static Clr operator / (float a, Clr b)
+    public static Clr operator / (float a, in Clr b)
     {
         return new Clr (
-            Utils.Clamp (Utils.Div (a, b.r), 0.0f, 1.0f),
-            Utils.Clamp (Utils.Div (a, b.g), 0.0f, 1.0f),
-            Utils.Clamp (Utils.Div (a, b.b), 0.0f, 1.0f),
+            Utils.Clamp (Utils.Div (a, b._r), 0.0f, 1.0f),
+            Utils.Clamp (Utils.Div (a, b._g), 0.0f, 1.0f),
+            Utils.Clamp (Utils.Div (a, b._b), 0.0f, 1.0f),
             Utils.Clamp (a, 0.0f, 1.0f));
     }
 
@@ -463,30 +384,30 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     //     return ((Clr)a) / b;
     // }
 
-    public static Clr operator % (Clr a, Clr b)
+    public static Clr operator % (in Clr a, in Clr b)
     {
         return new Clr (
-            Utils.Mod (a.r, b.r),
-            Utils.Mod (a.g, b.g),
-            Utils.Mod (a.b, b.b),
-            a.a);
+            Utils.Mod (a._r, b._r),
+            Utils.Mod (a._g, b._g),
+            Utils.Mod (a._b, b._b),
+            a._a);
     }
 
-    public static Clr operator % (Clr a, float b)
+    public static Clr operator % (in Clr a, float b)
     {
         return new Clr (
-            Utils.Mod (a.r, b),
-            Utils.Mod (a.g, b),
-            Utils.Mod (a.b, b),
-            a.a);
+            Utils.Mod (a._r, b),
+            Utils.Mod (a._g, b),
+            Utils.Mod (a._b, b),
+            a._a);
     }
 
-    public static Clr operator % (float a, Clr b)
+    public static Clr operator % (float a, in Clr b)
     {
         return new Clr (
-            Utils.Mod (a, b.r),
-            Utils.Mod (a, b.g),
-            Utils.Mod (a, b.b),
+            Utils.Mod (a, b._r),
+            Utils.Mod (a, b._g),
+            Utils.Mod (a, b._b),
             a);
     }
 
@@ -500,30 +421,30 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     //     return ((Clr)a) % b;
     // }
 
-    public static Clr operator + (Clr a, Clr b)
+    public static Clr operator + (in Clr a, in Clr b)
     {
         return new Clr (
-            Utils.Clamp (a.r + b.r, 0.0f, 1.0f),
-            Utils.Clamp (a.g + b.g, 0.0f, 1.0f),
-            Utils.Clamp (a.b + b.b, 0.0f, 1.0f),
-            Utils.Clamp (a.a, 0.0f, 1.0f));
+            Utils.Clamp (a._r + b._r, 0.0f, 1.0f),
+            Utils.Clamp (a._g + b._g, 0.0f, 1.0f),
+            Utils.Clamp (a._b + b._b, 0.0f, 1.0f),
+            Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
-    public static Clr operator + (Clr a, float b)
+    public static Clr operator + (in Clr a, float b)
     {
         return new Clr (
-            Utils.Clamp (a.r + b, 0.0f, 1.0f),
-            Utils.Clamp (a.g + b, 0.0f, 1.0f),
-            Utils.Clamp (a.b + b, 0.0f, 1.0f),
-            Utils.Clamp (a.a, 0.0f, 1.0f));
+            Utils.Clamp (a._r + b, 0.0f, 1.0f),
+            Utils.Clamp (a._g + b, 0.0f, 1.0f),
+            Utils.Clamp (a._b + b, 0.0f, 1.0f),
+            Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
-    public static Clr operator + (float a, Clr b)
+    public static Clr operator + (float a, in Clr b)
     {
         return new Clr (
-            Utils.Clamp (a + b.r, 0.0f, 1.0f),
-            Utils.Clamp (a + b.g, 0.0f, 1.0f),
-            Utils.Clamp (a + b.b, 0.0f, 1.0f),
+            Utils.Clamp (a + b._r, 0.0f, 1.0f),
+            Utils.Clamp (a + b._g, 0.0f, 1.0f),
+            Utils.Clamp (a + b._b, 0.0f, 1.0f),
             Utils.Clamp (a, 0.0f, 1.0f));
     }
 
@@ -537,30 +458,30 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     //     return ((Clr)a) + b;
     // }
 
-    public static Clr operator - (Clr a, Clr b)
+    public static Clr operator - (in Clr a, in Clr b)
     {
         return new Clr (
-            Utils.Clamp (a.r - b.r, 0.0f, 1.0f),
-            Utils.Clamp (a.g - b.g, 0.0f, 1.0f),
-            Utils.Clamp (a.b - b.b, 0.0f, 1.0f),
-            Utils.Clamp (a.a, 0.0f, 1.0f));
+            Utils.Clamp (a._r - b._r, 0.0f, 1.0f),
+            Utils.Clamp (a._g - b._g, 0.0f, 1.0f),
+            Utils.Clamp (a._b - b._b, 0.0f, 1.0f),
+            Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
-    public static Clr operator - (Clr a, float b)
+    public static Clr operator - (in Clr a, float b)
     {
         return new Clr (
-            Utils.Clamp (a.r - b, 0.0f, 1.0f),
-            Utils.Clamp (a.g - b, 0.0f, 1.0f),
-            Utils.Clamp (a.b - b, 0.0f, 1.0f),
-            Utils.Clamp (a.a, 0.0f, 1.0f));
+            Utils.Clamp (a._r - b, 0.0f, 1.0f),
+            Utils.Clamp (a._g - b, 0.0f, 1.0f),
+            Utils.Clamp (a._b - b, 0.0f, 1.0f),
+            Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
-    public static Clr operator - (float a, Clr b)
+    public static Clr operator - (float a, in Clr b)
     {
         return new Clr (
-            Utils.Clamp (a - b.r, 0.0f, 1.0f),
-            Utils.Clamp (a - b.g, 0.0f, 1.0f),
-            Utils.Clamp (a - b.b, 0.0f, 1.0f),
+            Utils.Clamp (a - b._r, 0.0f, 1.0f),
+            Utils.Clamp (a - b._g, 0.0f, 1.0f),
+            Utils.Clamp (a - b._b, 0.0f, 1.0f),
             Utils.Clamp (a, 0.0f, 1.0f));
     }
 
@@ -574,30 +495,41 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     //     return ((Clr)a) - b;
     // }
 
-    public static float Luminance (Clr c)
+    public static bool All (in Clr c)
     {
-        return 0.2126f * c.r + 0.7152f * c.g + 0.0722f * c.b;
+        return c._r != 0.0f &&
+            c._g != 0.0f &&
+            c._b != 0.0f &&
+            c._a != 0.0f;
     }
 
-    public static Clr Clamp (Clr v, float lb = 0.0f, float ub = 1.0f)
+    public static bool Any (in Clr c)
+    {
+        return c._r != 0.0f ||
+            c._g != 0.0f ||
+            c._b != 0.0f ||
+            c._a != 0.0f;
+    }
+
+    public static Clr Clamp (in Clr c, float lb = 0.0f, float ub = 1.0f)
     {
         return new Clr (
-            Utils.Clamp (v.r, lb, ub),
-            Utils.Clamp (v.g, lb, ub),
-            Utils.Clamp (v.b, lb, ub),
-            Utils.Clamp (v.a, lb, ub));
+            Utils.Clamp (c._r, lb, ub),
+            Utils.Clamp (c._g, lb, ub),
+            Utils.Clamp (c._b, lb, ub),
+            Utils.Clamp (c._a, lb, ub));
     }
 
-    public static Clr Clamp (Clr v, Clr lb, Clr ub)
+    public static Clr Clamp (in Clr c, in Clr lb, in Clr ub)
     {
         return new Clr (
-            Utils.Clamp (v.r, lb.r, ub.r),
-            Utils.Clamp (v.g, lb.g, ub.g),
-            Utils.Clamp (v.b, lb.b, ub.b),
-            Utils.Clamp (v.a, lb.a, ub.a));
+            Utils.Clamp (c._r, lb._r, ub._r),
+            Utils.Clamp (c._g, lb._g, ub._g),
+            Utils.Clamp (c._b, lb._b, ub._b),
+            Utils.Clamp (c._a, lb._a, ub._a));
     }
 
-    public static Clr HsbaToRgba (Vec4 v)
+    public static Clr HsbaToRgba (in Vec4 v)
     {
         return HsbaToRgba (v.x, v.y, v.z, v.w);
     }
@@ -639,51 +571,78 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         }
     }
 
-    public static Clr Max (Clr a, Clr b)
+    public static float Luminance (in Clr c)
+    {
+        return 0.2126f * c._r + 0.7152f * c._g + 0.0722f * c._b;
+    }
+
+    public static Clr Max (in Clr a, in Clr b)
     {
         return new Clr (
-            Utils.Max (a.r, b.r),
-            Utils.Max (a.g, b.g),
-            Utils.Max (a.b, b.b),
-            Utils.Max (a.a, b.a));
+            Utils.Max (a._r, b._r),
+            Utils.Max (a._g, b._g),
+            Utils.Max (a._b, b._b),
+            Utils.Max (a._a, b._a));
     }
 
-    public static Clr Min (Clr a, Clr b)
+    public static Clr Min (in Clr a, in Clr b)
     {
         return new Clr (
-            Utils.Min (a.r, b.r),
-            Utils.Min (a.g, b.g),
-            Utils.Min (a.b, b.b),
-            Utils.Min (a.a, b.a));
+            Utils.Min (a._r, b._r),
+            Utils.Min (a._g, b._g),
+            Utils.Min (a._b, b._b),
+            Utils.Min (a._a, b._a));
     }
 
-    public static Clr Mix (Clr a, Clr b, bool t)
+    public static Clr MixHsba (in Clr a, in Clr b, float t = 0.5f)
     {
-        return t ? b : a;
+        return Clr.HsbaToRgba (Vec4.Mix (Clr.RgbaToHsba (a), Clr.RgbaToHsba (b), t));
     }
 
-    public static Clr Mix (Clr a, Clr b, float t = 0.5f)
+    public static Clr MixHsba (in Clr a, in Clr b, in Vec4 t)
+    {
+        return Clr.HsbaToRgba (Vec4.Mix (Clr.RgbaToHsba (a), Clr.RgbaToHsba (b), t));
+    }
+
+    public static Clr MixRgba (in Clr a, in Clr b, float t = 0.5f)
     {
         float u = 1.0f - t;
         return new Clr (
-            u * a.r + t * b.r,
-            u * a.g + t * b.g,
-            u * a.b + t * b.b,
-            u * a.a + t * b.a);
+            u * a._r + t * b._r,
+            u * a._g + t * b._g,
+            u * a._b + t * b._b,
+            u * a._a + t * b._a);
     }
 
-    public static Clr Mix (Clr a, Clr b, Clr t)
+    public static Clr MixRgba (in Clr a, in Clr b, in Clr t)
     {
         return new Clr (
-            (1.0f - t.r) * a.r + t.r * b.r,
-            (1.0f - t.g) * a.g + t.g * b.g,
-            (1.0f - t.b) * a.b + t.b * b.b,
-            (1.0f - t.a) * a.a + t.a * b.a);
+            (1.0f - t._r) * a._r + t._r * b._r,
+            (1.0f - t._g) * a._g + t._g * b._g,
+            (1.0f - t._b) * a._b + t._b * b._b,
+            (1.0f - t._a) * a._a + t._a * b._a);
     }
 
-    public static Vec4 RgbaToHsba (Clr c)
+    public static Clr MixRgba (in Clr a, in Clr b, in Vec4 t)
     {
-        return RgbaToHsba (c.r, c.g, c.b, c.a);
+        return new Clr (
+            (1.0f - t.x) * a._r + t.x * b._r,
+            (1.0f - t.y) * a._g + t.y * b._g,
+            (1.0f - t.z) * a._b + t.z * b._b,
+            (1.0f - t.w) * a._a + t.w * b._a);
+    }
+
+    public static bool None (in Clr c)
+    {
+        return c._r == 0.0f &&
+            c._g == 0.0f &&
+            c._b == 0.0f &&
+            c._a == 0.0f;
+    }
+
+    public static Vec4 RgbaToHsba (in Clr c)
+    {
+        return RgbaToHsba (c._r, c._g, c._b, c._a);
     }
 
     public static Vec4 RgbaToHsba (
@@ -713,10 +672,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
             }
 
             hue *= Utils.OneSix;
-            if (hue < 0.0f)
-            {
-                hue += 1.0f;
-            }
+            if (hue < 0.0f) hue += 1.0f;
         }
 
         float sat = bri == 0.0f ? 0.0f : delta / bri;

@@ -83,6 +83,11 @@ public static class Utils
         return (float) Math.Cosh (radians);
     }
 
+    public static float Diff(float a, float b)
+    {
+        return Utils.Abs(a - b);
+    }
+
     public static float Div (float a, float b)
     {
         return b == 0.0f ? 0.0f : a / b;

@@ -1,89 +1,20 @@
 using System;
+using System.Collections;
 using System.Text;
 
 [Serializable]
-public readonly struct Quat : IEquatable<Quat>
+public readonly struct Quat : IEquatable<Quat>, IEnumerable
 {
-  public readonly float real;
-  public readonly Vec3 imag;
+  private readonly float real;
+  private readonly Vec3 imag;
 
-  public float Real
-  {
-    get
-    {
-      return this.real;
-    }
+  public float Real { get { return this.real; } }
+  public Vec3 Imag { get { return this.imag; } }
 
-    // set
-    // {
-    //   this.real = value;
-    // }
-  }
-
-  public Vec3 Imag
-  {
-    get
-    {
-      return this.imag;
-    }
-
-    // set
-    // {
-    //   this.imag = value;
-    // }
-  }
-
-  public float W
-  {
-    get
-    {
-      return this.real;
-    }
-
-    // set
-    // {
-    //   this.real = value;
-    // }
-  }
-
-  public float X
-  {
-    get
-    {
-      return this.imag.x;
-    }
-
-    // set
-    // {
-    //   this.imag.x = value;
-    // }
-  }
-
-  public float Y
-  {
-    get
-    {
-      return this.imag.y;
-    }
-
-    // set
-    // {
-    //   this.imag.y = value;
-    // }
-  }
-
-  public float Z
-  {
-    get
-    {
-      return this.imag.z;
-    }
-
-    // set
-    // {
-    //   this.imag.z = value;
-    // }
-  }
+  public float w { get { return this.real; } }
+  public float x { get { return this.imag.x; } }
+  public float y { get { return this.imag.y; } }
+  public float z { get { return this.imag.z; } }
 
   public float this [int i]
   {
@@ -107,29 +38,6 @@ public readonly struct Quat : IEquatable<Quat>
           return 0.0f;
       }
     }
-
-    // set
-    // {
-    //   switch (i)
-    //   {
-    //     case 0:
-    //     case -4:
-    //       this.real = value;
-    //       break;
-    //     case 1:
-    //     case -3:
-    //       this.imag.x = value;
-    //       break;
-    //     case 2:
-    //     case -2:
-    //       this.imag.y = value;
-    //       break;
-    //     case 3:
-    //     case -1:
-    //       this.imag.z = value;
-    //       break;
-    //   }
-    // }
   }
 
   public Quat (float real = 1.0f, Vec3 imag = new Vec3 ( ))
@@ -144,21 +52,31 @@ public readonly struct Quat : IEquatable<Quat>
     this.imag = new Vec3 (x, y, z);
   }
 
-  public bool Equals (Quat q)
+  public override bool Equals (object value)
   {
-    // return Quat.Approx (this, q);
+    if (Object.ReferenceEquals (this, value)) return true;
+    if (Object.ReferenceEquals (null, value)) return false;
 
-    if (this.real.GetHashCode ( ) != q.real.GetHashCode ( ))
+    if (value is Quat)
     {
-      return false;
+      Quat q = (Quat) value;
+
+      // return Quat.Approx (this, q);
+
+      if (this.real.GetHashCode ( ) != q.real.GetHashCode ( ))
+      {
+        return false;
+      }
+
+      if (this.imag.GetHashCode ( ) != q.imag.GetHashCode ( ))
+      {
+        return false;
+      }
+
+      return true;
     }
 
-    if (this.imag.GetHashCode ( ) != q.imag.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    return true;
+    return false;
   }
 
   public override int GetHashCode ( )
@@ -179,25 +97,30 @@ public readonly struct Quat : IEquatable<Quat>
     return ToString (4);
   }
 
-  // public Quat Reset ( )
-  // {
-  //   return Set (1.0f, 0.0f, 0.0f, 0.0f);
-  // }
+  public bool Equals (Quat q)
+  {
+    // return Quat.Approx (this, q);
 
-  // public Quat Set (float real = 1.0f, Vec3 imag = new Vec3 ( ))
-  // {
-  //   this.real = real;
-  //   this.imag = imag;
-  //   return this;
-  // }
+    if (this.real.GetHashCode ( ) != q.real.GetHashCode ( ))
+    {
+      return false;
+    }
 
-  // public Quat Set (float w = 1.0f, float x = 0.0f, float y = 0.0f, float z = 0.0f)
-  // {
-  //   this.real = w;
-  //   // this.imag = new Vec3 (x, y, z);
-  //   this.Imag.Set (x, y, z);
-  //   return this;
-  // }
+    if (this.imag.GetHashCode ( ) != q.imag.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    return true;
+  }
+
+  public IEnumerator GetEnumerator ( )
+  {
+    yield return this.real;
+    yield return this.imag.x;
+    yield return this.imag.y;
+    yield return this.imag.z;
+  }
 
   public float[ ] ToArray ( )
   {
@@ -206,7 +129,7 @@ public readonly struct Quat : IEquatable<Quat>
 
   public string ToString (int places = 4)
   {
-    return new StringBuilder ( )
+    return new StringBuilder (128)
       .Append ("{ real: ")
       .Append (Utils.ToFixed (this.real, places))
       .Append (", imag: ")
@@ -230,7 +153,7 @@ public readonly struct Quat : IEquatable<Quat>
     return new Quat (v.w, v.x, v.y, v.z);
   }
 
-  public static implicit operator Vec4 (Quat q)
+  public static implicit operator Vec4 (in Quat q)
   {
     return new Vec4 (
       q.imag.x,
@@ -239,27 +162,27 @@ public readonly struct Quat : IEquatable<Quat>
       q.real);
   }
 
-  public static explicit operator bool (Quat q)
+  public static explicit operator bool (in Quat q)
   {
     return Quat.Any (q);
   }
 
-  public static explicit operator float (Quat q)
+  public static explicit operator float (in Quat q)
   {
     return Quat.Mag (q);
   }
 
-  public static bool operator true (Quat q)
+  public static bool operator true (in Quat q)
   {
     return Quat.Any (q);
   }
 
-  public static bool operator false (Quat q)
+  public static bool operator false (in Quat q)
   {
     return Quat.None (q);
   }
 
-  public static Quat operator * (Quat a, Quat b)
+  public static Quat operator * (in Quat a, in Quat b)
   {
     return new Quat (
       (a.real * b.real) -
@@ -270,154 +193,154 @@ public readonly struct Quat : IEquatable<Quat>
       (b.real * a.imag));
   }
 
-  public static Quat operator * (Quat a, float b)
+  public static Quat operator * (in Quat a, float b)
   {
     return new Quat (a.real * b, a.imag * b);
   }
 
-  public static Quat operator * (float a, Quat b)
+  public static Quat operator * (float a, in Quat b)
   {
     return new Quat (a * b.real, a * b.imag);
   }
 
-  public static Quat operator * (Quat a, Vec3 b)
+  public static Quat operator * (in Quat a, in Vec3 b)
   {
     return new Quat (-Vec3.Dot (a.imag, b),
       Vec3.Cross (a.imag, b) + (a.real * b));
   }
 
-  public static Quat operator * (Vec3 a, Quat b)
+  public static Quat operator * (in Vec3 a, in Quat b)
   {
     return new Quat (-Vec3.Dot (a, b.imag),
       Vec3.Cross (a, b.imag) + (b.real * a));
   }
 
-  public static Quat operator / (Quat a, Quat b)
+  public static Quat operator / (in Quat a, in Quat b)
   {
     return a * Quat.Inverse (b);
   }
 
-  public static Quat operator / (Quat a, float b)
+  public static Quat operator / (in Quat a, float b)
   {
     if (b == 0.0f) return Quat.Identity;
     float bInv = 1.0f / b;
     return new Quat (a.real * bInv, a.imag * bInv);
   }
 
-  public static Quat operator / (Quat a, Vec3 b)
+  public static Quat operator / (in Quat a, in Vec3 b)
   {
     return a * (-b / Vec3.Dot (b, b));
   }
 
-  public static Quat operator / (Vec3 a, Quat b)
+  public static Quat operator / (in Vec3 a, in Quat b)
   {
     return a * Inverse (b);
   }
 
-  public static Quat operator / (float a, Quat b)
+  public static Quat operator / (float a, in Quat b)
   {
     return a * Quat.Inverse (b);
   }
 
-  public static Quat operator + (Quat a, Quat b)
+  public static Quat operator + (in Quat a, in Quat b)
   {
     return new Quat (a.real + b.real, a.imag + b.imag);
   }
 
-  public static Quat operator + (Quat a, float b)
+  public static Quat operator + (in Quat a, float b)
   {
     return new Quat (a.real + b, a.imag);
   }
 
-  public static Quat operator + (float a, Quat b)
+  public static Quat operator + (float a, in Quat b)
   {
     return new Quat (a + b.real, b.imag);
   }
 
-  public static Quat operator + (Quat a, Vec3 b)
+  public static Quat operator + (in Quat a, in Vec3 b)
   {
     return new Quat (a.real, a.imag + b);
   }
 
-  public static Quat operator + (Vec3 a, Quat b)
+  public static Quat operator + (in Vec3 a, in Quat b)
   {
     return new Quat (b.real, a + b.imag);
   }
 
-  public static Quat operator - (Quat a, Quat b)
+  public static Quat operator - (in Quat a, in Quat b)
   {
     return new Quat (a.real - b.real, a.imag - b.imag);
   }
 
-  public static Quat operator - (Quat a, float b)
+  public static Quat operator - (in Quat a, float b)
   {
     return new Quat (a.real - b, a.imag);
   }
 
-  public static Quat operator - (float a, Quat b)
+  public static Quat operator - (float a, in Quat b)
   {
     return new Quat (a - b.real, -b.imag);
   }
 
-  public static Quat operator - (Quat a, Vec3 b)
+  public static Quat operator - (in Quat a, in Vec3 b)
   {
     return new Quat (a.real, a.imag - b);
   }
 
-  public static Quat operator - (Vec3 a, Quat b)
+  public static Quat operator - (in Vec3 a, in Quat b)
   {
     return new Quat (-b.real, a - b.imag);
   }
 
-  public static bool All (Quat q)
+  public static bool All (in Quat q)
   {
     return q.real != 0.0f && Vec3.All (q.imag);
   }
 
-  public static bool Any (Quat q)
+  public static bool Any (in Quat q)
   {
     return q.real != 0.0f || Vec3.Any (q.imag);
   }
 
-  public static bool Approx (Quat a, Quat b)
+  public static bool Approx (in Quat a, in Quat b)
   {
     return Utils.Approx (a.real, b.real) &&
       Vec3.Approx (a.imag, b.imag);
   }
 
-  public static Quat Conj (Quat q)
+  public static Quat Conj (in Quat q)
   {
     return new Quat (q.real, -q.imag);
   }
 
-  public static float Dot (Quat a, Quat b)
+  public static float Dot (in Quat a, in Quat b)
   {
     return a.real * b.real + Vec3.Dot (a.real, b.real);
   }
 
-  public static Quat Inverse (Quat q)
+  public static Quat Inverse (in Quat q)
   {
-    return Conj (q) / Quat.MagSq (q);
+    return Quat.Conj (q) / Quat.MagSq (q);
   }
 
-  public static float Mag (Quat q)
+  public static float Mag (in Quat q)
   {
     return Utils.Sqrt (Quat.MagSq (q));
   }
 
-  public static float MagSq (Quat q)
+  public static float MagSq (in Quat q)
   {
     return q.real * q.real + Vec3.MagSq (q.imag);
   }
 
-  public static Quat Normalize (Quat q)
-  {
-    return q / Quat.Mag (q);
-  }
-
-  public static bool None (Quat q)
+  public static bool None (in Quat q)
   {
     return q.real == 0.0f && Vec3.None (q.imag);
+  }
+
+  public static Quat Normalize (in Quat q)
+  {
+    return q / Quat.Mag (q);
   }
 
   public static Quat Identity

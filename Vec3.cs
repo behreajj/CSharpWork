@@ -1,51 +1,17 @@
 ﻿using System;
+using System.Collections;
 using System.Text;
 
 [Serializable]
-public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>
+public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 {
-    public readonly float x;
-    public readonly float y;
-    public readonly float z;
+    private readonly float _x;
+    private readonly float _y;
+    private readonly float _z;
 
-    public float X
-    {
-        get
-        {
-            return this.x;
-        }
-
-        // set
-        // {
-        //     this.x = value;
-        // }
-    }
-
-    public float Y
-    {
-        get
-        {
-            return this.y;
-        }
-
-        // set
-        // {
-        //     this.y = value;
-        // }
-    }
-
-    public float Z
-    {
-        get
-        {
-            return this.z;
-        }
-
-        // set
-        // {
-        //     this.z = value;
-        // }
-    }
+    public float x { get { return this._x; } }
+    public float y { get { return this._y; } }
+    public float z { get { return this._z; } }
 
     public float this [int i]
     {
@@ -55,50 +21,63 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>
             {
                 case 0:
                 case -3:
-                    return this.x;
+                    return this._x;
                 case 1:
                 case -2:
-                    return this.y;
+                    return this._y;
                 case 2:
                 case -1:
-                    return this.z;
+                    return this._z;
                 default:
                     return 0.0f;
             }
         }
-
-        // set
-        // {
-        //     switch (i)
-        //     {
-        //         case 0:
-        //         case -3:
-        //             this.x = value;
-        //             break;
-        //         case 1:
-        //         case -2:
-        //             this.y = value;
-        //             break;
-        //         case 2:
-        //         case -1:
-        //             this.z = value;
-        //             break;
-        //     }
-        // }
     }
 
     public Vec3 (float x = 0.0f, float y = 0.0f, float z = 0.0f)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this._x = x;
+        this._y = y;
+        this._z = z;
     }
 
     public Vec3 (bool x = false, bool y = false, bool z = false)
     {
-        this.x = x ? 1.0f : 0.0f;
-        this.y = y ? 1.0f : 0.0f;
-        this.z = z ? 1.0f : 0.0f;
+        this._x = x ? 1.0f : 0.0f;
+        this._y = y ? 1.0f : 0.0f;
+        this._z = z ? 1.0f : 0.0f;
+    }
+
+    public override bool Equals (object value)
+    {
+        if (Object.ReferenceEquals (this, value)) return true;
+        if (Object.ReferenceEquals (null, value)) return false;
+
+        if (value is Vec3)
+        {
+            Vec3 v = (Vec3) value;
+
+            // return Vec3.Approx (this, v);
+
+            if (this._z.GetHashCode ( ) != v._z.GetHashCode ( ))
+            {
+                return false;
+            }
+
+            if (this._y.GetHashCode ( ) != v._y.GetHashCode ( ))
+            {
+                return false;
+            }
+
+            if (this._x.GetHashCode ( ) != v._x.GetHashCode ( ))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public override int GetHashCode ( )
@@ -108,9 +87,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>
             const int hashBase = -2128831035;
             const int hashMul = 16777619;
             int hash = hashBase;
-            hash = hash * hashMul ^ this.x.GetHashCode ( );
-            hash = hash * hashMul ^ this.y.GetHashCode ( );
-            hash = hash * hashMul ^ this.z.GetHashCode ( );
+            hash = hash * hashMul ^ this._x.GetHashCode ( );
+            hash = hash * hashMul ^ this._y.GetHashCode ( );
+            hash = hash * hashMul ^ this._z.GetHashCode ( );
             return hash;
         }
     }
@@ -122,12 +101,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>
 
     public int CompareTo (Vec3 v)
     {
-        return (this.z > v.z) ? 1 :
-            (this.z < v.z) ? -1 :
-            (this.y > v.y) ? 1 :
-            (this.y < v.y) ? -1 :
-            (this.x > v.x) ? 1 :
-            (this.x < v.x) ? -1 :
+        return (this._z > v._z) ? 1 :
+            (this._z < v._z) ? -1 :
+            (this._y > v._y) ? 1 :
+            (this._y < v._y) ? -1 :
+            (this._x > v._x) ? 1 :
+            (this._x < v._x) ? -1 :
             0;
     }
 
@@ -135,17 +114,17 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>
     {
         // return Vec3.Approx (this, v);
 
-        if (this.z.GetHashCode ( ) != v.z.GetHashCode ( ))
+        if (this._z.GetHashCode ( ) != v._z.GetHashCode ( ))
         {
             return false;
         }
 
-        if (this.y.GetHashCode ( ) != v.y.GetHashCode ( ))
+        if (this._y.GetHashCode ( ) != v._y.GetHashCode ( ))
         {
             return false;
         }
 
-        if (this.x.GetHashCode ( ) != v.x.GetHashCode ( ))
+        if (this._x.GetHashCode ( ) != v._x.GetHashCode ( ))
         {
             return false;
         }
@@ -153,41 +132,27 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>
         return true;
     }
 
-    // public Vec3 Reset ( )
-    // {
-    //     return this.Set (0.0f, 0.0f, 0.0f);
-    // }
-
-    // public Vec3 Set (float x = 0.0f, float y = 0.0f, float z = 0.0f)
-    // {
-    //     this.x = x;
-    //     this.y = y;
-    //     this.z = z;
-    //     return this;
-    // }
-
-    // public Vec3 Set (bool x = false, bool y = false, bool z = false)
-    // {
-    //     this.x = x ? 1.0f : 0.0f;
-    //     this.y = y ? 1.0f : 0.0f;
-    //     this.z = z ? 1.0f : 0.0f;
-    //     return this;
-    // }
+    public IEnumerator GetEnumerator ( )
+    {
+        yield return this._x;
+        yield return this._y;
+        yield return this._z;
+    }
 
     public float[ ] ToArray ( )
     {
-        return new float[ ] { this.x, this.y, this.z };
+        return new float[ ] { this._x, this._y, this._z };
     }
 
     public string ToString (int places = 4)
     {
-        return new StringBuilder ( )
+        return new StringBuilder (80)
             .Append ("{ x: ")
-            .Append (Utils.ToFixed (this.x, places))
+            .Append (Utils.ToFixed (this._x, places))
             .Append (", y: ")
-            .Append (Utils.ToFixed (this.y, places))
+            .Append (Utils.ToFixed (this._y, places))
             .Append (", z: ")
-            .Append (Utils.ToFixed (this.z, places))
+            .Append (Utils.ToFixed (this._z, places))
             .Append (" }")
             .ToString ( );
     }
@@ -203,233 +168,318 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>
         return new Vec3 (s, s, s);
     }
 
-    public static implicit operator Vec3 (Vec2 v)
+    public static implicit operator Vec3 (in Vec2 v)
     {
         return new Vec3 (v.x, v.y, 0.0f);
     }
 
-    public static explicit operator bool (Vec3 v)
+    public static explicit operator bool (in Vec3 v)
     {
         return Vec3.All (v);
     }
 
-    public static explicit operator float (Vec3 v)
+    public static explicit operator float (in Vec3 v)
     {
         return Vec3.Mag (v);
     }
 
-    public static bool operator true (Vec3 v)
+    public static bool operator true (in Vec3 v)
     {
         return Vec3.All (v);
     }
 
-    public static bool operator false (Vec3 v)
+    public static bool operator false (in Vec3 v)
     {
         return Vec3.None (v);
     }
 
-    public static Vec3 operator ! (Vec3 v)
+    public static Vec3 operator ! (in Vec3 v)
     {
         return Vec3.Not (v);
     }
 
-    public static Vec3 operator ~ (Vec3 v)
+    public static Vec3 operator ~ (in Vec3 v)
     {
         return Vec3.Not (v);
     }
 
-    public static Vec3 operator & (Vec3 a, Vec3 b)
+    public static Vec3 operator & (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
-            Utils.And (a.x, b.x),
-            Utils.And (a.y, b.y),
-            Utils.And (a.z, b.z));
+            Utils.And (a._x, b._x),
+            Utils.And (a._y, b._y),
+            Utils.And (a._z, b._z));
     }
 
-    public static Vec3 operator | (Vec3 a, Vec3 b)
+    public static Vec3 operator | (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
-            Utils.Or (a.x, b.x),
-            Utils.Or (a.y, b.y),
-            Utils.Or (a.z, b.z));
+            Utils.Or (a._x, b._x),
+            Utils.Or (a._y, b._y),
+            Utils.Or (a._z, b._z));
     }
 
-    public static Vec3 operator ^ (Vec3 a, Vec3 b)
+    public static Vec3 operator ^ (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
-            Utils.Xor (a.x, b.x),
-            Utils.Xor (a.y, b.y),
-            Utils.Xor (a.z, b.z));
+            Utils.Xor (a._x, b._x),
+            Utils.Xor (a._y, b._y),
+            Utils.Xor (a._z, b._z));
     }
 
-    public static Vec3 operator - (Vec3 v)
+    public static Vec3 operator - (in Vec3 v)
     {
-        return new Vec3 (-v.x, -v.y, -v.z);
+        return new Vec3 (-v._x, -v._y, -v._z);
     }
 
-    public static Vec3 operator * (Vec3 a, Vec3 b)
+    public static Vec3 operator * (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (a.x * b.x, a.y * b.y, a.z * b.z);
+        return new Vec3 (a._x * b._x, a._y * b._y, a._z * b._z);
     }
 
-    public static Vec3 operator * (Vec3 a, float b)
+    public static Vec3 operator * (in Vec3 a, float b)
     {
-        return new Vec3 (a.x * b, a.y * b, a.z * b);
+        return new Vec3 (a._x * b, a._y * b, a._z * b);
     }
 
-    public static Vec3 operator * (float a, Vec3 b)
+    public static Vec3 operator * (float a, in Vec3 b)
     {
-        return new Vec3 (a * b.x, a * b.y, a * b.z);
+        return new Vec3 (a * b._x, a * b._y, a * b._z);
     }
 
-    public static Vec3 operator / (Vec3 a, Vec3 b)
+    public static Vec3 operator / (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
-            Utils.Div (a.x, b.x),
-            Utils.Div (a.y, b.y),
-            Utils.Div (a.z, b.z));
+            Utils.Div (a._x, b._x),
+            Utils.Div (a._y, b._y),
+            Utils.Div (a._z, b._z));
     }
 
-    public static Vec3 operator / (Vec3 a, float b)
+    public static Vec3 operator / (in Vec3 a, float b)
     {
-        if (b == 0.0f) return new Vec3 (0.0f, 0.0f, 0.0f);
+        if (b == 0.0f) return new Vec3 ( );
         float bInv = 1.0f / b;
         return new Vec3 (
-            a.x * bInv,
-            a.y * bInv,
-            a.z * bInv);
+            a._x * bInv,
+            a._y * bInv,
+            a._z * bInv);
     }
 
-    public static Vec3 operator / (float a, Vec3 b)
+    public static Vec3 operator / (float a, in Vec3 b)
     {
         return new Vec3 (
-            Utils.Div (a, b.x),
-            Utils.Div (a, b.y),
-            Utils.Div (a, b.z));
+            Utils.Div (a, b._x),
+            Utils.Div (a, b._y),
+            Utils.Div (a, b._z));
     }
 
-    public static Vec3 operator % (Vec3 a, Vec3 b)
+    public static Vec3 operator % (in Vec3 a, in Vec3 b)
     {
         return Vec3.Fmod (a, b);
     }
 
-    public static Vec3 operator % (Vec3 a, float b)
+    public static Vec3 operator % (in Vec3 a, float b)
     {
         if (b == 0.0f) return a;
-        return new Vec3 (a.x % b, a.y % b, a.z % b);
+        return new Vec3 (a._x % b, a._y % b, a._z % b);
     }
 
-    public static Vec3 operator % (float a, Vec3 b)
+    public static Vec3 operator % (float a, in Vec3 b)
     {
         return new Vec3 (
-            Utils.Fmod (a, b.x),
-            Utils.Fmod (a, b.y),
-            Utils.Fmod (a, b.z));
+            Utils.Fmod (a, b._x),
+            Utils.Fmod (a, b._y),
+            Utils.Fmod (a, b._z));
     }
 
-    public static Vec3 operator + (Vec3 a, Vec3 b)
+    public static Vec3 operator + (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (a.x + b.x, a.y + b.y, a.z + b.z);
+        return new Vec3 (a._x + b._x, a._y + b._y, a._z + b._z);
     }
 
-    public static Vec3 operator - (Vec3 a, Vec3 b)
+    public static Vec3 operator - (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (a.x - b.x, a.y - b.y, a.z - b.z);
+        return new Vec3 (a._x - b._x, a._y - b._y, a._z - b._z);
     }
 
-    public static Vec3 Abs (Vec3 v)
+    public static Vec3 operator < (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (
-            Utils.Abs (v.x),
-            Utils.Abs (v.y),
-            Utils.Abs (v.z));
+        return new Vec3 (a._x < b._x, a._y < b._y, a._z < b._z);
     }
 
-    public static bool All (Vec3 v)
+    public static Vec3 operator > (in Vec3 a, in Vec3 b)
     {
-        return v.x != 0.0f &&
-            v.y != 0.0f &&
-            v.z != 0.0f;
+        return new Vec3 (a._x > b._x, a._y > b._y, a._z > b._z);
     }
 
-    public static bool Any (Vec3 v)
+    public static Vec3 operator <= (in Vec3 a, in Vec3 b)
     {
-        return v.x != 0.0f ||
-            v.y != 0.0f ||
-            v.z != 0.0f;
+        return new Vec3 (a._x <= b._x, a._y <= b._y, a._z <= b._z);
     }
 
-    public static bool Approx (Vec3 a, Vec3 b, float tolerance = Utils.Epsilon)
+    public static Vec3 operator >= (in Vec3 a, in Vec3 b)
     {
-        return Utils.Approx (a.x, b.x, tolerance) &&
-            Utils.Approx (a.y, b.y, tolerance) &&
-            Utils.Approx (a.z, b.z, tolerance);
+        return new Vec3 (a._x >= b._x, a._y >= b._y, a._z >= b._z);
     }
 
-    public static float Azimuth (Vec3 v)
+    public static Vec3 operator != (in Vec3 a, in Vec3 b)
     {
-        return Utils.Atan2 (v.y, v.x);
+        return new Vec3 (a._x != b._x, a._y != b._y, a._z != b._z);
     }
 
-    public static Vec3 Ceil (Vec3 v)
+    public static Vec3 operator == (in Vec3 a, in Vec3 b)
+    {
+        return new Vec3 (a._x == b._x, a._y == b._y, a._z == b._z);
+    }
+
+    public static Vec3 Abs (in Vec3 v)
     {
         return new Vec3 (
-            Utils.Ceil (v.x),
-            Utils.Ceil (v.y),
-            Utils.Ceil (v.z));
+            Utils.Abs (v._x),
+            Utils.Abs (v._y),
+            Utils.Abs (v._z));
     }
 
-    public static Vec3 Clamp (Vec3 v, float lb = 0.0f, float ub = 1.0f)
+    public static bool All (in Vec3 v)
+    {
+        return v._x != 0.0f &&
+            v._y != 0.0f &&
+            v._z != 0.0f;
+    }
+
+    public static bool Any (in Vec3 v)
+    {
+        return v._x != 0.0f ||
+            v._y != 0.0f ||
+            v._z != 0.0f;
+    }
+
+    public static bool Approx (in Vec3 a, in Vec3 b, float tolerance = Utils.Epsilon)
+    {
+        return Utils.Approx (a._x, b._x, tolerance) &&
+            Utils.Approx (a._y, b._y, tolerance) &&
+            Utils.Approx (a._z, b._z, tolerance);
+    }
+
+    public static bool ApproxMag (in Vec3 a,
+        float b = 1.0f,
+        float tolerance = Utils.Epsilon)
+    {
+        return Utils.Approx (Vec3.MagSq (a), b * b, tolerance);
+    }
+
+    public static float AzimuthSigned (in Vec3 v)
+    {
+        return Utils.Atan2 (v._y, v._x);
+    }
+
+    public static float AzimuthUnsigned (in Vec3 v)
+    {
+        return Utils.ModRadians (Utils.Atan2 (v._y, v._x));
+    }
+
+    public static Vec3 Ceil (in Vec3 v)
     {
         return new Vec3 (
-            Utils.Clamp (v.x, lb, ub),
-            Utils.Clamp (v.y, lb, ub),
-            Utils.Clamp (v.z, lb, ub));
+            Utils.Ceil (v._x),
+            Utils.Ceil (v._y),
+            Utils.Ceil (v._z));
     }
 
-    public static Vec3 Clamp (Vec3 v, Vec3 lb, Vec3 ub)
+    public static Vec3 Clamp (in Vec3 v, float lb = 0.0f, float ub = 1.0f)
     {
         return new Vec3 (
-            Utils.Clamp (v.x, lb.x, ub.x),
-            Utils.Clamp (v.y, lb.y, ub.y),
-            Utils.Clamp (v.z, lb.z, ub.z));
+            Utils.Clamp (v._x, lb, ub),
+            Utils.Clamp (v._y, lb, ub),
+            Utils.Clamp (v._z, lb, ub));
     }
 
-    public static Vec3 Cross (Vec3 a, Vec3 b)
+    public static Vec3 Clamp (in Vec3 v, in Vec3 lb, in Vec3 ub)
     {
         return new Vec3 (
-            a.y * b.z - a.z * b.y,
-            a.z * b.x - a.x * b.z,
-            a.x * b.y - a.y * b.x);
+            Utils.Clamp (v._x, lb._x, ub._x),
+            Utils.Clamp (v._y, lb._y, ub._y),
+            Utils.Clamp (v._z, lb._z, ub._z));
     }
 
-    public static float Dot (Vec3 a, Vec3 b)
-    {
-        return a.x * b.x + a.y * b.y + a.z * b.z;
-    }
-
-    public static Vec3 Floor (Vec3 v)
+    public static Vec3 CopySign (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
-            Utils.Floor (v.x),
-            Utils.Floor (v.y),
-            Utils.Floor (v.z));
+            Utils.CopySign (a._x, b._x),
+            Utils.CopySign (a._y, b._y),
+            Utils.CopySign (a._z, b._z));
     }
 
-    public static Vec3 Fmod (Vec3 a, Vec3 b)
+    public static Vec3 CopySign (float a, in Vec3 b)
     {
+        int n = Utils.Sign (a);
         return new Vec3 (
-            Utils.Fmod (a.x, b.x),
-            Utils.Fmod (a.y, b.y),
-            Utils.Fmod (a.z, b.z));
+            Utils.Abs (b._x) * n,
+            Utils.Abs (b._y) * n,
+            Utils.Abs (b._z) * n);
     }
 
-    public static Vec3 Fract (Vec3 a)
+    public static Vec3 CopySign (in Vec3 a, float b)
+    {
+        int n = Utils.Sign (b);
+        return new Vec3 (
+            Utils.Abs (a._x) * n,
+            Utils.Abs (a._y) * n,
+            Utils.Abs (a._z) * n);
+    }
+
+    public static Vec3 Cross (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
-            a.x - (int) a.x,
-            a.y - (int) a.y,
-            a.z - (int) a.z);
+            a._y * b._z - a._z * b._y,
+            a._z * b._x - a._x * b._z,
+            a._x * b._y - a._y * b._x);
+    }
+
+    public static Vec3 Diff (in Vec3 a, in Vec3 b)
+    {
+        return new Vec3 (
+            Utils.Diff (b._x, a._x),
+            Utils.Diff (b._y, a._y),
+            Utils.Diff (b._z, a._z));
+    }
+
+    public static float Dot (in Vec3 a, in Vec3 b)
+    {
+        return a._x * b._x + a._y * b._y + a._z * b._z;
+    }
+
+    public static Vec3 Floor (in Vec3 v)
+    {
+        return new Vec3 (
+            Utils.Floor (v._x),
+            Utils.Floor (v._y),
+            Utils.Floor (v._z));
+    }
+
+    public static Vec3 Fmod (in Vec3 a, in Vec3 b)
+    {
+        return new Vec3 (
+            Utils.Fmod (a._x, b._x),
+            Utils.Fmod (a._y, b._y),
+            Utils.Fmod (a._z, b._z));
+    }
+
+    public static Vec3 Fract (in Vec3 v)
+    {
+        return new Vec3 (
+            v._x - (int) v._x,
+            v._y - (int) v._y,
+            v._z - (int) v._z);
+    }
+
+    public static Vec3 FromPolar (
+        float heading = 0.0f,
+        float radius = 1.0f)
+    {
+        return new Vec3 (
+            radius * Utils.Cos (heading),
+            radius * Utils.Sin (heading), 0.0f);
     }
 
     public static Vec3 FromSpherical (
@@ -444,126 +494,274 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>
             radius * -Utils.Sin (inclination));
     }
 
-    public static float Mag (Vec3 v)
+    public static Vec3 Limit (in Vec3 v, float limit = float.MaxValue)
+    {
+        float mSq = Vec3.MagSq (v);
+        if (mSq > (limit * limit))
+        {
+            return Utils.Div (limit, Vec3.Mag (v)) * v;
+        }
+        return v;
+    }
+
+    public static Vec3 LinearStep (in Vec3 edge0, in Vec3 edge1, in Vec3 x)
+    {
+        return Vec3.Clamp ((x - edge0) / (edge1 - edge0));
+    }
+
+    public static float Mag (in Vec3 v)
     {
         return Utils.Sqrt (
-            v.x * v.x +
-            v.y * v.y +
-            v.z * v.z);
+            v._x * v._x +
+            v._y * v._y +
+            v._z * v._z);
     }
 
-    public static float MagSq (Vec3 v)
+    public static float MagSq (in Vec3 v)
     {
-        return v.x * v.x + v.y * v.y + v.z * v.z;
+        return v._x * v._x + v._y * v._y + v._z * v._z;
     }
 
-    public static Vec3 Max (Vec3 a, Vec3 b)
-    {
-        return new Vec3 (
-            Utils.Max (a.x, b.x),
-            Utils.Max (a.y, b.y),
-            Utils.Max (a.z, b.z));
-    }
-
-    public static Vec3 Min (Vec3 a, Vec3 b)
+    public static Vec3 Map (in Vec3 v, in Vec3 lbOrigin, in Vec3 ubOrigin, in Vec3 lbDest, in Vec3 ubDest)
     {
         return new Vec3 (
-            Utils.Min (a.x, b.x),
-            Utils.Min (a.y, b.y),
-            Utils.Min (a.z, b.z));
+            Utils.Map (v._x, lbOrigin._x, ubOrigin._x, lbDest._x, ubDest._x),
+            Utils.Map (v._y, lbOrigin._y, ubOrigin._y, lbDest._y, ubDest._y),
+            Utils.Map (v._z, lbOrigin._z, ubOrigin._z, lbDest._z, ubDest._z));
     }
 
-    public static Vec3 Mix (Vec3 a, Vec3 b, bool t)
+    public static Vec3 Max (in Vec3 a, in Vec3 b)
     {
-        return t ? b : a;
+        return new Vec3 (
+            Utils.Max (a._x, b._x),
+            Utils.Max (a._y, b._y),
+            Utils.Max (a._z, b._z));
     }
 
-    public static Vec3 Mix (Vec3 a, Vec3 b, float t = 0.5f)
+    public static Vec3 Min (in Vec3 a, in Vec3 b)
+    {
+        return new Vec3 (
+            Utils.Min (a._x, b._x),
+            Utils.Min (a._y, b._y),
+            Utils.Min (a._z, b._z));
+    }
+
+    public static Vec3 Mix (in Vec3 a, in Vec3 b, float t = 0.5f)
     {
         float u = 1.0f - t;
         return new Vec3 (
-            u * a.x + t * b.x,
-            u * a.y + t * b.y,
-            u * a.z + t * b.z);
+            u * a._x + t * b._x,
+            u * a._y + t * b._y,
+            u * a._z + t * b._z);
     }
 
-    public static Vec3 Mix (Vec3 a, Vec3 b, Vec3 t)
+    public static Vec3 Mix (in Vec3 a, in Vec3 b, in Vec3 t)
     {
         return new Vec3 (
-            (1.0f - t.x) * a.x + t.x * b.x,
-            (1.0f - t.y) * a.y + t.y * b.y,
-            (1.0f - t.z) * a.z + t.z * b.z);
+            (1.0f - t._x) * a._x + t._x * b._x,
+            (1.0f - t._y) * a._y + t._y * b._y,
+            (1.0f - t._z) * a._z + t._z * b._z);
     }
 
-    public static Vec3 Mod (Vec3 a, Vec3 b)
+    public static Vec3 Mod (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
-            Utils.Mod (a.x, b.x),
-            Utils.Mod (a.y, b.y),
-            Utils.Mod (a.z, b.z));
+            Utils.Mod (a._x, b._x),
+            Utils.Mod (a._y, b._y),
+            Utils.Mod (a._z, b._z));
     }
 
-    public static Vec3 Mod1 (Vec3 v)
+    public static Vec3 Mod1 (in Vec3 v)
     {
         return new Vec3 (
-            Utils.Mod1 (v.x),
-            Utils.Mod1 (v.y),
-            Utils.Mod1 (v.z));
+            Utils.Mod1 (v._x),
+            Utils.Mod1 (v._y),
+            Utils.Mod1 (v._z));
     }
 
-    public static bool None (Vec3 v)
+    public static bool None (in Vec3 v)
     {
-        return v.x == 0.0f &&
-            v.y == 0.0f &&
-            v.z == 0.0f;
+        return v._x == 0.0f &&
+            v._y == 0.0f &&
+            v._z == 0.0f;
     }
 
-    public static Vec3 Normalize (Vec3 v)
+    public static Vec3 Normalize (in Vec3 v)
     {
         return v / Vec3.Mag (v);
     }
 
-    public static Vec3 Not (Vec3 v)
+    public static Vec3 Not (in Vec3 v)
     {
         return new Vec3 (
-            v.x != 0.0f ? 0.0f : 1.0f,
-            v.y != 0.0f ? 0.0f : 1.0f,
-            v.z != 0.0f ? 0.0f : 1.0f);
+            v._x != 0.0f ? 0.0f : 1.0f,
+            v._y != 0.0f ? 0.0f : 1.0f,
+            v._z != 0.0f ? 0.0f : 1.0f);
     }
 
-    public static Vec3 Reflect (Vec3 i, Vec3 n)
+    public static Vec3 Reflect (in Vec3 i, in Vec3 n)
     {
         return i - ((2.0f * Vec3.Dot (n, i)) * n);
     }
 
-    public static Vec3 Refract (Vec3 i, Vec3 n, float eta)
+    public static Vec3 Pow (in Vec3 a, in Vec3 b)
+    {
+        return new Vec3 (
+            Utils.Pow (a._x, b._x),
+            Utils.Pow (a._y, b._y),
+            Utils.Pow (a._z, b._z));
+    }
+
+    public static Vec3 Pow (in Vec3 a, float b)
+    {
+        return new Vec3 (
+            Utils.Pow (a._x, b),
+            Utils.Pow (a._y, b),
+            Utils.Pow (a._z, b));
+    }
+
+    public static Vec3 Pow (float a, in Vec3 b)
+    {
+        return new Vec3 (
+            Utils.Pow (a, b._x),
+            Utils.Pow (a, b._y),
+            Utils.Pow (a, b._z));
+    }
+
+    public static float ProjectScalar (in Vec3 a, in Vec3 b)
+    {
+        float bSq = Vec3.MagSq (b);
+        if (bSq != 0.0f) return Vec3.Dot (a, b) / bSq;
+        return 0.0f;
+    }
+
+    public static Vec3 ProjectVector (in Vec3 a, in Vec3 b)
+    {
+        return b * Vec3.ProjectScalar (a, b);
+    }
+
+    public static Vec3 Refract (in Vec3 i, in Vec3 n, float eta)
     {
         float iDotN = Vec3.Dot (i, n);
         float k = 1.0f - eta * eta * (1.0f - iDotN * iDotN);
-        if (k < 0.0f) return new Vec3 (0.0f, 0.0f);
+        if (k < 0.0f) return new Vec3 ( );
         return (eta * i) -
             (n * (eta * iDotN + Utils.Sqrt (k)));
     }
 
-    public static Vec3 Round (Vec3 v)
+    public static Vec3 Rescale (in Vec3 v, float scalar = 1.0f)
     {
-        return new Vec3 (
-            Utils.Round (v.x),
-            Utils.Round (v.y),
-            Utils.Round (v.z));
+        return Utils.Div (scalar, Vec3.Mag (v)) * v;
     }
 
-    public static Vec3 Sign (Vec3 v)
+    public static Vec3 Rotate (in Vec3 v, float radians, in Vec3 axis)
     {
-        return new Vec3 (
-            Utils.Sign (v.x),
-            Utils.Sign (v.y),
-            Utils.Sign (v.z));
+        return Vec3.Rotate (v, Utils.Cos (radians), Utils.Sin (radians), axis);
     }
 
-    public static Vec3 Trunc (Vec3 v)
+    public static Vec3 Rotate (in Vec3 v, float cosa, float sina, in Vec3 axis)
     {
-        return new Vec3 ((int) v.x, (int) v.y, (int) v.z);
+        float complcos = 1.0f - cosa;
+        float complxy = complcos * axis._x * axis._y;
+        float complxz = complcos * axis._x * axis._z;
+        float complyz = complcos * axis._y * axis._z;
+
+        float sinx = sina * axis._x;
+        float siny = sina * axis._y;
+        float sinz = sina * axis._z;
+
+        return new Vec3 (
+            (complcos * axis._x * axis._x + cosa) * v._x +
+            (complxy - sinz) * v._y +
+            (complxz + siny) * v._z,
+
+            (complxy + sinz) * v._x +
+            (complcos * axis._y * axis._y + cosa) * v._y +
+            (complyz - sinx) * v._z,
+
+            (complxz - siny) * v._x +
+            (complyz + sinx) * v._y +
+            (complcos * axis._z * axis._z + cosa) * v._z);
+    }
+
+    public static Vec3 RotateX (in Vec3 v, float radians = 0.0f)
+    {
+        return Vec3.RotateX (v, Utils.Cos (radians), Utils.Sin (radians));
+    }
+
+    public static Vec3 RotateX (in Vec3 v,
+        float cosa = 1.0f,
+        float sina = 0.0f)
+    {
+        return new Vec3 (
+            v._x,
+            cosa * v._y - sina * v._z,
+            cosa * v._z + sina * v._y);
+    }
+
+    public static Vec3 RotateY (in Vec3 v, float radians = 0.0f)
+    {
+        return Vec3.RotateY (v, Utils.Cos (radians), Utils.Sin (radians));
+    }
+
+    public static Vec3 RotateY (in Vec3 v,
+        float cosa = 1.0f,
+        float sina = 0.0f)
+    {
+        return new Vec3 (
+            cosa * v._x + sina * v._z,
+            v._y,
+            cosa * v._z - sina * v._x);
+    }
+
+    public static Vec3 RotateZ (in Vec3 v, float radians = 0.0f)
+    {
+        return Vec3.RotateZ (v, Utils.Cos (radians), Utils.Sin (radians));
+    }
+
+    public static Vec3 RotateZ (in Vec3 v,
+        float cosa = 1.0f,
+        float sina = 0.0f)
+    {
+        return new Vec3 (
+            cosa * v._x - sina * v._y,
+            cosa * v._y + sina * v._x,
+            v._z);
+    }
+
+    public static Vec3 Round (in Vec3 v)
+    {
+        return new Vec3 (
+            Utils.Round (v._x),
+            Utils.Round (v._y),
+            Utils.Round (v._z));
+    }
+
+    public static Vec3 SmoothStep (in Vec3 edge0, in Vec3 edge1, in Vec3 x)
+    {
+        Vec3 t = Vec3.Clamp ((x - edge0) / (edge1 - edge0));
+        return t * t * (new Vec3 (3.0f, 3.0f, 3.0f) - (t + t));
+    }
+
+    public static Vec3 Sign (in Vec3 v)
+    {
+        return new Vec3 (
+            Utils.Sign (v._x),
+            Utils.Sign (v._y),
+            Utils.Sign (v._z));
+    }
+
+    public static Vec3 Step (in Vec3 edge, in Vec3 x)
+    {
+        return new Vec3 (
+            x._x < edge._x ? 0.0f : 1.0f,
+            x._y < edge._y ? 0.0f : 1.0f,
+            x._z < edge._z ? 0.0f : 1.0f);
+    }
+
+    public static Vec3 Trunc (in Vec3 v)
+    {
+        return new Vec3 ((int) v._x, (int) v._y, (int) v._z);
     }
 
     public static Vec3 Back
