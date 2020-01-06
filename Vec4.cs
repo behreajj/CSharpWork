@@ -103,13 +103,11 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
     {
         unchecked
         {
-            const int hashBase = -2128831035;
-            const int hashMul = 16777619;
-            int hash = hashBase;
-            hash = hash * hashMul ^ this._x.GetHashCode ( );
-            hash = hash * hashMul ^ this._y.GetHashCode ( );
-            hash = hash * hashMul ^ this._z.GetHashCode ( );
-            hash = hash * hashMul ^ this._w.GetHashCode ( );
+            int hash = Utils.HashBase;
+            hash = hash * Utils.HashMul ^ this._x.GetHashCode ( );
+            hash = hash * Utils.HashMul ^ this._y.GetHashCode ( );
+            hash = hash * Utils.HashMul ^ this._z.GetHashCode ( );
+            hash = hash * Utils.HashMul ^ this._w.GetHashCode ( );
             return hash;
         }
     }
@@ -584,6 +582,34 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
             v._y != 0.0f ? 0.0f : 1.0f,
             v._z != 0.0f ? 0.0f : 1.0f,
             v._w != 0.0f ? 0.0f : 1.0f);
+    }
+
+    public static Vec4 RandomCartesian (in Random rng, in Vec4 lb, in Vec4 ub)
+    {
+        float xFac = (float) rng.NextDouble ( );
+        float yFac = (float) rng.NextDouble ( );
+        float zFac = (float) rng.NextDouble ( );
+        float wFac = (float) rng.NextDouble ( );
+
+        return new Vec4(
+            Utils.Mix(lb._x, ub._x, xFac),
+            Utils.Mix(lb._y, ub._y, yFac),
+            Utils.Mix(lb._z, ub._z, zFac),
+            Utils.Mix(lb._w, ub._w, wFac));
+    }
+
+    public static Vec4 RandomCartesian (in Random rng, float lb = 0.0f, float ub = 1.0f)
+    {
+        float xFac = (float) rng.NextDouble ( );
+        float yFac = (float) rng.NextDouble ( );
+        float zFac = (float) rng.NextDouble ( );
+        float wFac = (float) rng.NextDouble ( );
+
+        return new Vec4(
+            Utils.Mix(lb, ub, xFac),
+            Utils.Mix(lb, ub, yFac),
+            Utils.Mix(lb, ub, zFac),
+            Utils.Mix(lb, ub, wFac));
     }
 
     public static Vec4 Reflect (Vec4 i, Vec4 n)

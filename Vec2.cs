@@ -72,11 +72,9 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     {
         unchecked
         {
-            const int hashBase = -2128831035;
-            const int hashMul = 16777619;
-            int hash = hashBase;
-            hash = hash * hashMul ^ this._x.GetHashCode ( );
-            hash = hash * hashMul ^ this._y.GetHashCode ( );
+            int hash = Utils.HashBase;
+            hash = hash * Utils.HashMul ^ this._x.GetHashCode ( );
+            hash = hash * Utils.HashMul ^ this._y.GetHashCode ( );
             return hash;
         }
     }
@@ -524,7 +522,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         float[ ] xs = new float[cval];
         for (int j = 0; j < cval; ++j)
         {
-            xs[j] = Utils.LerpUnclamped (
+            xs[j] = Utils.Mix (
                 lowerBound._x,
                 upperBound._x,
                 j * jToStep);
@@ -533,8 +531,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         Vec2[, ] result = new Vec2[rval, cval];
         for (int i = 0; i < rval; ++i)
         {
-
-            float y = Utils.LerpUnclamped (
+            float y = Utils.Mix (
                 lowerBound._y,
                 upperBound._y,
                 i * iToStep);
@@ -555,6 +552,11 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     public static float HeadingUnsigned (in Vec2 v)
     {
         return Utils.ModRadians (Utils.Atan2 (v._y, v._x));
+    }
+
+    public static bool IsUnit(in Vec2 v)
+    {
+        return Utils.Approx(Vec2.MagSq(v), 1.0f);
     }
 
     public static Vec2 Limit (in Vec2 v, float limit = float.MaxValue)
@@ -690,6 +692,31 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     public static Vec2 ProjectVector (in Vec2 a, in Vec2 b)
     {
         return b * Vec2.ProjectScalar (a, b);
+    }
+
+    public static Vec2 RandomCartesian (in Random rng, in Vec2 lb, in Vec2 ub)
+    {
+        float xFac = (float) rng.NextDouble ( );
+        float yFac = (float) rng.NextDouble ( );
+
+        return new Vec2 (
+            Utils.Mix (lb._x, ub._x, xFac),
+            Utils.Mix (lb._y, ub._y, yFac));
+    }
+
+    public static Vec2 RandomCartesian (in Random rng, float lb = 0.0f, float ub = 1.0f)
+    {
+        float xFac = (float) rng.NextDouble ( );
+        float yFac = (float) rng.NextDouble ( );
+
+        return new Vec2 (
+            Utils.Mix (lb, ub, xFac),
+            Utils.Mix (lb, ub, yFac));
+    }
+
+    public static Vec2 RandomPolar (in Random rng)
+    {
+        return Vec2.FromPolar (Utils.Mix (-Utils.Pi, Utils.Pi, (float) rng.NextDouble ( )), 1.0f);
     }
 
     public static Vec2 Reflect (in Vec2 i, in Vec2 n)

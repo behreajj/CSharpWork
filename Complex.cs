@@ -66,11 +66,9 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     {
         unchecked
         {
-            const int hashBase = -2128831035;
-            const int hashMul = 16777619;
-            int hash = hashBase;
-            hash = hash * hashMul ^ this.real.GetHashCode ( );
-            hash = hash * hashMul ^ this.imag.GetHashCode ( );
+            int hash = Utils.HashBase;
+            hash = hash * Utils.HashMul ^ this.real.GetHashCode ( );
+            hash = hash * Utils.HashMul ^ this.imag.GetHashCode ( );
             return hash;
         }
     }

@@ -83,11 +83,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   {
     unchecked
     {
-      const int hashBase = -2128831035;
-      const int hashMul = 16777619;
-      int hash = hashBase;
-      hash = hash * hashMul ^ this.real.GetHashCode ( );
-      hash = hash * hashMul ^ this.imag.GetHashCode ( );
+      int hash = Utils.HashBase;
+      hash = hash * Utils.HashMul ^ this.real.GetHashCode ( );
+      hash = hash * Utils.HashMul ^ this.imag.GetHashCode ( );
       return hash;
     }
   }
@@ -341,6 +339,22 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   public static Quat Normalize (in Quat q)
   {
     return q / Quat.Mag (q);
+  }
+
+  public static Quat Random (Random rng)
+  {
+    float t0 = Utils.Tau * (float) rng.NextDouble ( );
+    float t1 = Utils.Tau * (float) rng.NextDouble ( );
+
+    float r1 = (float) rng.NextDouble ( );
+    float x0 = Utils.Sqrt (1.0f - r1);
+    float x1 = Utils.Sqrt (r1);
+
+    return new Quat (
+      x0 * Utils.Sin (t0),
+      x0 * Utils.Cos (t0),
+      x1 * Utils.Sin (t1),
+      x1 * Utils.Cos (t1));
   }
 
   public static Quat Identity

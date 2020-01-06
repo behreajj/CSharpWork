@@ -84,12 +84,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     {
         unchecked
         {
-            const int hashBase = -2128831035;
-            const int hashMul = 16777619;
-            int hash = hashBase;
-            hash = hash * hashMul ^ this._x.GetHashCode ( );
-            hash = hash * hashMul ^ this._y.GetHashCode ( );
-            hash = hash * hashMul ^ this._z.GetHashCode ( );
+            int hash = Utils.HashBase;
+            hash = hash * Utils.HashMul ^ this._x.GetHashCode ( );
+            hash = hash * Utils.HashMul ^ this._y.GetHashCode ( );
+            hash = hash * Utils.HashMul ^ this._z.GetHashCode ( );
             return hash;
         }
     }
@@ -494,6 +492,80 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             radius * -Utils.Sin (inclination));
     }
 
+    public static Vec3[, , ] Grid (
+        int rows,
+        int cols,
+        int layers, in Vec3 lowerBound, in Vec3 upperBound)
+    {
+
+        int rval = rows < 3 ? 3 : rows;
+        int cval = cols < 3 ? 3 : cols;
+        int lval = layers < 3 ? 3 : layers;
+
+        float hToStep = 1.0f / (lval - 1.0f);
+        float iToStep = 1.0f / (rval - 1.0f);
+        float jToStep = 1.0f / (cval - 1.0f);
+
+        /* Calculate x values in separate loop. */
+        float[ ] xs = new float[cval];
+        for (int j = 0; j < cval; ++j)
+        {
+            xs[j] = Utils.Mix (
+                lowerBound.x,
+                upperBound.x,
+                j * jToStep);
+        }
+
+        /* Calculate y values in separate loop. */
+        float[ ] ys = new float[rval];
+        for (int i = 0; i < rval; ++i)
+        {
+            ys[i] = Utils.Mix (
+                lowerBound.y,
+                upperBound.y,
+                i * iToStep);
+        }
+
+        Vec3[, , ] result = new Vec3[lval, rval, cval];
+        for (int h = 0; h < lval; ++h)
+        {
+            float z = Utils.Mix (
+                lowerBound.z,
+                upperBound.z,
+                h * hToStep);
+
+            for (int i = 0; i < rval; ++i)
+            {
+                float y = ys[i];
+                for (int j = 0; j < cval; ++j)
+                {
+                    result[h, i, j] = new Vec3 (xs[j], y, z);
+                }
+            }
+        }
+        return result;
+    }
+
+    public static float InclinationSigned (in Vec3 v)
+    {
+        float mSq = Vec3.MagSq (v);
+        if (mSq == 0.0f)
+        {
+            return 0.0f;
+        }
+        return Utils.Asin (v._z / Utils.Sqrt (mSq));
+    }
+
+    public static float InclinationUnsigned (in Vec3 v)
+    {
+        return Utils.ModRadians (Vec3.InclinationSigned (v));
+    }
+
+    public static bool IsUnit (in Vec3 v)
+    {
+        return Utils.Approx (Vec3.MagSq (v), 1.0f);
+    }
+
     public static Vec3 Limit (in Vec3 v, float limit = float.MaxValue)
     {
         float mSq = Vec3.MagSq (v);
@@ -599,11 +671,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             v._z != 0.0f ? 0.0f : 1.0f);
     }
 
-    public static Vec3 Reflect (in Vec3 i, in Vec3 n)
-    {
-        return i - ((2.0f * Vec3.Dot (n, i)) * n);
-    }
-
     public static Vec3 Pow (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
@@ -638,6 +705,49 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 ProjectVector (in Vec3 a, in Vec3 b)
     {
         return b * Vec3.ProjectScalar (a, b);
+    }
+
+    public static Vec3 RandomCartesian (in Random rng, in Vec3 lb, in Vec3 ub)
+    {
+        float xFac = (float) rng.NextDouble ( );
+        float yFac = (float) rng.NextDouble ( );
+        float zFac = (float) rng.NextDouble ( );
+
+        return new Vec3 (
+            Utils.Mix (lb._x, ub._x, xFac),
+            Utils.Mix (lb._y, ub._y, yFac),
+            Utils.Mix (lb._z, ub._z, zFac));
+    }
+
+    public static Vec3 RandomCartesian (in Random rng, float lb = 0.0f, float ub = 1.0f)
+    {
+        float xFac = (float) rng.NextDouble ( );
+        float yFac = (float) rng.NextDouble ( );
+        float zFac = (float) rng.NextDouble ( );
+
+        return new Vec3 (
+            Utils.Mix (lb, ub, xFac),
+            Utils.Mix (lb, ub, yFac),
+            Utils.Mix (lb, ub, zFac));
+    }
+
+    public static Vec3 RandomPolar (in Random rng)
+    {
+        return Vec3.FromPolar (
+            Utils.Mix (-Utils.Pi, Utils.Pi, (float) rng.NextDouble ( )), 1.0f);
+    }
+
+    public static Vec3 RandomSpherical (in Random rng)
+    {
+        return Vec3.FromSpherical (
+            Utils.Mix (-Utils.Pi, Utils.Pi, (float) rng.NextDouble ( )),
+            Utils.Mix (-Utils.HalfPi, Utils.HalfPi, (float) rng.NextDouble ( )),
+            1.0f);
+    }
+
+    public static Vec3 Reflect (in Vec3 i, in Vec3 n)
+    {
+        return i - ((2.0f * Vec3.Dot (n, i)) * n);
     }
 
     public static Vec3 Refract (in Vec3 i, in Vec3 n, float eta)

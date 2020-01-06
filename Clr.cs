@@ -164,6 +164,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
 
     public static implicit operator Clr (int c)
     {
+        // TODO: Should should this and the next three conversions
+        // be made explicit?
         return new Clr (
             (c >> 0x10 & 0xff) * Utils.One255,
             (c >> 0x8 & 0xff) * Utils.One255,
@@ -638,6 +640,34 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             c._g == 0.0f &&
             c._b == 0.0f &&
             c._a == 0.0f;
+    }
+
+    public static Clr RandomRgba (in Random rng, float lb = 0.0f, float ub = 1.0f)
+    {
+        float xFac = (float) rng.NextDouble ( );
+        float yFac = (float) rng.NextDouble ( );
+        float zFac = (float) rng.NextDouble ( );
+        float wFac = (float) rng.NextDouble ( );
+
+        return new Vec4(
+            Utils.Mix(lb, ub, xFac),
+            Utils.Mix(lb, ub, yFac),
+            Utils.Mix(lb, ub, zFac),
+            Utils.Mix(lb, ub, wFac));
+    }
+
+    public static Clr RandomRgba (in Random rng, in Clr lb, in Clr ub)
+    {
+        float xFac = (float) rng.NextDouble ( );
+        float yFac = (float) rng.NextDouble ( );
+        float zFac = (float) rng.NextDouble ( );
+        float wFac = (float) rng.NextDouble ( );
+
+        return new Vec4(
+            Utils.Mix(lb._r, ub._r, xFac),
+            Utils.Mix(lb._g, ub._g, yFac),
+            Utils.Mix(lb._b, ub._b, zFac),
+            Utils.Mix(lb._a, ub._a, wFac));
     }
 
     public static Vec4 RgbaToHsba (in Clr c)

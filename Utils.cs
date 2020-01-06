@@ -4,19 +4,14 @@ using System.Text;
 public static class Utils
 {
     public const float HalfPi = 1.57079637f;
-
+    public const int HashBase = -2128831035;
+    public const int HashMul = 16777619;
     public const float OneTau = 0.159154937f;
-
     public const float One255 = 0.003921569f;
-
     public const float One360 = 0.00277777785f;
-
-    public const float OneSix = 0.166666672f;
-
+    public const float OneSix = 0.166666667f;
     public const float Pi = 3.14159274f;
-
     public const float Tau = 6.28318548f;
-
     public const float Epsilon = 0.000001f;
 
     public static float Abs (float v)
@@ -24,15 +19,57 @@ public static class Utils
         return v < 0.0f ? -v : v;
     }
 
+    public static float Acos (float v)
+    {
+        if (v <= -1.0f) return Utils.Pi;
+        if (v >= 1.0f) return 0.0f;
+
+        bool ltzero = v < 0.0f;
+        float negate = ltzero ? 1.0f : 0.0f;
+        v = ltzero ? -v : v;
+
+        float ret = -0.0187293f;
+        ret = ret * v;
+        ret = ret + 0.0742610f;
+        ret = ret * v;
+        ret = ret - 0.2121144f;
+        ret = ret * v;
+        ret = ret + Utils.HalfPi;
+        ret = ret * Utils.Sqrt (1.0f - v);
+        ret = ret - negate * (ret + ret);
+        return negate * Utils.Pi + ret;
+    }
+
     public static int And (float a, float b)
     {
-        return (a != 0.0f ? 1 : 0) * (b != 0.0f ? 1 : 0);
+        // return (a != 0.0f ? 1 : 0) * (b != 0.0f ? 1 : 0);
+        return ((a != 0.0f) & (b != 0.0f)) ? 1 : 0;
     }
 
     public static bool Approx (float a, float b, float tolerance = Utils.Epsilon)
     {
         float diff = b - a;
         return diff <= tolerance && diff >= -tolerance;
+    }
+
+    public static float Asin (float v)
+    {
+        if (v <= -1.0f) return -Utils.HalfPi;
+        if (v >= 1.0f) return Utils.HalfPi;
+
+        bool ltzero = v < 0.0f;
+        float negate = ltzero ? 1.0f : 0.0f;
+        v = ltzero ? -v : v;
+
+        float ret = -0.0187293f;
+        ret *= v;
+        ret += 0.0742610f;
+        ret *= v;
+        ret -= 0.2121144f;
+        ret *= v;
+        ret += Utils.HalfPi;
+        ret = Utils.Pi * 0.5f - Utils.Sqrt (1.0f - v) * ret;
+        return ret - negate * (ret + ret);
     }
 
     public static float Atan2 (float y, float x)
@@ -60,7 +97,8 @@ public static class Utils
 
     public static int Ceil (float v)
     {
-        return -Utils.Floor (-v);
+        // return -Utils.Floor (-v);
+        return v > 0.0f ? (int) (v + 1) : (int) v;
     }
 
     public static float Clamp (float v, float lb = 0.0f, float ub = 1.0f)
@@ -68,9 +106,10 @@ public static class Utils
         return (v < lb) ? lb : (v > ub) ? ub : v;
     }
 
-    public static float CopySign (float magnitude, float sign)
+    public static float CopySign (float mag, float sign)
     {
-        return Utils.Abs (magnitude) * Utils.Sign (sign);
+        // return Utils.Abs (magnitude) * Utils.Sign (sign);
+        return (mag < 0.0f ? -mag : mag) * ((sign < 0.0f) ? -1.0f : (sign > 0.0f) ? 1.0f : 0.0f);
     }
 
     public static float Cos (float radians)
@@ -83,9 +122,9 @@ public static class Utils
         return (float) Math.Cosh (radians);
     }
 
-    public static float Diff(float a, float b)
+    public static float Diff (float a, float b)
     {
-        return Utils.Abs(a - b);
+        return Utils.Abs (a - b);
     }
 
     public static float Div (float a, float b)
@@ -98,14 +137,14 @@ public static class Utils
         return (float) Math.Exp (v);
     }
 
-    public static int Floor (float a)
+    public static int Floor (float v)
     {
-        return a > 0.0f ? (int) a : (int) a - 1;
+        return v > 0.0f ? (int) v : (int) v - 1;
     }
 
-    public static float Fract (float a)
+    public static float Fract (float v)
     {
-        return a - (int) a;
+        return v - (int) v;
     }
 
     public static float Fmod (float a, float b)
@@ -113,19 +152,9 @@ public static class Utils
         return b == 0.0f ? a : a % b;
     }
 
-    public static float Lerp (float a, float b, float t = 0.5f)
+    public static float LinearStep (float edge0 = 0.0f, float edge1 = 1.0f, float x = 0.5f)
     {
-        if (t <= 0.0f) return a;
-        if (t >= 1.0f) return b;
-        return (1.0f - t) * a + t * b;
-    }
-
-    public static float LerpUnclamped (
-        float a,
-        float b,
-        float t = 0.5f)
-    {
-        return (1.0f - t) * a + t * b;
+        return Utils.Clamp (Utils.Div (x - edge0, edge1 - edge0));
     }
 
     public static float Log (float v)
@@ -154,6 +183,11 @@ public static class Utils
     public static float Max (float a, float b, float c)
     {
         return Utils.Max (Utils.Max (a, b), c);
+    }
+
+    public static float Mix (float a, float b, float t = 0.5f)
+    {
+        return (1.0f - t) * a + t * b;
     }
 
     public static float Min (float a, float b)
@@ -186,16 +220,18 @@ public static class Utils
         return rad - Utils.Tau * Utils.Floor (rad * Utils.OneTau);
     }
 
-    public static int Not (float a)
+    public static int Not (float v)
     {
-        return a != 0.0f ? 1 : 0;
+        return v != 0.0f ? 1 : 0;
     }
 
     public static int Or (float a, float b)
     {
-        int aBool = a != 0.0f ? 1 : 0;
-        int bBool = b != 0.0f ? 1 : 0;
-        return aBool + bBool - aBool * bBool;
+        // int aBool = a != 0.0f ? 1 : 0;
+        // int bBool = b != 0.0f ? 1 : 0;
+        // return aBool + bBool - aBool * bBool;
+
+        return ((a != 0.0f) | (b != 0.0f)) ? 1 : 0;
     }
 
     public static float Pow (float a, float b)
@@ -203,20 +239,15 @@ public static class Utils
         return (float) Math.Pow (a, b);
     }
 
-    public static int Round (float a)
+    public static int Round (float v)
     {
-        return (a < 0.0f) ? (int) (a - 0.5f) :
-            (a > 0.0f) ? (int) (a + 0.5f) : 0;
+        return (v < 0.0f) ? (int) (v - 0.5f) :
+            (v > 0.0f) ? (int) (v + 0.5f) : 0;
     }
 
     public static int Sign (float v)
     {
         return (v < 0.0f) ? -1 : (v > 0.0f) ? 1 : 0;
-    }
-
-    public static float Sqrt (float v)
-    {
-        return (float) Math.Sqrt (v);
     }
 
     public static float Sin (float radians)
@@ -229,6 +260,22 @@ public static class Utils
         return (float) Math.Sinh (radians);
     }
 
+    public static float SmoothStep (float edge0 = 0.0f, float edge1 = 1.0f, float x = 0.5f)
+    {
+        float t = Utils.Clamp (Utils.Div (x - edge0, edge1 - edge0));
+        return t * t * (3.0f - (t + t));
+    }
+
+    public static float Sqrt (float v)
+    {
+        return (float) Math.Sqrt (v);
+    }
+
+    public static float Step (float edge, float x)
+    {
+        return x < edge ? 0.0f : 1.0f;
+    }
+
     public static float Trunc (float a)
     {
         return (int) a;
@@ -236,15 +283,17 @@ public static class Utils
 
     public static int Xor (float a, float b)
     {
-        int aBool = (a != 0.0f) ? 1 : 0;
-        int bBool = (b != 0.0f) ? 1 : 0;
-        return aBool + bBool - 2 * aBool * bBool;
+        // int aBool = (a != 0.0f) ? 1 : 0;
+        // int bBool = (b != 0.0f) ? 1 : 0;
+        // return aBool + bBool - 2 * aBool * bBool;
+
+        return ((a != 0.0f) ^ (b != 0.0f)) ? 1 : 0;
     }
 
     public static string ToFixed (float v, int places = 7)
     {
         /*
-         * Dispense with value and places edge cases.
+         * Dispense with v and places edge cases.
          */
         if (float.IsNaN (v)) return "0.0";
         if (places < 0) return ((int) v).ToString ( );
@@ -255,7 +304,7 @@ public static class Utils
         }
 
         /*
-         * Find the sign, the unsigned value and the
+         * Find the sign, the unsigned v and the
          * unsigned integral.
          */
         bool ltZero = v < 0.0f;
@@ -297,7 +346,7 @@ public static class Utils
 
         /* 
          * Separate each digit by subtracting the truncation from
-         * the value (fract), then multiplying by 10 to shift the
+         * the v (fract), then multiplying by 10 to shift the
          * next digit past the decimal point.
          */
         float frac = abs - trunc;

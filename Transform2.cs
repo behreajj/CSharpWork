@@ -43,7 +43,7 @@ public class Transform2
 
         set
         {
-            this.scale = value;
+            this.scale = Vec2.Max (value, Utils.Epsilon);
         }
     }
 
@@ -59,28 +59,40 @@ public class Transform2
         this.scale = scale;
     }
 
-    public Transform2 MoveBy(Vec2 v)
+    public Transform2 MoveBy (Vec2 v)
     {
         this.location += v;
         return this;
     }
 
-    public Transform2 MoveTo(Vec2 v, float step)
+    public Transform2 MoveTo (Vec2 v, float step = 1.0f)
     {
-        this.location = Vec2.Mix(this.location, v, step);
+        if (step <= 0.0f) return this;
+        if (step >= 1.0f) { this.location = v; return this; }
+
+        this.location = Vec2.Mix (this.location, v, step);
         return this;
     }
 
-    public Transform2 MoveTo(Vec2 v, Vec2 step, Func<Vec2, Vec2, Vec2, Vec2> Easing)
+    public Transform2 MoveTo (Vec2 v, Vec2 step, Func<Vec2, Vec2, Vec2, Vec2> Easing)
     {
-        Vec2 t = Easing(this.location, v, step);
-        this.location = Vec2.Mix(this.location, v, t);
+        Vec2 t = Easing (this.location, v, step);
+        this.location = Vec2.Mix (this.location, v, t);
         return this;
     }
 
-    public Transform2 ScaleBy(Vec2 v)
+    public Transform2 ScaleBy (Vec2 v)
     {
-        this.scale += v;
+        this.Scale = this.scale + v;
+        return this;
+    }
+
+    public Transform2 ScaleTo (Vec2 v, float step = 1.0f)
+    {
+        if (step <= 0.0f) return this;
+        if (step >= 1.0f) { this.Scale = v; return this; }
+
+        this.Scale = Vec2.Mix (this.scale, v, step);
         return this;
     }
 }
