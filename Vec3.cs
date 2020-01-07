@@ -155,6 +155,11 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             .ToString ( );
     }
 
+    public (float, float, float) ToTuple ( )
+    {
+        return (x: this._x, y: this._y, z: this._z);
+    }
+
     public static implicit operator Vec3 (bool b)
     {
         float eval = b ? 1.0f : 0.0f;
@@ -867,6 +872,17 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             x._x < edge._x ? 0.0f : 1.0f,
             x._y < edge._y ? 0.0f : 1.0f,
             x._z < edge._z ? 0.0f : 1.0f);
+    }
+
+    public static (float, float, float) ToSpherical (in Vec3 v)
+    {
+        float mSq = Vec3.MagSq (v);
+        if (mSq == 0.0f)
+        {
+            return (0.0f, 0.0f, 0.0f);
+        }
+        float m = Utils.Sqrt (mSq);
+        return (Vec3.AzimuthSigned (v), v._z / m, m);
     }
 
     public static Vec3 Trunc (in Vec3 v)

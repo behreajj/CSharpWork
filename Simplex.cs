@@ -215,13 +215,13 @@ public static class Simplex
         return c;
     }
 
-    public static Tuple<float, Vec4> Eval4 (in Vec4 v = new Vec4 ( ),
+    public static (float, Vec4) Eval4 (in Vec4 v = new Vec4 ( ),
         int seed = Utils.HashBase)
     {
         return Simplex.Eval4 (v.x, v.y, v.z, v.w, seed);
     }
 
-    public static Tuple<float, Vec4> Eval4 (
+    public static (float, Vec4) Eval4 (
         float x = 0.0f,
         float y = 0.0f,
         float z = 0.0f,
@@ -407,18 +407,17 @@ public static class Simplex
         derivz *= Simplex.Scale4;
         derivw *= Simplex.Scale4;
 
-        return Tuple.Create (
-            Simplex.Scale4 * (t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 + t44 * n4),
-            new Vec4 (derivx, derivy, derivz, derivw));
+        return (fac: Simplex.Scale4 * (t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 + t44 * n4),
+            deriv: new Vec4 (derivx, derivy, derivz, derivw));
     }
 
-    public static Tuple<float, Vec3> Eval3 (in Vec3 v = new Vec3 ( ),
+    public static (float, Vec3) Eval3 (in Vec3 v = new Vec3 ( ),
         int seed = Utils.HashBase)
     {
         return Simplex.Eval3 (v.x, v.y, v.z, seed);
     }
 
-    public static Tuple<float, Vec3> Eval3 (
+    public static (float, Vec3) Eval3 (
         float x = 0.0f,
         float y = 0.0f,
         float z = 0.0f,
@@ -590,18 +589,17 @@ public static class Simplex
         derivy *= Simplex.Scale3;
         derivz *= Simplex.Scale3;
 
-        return Tuple.Create (
-            Simplex.Scale3 * (t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3),
-            new Vec3 (derivx, derivy, derivz));
+        return (fac: Simplex.Scale3 * (t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3),
+            deriv: new Vec3 (derivx, derivy, derivz));
     }
 
-    public static Tuple<float, Vec2> Eval2 (in Vec2 v = new Vec2 ( ),
+    public static (float, Vec2) Eval2 (in Vec2 v = new Vec2 ( ),
         int seed = Utils.HashBase)
     {
         return Simplex.Eval2 (v.x, v.y, seed);
     }
 
-    public static Tuple<float, Vec2> Eval2 (
+    public static (float, Vec2) Eval2 (
         float x = 0.0f,
         float y = 0.0f,
         int seed = Utils.HashBase)
@@ -699,48 +697,55 @@ public static class Simplex
         derivx *= Simplex.Scale2;
         derivy *= Simplex.Scale2;
 
-        return Tuple.Create (
-            Simplex.Scale2 * (t40 * n0 + t41 * n1 + t42 * n2),
-            new Vec2 (derivx, derivy));
+        return (fac: Simplex.Scale2 * (t40 * n0 + t41 * n1 + t42 * n2),
+            deriv: new Vec2 (derivx, derivy));
     }
 
-    public static Tuple<Vec4, Vec4, Vec4, Vec4, Vec4> Noise4 (
+    public static (Vec4, Vec4, Vec4, Vec4, Vec4) Noise4 (
         Vec4 v = new Vec4 ( ),
         int seed = Utils.HashBase)
     {
         float st = Vec4.Mag (v) * Simplex.Step4;
 
-        Tuple<float, Vec4> x = Simplex.Eval4 (v.x + st, v.y, v.z, v.w, seed);
-        Tuple<float, Vec4> y = Simplex.Eval4 (v.x, v.y + st, v.z, v.w, seed);
-        Tuple<float, Vec4> z = Simplex.Eval4 (v.x, v.y, v.z + st, v.w, seed);
-        Tuple<float, Vec4> w = Simplex.Eval4 (v.x, v.y, v.z, v.w + st, seed);
-        return Tuple.Create (
-            new Vec4 (x.Item1, y.Item1, z.Item1, w.Item1),
-            x.Item2, y.Item2, z.Item2, w.Item2);
+        (float, Vec4) x = Simplex.Eval4 (v.x + st, v.y, v.z, v.w, seed);
+        (float, Vec4) y = Simplex.Eval4 (v.x, v.y + st, v.z, v.w, seed);
+        (float, Vec4) z = Simplex.Eval4 (v.x, v.y, v.z + st, v.w, seed);
+        (float, Vec4) w = Simplex.Eval4 (v.x, v.y, v.z, v.w + st, seed);
+        
+        return (fac: new Vec4 (x.Item1, y.Item1, z.Item1, w.Item1),
+            xDeriv : x.Item2,
+            yDeriv : y.Item2,
+            zDeriv : z.Item2,
+            wDeriv : w.Item2);
     }
 
-    public static Tuple<Vec3, Vec3, Vec3, Vec3> Noise3 (
+    public static (Vec3, Vec3, Vec3, Vec3) Noise3 (
         Vec3 v = new Vec3 ( ),
         int seed = Utils.HashBase)
     {
         float st = Vec3.Mag (v) * Simplex.Step3;
-        Tuple<float, Vec3> x = Simplex.Eval3 (v.x + st, v.y, v.z, seed);
-        Tuple<float, Vec3> y = Simplex.Eval3 (v.x, v.y + st, v.z, seed);
-        Tuple<float, Vec3> z = Simplex.Eval3 (v.x, v.y, v.z + st, seed);
-        return Tuple.Create (
-            new Vec3 (x.Item1, y.Item1, z.Item1),
-            x.Item2, y.Item2, z.Item2);
+
+        (float, Vec3) x = Simplex.Eval3 (v.x + st, v.y, v.z, seed);
+        (float, Vec3) y = Simplex.Eval3 (v.x, v.y + st, v.z, seed);
+        (float, Vec3) z = Simplex.Eval3 (v.x, v.y, v.z + st, seed);
+
+        return (fac: new Vec3 (x.Item1, y.Item1, z.Item1),
+            xDeriv : x.Item2,
+            yDeriv : y.Item2,
+            zDeriv : z.Item2);
     }
 
-    public static Tuple<Vec2, Vec2, Vec2> Noise2 (
+    public static (Vec2, Vec2, Vec2) Noise2 (
         Vec2 v = new Vec2 ( ),
         int seed = Utils.HashBase)
     {
         float st = Vec2.Mag (v) * Simplex.Step2;
-        Tuple<float, Vec2> x = Simplex.Eval2 (v.x + st, v.y, seed);
-        Tuple<float, Vec2> y = Simplex.Eval2 (v.x, v.y + st, seed);
-        return Tuple.Create (
-            new Vec2 (x.Item1, y.Item1),
-            x.Item2, y.Item2);
+
+        (float, Vec2) x = Simplex.Eval2 (v.x + st, v.y, seed);
+        (float, Vec2) y = Simplex.Eval2 (v.x, v.y + st, seed);
+
+        return (fac: new Vec2 (x.Item1, y.Item1),
+            xDeriv : x.Item2,
+            yDeriv : y.Item2);
     }
 }

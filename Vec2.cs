@@ -131,6 +131,11 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
             .Append (" }")
             .ToString ( );
     }
+    
+    public (float, float) ToTuple ( )
+    {
+        return (x: this._x, y: this._y);
+    }
 
     public static implicit operator Vec2 (bool b)
     {
@@ -554,9 +559,9 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         return Utils.ModRadians (Utils.Atan2 (v._y, v._x));
     }
 
-    public static bool IsUnit(in Vec2 v)
+    public static bool IsUnit (in Vec2 v)
     {
-        return Utils.Approx(Vec2.MagSq(v), 1.0f);
+        return Utils.Approx (Vec2.MagSq (v), 1.0f);
     }
 
     public static Vec2 Limit (in Vec2 v, float limit = float.MaxValue)
@@ -777,6 +782,11 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         return new Vec2 (
             x._x < edge._x ? 0.0f : 1.0f,
             x._y < edge._y ? 0.0f : 1.0f);
+    }
+
+    public static (float, float) ToPolar (in Vec2 v)
+    {
+        return (Vec2.HeadingSigned (v), Vec2.Mag (v));
     }
 
     public static Vec2 Trunc (in Vec2 v)

@@ -126,6 +126,11 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
             .ToString ( );
     }
 
+    public (float, float) ToTuple ( )
+    {
+        return (real: this.real, imag: this.imag);
+    }
+
     public static implicit operator Complex (float s)
     {
         return new Complex (s, 0.0f);

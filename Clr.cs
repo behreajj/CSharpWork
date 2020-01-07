@@ -130,6 +130,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             .ToString ( );
     }
 
+    public (float, float, float, float) ToTuple ( )
+    {
+        return (r: this._r, g: this._g, b: this._b, a: this._a);
+    }
+
     public static implicit operator int (in Clr c)
     {
         return (int) (c._a * 0xff + 0.5f) << 0x18 |

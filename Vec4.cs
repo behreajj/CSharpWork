@@ -185,6 +185,11 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
             .ToString ( );
     }
 
+    public (float, float, float, float) ToTuple ( )
+    {
+        return (x: this._x, y: this._y, z: this._z, w: this._w);
+    }
+
     public static implicit operator Vec4 (bool b)
     {
         float eval = b ? 1.0f : 0.0f;
@@ -368,32 +373,56 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
 
     public static Vec4 operator < (in Vec4 a, in Vec4 b)
     {
-        return new Vec4 (a._x < b._x, a._y < b._y, a._z < b._z, a._w < b._w);
+        return new Vec4 (
+            a._x < b._x, 
+            a._y < b._y, 
+            a._z < b._z, 
+            a._w < b._w);
     }
 
     public static Vec4 operator > (in Vec4 a, in Vec4 b)
     {
-        return new Vec4 (a._x > b._x, a._y > b._y, a._z > b._z, a._w > b._w);
+        return new Vec4 (
+            a._x > b._x, 
+            a._y > b._y, 
+            a._z > b._z, 
+            a._w > b._w);
     }
 
     public static Vec4 operator <= (in Vec4 a, in Vec4 b)
     {
-        return new Vec4 (a._x <= b._x, a._y <= b._y, a._z <= b._z, a._w <= b._w);
+        return new Vec4 (
+            a._x <= b._x, 
+            a._y <= b._y, 
+            a._z <= b._z, 
+            a._w <= b._w);
     }
 
     public static Vec4 operator >= (in Vec4 a, in Vec4 b)
     {
-        return new Vec4 (a._x >= b._x, a._y >= b._y, a._z >= b._z, a._w >= b._w);
+        return new Vec4 (
+            a._x >= b._x, 
+            a._y >= b._y,
+            a._z >= b._z, 
+            a._w >= b._w);
     }
 
     public static Vec4 operator != (in Vec4 a, in Vec4 b)
     {
-        return new Vec4 (a._x != b._x, a._y != b._y, a._z != b._z, a._w != b._w);
+        return new Vec4 (
+            a._x != b._x, 
+            a._y != b._y, 
+            a._z != b._z, 
+            a._w != b._w);
     }
 
     public static Vec4 operator == (in Vec4 a, in Vec4 b)
     {
-        return new Vec4 (a._x == b._x, a._y == b._y, a._z == b._z, a._w == b._w);
+        return new Vec4 (
+            a._x == b._x,
+            a._y == b._y,
+            a._z == b._z,
+            a._w == b._w);
     }
 
     public static Vec4 Abs (in Vec4 v)
@@ -591,11 +620,11 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
         float zFac = (float) rng.NextDouble ( );
         float wFac = (float) rng.NextDouble ( );
 
-        return new Vec4(
-            Utils.Mix(lb._x, ub._x, xFac),
-            Utils.Mix(lb._y, ub._y, yFac),
-            Utils.Mix(lb._z, ub._z, zFac),
-            Utils.Mix(lb._w, ub._w, wFac));
+        return new Vec4 (
+            Utils.Mix (lb._x, ub._x, xFac),
+            Utils.Mix (lb._y, ub._y, yFac),
+            Utils.Mix (lb._z, ub._z, zFac),
+            Utils.Mix (lb._w, ub._w, wFac));
     }
 
     public static Vec4 RandomCartesian (in Random rng, float lb = 0.0f, float ub = 1.0f)
@@ -605,11 +634,11 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
         float zFac = (float) rng.NextDouble ( );
         float wFac = (float) rng.NextDouble ( );
 
-        return new Vec4(
-            Utils.Mix(lb, ub, xFac),
-            Utils.Mix(lb, ub, yFac),
-            Utils.Mix(lb, ub, zFac),
-            Utils.Mix(lb, ub, wFac));
+        return new Vec4 (
+            Utils.Mix (lb, ub, xFac),
+            Utils.Mix (lb, ub, yFac),
+            Utils.Mix (lb, ub, zFac),
+            Utils.Mix (lb, ub, wFac));
     }
 
     public static Vec4 Reflect (Vec4 i, Vec4 n)

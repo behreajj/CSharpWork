@@ -136,6 +136,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       .ToString ( );
   }
 
+  public (float, float, float, float ) ToTuple ( )
+  {
+    return (w: this.real, x: this.imag.x, y: this.imag.y, z: this.imag.z);
+  }
+
   public static implicit operator Quat (float v)
   {
     return new Quat (v, new Vec3 ( ));

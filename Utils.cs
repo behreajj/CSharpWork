@@ -152,6 +152,27 @@ public static class Utils
         return b == 0.0f ? a : a % b;
     }
 
+    public static float LerpAngle (float origin, float dest, float t = 0.5f)
+    {
+        float a = Utils.ModRadians (origin);
+        float b = Utils.ModRadians (dest);
+        float diff = b - a;
+        bool modResult = false;
+        if (a < b && diff > Utils.Pi)
+        {
+            a = a + Utils.Pi;
+            modResult = true;
+        }
+        else if (a > b && diff < -Utils.Pi)
+        {
+            b = b + Utils.Pi;
+            modResult = true;
+        }
+        
+        float fac = (1.0f - t) * a + t * b;
+        return modResult ? Utils.ModRadians (fac) : fac;
+    }
+
     public static float LinearStep (float edge0 = 0.0f, float edge1 = 1.0f, float x = 0.5f)
     {
         return Utils.Clamp (Utils.Div (x - edge0, edge1 - edge0));
