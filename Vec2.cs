@@ -131,8 +131,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
             .Append (" }")
             .ToString ( );
     }
-    
-    public (float, float) ToTuple ( )
+
+    public (float x, float y) ToTuple ( )
     {
         return (x: this._x, y: this._y);
     }
@@ -381,11 +381,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
             (ap1._y - cp1._y) * tsq3);
     }
 
-    public static Vec2 BezierTanUnit (
-        Vec2 ap0 = new Vec2 ( ),
-        Vec2 cp0 = new Vec2 ( ),
-        Vec2 cp1 = new Vec2 ( ),
-        Vec2 ap1 = new Vec2 ( ),
+    public static Vec2 BezierTanUnit (in Vec2 ap0 = new Vec2 ( ), in Vec2 cp0 = new Vec2 ( ), in Vec2 cp1 = new Vec2 ( ), in Vec2 ap1 = new Vec2 ( ),
         float step = 0.5f)
     {
         return Vec2.Normalize (Vec2.BezierTangent (
@@ -784,7 +780,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
             x._y < edge._y ? 0.0f : 1.0f);
     }
 
-    public static (float, float) ToPolar (in Vec2 v)
+    public static (float theta, float rho) ToPolar (in Vec2 v)
     {
         return (Vec2.HeadingSigned (v), Vec2.Mag (v));
     }

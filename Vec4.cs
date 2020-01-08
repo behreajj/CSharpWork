@@ -185,7 +185,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
             .ToString ( );
     }
 
-    public (float, float, float, float) ToTuple ( )
+    public (float x, float y, float z, float w) ToTuple ( )
     {
         return (x: this._x, y: this._y, z: this._z, w: this._w);
     }

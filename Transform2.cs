@@ -86,13 +86,13 @@ public class Transform2
         return ToString (4);
     }
 
-    public Transform2 MoveBy (Vec2 v)
+    public Transform2 MoveBy (in Vec2 v)
     {
         this.location += v;
         return this;
     }
 
-    public Transform2 MoveTo (Vec2 v, float step = 1.0f)
+    public Transform2 MoveTo (in Vec2 v, float step = 1.0f)
     {
         if (step <= 0.0f) return this;
         if (step >= 1.0f) { this.location = v; return this; }
@@ -101,11 +101,26 @@ public class Transform2
         return this;
     }
 
-    public Transform2 MoveTo (in Vec2 v, Vec2 step, Func<Vec2, Vec2, Vec2, Vec2> Easing)
+    public Transform2 MoveTo (in Vec2 v, in Vec2 step, Func<Vec2, Vec2, Vec2, Vec2> Easing)
     {
         Vec2 t = Easing (this.location, v, step);
         this.location = Vec2.Mix (this.location, v, t);
         return this;
+    }
+
+    public static Vec2 MulDir (in Transform2 transform, in Vec2 dir)
+    {
+        return Vec2.RotateZ (dir, transform.rotation);
+    }
+
+    public static Vec2 MulPoint (in Transform2 transform, in Vec2 vec)
+    {
+        return transform.location + transform.scale * Vec2.RotateZ (vec, transform.rotation);
+    }
+
+    public static Vec2 MulVector (in Transform2 transform, in Vec2 vec)
+    {
+        return transform.scale * Vec2.RotateZ (vec, transform.rotation);
     }
 
     public Transform2 Reset ( )
@@ -141,36 +156,39 @@ public class Transform2
     public Transform2 ScaleTo (in Vec2 v, float step = 1.0f)
     {
         if (step <= 0.0f) return this;
-        if (step >= 1.0f)
-        {
-            this.Scale = v;
-            return this;
-        }
+        if (step >= 1.0f) { this.Scale = v; return this; }
 
         this.Scale = Vec2.Mix (this.scale, v, step);
         return this;
     }
 
-    public Transform2 ScaleTo (in Vec2 v, Vec2 step, Func<Vec2, Vec2, Vec2, Vec2> Easing)
+    public Transform2 ScaleTo (in Vec2 v, in Vec2 step, Func<Vec2, Vec2, Vec2, Vec2> Easing)
     {
         Vec2 t = Easing (this.scale, v, step);
         this.Scale = Vec2.Mix (this.scale, v, t);
         return this;
     }
 
-    public static Vec2 MulDir (in Transform2 transform, in Vec2 dir)
+    public Transform2 Set (
+        Vec2 location,
+        float rotation,
+        Vec2 scale)
     {
-        return Vec2.RotateZ (dir, transform.rotation);
+        this.location = location;
+        this.rotation = rotation;
+        this.Scale = scale;
+        return this;
     }
 
-    public static Vec2 MulPoint (in Transform2 transform, in Vec2 vec)
+    public Transform2 Set (
+        float x = 0.0f, float y = 0.0f,
+        float rotation = 0.0f,
+        float width = 1.0f, float height = 1.0f)
     {
-        return transform.location + transform.scale * Vec2.RotateZ (vec, transform.rotation);
-    }
-
-    public static Vec2 MulVector (in Transform2 transform, in Vec2 vec)
-    {
-        return transform.scale * Vec2.RotateZ (vec, transform.rotation);
+        this.location = new Vec2 (x, y);
+        this.rotation = rotation;
+        this.Scale = new Vec2 (width, height);
+        return this;
     }
 
     public string ToString (int places = 4)
@@ -190,7 +208,10 @@ public class Transform2
     {
         get
         {
-            return new Transform2 (new Vec2 (), 0.0f, new Vec2 (1.0f, 1.0f));
+            return new Transform2 (
+                new Vec2 (0.0f, 0.0f),
+                0.0f,
+                new Vec2 (1.0f, 1.0f));
         }
     }
 }

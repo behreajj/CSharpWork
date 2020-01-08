@@ -130,17 +130,14 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             .ToString ( );
     }
 
-    public (float, float, float, float) ToTuple ( )
+    public (float r, float g, float b, float a) ToTuple ( )
     {
         return (r: this._r, g: this._g, b: this._b, a: this._a);
     }
 
     public static implicit operator int (in Clr c)
     {
-        return (int) (c._a * 0xff + 0.5f) << 0x18 |
-            (int) (c._r * 0xff + 0.5f) << 0x10 |
-            (int) (c._g * 0xff + 0.5f) << 0x8 |
-            (int) (c._b * 0xff + 0.5f);
+        return Clr.ToHexInt (c);
     }
 
     public static implicit operator uint (in Clr c)
@@ -171,29 +168,27 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         // TODO: Should should this and the next three conversions
         // be made explicit?
-        return new Clr (
-            (c >> 0x10 & 0xff) * Utils.One255,
-            (c >> 0x8 & 0xff) * Utils.One255,
-            (c & 0xff) * Utils.One255,
-            (c >> 0x18 & 0xff) * Utils.One255);
+        return Clr.FromHex (c);
     }
 
     public static implicit operator Clr (uint c)
     {
-        return new Clr (
-            (c >> 0x10 & 0xff) * Utils.One255,
-            (c >> 0x8 & 0xff) * Utils.One255,
-            (c & 0xff) * Utils.One255,
-            (c >> 0x18 & 0xff) * Utils.One255);
+        // return new Clr (
+        //     (c >> 0x10 & 0xff) * Utils.One255,
+        //     (c >> 0x8 & 0xff) * Utils.One255,
+        //     (c & 0xff) * Utils.One255,
+        //     (c >> 0x18 & 0xff) * Utils.One255);
+        return Clr.FromHex (c);
     }
 
     public static implicit operator Clr (long c)
     {
-        return new Clr (
-            (c >> 0x10 & 0xff) * Utils.One255,
-            (c >> 0x8 & 0xff) * Utils.One255,
-            (c & 0xff) * Utils.One255,
-            (c >> 0x18 & 0xff) * Utils.One255);
+        // return new Clr (
+        //     (c >> 0x10 & 0xff) * Utils.One255,
+        //     (c >> 0x8 & 0xff) * Utils.One255,
+        //     (c & 0xff) * Utils.One255,
+        //     (c >> 0x18 & 0xff) * Utils.One255);
+        return Clr.FromHex (c);
     }
 
     public static implicit operator Clr (float v)
@@ -536,16 +531,43 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             Utils.Clamp (c._a, lb._a, ub._a));
     }
 
+    public static Clr FromHex (int c)
+    {
+        return new Clr (
+            (c >> 0x10 & 0xff) * Utils.One255,
+            (c >> 0x8 & 0xff) * Utils.One255,
+            (c & 0xff) * Utils.One255,
+            (c >> 0x18 & 0xff) * Utils.One255);
+    }
+
+    public static Clr FromHex (uint c)
+    {
+        return new Clr (
+            (c >> 0x10 & 0xff) * Utils.One255,
+            (c >> 0x8 & 0xff) * Utils.One255,
+            (c & 0xff) * Utils.One255,
+            (c >> 0x18 & 0xff) * Utils.One255);
+    }
+
+    public static Clr FromHex (long c)
+    {
+        return new Clr (
+            (c >> 0x10 & 0xff) * Utils.One255,
+            (c >> 0x8 & 0xff) * Utils.One255,
+            (c & 0xff) * Utils.One255,
+            (c >> 0x18 & 0xff) * Utils.One255);
+    }
+
     public static Clr HsbaToRgba (in Vec4 v)
     {
         return HsbaToRgba (v.x, v.y, v.z, v.w);
     }
 
     public static Clr HsbaToRgba (
-        float hue,
-        float sat,
-        float bri,
-        float alpha)
+        float hue = 1.0f,
+        float sat = 1.0f,
+        float bri = 1.0f,
+        float alpha = 1.0f)
     {
         if (sat <= 0.0f)
         {
@@ -654,11 +676,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         float zFac = (float) rng.NextDouble ( );
         float wFac = (float) rng.NextDouble ( );
 
-        return new Vec4(
-            Utils.Mix(lb, ub, xFac),
-            Utils.Mix(lb, ub, yFac),
-            Utils.Mix(lb, ub, zFac),
-            Utils.Mix(lb, ub, wFac));
+        return new Vec4 (
+            Utils.Mix (lb, ub, xFac),
+            Utils.Mix (lb, ub, yFac),
+            Utils.Mix (lb, ub, zFac),
+            Utils.Mix (lb, ub, wFac));
     }
 
     public static Clr RandomRgba (in Random rng, in Clr lb, in Clr ub)
@@ -668,11 +690,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         float zFac = (float) rng.NextDouble ( );
         float wFac = (float) rng.NextDouble ( );
 
-        return new Vec4(
-            Utils.Mix(lb._r, ub._r, xFac),
-            Utils.Mix(lb._g, ub._g, yFac),
-            Utils.Mix(lb._b, ub._b, zFac),
-            Utils.Mix(lb._a, ub._a, wFac));
+        return new Vec4 (
+            Utils.Mix (lb._r, ub._r, xFac),
+            Utils.Mix (lb._g, ub._g, yFac),
+            Utils.Mix (lb._b, ub._b, zFac),
+            Utils.Mix (lb._a, ub._a, wFac));
     }
 
     public static Vec4 RgbaToHsba (in Clr c)
@@ -694,17 +716,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         if (delta != 0.0f)
         {
             if (red == bri)
-            {
                 hue = (green - blue) / delta;
-            }
             else if (green == bri)
-            {
                 hue = 2.0f + (blue - red) / delta;
-            }
             else
-            {
                 hue = 4.0f + (red - green) / delta;
-            }
 
             hue *= Utils.OneSix;
             if (hue < 0.0f) hue += 1.0f;
@@ -712,6 +728,14 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
 
         float sat = bri == 0.0f ? 0.0f : delta / bri;
         return new Vec4 (hue, sat, bri, alpha);
+    }
+
+    public static int ToHexInt (in Clr c)
+    {
+        return (int) (c._a * 0xff + 0.5f) << 0x18 |
+            (int) (c._r * 0xff + 0.5f) << 0x10 |
+            (int) (c._g * 0xff + 0.5f) << 0x8 |
+            (int) (c._b * 0xff + 0.5f);
     }
 
     public static Clr Black
@@ -766,7 +790,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         get
         {
-            return new Clr (1.0f, 0.9686275f, 0.8352942f, 1.0f);
+            // #fff7d5
+            // return new Clr (1.0f, 0.9686275f, 0.8352942f, 1.0f);
+
+            // #fff4d6
+            return new Clr (1.0f, 0.9568628f, 0.8392158f, 1.0f);
         }
     }
 

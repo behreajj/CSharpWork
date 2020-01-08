@@ -10,7 +10,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public float Real { get { return this.real; } }
   public Vec3 Imag { get { return this.imag; } }
-
   public float w { get { return this.real; } }
   public float x { get { return this.imag.x; } }
   public float y { get { return this.imag.y; } }
@@ -136,7 +135,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       .ToString ( );
   }
 
-  public (float, float, float, float ) ToTuple ( )
+  public (float w, float x, float y, float z) ToTuple ( )
   {
     return (w: this.real, x: this.imag.x, y: this.imag.y, z: this.imag.z);
   }
@@ -237,7 +236,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public static Quat operator / (in Vec3 a, in Quat b)
   {
-    return a * Inverse (b);
+    return a * Quat.Inverse (b);
   }
 
   public static Quat operator / (float a, in Quat b)
@@ -305,6 +304,25 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return q.real != 0.0f || Vec3.Any (q.imag);
   }
 
+  public static Vec3 ApplyTo (in Quat q, in Vec3 source)
+  {
+    float w = q.real;
+    Vec3 i = q.imag;
+    float qx = i.x;
+    float qy = i.y;
+    float qz = i.z;
+
+    float iw = -qx * source.x - qy * source.y - qz * source.z;
+    float ix = w * source.x + qy * source.z - qz * source.y;
+    float iy = w * source.y + qz * source.x - qx * source.z;
+    float iz = w * source.z + qx * source.y - qy * source.x;
+
+    return new Vec3 (
+      ix * w + iz * qy - iw * qx - iy * qz,
+      iy * w + ix * qz - iw * qy - iz * qx,
+      iz * w + iy * qx - iw * qz - ix * qy);
+  }
+
   public static bool Approx (in Quat a, in Quat b)
   {
     return Utils.Approx (a.real, b.real) &&
@@ -321,8 +339,35 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return a.real * b.real + Vec3.Dot (a.real, b.real);
   }
 
+  public static Quat FromAxisAngle (float radians, in Vec3 axis)
+  {
+    float amSq = Vec3.MagSq (axis);
+    if (amSq == 0.0f) return Quat.Identity;
+
+    float nx = axis.x;
+    float ny = axis.y;
+    float nz = axis.z;
+
+    if (!Utils.Approx (amSq, 1.0f))
+    {
+      float amInv = (float) (1.0f / Utils.Sqrt (amSq));
+      nx *= amInv;
+      ny *= amInv;
+      nz *= amInv;
+    }
+
+    float halfAngle = 0.5f * radians;
+    float sinHalf = Utils.Sin (halfAngle);
+    return new Quat (
+      Utils.Cos (halfAngle),
+      nx * sinHalf,
+      ny * sinHalf,
+      nz * sinHalf);
+  }
+
   public static Quat Inverse (in Quat q)
   {
+    //TODO: Replace with inlined version that returns identity when mag is invalid.
     return Quat.Conj (q) / Quat.MagSq (q);
   }
 
@@ -343,6 +388,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public static Quat Normalize (in Quat q)
   {
+    //TODO: Replace with inlined version that returns identity when mag is invalid.
     return q / Quat.Mag (q);
   }
 
@@ -360,6 +406,54 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       x0 * Utils.Cos (t0),
       x1 * Utils.Sin (t1),
       x1 * Utils.Cos (t1));
+  }
+
+  public static Quat RotateX (in Quat q, float radians)
+  {
+    float halfAngle = radians * 0.5f;
+    return Quat.RotateX (q, Utils.Cos (halfAngle), Utils.Sin (halfAngle));
+  }
+
+  public static Quat RotateX (in Quat q, float cosah, float sinah)
+  {
+    Vec3 i = q.imag;
+    return new Quat (
+      cosah * q.real - sinah * i.x,
+      cosah * i.x + sinah * q.real,
+      cosah * i.y + sinah * i.z,
+      cosah * i.z - sinah * i.y);
+  }
+
+  public static Quat RotateY (in Quat q, float radians)
+  {
+    float halfAngle = radians * 0.5f;
+    return Quat.RotateY (q, Utils.Cos (halfAngle), Utils.Sin (halfAngle));
+  }
+
+  public static Quat RotateY (in Quat q, float cosah, float sinah)
+  {
+    Vec3 i = q.imag;
+    return new Quat (
+      cosah * q.real - sinah * i.y,
+      cosah * i.x - sinah * i.z,
+      cosah * i.y + sinah * q.real,
+      cosah * i.z + sinah * i.x);
+  }
+
+  public static Quat RotateZ (in Quat q, float radians)
+  {
+    float halfAngle = radians * 0.5f;
+    return Quat.RotateZ (q, Utils.Cos (halfAngle), Utils.Sin (halfAngle));
+  }
+
+  public static Quat RotateZ (in Quat q, float cosah, float sinah)
+  {
+    Vec3 i = q.imag;
+    return new Quat (
+      cosah * q.real - sinah * i.z,
+      cosah * i.x + sinah * i.y,
+      cosah * i.y - sinah * i.x,
+      cosah * i.z + sinah * q.real);
   }
 
   public static Quat Identity

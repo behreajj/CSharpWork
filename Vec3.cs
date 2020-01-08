@@ -155,7 +155,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             .ToString ( );
     }
 
-    public (float, float, float) ToTuple ( )
+    public (float x, float y, float z) ToTuple ( )
     {
         return (x: this._x, y: this._y, z: this._z);
     }
@@ -237,17 +237,26 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 
     public static Vec3 operator * (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (a._x * b._x, a._y * b._y, a._z * b._z);
+        return new Vec3 (
+            a._x * b._x,
+            a._y * b._y,
+            a._z * b._z);
     }
 
     public static Vec3 operator * (in Vec3 a, float b)
     {
-        return new Vec3 (a._x * b, a._y * b, a._z * b);
+        return new Vec3 (
+            a._x * b,
+            a._y * b,
+            a._z * b);
     }
 
     public static Vec3 operator * (float a, in Vec3 b)
     {
-        return new Vec3 (a * b._x, a * b._y, a * b._z);
+        return new Vec3 (
+            a * b._x,
+            a * b._y,
+            a * b._z);
     }
 
     public static Vec3 operator / (in Vec3 a, in Vec3 b)
@@ -297,42 +306,66 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 
     public static Vec3 operator + (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (a._x + b._x, a._y + b._y, a._z + b._z);
+        return new Vec3 (
+            a._x + b._x,
+            a._y + b._y,
+            a._z + b._z);
     }
 
     public static Vec3 operator - (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (a._x - b._x, a._y - b._y, a._z - b._z);
+        return new Vec3 (
+            a._x - b._x,
+            a._y - b._y,
+            a._z - b._z);
     }
 
     public static Vec3 operator < (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (a._x < b._x, a._y < b._y, a._z < b._z);
+        return new Vec3 (
+            a._x < b._x,
+            a._y < b._y,
+            a._z < b._z);
     }
 
     public static Vec3 operator > (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (a._x > b._x, a._y > b._y, a._z > b._z);
+        return new Vec3 (
+            a._x > b._x,
+            a._y > b._y,
+            a._z > b._z);
     }
 
     public static Vec3 operator <= (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (a._x <= b._x, a._y <= b._y, a._z <= b._z);
+        return new Vec3 (
+            a._x <= b._x,
+            a._y <= b._y,
+            a._z <= b._z);
     }
 
     public static Vec3 operator >= (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (a._x >= b._x, a._y >= b._y, a._z >= b._z);
+        return new Vec3 (
+            a._x >= b._x,
+            a._y >= b._y,
+            a._z >= b._z);
     }
 
     public static Vec3 operator != (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (a._x != b._x, a._y != b._y, a._z != b._z);
+        return new Vec3 (
+            a._x != b._x,
+            a._y != b._y,
+            a._z != b._z);
     }
 
     public static Vec3 operator == (in Vec3 a, in Vec3 b)
     {
-        return new Vec3 (a._x == b._x, a._y == b._y, a._z == b._z);
+        return new Vec3 (
+            a._x == b._x,
+            a._y == b._y,
+            a._z == b._z);
     }
 
     public static Vec3 Abs (in Vec3 v)
@@ -874,7 +907,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             x._z < edge._z ? 0.0f : 1.0f);
     }
 
-    public static (float, float, float) ToSpherical (in Vec3 v)
+    public static (float theta, float phi, float rho) ToSpherical (in Vec3 v)
     {
         float mSq = Vec3.MagSq (v);
         if (mSq == 0.0f)
@@ -887,7 +920,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 
     public static Vec3 Trunc (in Vec3 v)
     {
-        return new Vec3 ((int) v._x, (int) v._y, (int) v._z);
+        return new Vec3 (
+            (int) v._x,
+            (int) v._y,
+            (int) v._z);
     }
 
     public static Vec3 Back

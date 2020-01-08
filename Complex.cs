@@ -126,7 +126,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
             .ToString ( );
     }
 
-    public (float, float) ToTuple ( )
+    public (float real, float imag) ToTuple ( )
     {
         return (real: this.real, imag: this.imag);
     }

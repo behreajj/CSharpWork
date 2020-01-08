@@ -215,13 +215,13 @@ public static class Simplex
         return c;
     }
 
-    public static (float, Vec4) Eval4 (in Vec4 v = new Vec4 ( ),
+    public static (float fac, Vec4 deriv) Eval4 (in Vec4 v = new Vec4 ( ),
         int seed = Utils.HashBase)
     {
         return Simplex.Eval4 (v.x, v.y, v.z, v.w, seed);
     }
 
-    public static (float, Vec4) Eval4 (
+    public static (float fac, Vec4 deriv) Eval4 (
         float x = 0.0f,
         float y = 0.0f,
         float z = 0.0f,
@@ -411,13 +411,13 @@ public static class Simplex
             deriv: new Vec4 (derivx, derivy, derivz, derivw));
     }
 
-    public static (float, Vec3) Eval3 (in Vec3 v = new Vec3 ( ),
+    public static (float fac, Vec3 deriv) Eval3 (in Vec3 v = new Vec3 ( ),
         int seed = Utils.HashBase)
     {
         return Simplex.Eval3 (v.x, v.y, v.z, seed);
     }
 
-    public static (float, Vec3) Eval3 (
+    public static (float fac, Vec3 deriv) Eval3 (
         float x = 0.0f,
         float y = 0.0f,
         float z = 0.0f,
@@ -593,13 +593,13 @@ public static class Simplex
             deriv: new Vec3 (derivx, derivy, derivz));
     }
 
-    public static (float, Vec2) Eval2 (in Vec2 v = new Vec2 ( ),
+    public static (float fac, Vec2 deriv) Eval2 (in Vec2 v = new Vec2 ( ),
         int seed = Utils.HashBase)
     {
         return Simplex.Eval2 (v.x, v.y, seed);
     }
 
-    public static (float, Vec2) Eval2 (
+    public static (float fac, Vec2 deriv) Eval2 (
         float x = 0.0f,
         float y = 0.0f,
         int seed = Utils.HashBase)
@@ -701,7 +701,7 @@ public static class Simplex
             deriv: new Vec2 (derivx, derivy));
     }
 
-    public static (Vec4, Vec4, Vec4, Vec4, Vec4) Noise4 (
+    public static (Vec4 fac, Vec4 xDeriv, Vec4 yDeriv, Vec4 zDeriv, Vec4 wDeriv) Noise4 (
         Vec4 v = new Vec4 ( ),
         int seed = Utils.HashBase)
     {
@@ -719,7 +719,7 @@ public static class Simplex
             wDeriv : w.Item2);
     }
 
-    public static (Vec3, Vec3, Vec3, Vec3) Noise3 (
+    public static (Vec3 fac, Vec3 xDeriv, Vec3 yDeriv, Vec3 zDeriv) Noise3 (
         Vec3 v = new Vec3 ( ),
         int seed = Utils.HashBase)
     {
@@ -735,7 +735,7 @@ public static class Simplex
             zDeriv : z.Item2);
     }
 
-    public static (Vec2, Vec2, Vec2) Noise2 (
+    public static (Vec2 fac, Vec2 xDeriv, Vec2 yDeriv) Noise2 (
         Vec2 v = new Vec2 ( ),
         int seed = Utils.HashBase)
     {
