@@ -790,11 +790,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         get
         {
-            // #fff7d5
-            // return new Clr (1.0f, 0.9686275f, 0.8352942f, 1.0f);
-
-            // #fff4d6
-            return new Clr (1.0f, 0.9568628f, 0.8392158f, 1.0f);
+            return new Clr (1.0f, 0.9568627f, 0.8392157f, 1.0f);
         }
     }
 

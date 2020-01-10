@@ -273,6 +273,24 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
         return new Vec4 (-v._x, -v._y, -v._z, -v._w);
     }
 
+    public static Vec4 operator ++ (in Vec4 v)
+    {
+        return new Vec4 (
+            v._x + 1.0f,
+            v._y + 1.0f,
+            v._z + 1.0f,
+            v._w + 1.0f);
+    }
+
+    public static Vec4 operator -- (in Vec4 v)
+    {
+        return new Vec4 (
+            v._x - 1.0f,
+            v._y - 1.0f,
+            v._z - 1.0f,
+            v._w - 1.0f);
+    }
+
     public static Vec4 operator * (in Vec4 a, in Vec4 b)
     {
         return new Vec4 (
@@ -374,45 +392,45 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
     public static Vec4 operator < (in Vec4 a, in Vec4 b)
     {
         return new Vec4 (
-            a._x < b._x, 
-            a._y < b._y, 
-            a._z < b._z, 
+            a._x < b._x,
+            a._y < b._y,
+            a._z < b._z,
             a._w < b._w);
     }
 
     public static Vec4 operator > (in Vec4 a, in Vec4 b)
     {
         return new Vec4 (
-            a._x > b._x, 
-            a._y > b._y, 
-            a._z > b._z, 
+            a._x > b._x,
+            a._y > b._y,
+            a._z > b._z,
             a._w > b._w);
     }
 
     public static Vec4 operator <= (in Vec4 a, in Vec4 b)
     {
         return new Vec4 (
-            a._x <= b._x, 
-            a._y <= b._y, 
-            a._z <= b._z, 
+            a._x <= b._x,
+            a._y <= b._y,
+            a._z <= b._z,
             a._w <= b._w);
     }
 
     public static Vec4 operator >= (in Vec4 a, in Vec4 b)
     {
         return new Vec4 (
-            a._x >= b._x, 
+            a._x >= b._x,
             a._y >= b._y,
-            a._z >= b._z, 
+            a._z >= b._z,
             a._w >= b._w);
     }
 
     public static Vec4 operator != (in Vec4 a, in Vec4 b)
     {
         return new Vec4 (
-            a._x != b._x, 
-            a._y != b._y, 
-            a._z != b._z, 
+            a._x != b._x,
+            a._y != b._y,
+            a._z != b._z,
             a._w != b._w);
     }
 
@@ -662,6 +680,15 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
             Utils.Round (v._y),
             Utils.Round (v._z),
             Utils.Round (v._w));
+    }
+
+    public static Vec4 Round (in Vec4 v, int places)
+    {
+        return new Vec4 (
+            Utils.Round (v._x, places),
+            Utils.Round (v._y, places),
+            Utils.Round (v._z, places),
+            Utils.Round (v._w, places));
     }
 
     public static Vec4 Sign (in Vec4 v)

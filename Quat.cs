@@ -121,7 +121,13 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public float[ ] ToArray ( )
   {
-    return new float[ ] { this.real, this.imag.x, this.imag.y, this.imag.z };
+    return new float[ ]
+    {
+      this.real,
+        this.imag.x,
+        this.imag.y,
+        this.imag.z
+    };
   }
 
   public string ToString (int places = 4)
@@ -137,7 +143,10 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public (float w, float x, float y, float z) ToTuple ( )
   {
-    return (w: this.real, x: this.imag.x, y: this.imag.y, z: this.imag.z);
+    return (w: this.real,
+      x: this.imag.x,
+      y: this.imag.y,
+      z: this.imag.z);
   }
 
   public static implicit operator Quat (float v)
@@ -197,22 +206,26 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public static Quat operator * (in Quat a, float b)
   {
+    // if (b == 0.0f) return Quat.Identity;
     return new Quat (a.real * b, a.imag * b);
   }
 
   public static Quat operator * (float a, in Quat b)
   {
+    // if (a == 0.0f) return Quat.Identity;
     return new Quat (a * b.real, a * b.imag);
   }
 
   public static Quat operator * (in Quat a, in Vec3 b)
   {
+    // if (Vec3.None (b)) return Quat.Identity;
     return new Quat (-Vec3.Dot (a.imag, b),
       Vec3.Cross (a.imag, b) + (a.real * b));
   }
 
   public static Quat operator * (in Vec3 a, in Quat b)
   {
+    // if (Vec3.None (a)) return Quat.Identity;
     return new Quat (-Vec3.Dot (a, b.imag),
       Vec3.Cross (a, b.imag) + (b.real * a));
   }
@@ -224,7 +237,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public static Quat operator / (in Quat a, float b)
   {
-    if (b == 0.0f) return Quat.Identity;
+    // if (b == 0.0f) return Quat.Identity;
+    if (b == 0.0f) return new Quat (0.0f, 0.0f, 0.0f, 0.0f);
     float bInv = 1.0f / b;
     return new Quat (a.real * bInv, a.imag * bInv);
   }
@@ -367,7 +381,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public static Quat Inverse (in Quat q)
   {
-    //TODO: Replace with inlined version that returns identity when mag is invalid.
     return Quat.Conj (q) / Quat.MagSq (q);
   }
 
@@ -388,7 +401,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public static Quat Normalize (in Quat q)
   {
-    //TODO: Replace with inlined version that returns identity when mag is invalid.
     return q / Quat.Mag (q);
   }
 
@@ -454,6 +466,13 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       cosah * i.x + sinah * i.y,
       cosah * i.y - sinah * i.x,
       cosah * i.z + sinah * q.real);
+  }
+
+  public static Quat Round (in Quat q, int places)
+  {
+    return new Quat (
+      Utils.Round (q.real, places),
+      Vec3.Round (q.imag, places));
   }
 
   public static Quat Identity

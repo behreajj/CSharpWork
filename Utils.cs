@@ -95,9 +95,20 @@ public static class Utils
         return y < 0.0f ? -t2 : t2;
     }
 
+    // public static int BisectLeft<T> (T[ ] a, T x, int lo, int hi) where T : IComparable<T>
+    // {
+    //     if (lo < 0) lo = 0;
+    //     while (lo < hi)
+    //     {
+    //         int mid = (lo + hi) / 2 | 0;
+    //         if (x.CompareTo (a[mid]) > 0) lo = mid + 1;
+    //         else hi = mid;
+    //     }
+    //     return lo;
+    // }
+
     public static int Ceil (float v)
     {
-        // return -Utils.Floor (-v);
         return v > 0.0f ? (int) (v + 1) : (int) v;
     }
 
@@ -147,6 +158,11 @@ public static class Utils
         return v - (int) v;
     }
 
+    public static int Fmod (int a, int b)
+    {
+        return b == 0 ? a : a % b;
+    }
+
     public static float Fmod (float a, float b)
     {
         return b == 0.0f ? a : a % b;
@@ -168,7 +184,7 @@ public static class Utils
             b = b + Utils.Pi;
             modResult = true;
         }
-        
+
         float fac = (1.0f - t) * a + t * b;
         return modResult ? Utils.ModRadians (fac) : fac;
     }
@@ -221,6 +237,13 @@ public static class Utils
         return Utils.Min (Utils.Min (a, b), c);
     }
 
+    public static int Mod (int a, int b)
+    {
+        if (b == 0) return a;
+        int result = a - b * (a / b);
+        return result < 0 ? result + b : result;
+    }
+
     public static float Mod (float a, float b)
     {
         return b == 0.0f ? a : a - b * Utils.Floor (a / b);
@@ -264,6 +287,11 @@ public static class Utils
     {
         return (v < 0.0f) ? (int) (v - 0.5f) :
             (v > 0.0f) ? (int) (v + 0.5f) : 0;
+    }
+
+    public static float Round (float v, int places)
+    {
+        return (float) Math.Round (v, places);
     }
 
     public static int Sign (float v)

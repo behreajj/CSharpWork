@@ -204,6 +204,16 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         return new Vec2 (-v._x, -v._y);
     }
 
+    public static Vec2 operator ++ (in Vec2 v)
+    {
+        return new Vec2 (v._x + 1.0f, v._y + 1.0f);
+    }
+
+    public static Vec2 operator -- (in Vec2 v)
+    {
+        return new Vec2 (v._x - 1.0f, v._y - 1.0f);
+    }
+
     public static Vec2 operator * (in Vec2 a, in Vec2 b)
     {
         return new Vec2 (a._x * b._x, a._y * b._y);
@@ -332,8 +342,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         return a._x * b._y - a._y * b._x == 0.0f;
     }
 
-    public static Vec2 BezierPoint (in Vec2 ap0 = new Vec2 ( ), in Vec2 cp0 = new Vec2 ( ), in Vec2 cp1 = new Vec2 ( ), in Vec2 ap1 = new Vec2 ( ),
-        float step = 0.5f)
+    public static Vec2 BezierPoint (in Vec2 ap0 = new Vec2 ( ), in Vec2 cp0 = new Vec2 ( ), in Vec2 cp1 = new Vec2 ( ), in Vec2 ap1 = new Vec2 ( ), float step = 0.5f)
     {
         if (step <= 0.0f) return new Vec2 (ap0._x, ap0._y);
         else if (step >= 1.0f) return new Vec2 (ap1._x, ap1._y);
@@ -358,8 +367,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
             ap1._y * tcb);
     }
 
-    public static Vec2 BezierTangent (in Vec2 ap0 = new Vec2 ( ), in Vec2 cp0 = new Vec2 ( ), in Vec2 cp1 = new Vec2 ( ), in Vec2 ap1 = new Vec2 ( ),
-        float step = 0.5f)
+    public static Vec2 BezierTangent (in Vec2 ap0 = new Vec2 ( ), in Vec2 cp0 = new Vec2 ( ), in Vec2 cp1 = new Vec2 ( ), in Vec2 ap1 = new Vec2 ( ), float step = 0.5f)
     {
 
         if (step <= 0.0f) return cp0 - ap0;
@@ -381,8 +389,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
             (ap1._y - cp1._y) * tsq3);
     }
 
-    public static Vec2 BezierTanUnit (in Vec2 ap0 = new Vec2 ( ), in Vec2 cp0 = new Vec2 ( ), in Vec2 cp1 = new Vec2 ( ), in Vec2 ap1 = new Vec2 ( ),
-        float step = 0.5f)
+    public static Vec2 BezierTanUnit (in Vec2 ap0 = new Vec2 ( ), in Vec2 cp0 = new Vec2 ( ), in Vec2 cp1 = new Vec2 ( ), in Vec2 ap1 = new Vec2 ( ), float step = 0.5f)
     {
         return Vec2.Normalize (Vec2.BezierTangent (
             ap0, cp0, cp1, ap1, step));
@@ -758,6 +765,13 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         return new Vec2 (
             Utils.Round (v._x),
             Utils.Round (v._y));
+    }
+
+    public static Vec2 Round (in Vec2 v, int places)
+    {
+        return new Vec2 (
+            Utils.Round (v._x, places),
+            Utils.Round (v._y, places));
     }
 
     public static Vec2 SmoothStep (in Vec2 edge0, in Vec2 edge1, in Vec2 x)

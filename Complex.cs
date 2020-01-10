@@ -151,6 +151,16 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         return Complex.Abs (z);
     }
 
+    public static bool operator true (in Complex z)
+    {
+        return Complex.Any(z);
+    }
+
+    public static bool operator false (in Complex z)
+    {
+        return Complex.None(z);
+    }
+
     public static Complex operator * (in Complex a, in Complex b)
     {
         return new Complex (
@@ -285,11 +295,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         return Utils.Atan2 (z.imag, z.real);
     }
 
-    public static Complex Rect (float r = 1.0f, float phi = 0.0f)
-    {
-        return new Complex (r * Utils.Cos (phi), r * Utils.Sin (phi));
-    }
-
     public static Complex Pow (in Complex a, in Complex b)
     {
         return Complex.Exp (b * Complex.Log (a));
@@ -303,6 +308,23 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     public static Complex Pow (float a, in Complex b)
     {
         return Complex.Exp (b * Complex.Log (a));
+    }
+
+    public static (float r, float phi) Polar (Complex z)
+    {
+        return (r: Complex.Phase (z), phi: Complex.Abs (z));
+    }
+
+    public static Complex Rect (float r = 1.0f, float phi = 0.0f)
+    {
+        return new Complex (r * Utils.Cos (phi), r * Utils.Sin (phi));
+    }
+
+    public static Complex Round (in Complex z, int places)
+    {
+        return new Complex (
+            Utils.Round (z.real, places),
+            Utils.Round (z.imag, places));
     }
 
     public static Complex Sin (in Complex z)

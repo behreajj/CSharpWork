@@ -235,6 +235,22 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         return new Vec3 (-v._x, -v._y, -v._z);
     }
 
+    public static Vec3 operator ++ (in Vec3 v)
+    {
+        return new Vec3 (
+            v._x + 1.0f,
+            v._y + 1.0f,
+            v._z + 1.0f);
+    }
+
+    public static Vec3 operator -- (in Vec3 v)
+    {
+        return new Vec3 (
+            v._x - 1.0f,
+            v._y - 1.0f,
+            v._z - 1.0f);
+    }
+
     public static Vec3 operator * (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
@@ -883,6 +899,14 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             Utils.Round (v._x),
             Utils.Round (v._y),
             Utils.Round (v._z));
+    }
+
+    public static Vec3 Round (in Vec3 v, int places)
+    {
+        return new Vec3 (
+            Utils.Round (v._x, places),
+            Utils.Round (v._y, places),
+            Utils.Round (v._z, places));
     }
 
     public static Vec3 SmoothStep (in Vec3 edge0, in Vec3 edge1, in Vec3 x)
