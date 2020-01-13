@@ -10,6 +10,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
     private readonly float _z;
     private readonly float _w;
 
+    public int Length { get { return 4; } }
     public float x { get { return this._x; } }
     public float y { get { return this._y; } }
     public float z { get { return this._z; } }
@@ -503,9 +504,21 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
             Utils.Clamp (v._w, lb._w, ub._w));
     }
 
+    public static Vec4 CopySign (in Vec4 a, in Vec4 b)
+    {
+        return new Vec4 (
+            Utils.CopySign (a._x, b._x),
+            Utils.CopySign (a._y, b._y),
+            Utils.CopySign (a._z, b._z),
+            Utils.CopySign (a._w, b._w));
+    }
+
     public static float Dot (in Vec4 a, in Vec4 b)
     {
-        return a._x * b._x + a._y * b._y + a._z * b._z + a._w * b._w;
+        return a._x * b._x +
+            a._y * b._y +
+            a._z * b._z +
+            a._w * b._w;
     }
 
     public static Vec4 Floor (in Vec4 v)
@@ -551,7 +564,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
 
     public static float MagSq (in Vec4 v)
     {
-        return v._x * v._x + v._y * v._y + v._z * v._z + v._w * v._w;
+        return v._x * v._x +
+            v._y * v._y +
+            v._z * v._z +
+            v._w * v._w;
     }
 
     public static Vec4 Max (in Vec4 a, in Vec4 b)
@@ -629,6 +645,15 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>
             v._y != 0.0f ? 0.0f : 1.0f,
             v._z != 0.0f ? 0.0f : 1.0f,
             v._w != 0.0f ? 0.0f : 1.0f);
+    }
+
+    public static Vec4 Pow (in Vec4 a, in Vec4 b)
+    {
+        return new Vec4 (
+            Utils.Pow (a._x, b._x),
+            Utils.Pow (a._y, b._y),
+            Utils.Pow (a._z, b._z),
+            Utils.Pow (a._w, b._w));
     }
 
     public static Vec4 RandomCartesian (in Random rng, in Vec4 lb, in Vec4 ub)

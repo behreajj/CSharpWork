@@ -112,6 +112,11 @@ public static class Utils
         return v > 0.0f ? (int) (v + 1) : (int) v;
     }
 
+    public static int Clamp (int v, int lb = int.MinValue, int ub = int.MaxValue)
+    {
+        return (v < lb) ? lb : (v > ub) ? ub : v;
+    }
+
     public static float Clamp (float v, float lb = 0.0f, float ub = 1.0f)
     {
         return (v < lb) ? lb : (v > ub) ? ub : v;
@@ -311,7 +316,7 @@ public static class Utils
 
     public static float SmoothStep (float edge0 = 0.0f, float edge1 = 1.0f, float x = 0.5f)
     {
-        float t = Utils.Clamp (Utils.Div (x - edge0, edge1 - edge0));
+        float t = Utils.LinearStep (edge0, edge1, x);
         return t * t * (3.0f - (t + t));
     }
 

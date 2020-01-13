@@ -30,10 +30,7 @@ public class Transform3
 
     set
     {
-      if (Quat.Any (value))
-      {
-        this.rotation = value;
-      }
+      if (Quat.Any (value)) this.rotation = value;
     }
   }
 
@@ -46,7 +43,7 @@ public class Transform3
 
     set
     {
-      this.scale = Vec3.Max (value, Utils.Epsilon);
+      if (Vec3.All (value)) this.scale = value;
     }
   }
 

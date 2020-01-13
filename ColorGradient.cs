@@ -11,14 +11,8 @@ public class ColorGradient : IEnumerable
     private readonly float step;
     private readonly Clr color;
 
-    public float Step
-    {
-      get
-      {
-        return this.step;
-      }
-    }
-
+    public int Length { get { return 5; } }
+    public float Step { get { return this.step; } }
     public Clr Color { get { return this.color; } }
 
     public Key (
@@ -137,10 +131,12 @@ public class ColorGradient : IEnumerable
 
   protected readonly List<Key> keys = new List<Key> (16);
 
-  public ColorGradient()
+  public int Length { get { return this.keys.Count; } }
+
+  public ColorGradient ( )
   {
-    this.keys.Add(new Key(0.0f, Clr.ClearBlack));
-    this.keys.Add(new Key(1.0f, Clr.White));
+    this.keys.Add (new Key (0.0f, Clr.ClearBlack));
+    this.keys.Add (new Key (1.0f, Clr.White));
   }
 
   public ColorGradient (params Key[ ] keys)
@@ -151,14 +147,6 @@ public class ColorGradient : IEnumerable
   public ColorGradient (params Clr[ ] colors)
   {
     this.AppendAll (colors);
-  }
-
-  public int KeyCount
-  {
-    get
-    {
-      return this.keys.Count;
-    }
   }
 
   public Key this [int i]
@@ -209,10 +197,7 @@ public class ColorGradient : IEnumerable
 
   public ColorGradient AppendAll (params Key[ ] keys)
   {
-    foreach (Key key in keys)
-    {
-      this.Append (key);
-    }
+    foreach (Key key in keys) this.Append (key);
     return this;
   }
 

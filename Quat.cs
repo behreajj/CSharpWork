@@ -8,6 +8,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   private readonly float real;
   private readonly Vec3 imag;
 
+  public int Length { get { return 4; } }
   public float Real { get { return this.real; } }
   public Vec3 Imag { get { return this.imag; } }
   public float w { get { return this.real; } }

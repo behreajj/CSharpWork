@@ -43,7 +43,7 @@ public class Transform2
 
         set
         {
-            this.scale = Vec2.Max (value, Utils.Epsilon);
+            if(Vec2.All(value)) this.scale = value;
         }
     }
 

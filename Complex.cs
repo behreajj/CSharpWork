@@ -8,8 +8,9 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     private readonly float real;
     private readonly float imag;
 
-    public float Real { get { return this.real; } }
+    public int Length { get { return 2; } }
     public float Imag { get { return this.imag; } }
+    public float Real { get { return this.real; } }
 
     public float this [int i]
     {
