@@ -31,25 +31,28 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Returns the number of values (dimensions) in this vector.
     /// </summary>
-    /// <value></value>
+    /// /// <value>the length</value>
     public int Length { get { return 3; } }
 
     /// <summary>
     /// Component on the z axis in the Cartesian coordinate
     /// system.
     /// </summary>
+    /// <value>x</value>
     public float x { get { return this._x; } }
 
     /// <summary>
     /// Component on the y axis in the Cartesian coordinate
     /// system.
     /// </summary>
+    /// <value>y</value>
     public float y { get { return this._y; } }
 
     /// <summary>
     /// Component on the z axis in the Cartesian coordinate
     /// system.
     /// </summary>
+    /// <value>z</value>
     public float z { get { return this._z; } }
 
     /// <summary>
@@ -425,26 +428,26 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the result</returns>
-    public static Vec3 operator ++ (in Vec3 v)
-    {
-        return new Vec3 (
-            v._x + 1.0f,
-            v._y + 1.0f,
-            v._z + 1.0f);
-    }
+    // public static Vec3 operator ++ (in Vec3 v)
+    // {
+    //     return new Vec3 (
+    //         v._x + 1.0f,
+    //         v._y + 1.0f,
+    //         v._z + 1.0f);
+    // }
 
     /// <summary>
     /// Decrements the vector by 1.0 , component-wise.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the result</returns>
-    public static Vec3 operator -- (in Vec3 v)
-    {
-        return new Vec3 (
-            v._x - 1.0f,
-            v._y - 1.0f,
-            v._z - 1.0f);
-    }
+    // public static Vec3 operator -- (in Vec3 v)
+    // {
+    //     return new Vec3 (
+    //         v._x - 1.0f,
+    //         v._y - 1.0f,
+    //         v._z - 1.0f);
+    // }
 
     /// <summary>
     /// Multiplies two vectors, component-wise. Such
@@ -1885,20 +1888,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Generates a clamped Hermite step for an input factor; to
-    /// be used in conjunction with a mixing function.
-    /// </summary>
-    /// <param name="edge0">left edge</param>
-    /// <param name="edge1">right edge</param>
-    /// <param name="x">factor</param>
-    /// <returns>the smooth step</returns>
-    public static Vec3 SmoothStep (in Vec3 edge0, in Vec3 edge1, in Vec3 x)
-    {
-        Vec3 t = Vec3.Clamp ((x - edge0) / (edge1 - edge0));
-        return t * t * (new Vec3 (3.0f, 3.0f, 3.0f) - (t + t));
-    }
-
-    /// <summary>
     /// Finds the sign of the vector: -1, if negative; 1, if
     /// positive.
     /// </summary>
@@ -1910,6 +1899,20 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             Utils.Sign (v._x),
             Utils.Sign (v._y),
             Utils.Sign (v._z));
+    }
+
+    /// <summary>
+    /// Generates a clamped Hermite step for an input factor; to
+    /// be used in conjunction with a mixing function.
+    /// </summary>
+    /// <param name="edge0">left edge</param>
+    /// <param name="edge1">right edge</param>
+    /// <param name="x">factor</param>
+    /// <returns>the smooth step</returns>
+    public static Vec3 SmoothStep (in Vec3 edge0, in Vec3 edge1, in Vec3 x)
+    {
+        Vec3 t = Vec3.Clamp ((x - edge0) / (edge1 - edge0));
+        return t * t * (new Vec3 (3.0f, 3.0f, 3.0f) - (t + t));
     }
 
     /// <summary>

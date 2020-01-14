@@ -155,12 +155,12 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return new Quat (v, new Vec3 ( ));
   }
 
-  public static implicit operator Quat (Vec3 v)
+  public static implicit operator Quat (in Vec3 v)
   {
-    return new Quat (0.0f, v);
+    return new Quat (0.0f, v.x, v.y, v.z);
   }
 
-  public static implicit operator Quat (Vec4 v)
+  public static implicit operator Quat (in Vec4 v)
   {
     return new Quat (v.w, v.x, v.y, v.z);
   }
@@ -319,25 +319,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return q.real != 0.0f || Vec3.Any (q.imag);
   }
 
-  public static Vec3 ApplyTo (in Quat q, in Vec3 source)
-  {
-    float w = q.real;
-    Vec3 i = q.imag;
-    float qx = i.x;
-    float qy = i.y;
-    float qz = i.z;
-
-    float iw = -qx * source.x - qy * source.y - qz * source.z;
-    float ix = w * source.x + qy * source.z - qz * source.y;
-    float iy = w * source.y + qz * source.x - qx * source.z;
-    float iz = w * source.z + qx * source.y - qy * source.x;
-
-    return new Vec3 (
-      ix * w + iz * qy - iw * qx - iy * qz,
-      iy * w + ix * qz - iw * qy - iz * qx,
-      iz * w + iy * qx - iw * qz - ix * qy);
-  }
-
   public static bool Approx (in Quat a, in Quat b)
   {
     return Utils.Approx (a.real, b.real) &&
@@ -393,6 +374,25 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   public static float MagSq (in Quat q)
   {
     return q.real * q.real + Vec3.MagSq (q.imag);
+  }
+
+  public static Vec3 MulVector (in Quat q, in Vec3 source)
+  {
+    float w = q.real;
+    Vec3 i = q.imag;
+    float qx = i.x;
+    float qy = i.y;
+    float qz = i.z;
+
+    float iw = -qx * source.x - qy * source.y - qz * source.z;
+    float ix = w * source.x + qy * source.z - qz * source.y;
+    float iy = w * source.y + qz * source.x - qx * source.z;
+    float iz = w * source.z + qx * source.y - qy * source.x;
+
+    return new Vec3 (
+      ix * w + iz * qy - iw * qx - iy * qz,
+      iy * w + ix * qz - iw * qy - iz * qx,
+      iz * w + iy * qx - iw * qz - ix * qy);
   }
 
   public static bool None (in Quat q)

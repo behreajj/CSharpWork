@@ -25,7 +25,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Returns the number of values (dimensions) in this vector.
     /// </summary>
-    /// <value></value>
+    /// <value>the length</value>
     public int Length { get { return 2; } }
 
     /// <summary>
@@ -378,20 +378,20 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the result</returns>
-    public static Vec2 operator ++ (in Vec2 v)
-    {
-        return new Vec2 (v._x + 1.0f, v._y + 1.0f);
-    }
+    // public static Vec2 operator ++ (in Vec2 v)
+    // {
+    //     return new Vec2 (v._x + 1.0f, v._y + 1.0f);
+    // }
 
     /// <summary>
     /// Decrements the vector by 1.0 , component-wise.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the result</returns>
-    public static Vec2 operator -- (in Vec2 v)
-    {
-        return new Vec2 (v._x - 1.0f, v._y - 1.0f);
-    }
+    // public static Vec2 operator -- (in Vec2 v)
+    // {
+    //     return new Vec2 (v._x - 1.0f, v._y - 1.0f);
+    // }
 
     /// <summary>
     /// Multiplies two vectors, component-wise. Such
@@ -1542,6 +1542,19 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
+    /// Finds the sign of the vector: -1, if negative; 1, if
+    /// positive.
+    /// </summary>
+    /// <param name="v">the input vector</param>
+    /// <returns>the sign</returns>
+    public static Vec2 Sign (in Vec2 v)
+    {
+        return new Vec2 (
+            Utils.Sign (v._x),
+            Utils.Sign (v._y));
+    }
+
+    /// <summary>
     /// Generates a clamped Hermite step for an input factor; to
     /// be used in conjunction with a mixing function.
     /// </summary>
@@ -1553,19 +1566,6 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     {
         Vec2 t = Vec2.Clamp ((x - edge0) / (edge1 - edge0));
         return t * t * (new Vec2 (3.0f, 3.0f) - (t + t));
-    }
-
-    /// <summary>
-    /// Finds the sign of the vector: -1, if negative; 1, if
-    /// positive.
-    /// </summary>
-    /// <param name="v">the input vector</param>
-    /// <returns>the sign</returns>
-    public static Vec2 Sign (in Vec2 v)
-    {
-        return new Vec2 (
-            Utils.Sign (v._x),
-            Utils.Sign (v._y));
     }
 
     /// <summary>

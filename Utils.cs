@@ -227,6 +227,18 @@ public static class Utils
         return Utils.Max (Utils.Max (a, b), c);
     }
 
+    public static float Max (params float[ ] values)
+    {
+        int len = values.Length;
+        float result = float.MinValue;
+        for (int i = 0; i < len; ++i)
+        {
+            float v = values[i];
+            result = (v >= result) ? v : result;
+        }
+        return result;
+    }
+
     public static float Mix (float a, float b, float t = 0.5f)
     {
         return (1.0f - t) * a + t * b;
@@ -240,6 +252,18 @@ public static class Utils
     public static float Min (float a, float b, float c)
     {
         return Utils.Min (Utils.Min (a, b), c);
+    }
+
+    public static float Min (params float[ ] values)
+    {
+        int len = values.Length;
+        float result = float.MaxValue;
+        for (int i = 0; i < len; ++i)
+        {
+            float v = values[i];
+            result = (v <= result) ? v : result;
+        }
+        return result;
     }
 
     public static int Mod (int a, int b)

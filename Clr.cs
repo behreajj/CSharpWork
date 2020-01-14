@@ -248,23 +248,23 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             Utils.Clamp (c._a, 0.0f, 1.0f));
     }
 
-    public static Clr operator ++ (in Clr c)
-    {
-        return new Clr (
-            Utils.Clamp (c._r + Utils.One255, 0.0f, 1.0f),
-            Utils.Clamp (c._g + Utils.One255, 0.0f, 1.0f),
-            Utils.Clamp (c._b + Utils.One255, 0.0f, 1.0f),
-            Utils.Clamp (c._a, 0.0f, 1.0f));
-    }
+    // public static Clr operator ++ (in Clr c)
+    // {
+    //     return new Clr (
+    //         Utils.Clamp (c._r + Utils.One255, 0.0f, 1.0f),
+    //         Utils.Clamp (c._g + Utils.One255, 0.0f, 1.0f),
+    //         Utils.Clamp (c._b + Utils.One255, 0.0f, 1.0f),
+    //         Utils.Clamp (c._a, 0.0f, 1.0f));
+    // }
 
-    public static Clr operator -- (in Clr c)
-    {
-        return new Clr (
-            Utils.Clamp (c._r - Utils.One255, 0.0f, 1.0f),
-            Utils.Clamp (c._g - Utils.One255, 0.0f, 1.0f),
-            Utils.Clamp (c._b - Utils.One255, 0.0f, 1.0f),
-            Utils.Clamp (c._a, 0.0f, 1.0f));
-    }
+    // public static Clr operator -- (in Clr c)
+    // {
+    //     return new Clr (
+    //         Utils.Clamp (c._r - Utils.One255, 0.0f, 1.0f),
+    //         Utils.Clamp (c._g - Utils.One255, 0.0f, 1.0f),
+    //         Utils.Clamp (c._b - Utils.One255, 0.0f, 1.0f),
+    //         Utils.Clamp (c._a, 0.0f, 1.0f));
+    // }
 
     public static Clr operator * (in Clr a, in Clr b)
     {
@@ -313,10 +313,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
 
     public static bool All (in Clr c)
     {
-        return c._a > 0.0f &&
-            c._r > 0.0f &&
-            c._g > 0.0f &&
-            c._b > 0.0f;
+        return (c._a > 0.0f) &&
+            (c._r > 0.0f) &&
+            (c._g > 0.0f) &&
+            (c._b > 0.0f);
     }
 
     public static bool Any (in Clr c)
