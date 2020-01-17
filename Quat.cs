@@ -405,7 +405,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return q / Quat.Mag (q);
   }
 
-  public static Quat Random (Random rng)
+  public static Quat Random (System.Random rng)
   {
     float t0 = Utils.Tau * (float) rng.NextDouble ( );
     float t1 = Utils.Tau * (float) rng.NextDouble ( );

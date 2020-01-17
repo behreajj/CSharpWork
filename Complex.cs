@@ -154,12 +154,12 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
 
     public static bool operator true (in Complex z)
     {
-        return Complex.Any(z);
+        return Complex.Any (z);
     }
 
     public static bool operator false (in Complex z)
     {
-        return Complex.None(z);
+        return Complex.None (z);
     }
 
     public static Complex operator * (in Complex a, in Complex b)
@@ -314,6 +314,16 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     public static (float r, float phi) Polar (Complex z)
     {
         return (r: Complex.Phase (z), phi: Complex.Abs (z));
+    }
+
+    public static Complex Random (in System.Random rng, float rhoMin = 1.0f, float rhoMax = 1.0f)
+    {
+        return Complex.Rect (
+            Utils.Mix (rhoMin, rhoMax,
+                (float) rng.NextDouble ( )),
+
+            Utils.Mix (-Utils.Pi, Utils.Pi,
+                (float) rng.NextDouble ( )));
     }
 
     public static Complex Rect (float r = 1.0f, float phi = 0.0f)

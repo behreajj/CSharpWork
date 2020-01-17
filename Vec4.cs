@@ -1363,7 +1363,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the random vector</returns>
-    public static Vec4 RandomCartesian (in Random rng, in Vec4 lb, in Vec4 ub)
+    public static Vec4 RandomCartesian (in System.Random rng, in Vec4 lb, in Vec4 ub)
     {
         float xFac = (float) rng.NextDouble ( );
         float yFac = (float) rng.NextDouble ( );
@@ -1385,7 +1385,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the random vector</returns>
-    public static Vec4 RandomCartesian (in Random rng, float lb = 0.0f, float ub = 1.0f)
+    public static Vec4 RandomCartesian (in System.Random rng, float lb = 0.0f, float ub = 1.0f)
     {
         float xFac = (float) rng.NextDouble ( );
         float yFac = (float) rng.NextDouble ( );

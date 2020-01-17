@@ -1595,7 +1595,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the random vector</returns>
-    public static Vec3 RandomCartesian (in Random rng, in Vec3 lb, in Vec3 ub)
+    public static Vec3 RandomCartesian (in System.Random rng, in Vec3 lb, in Vec3 ub)
     {
         float xFac = (float) rng.NextDouble ( );
         float yFac = (float) rng.NextDouble ( );
@@ -1615,7 +1615,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the random vector</returns>
-    public static Vec3 RandomCartesian (in Random rng, float lb = 0.0f, float ub = 1.0f)
+    public static Vec3 RandomCartesian (in System.Random rng, float lb = 0.0f, float ub = 1.0f)
     {
         float xFac = (float) rng.NextDouble ( );
         float yFac = (float) rng.NextDouble ( );
@@ -1634,7 +1634,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="rhoMin">the minimum radius</param>
     /// <param name="rhoMax">the maximum radius</param>
     /// <returns>the output vector</returns>
-    public static Vec3 RandomPolar (in Random rng, float rhoMin = 1.0f, float rhoMax = 1.0f)
+    public static Vec3 RandomPolar (in System.Random rng, float rhoMin = 1.0f, float rhoMax = 1.0f)
     {
         return Vec3.FromPolar (
             Utils.Mix (-Utils.Pi, Utils.Pi,
@@ -1652,7 +1652,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="rhoMin">the minimum radius</param>
     /// <param name="rhoMax">the maximum radius</param>
     /// <returns>the output vector</returns>
-    public static Vec3 RandomSpherical (in Random rng, float rhoMin = 1.0f, float rhoMax = 1.0f)
+    public static Vec3 RandomSpherical (in System.Random rng, float rhoMin = 1.0f, float rhoMax = 1.0f)
     {
         return Vec3.FromSpherical (
             Utils.Mix (-Utils.Pi, Utils.Pi,

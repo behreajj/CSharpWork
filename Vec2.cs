@@ -10,6 +10,8 @@ using System.Text;
 [Serializable]
 public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
 {
+    // public delegate Vec2 Random(in System.Random rng);
+
     /// <summary>
     /// Component on the x axis in the Cartesian coordinate
     /// system.
@@ -1396,7 +1398,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the random vector</returns>
-    public static Vec2 RandomCartesian (in Random rng, in Vec2 lb, in Vec2 ub)
+    public static Vec2 RandomCartesian (in System.Random rng, in Vec2 lb, in Vec2 ub)
     {
         float xFac = (float) rng.NextDouble ( );
         float yFac = (float) rng.NextDouble ( );
@@ -1414,7 +1416,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the random vector</returns>
-    public static Vec2 RandomCartesian (in Random rng, float lb = 0.0f, float ub = 1.0f)
+    public static Vec2 RandomCartesian (in System.Random rng, float lb = 0.0f, float ub = 1.0f)
     {
         float xFac = (float) rng.NextDouble ( );
         float yFac = (float) rng.NextDouble ( );
@@ -1431,7 +1433,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="rhoMin">the minimum radius</param>
     /// <param name="rhoMax">the maximum radius</param>
     /// <returns>the output vector</returns>
-    public static Vec2 RandomPolar (in Random rng, float rhoMin = 1.0f, float rhoMax = 1.0f)
+    public static Vec2 RandomPolar (in System.Random rng, float rhoMin = 1.0f, float rhoMax = 1.0f)
     {
         return Vec2.FromPolar (
             Utils.Mix (-Utils.Pi, Utils.Pi,
