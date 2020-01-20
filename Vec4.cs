@@ -3,7 +3,7 @@ using System.Collections;
 using System.Text;
 
 /// <summary>
-/// A mutable, extensible struct influenced by GLSL and OSL.
+/// A readonly struct influenced by GLSL and OSL.
 /// </summary>
 [Serializable]
 public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
@@ -1353,6 +1353,24 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static Vec4 ProjectVector (in Vec4 a, in Vec4 b)
     {
         return b * Vec4.ProjectScalar (a, b);
+    }
+
+    /// <summary>
+    /// Reduces the signal, or granularity, of a vector's components. Any level
+    /// less than 2 returns the target set to the input.
+    /// </summary>
+    /// <param name="v">input vector</param>
+    /// <param name="levels">levels</param>
+    /// <returns>the quantized vector</returns>
+    public static Vec4 Quantize (in Vec4 v, int levels = 8)
+    {
+        if (levels < 2) return new Vec4 (v._x, v._y, v._z, v._w);
+        float delta = 1.0f / levels;
+        return new Vec4 (
+            delta * Utils.Floor (0.5f + v._y * levels),
+            delta * Utils.Floor (0.5f + v._y * levels),
+            delta * Utils.Floor (0.5f + v._z * levels),
+            delta * Utils.Floor (0.5f + v._w * levels));
     }
 
     /// <summary>

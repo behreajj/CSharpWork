@@ -196,7 +196,7 @@ public static class Utils
 
     public static float LinearStep (float edge0 = 0.0f, float edge1 = 1.0f, float x = 0.5f)
     {
-        return Utils.Clamp (Utils.Div (x - edge0, edge1 - edge0));
+        return Utils.Clamp (Utils.Div (x - edge0, edge1 - edge0), 0.0f, 1.0f);
     }
 
     public static float Log (float v)
@@ -310,6 +310,12 @@ public static class Utils
     public static float Pow (float a, float b)
     {
         return (float) Math.Pow (a, b);
+    }
+
+    public static float Quantize (float v, int levels = 8)
+    {
+        if (levels < 2) return v;
+        return Utils.Floor (0.5f + v * levels) / levels;
     }
 
     public static int Round (float v)

@@ -2,14 +2,38 @@ using System;
 using System.Collections;
 using System.Text;
 
+/// <summary>
+/// A readonly struct. Supports RGBA and HSBA color
+/// spaces. Supports conversion to and from integers where
+/// color channels are in the format 0xAARRGGBB.
+/// </summary>
 [Serializable]
 public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
 {
+    /// <summary>
+    /// The red color channel.
+    /// </summary>
     private readonly float _r;
+
+    /// <summary>
+    /// The green color channel.
+    /// </summary>
     private readonly float _g;
+
+    /// <summary>
+    /// The blue color channel.
+    /// </summary>
     private readonly float _b;
+
+    /// <summary>
+    /// The alpha (transparency) channel.
+    /// </summary>
     private readonly float _a;
 
+    /// <summary>
+    /// Returns the number of elements in this color.
+    /// </summary>
+    /// <value>the length</value>
     public int Length { get { return 4; } }
     public float r { get { return this._r; } }
     public float g { get { return this._g; } }
@@ -239,6 +263,13 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         return Clr.FromHex (Clr.ToHexInt (a) >> b);
     }
 
+    /// <summary>
+    /// Inverts the color's red, green and blue channels by subtracting
+    /// them from 1.0 . Clamps the alpha channel to [0.0, 1.0]. Similar
+    /// to to using the '~' operator except for the alpha channel.
+    /// </summary>
+    /// <param name="c">the color</param>
+    /// <returns>the inversion</returns>
     public static Clr operator - (in Clr c)
     {
         return new Clr (
@@ -248,24 +279,16 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             Utils.Clamp (c._a, 0.0f, 1.0f));
     }
 
-    // public static Clr operator ++ (in Clr c)
-    // {
-    //     return new Clr (
-    //         Utils.Clamp (c._r + Utils.One255, 0.0f, 1.0f),
-    //         Utils.Clamp (c._g + Utils.One255, 0.0f, 1.0f),
-    //         Utils.Clamp (c._b + Utils.One255, 0.0f, 1.0f),
-    //         Utils.Clamp (c._a, 0.0f, 1.0f));
-    // }
-
-    // public static Clr operator -- (in Clr c)
-    // {
-    //     return new Clr (
-    //         Utils.Clamp (c._r - Utils.One255, 0.0f, 1.0f),
-    //         Utils.Clamp (c._g - Utils.One255, 0.0f, 1.0f),
-    //         Utils.Clamp (c._b - Utils.One255, 0.0f, 1.0f),
-    //         Utils.Clamp (c._a, 0.0f, 1.0f));
-    // }
-
+    /// <summary>
+    /// Multiplies the left and right operand, except for the alpha
+    /// channel, then clamps the product to [0.0, 1.0] .
+    /// The left operand's alpha channel is retained.
+    /// 
+    /// For that reason, color multiplication is _not_ commutative.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the product</returns>
     public static Clr operator * (in Clr a, in Clr b)
     {
         return new Clr (
@@ -275,6 +298,14 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
+    /// <summary>
+    /// Divides the left operand by the right, except for the alpha
+    /// channel, then clamps the product to [0.0, 1.0] .
+    /// The left operand's alpha channel is retained.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the quotient</returns>
     public static Clr operator / (in Clr a, in Clr b)
     {
         return new Clr (
@@ -284,6 +315,14 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
+    /// <summary>
+    /// Applies floor modulo to the left operand with the
+    /// components of the right, except for the alpha channel.
+    /// The left operand's alpha channel is clamped to [0.0, 1.0].
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the color</returns>
     public static Clr operator % (in Clr a, in Clr b)
     {
         return new Clr (
@@ -293,6 +332,16 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
+    /// <summary>
+    /// Adds the left and right operand, except for the alpha
+    /// channel, then clamps the sum to [0.0, 1.0] .
+    /// The left operand's alpha channel is retained.
+    /// 
+    /// For that reason, color addition is _not_ commutative.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the sum</returns>
     public static Clr operator + (in Clr a, in Clr b)
     {
         return new Clr (
@@ -302,6 +351,14 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
+    /// <summary>
+    /// Subtracts the right operand from the left operand, except
+    /// for the alpha channel, then clamps the difference
+    /// to [0.0, 1.0] . The left operand's alpha channel is retained.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the difference</returns>
     public static Clr operator - (in Clr a, in Clr b)
     {
         return new Clr (
@@ -311,6 +368,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
+    /// <summary>
+    /// Tests to see if all color channels are greater than zero.
+    /// </summary>
+    /// <param name="c">the color</param>
+    /// <returns>the evaluation</returns>
     public static bool All (in Clr c)
     {
         return (c._a > 0.0f) &&
@@ -319,6 +381,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             (c._b > 0.0f);
     }
 
+    /// <summary>
+    /// Tests to see if the alpha channel of the color is 
+    /// greater than zero, i.e., if it has some opacity.
+    /// </summary>
+    /// <param name="c">the color</param>
+    /// <returns>the evaluation</returns>
     public static bool Any (in Clr c)
     {
         return c._a > 0.0f;
@@ -444,6 +512,13 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         return Clr.HsbaToRgba (Vec4.Mix (Clr.RgbaToHsba (a), Clr.RgbaToHsba (b), t));
     }
 
+    /// <summary>
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// </summary>
+    /// <param name="a">the origin color</param>
+    /// <param name="b">the destination color</param>
+    /// <param name="t">the step</param>
+    /// <returns>the mixed color</returns>
     public static Clr MixRgba (in Clr a, in Clr b, float t = 0.5f)
     {
         float u = 1.0f - t;
@@ -472,11 +547,87 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             (1.0f - t.w) * a._a + t.w * b._a);
     }
 
+    /// <summary>
+    /// Tests to see if the alpha channel of this color is less
+    /// than or equal to zero, i.e., if it is completely
+    /// transparent.
+    /// </summary>
+    /// <param name="c">the color</param>
+    /// <returns>the evaluation</returns>
     public static bool None (in Clr c)
     {
         return c._a <= 0.0f;
     }
 
+    /// <summary>
+    /// Raises each component of the color, except for the
+    /// alpha channel, to a power. Useful for gamma adjustment.
+    /// </summary>
+    /// <param name="a">the color</param>
+    /// <param name="b">the power</param>
+    /// <returns>the adjusted color</returns>
+    public static Clr Pow (in Clr a, float b = 0.4545f)
+    {
+        return new Clr (
+            Utils.Pow (a._r, b),
+            Utils.Pow (a._g, b),
+            Utils.Pow (a._b, b),
+            a._a);
+    }
+
+    /// <summary>
+    /// Multiplies the red, green and blue color channels of a
+    /// color by the alpha channel.
+    /// </summary>
+    /// <param name="c">the color</param>
+    /// <returns>the premultiplied color</returns>
+    public static Clr PreMul (in Clr c)
+    {
+        if (c._a <= 0.0f)
+        {
+            return Clr.ClearBlack;
+        }
+        else if (c._a >= 1.0f)
+        {
+            return new Clr (c._r, c._g, c._b, 1.0f);
+        }
+
+        return new Clr (
+            c._r * c._a,
+            c._g * c._a,
+            c._b * c._a,
+            c._a);
+    }
+
+    /// <summary>
+    /// Reduces the signal, or granularity, of a color's
+    /// channels. Any level less than 2 or greater than 255
+    /// returns sets the target to the input.
+    /// </summary>
+    /// <param name="c">the color</param>
+    /// <param name="levels">the levels</param>
+    /// <returns>the posterized color</returns>
+    public static Clr Quantize (in Clr c, int levels = 127)
+    {
+        if (levels < 2 || levels > 255)
+        {
+            return new Clr (c._r, c._g, c._b, c._a);
+        }
+        float delta = 1.0f / levels;
+        return new Clr (
+            delta * Utils.Floor (0.5f + c._r * levels),
+            delta * Utils.Floor (0.5f + c._g * levels),
+            delta * Utils.Floor (0.5f + c._b * levels),
+            delta * Utils.Floor (0.5f + c._a * levels));
+    }
+
+    /// <summary>
+    /// Creates a random color from red, green, blue and alpha channels.
+    /// </summary>
+    /// <param name="rng">the random number generator</param>
+    /// <param name="lb">the lower bound</param>
+    /// <param name="ub">the upper bound</param>
+    /// <returns>the color</returns>
     public static Clr RandomRgba (in Random rng, float lb = 0.0f, float ub = 1.0f)
     {
         float xFac = (float) rng.NextDouble ( );
@@ -491,6 +642,13 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             Utils.Mix (lb, ub, wFac));
     }
 
+    /// <summary>
+    /// Creates a random color from a lower- and upper-bound.
+    /// </summary>
+    /// <param name="rng">the random number generator</param>
+    /// <param name="lb">the lower bound</param>
+    /// <param name="ub">the upper bound</param>
+    /// <returns>the color</returns>
     public static Clr RandomRgba (in Random rng, in Clr lb, in Clr ub)
     {
         float xFac = (float) rng.NextDouble ( );
@@ -505,11 +663,26 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             Utils.Mix (lb._a, ub._a, wFac));
     }
 
+    /// <summary>
+    /// Converts a color to a vector which holds hue,
+    /// saturation, brightness and alpha.
+    /// </summary>
+    /// <param name="c">the color</param>
+    /// <returns>the output vector</returns>
     public static Vec4 RgbaToHsba (in Clr c)
     {
         return RgbaToHsba (c._r, c._g, c._b, c._a);
     }
 
+    /// <summary>
+    /// Converts RGBA channels to a vector which holds hue,
+    /// saturation, brightness and alpha.
+    /// </summary>
+    /// <param name="red">the red channel</param>
+    /// <param name="green">the green channel</param>
+    /// <param name="blue">the blue channel</param>
+    /// <param name="alpha">the alpha channel</param>
+    /// <returns>the output vector</returns>
     public static Vec4 RgbaToHsba (
         float red = 1.0f,
         float green = 1.0f,
@@ -538,6 +711,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         return new Vec4 (hue, sat, bri, alpha);
     }
 
+    /// <summary>
+    /// Converts a color to an integer where hexadecimal
+    /// represents the ARGB color channels: 0xAARRGGB .
+    /// </summary>
+    /// <param name="c">the input color</param>
+    /// <returns>the color in hexadecimal</returns>
     public static int ToHexInt (in Clr c)
     {
         return (int) (c._a * 0xff + 0.5f) << 0x18 |
@@ -546,6 +725,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             (int) (c._b * 0xff + 0.5f);
     }
 
+    /// <summary>
+    /// Returns the color black, (0.0, 0.0, 0.0, 1.0) .
+    /// </summary>
+    /// <value>black</value>
     public static Clr Black
     {
         get
@@ -554,6 +737,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Returns the color blue, (0.0, 0.0, 1.0, 1.0) .
+    /// </summary>
+    /// <value>blue</value>
     public static Clr Blue
     {
         get
@@ -562,6 +749,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Returns the color clear black, (0.0, 0.0, 0.0, 0.0) .
+    /// </summary>
+    /// <value>clear black</value>
     public static Clr ClearBlack
     {
         get
@@ -570,6 +761,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Returns the color clear white, (1.0, 1.0, 1.0, 0.0) .
+    /// </summary>
+    /// <value>clear white</value>
     public static Clr ClearWhite
     {
         get
@@ -578,6 +773,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Returns the color cyan, (0.0, 1.0, 1.0, 1.0) .
+    /// </summary>
+    /// <value>cyan</value>
     public static Clr Cyan
     {
         get
@@ -586,6 +785,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Returns the color green, (0.0, 1.0, 0.0, 1.0) .
+    /// </summary>
+    /// <value>green</value>
     public static Clr Green
     {
         get
@@ -594,6 +797,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Returns the default color of a light in Unity, (1.0, 0.957, 0.840, 1.0)
+    /// or #FFF4D6 .
+    /// </summary>
+    /// <value></value>
     public static Clr Light
     {
         get
@@ -602,6 +810,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Returns the color magenta, (1.0, 0.0, 1.0, 1.0) .
+    /// </summary>
+    /// <value>magenta</value>
     public static Clr Magenta
     {
         get
@@ -610,6 +822,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Returns the color red, (1.0, 0.0, 0.0, 1.0) .
+    /// </summary>
+    /// <value>red</value>
     public static Clr Red
     {
         get
@@ -618,6 +834,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Returns the color yellow, (1.0, 1.0, 0.0, 1.0) .
+    /// </summary>
+    /// <value>yellow</value>
     public static Clr Yellow
     {
         get
@@ -626,6 +846,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Returns the color white, (1.0, 1.0, 1.0, 1.0) .
+    /// </summary>
+    /// <value>white</value>
     public static Clr White
     {
         get

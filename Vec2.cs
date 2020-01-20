@@ -3,7 +3,7 @@ using System.Collections;
 using System.Text;
 
 /// <summary>
-/// A mutable, extensible struct influenced by GLSL, OSL and
+/// A readonly struct influenced by GLSL, OSL and
 /// Processing's PVector. This is intended for storing points
 /// and directions in two-dimensional graphics programs.
 /// </summary>
@@ -1388,6 +1388,22 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     public static Vec2 ProjectVector (in Vec2 a, in Vec2 b)
     {
         return b * Vec2.ProjectScalar (a, b);
+    }
+
+    /// <summary>
+    /// Reduces the signal, or granularity, of a vector's components. Any level
+    /// less than 2 returns the target set to the input.
+    /// </summary>
+    /// <param name="a">input vector</param>
+    /// <param name="levels">the levels</param>
+    /// <returns>the quantized vector</returns>
+    public static Vec2 Quantize (in Vec2 a, int levels = 8)
+    {
+        if (levels < 2) return new Vec2 (a._x, a._y);
+        float delta = 1.0f / levels;
+        return new Vec2 (
+            delta * Utils.Floor (0.5f + a._y * levels),
+            delta * Utils.Floor (0.5f + a._y * levels));
     }
 
     /// <summary>

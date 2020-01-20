@@ -2,18 +2,66 @@ using System;
 using System.Collections;
 using System.Text;
 
+/// <summary>
+/// A four-dimensional complex number. The x, y and z components are coefficients
+/// of the imaginary i, j, and k. Discovered by William R. Hamilton with the
+/// formula i i = j j = k k = i j k = -1.0 . Quaternions with a magnitude of 1.0
+/// are commonly used to rotate 3D objects from one orientation to another
+/// without suffering gimbal lock.
+/// </summary>
 [Serializable]
 public readonly struct Quat : IEquatable<Quat>, IEnumerable
 {
+  /// <summary>
+  /// The real component.
+  /// </summary>
   private readonly float real;
+
+  /// <summary>
+  /// The coefficients of the imaginary components i, j and k.
+  /// </summary>
   private readonly Vec3 imag;
 
+  /// <summary>
+  /// Returns the number of elements in this quaternion.
+  /// </summary>
+  /// <value>the length</value>
   public int Length { get { return 4; } }
+
+  /// <summary>
+  /// The real component.
+  /// </summary>
+  /// <value>the real scalar</value>
   public float Real { get { return this.real; } }
+
+  /// <summary>
+  /// The coefficients of the imaginary components i, j and k.
+  /// </summary>
+  /// <value>the imaginary vector</value>
   public Vec3 Imag { get { return this.imag; } }
+
+  /// <summary>
+  /// The real component.
+  /// </summary>
+  /// <value>w</value>
   public float w { get { return this.real; } }
+
+  /// <summary>
+  /// The coefficient of the imaginary i.
+  /// </summary>
+  /// <value>x</value>
   public float x { get { return this.imag.x; } }
+
+  /// <summary>
+  /// The coefficient of the imaginary j.
+  /// </summary>
+  /// <value>y</value>
   public float y { get { return this.imag.y; } }
+
+  /// <summary>
+  /// The coefficient of the imaginary k.
+  /// </summary>
+  /// <value>z</value>
   public float z { get { return this.imag.z; } }
 
   public float this [int i]
@@ -194,6 +242,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return Quat.None (q);
   }
 
+  public static Quat operator - (in Quat z)
+  {
+    return new Quat (-z.real, -z.imag);
+  }
+
   public static Quat operator * (in Quat a, in Quat b)
   {
     return new Quat (
@@ -207,26 +260,22 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public static Quat operator * (in Quat a, float b)
   {
-    // if (b == 0.0f) return Quat.Identity;
     return new Quat (a.real * b, a.imag * b);
   }
 
   public static Quat operator * (float a, in Quat b)
   {
-    // if (a == 0.0f) return Quat.Identity;
     return new Quat (a * b.real, a * b.imag);
   }
 
   public static Quat operator * (in Quat a, in Vec3 b)
   {
-    // if (Vec3.None (b)) return Quat.Identity;
     return new Quat (-Vec3.Dot (a.imag, b),
       Vec3.Cross (a.imag, b) + (a.real * b));
   }
 
   public static Quat operator * (in Vec3 a, in Quat b)
   {
-    // if (Vec3.None (a)) return Quat.Identity;
     return new Quat (-Vec3.Dot (a, b.imag),
       Vec3.Cross (a, b.imag) + (b.real * a));
   }
@@ -238,7 +287,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public static Quat operator / (in Quat a, float b)
   {
-    // if (b == 0.0f) return Quat.Identity;
     if (b == 0.0f) return new Quat (0.0f, 0.0f, 0.0f, 0.0f);
     float bInv = 1.0f / b;
     return new Quat (a.real * bInv, a.imag * bInv);
@@ -467,13 +515,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       cosah * i.x + sinah * i.y,
       cosah * i.y - sinah * i.x,
       cosah * i.z + sinah * q.real);
-  }
-
-  public static Quat Round (in Quat q, int places)
-  {
-    return new Quat (
-      Utils.Round (q.real, places),
-      Vec3.Round (q.imag, places));
   }
 
   public static Quat Identity

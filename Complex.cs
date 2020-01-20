@@ -162,6 +162,11 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         return Complex.None (z);
     }
 
+    public static Complex operator - (in Complex z)
+    {
+        return new Complex (-z.real, -z.imag);
+    }
+
     public static Complex operator * (in Complex a, in Complex b)
     {
         return new Complex (
@@ -330,14 +335,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     {
         return new Complex (r * Utils.Cos (phi), r * Utils.Sin (phi));
     }
-
-    public static Complex Round (in Complex z, int places)
-    {
-        return new Complex (
-            Utils.Round (z.real, places),
-            Utils.Round (z.imag, places));
-    }
-
+    
     public static Complex Sin (in Complex z)
     {
         return new Complex (
