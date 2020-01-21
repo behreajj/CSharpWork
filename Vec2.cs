@@ -1402,7 +1402,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         if (levels < 2) return new Vec2 (a._x, a._y);
         float delta = 1.0f / levels;
         return new Vec2 (
-            delta * Utils.Floor (0.5f + a._y * levels),
+            delta * Utils.Floor (0.5f + a._x * levels),
             delta * Utils.Floor (0.5f + a._y * levels));
     }
 

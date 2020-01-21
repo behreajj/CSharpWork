@@ -248,20 +248,20 @@ public static class Simplex
         int sc2 = Simplex.Permute[index, 2];
         int sc3 = Simplex.Permute[index, 3];
 
-        int i1 = sc0 >= 3 ? 1 : 0;
-        int j1 = sc1 >= 3 ? 1 : 0;
-        int k1 = sc2 >= 3 ? 1 : 0;
-        int l1 = sc3 >= 3 ? 1 : 0;
-
-        int i2 = sc0 >= 2 ? 1 : 0;
-        int j2 = sc1 >= 2 ? 1 : 0;
-        int k2 = sc2 >= 2 ? 1 : 0;
-        int l2 = sc3 >= 2 ? 1 : 0;
-
-        int i3 = sc0 >= 1 ? 1 : 0;
-        int j3 = sc1 >= 1 ? 1 : 0;
-        int k3 = sc2 >= 1 ? 1 : 0;
-        int l3 = sc3 >= 1 ? 1 : 0;
+        int i1 = sc0 > 2 ? 1 : 0; /* int i1 = sc0 >= 3 ? 1 : 0; */
+        int j1 = sc1 > 2 ? 1 : 0; /* int j1 = sc1 >= 3 ? 1 : 0; */
+        int k1 = sc2 > 2 ? 1 : 0; /* int k1 = sc2 >= 3 ? 1 : 0; */
+        int l1 = sc3 > 2 ? 1 : 0; /* int l1 = sc3 >= 3 ? 1 : 0; */
+        
+        int i2 = sc0 > 1 ? 1 : 0; /* int i2 = sc0 >= 2 ? 1 : 0; */
+        int j2 = sc1 > 1 ? 1 : 0; /* int j2 = sc1 >= 2 ? 1 : 0; */
+        int k2 = sc2 > 1 ? 1 : 0; /* int k2 = sc2 >= 2 ? 1 : 0; */
+        int l2 = sc3 > 1 ? 1 : 0; /* int l2 = sc3 >= 2 ? 1 : 0; */
+        
+        int i3 = sc0 > 0 ? 1 : 0; /* int i3 = sc0 >= 1 ? 1 : 0; */
+        int j3 = sc1 > 0 ? 1 : 0; /* int j3 = sc1 >= 1 ? 1 : 0; */
+        int k3 = sc2 > 0 ? 1 : 0; /* int k3 = sc2 >= 1 ? 1 : 0; */
+        int l3 = sc3 > 0 ? 1 : 0; /* int l3 = sc3 >= 1 ? 1 : 0; */
 
         float x1 = x0 - i1 + Simplex.G4;
         float y1 = y0 - j1 + Simplex.G4;

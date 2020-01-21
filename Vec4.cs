@@ -1367,7 +1367,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         if (levels < 2) return new Vec4 (v._x, v._y, v._z, v._w);
         float delta = 1.0f / levels;
         return new Vec4 (
-            delta * Utils.Floor (0.5f + v._y * levels),
+            delta * Utils.Floor (0.5f + v._x * levels),
             delta * Utils.Floor (0.5f + v._y * levels),
             delta * Utils.Floor (0.5f + v._z * levels),
             delta * Utils.Floor (0.5f + v._w * levels));

@@ -19,25 +19,22 @@ public static class Utils
         return v < 0.0f ? -v : v;
     }
 
-    public static float Acos (float v)
+    public static float Acos (float value)
     {
-        if (v <= -1.0f) return Utils.Pi;
-        if (v >= 1.0f) return 0.0f;
+        if (value <= -1.0f) return Utils.Pi;
+        if (value >= 1.0f) return 0.0f;
 
-        bool ltzero = v < 0.0f;
-        float negate = ltzero ? 1.0f : 0.0f;
-        v = ltzero ? -v : v;
-
+        bool ltZero = value < 0.0f;
+        float x = ltZero ? -value : value;
         float ret = -0.0187293f;
-        ret = ret * v;
-        ret = ret + 0.0742610f;
-        ret = ret * v;
-        ret = ret - 0.2121144f;
-        ret = ret * v;
-        ret = ret + Utils.HalfPi;
-        ret = ret * Utils.Sqrt (1.0f - v);
-        ret = ret - negate * (ret + ret);
-        return negate * Utils.Pi + ret;
+        ret *= x;
+        ret += 0.074261f;
+        ret *= x;
+        ret -= 0.2121144f;
+        ret *= x;
+        ret += Utils.HalfPi;
+        ret *= (float) Math.Sqrt (1.0d - x);
+        return ltZero ? Utils.Pi - ret : ret;
     }
 
     public static int And (float a, float b)
@@ -52,47 +49,47 @@ public static class Utils
         return diff <= tolerance && diff >= -tolerance;
     }
 
-    public static float Asin (float v)
+    public static float Asin (float value)
     {
-        if (v <= -1.0f) return -Utils.HalfPi;
-        if (v >= 1.0f) return Utils.HalfPi;
+        if (value <= -1.0f) return -Utils.HalfPi;
+        if (value >= 1.0f) return Utils.HalfPi;
 
-        bool ltzero = v < 0.0f;
-        float negate = ltzero ? 1.0f : 0.0f;
-        v = ltzero ? -v : v;
-
+        bool ltZero = value < 0.0f;
+        float x = ltZero ? -value : value;
         float ret = -0.0187293f;
-        ret *= v;
-        ret += 0.0742610f;
-        ret *= v;
+        ret *= x;
+        ret += 0.074261f;
+        ret *= x;
         ret -= 0.2121144f;
-        ret *= v;
+        ret *= x;
         ret += Utils.HalfPi;
-        ret = Utils.Pi * 0.5f - Utils.Sqrt (1.0f - v) * ret;
-        return ret - negate * (ret + ret);
+        ret = Utils.HalfPi - ret * (float) Math.Sqrt (1.0d - x);
+        return ltZero ? -ret : ret;
     }
 
     public static float Atan2 (float y, float x)
     {
-        float yAbs = Utils.Abs (y);
-        float xAbs = Utils.Abs (x);
-        float t1 = yAbs;
-        float t2 = xAbs;
-        float t0 = Utils.Max (t1, t2);
-        t1 = Utils.Min (t1, t2);
-        t2 = 1.0f / t0;
-        t2 = t1 * t2;
+        bool yLtZero = y < 0.0f;
+        bool xLtZero = x < 0.0f;
+        float yAbs = yLtZero ? -y : y;
+        float xAbs = xLtZero ? -x : x;
+
+        bool yGtX = yAbs > xAbs;
+        float t0 = yGtX ? yAbs : xAbs;
+        if (t0 == 0.0f) return 0.0f;
+        float t2 = (yGtX ? xAbs : yAbs) / t0;
+
         float t3 = t2 * t2;
-        t0 = -0.013480470f;
+        t0 = -0.01348047f;
         t0 = t0 * t3 + 0.057477314f;
         t0 = t0 * t3 - 0.121239071f;
         t0 = t0 * t3 + 0.195635925f;
         t0 = t0 * t3 - 0.332994597f;
-        t0 = t0 * t3 + 0.999995630f;
+        t0 = t0 * t3 + 0.99999563f;
         t2 = t0 * t2;
-        t2 = yAbs > xAbs ? Utils.HalfPi - t2 : t2;
-        t2 = x < 0.0f ? Utils.Pi - t2 : t2;
-        return y < 0.0f ? -t2 : t2;
+        t2 = yGtX ? Utils.HalfPi - t2 : t2;
+        t2 = xLtZero ? Utils.Pi - t2 : t2;
+        return yLtZero ? -t2 : t2;
     }
 
     // public static int BisectLeft<T> (T[ ] a, T x, int lo, int hi) where T : IComparable<T>
@@ -352,7 +349,7 @@ public static class Utils
 
     public static float Sqrt (float v)
     {
-        return (float) Math.Sqrt (v);
+        return v <= 0.0f ? 0.0f : (float) Math.Sqrt (v);
     }
 
     public static float Step (float edge, float x)

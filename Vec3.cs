@@ -1599,7 +1599,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         if (levels < 2) return new Vec3 (v._x, v._y, v._z);
         float delta = 1.0f / levels;
         return new Vec3 (
-            delta * Utils.Floor (0.5f + v._y * levels),
+            delta * Utils.Floor (0.5f + v._x * levels),
             delta * Utils.Floor (0.5f + v._y * levels),
             delta * Utils.Floor (0.5f + v._z * levels));
     }
