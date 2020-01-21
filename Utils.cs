@@ -127,7 +127,8 @@ public static class Utils
 
     public static float Cos (float radians)
     {
-        return (float) Math.Cos (radians);
+        // return (float) Math.Cos (radians);
+        return SinCosEval(Utils.OneTau * radians);
     }
 
     public static float Cosh (float radians)
@@ -333,7 +334,57 @@ public static class Utils
 
     public static float Sin (float radians)
     {
-        return (float) Math.Sin (radians);
+        // return (float) Math.Sin (radians);
+        return SinCosEval(Utils.OneTau * radians - 0.25f);
+    }
+
+    public static (float sin, float cos) SinCos(float radians, out float sina, out float cosa)
+    {
+        float nrm = Utils.OneTau * radians;
+        sina = SinCosEval(nrm - 0.25f);
+        cosa = SinCosEval(nrm);
+        return (sin: sina, cos: cosa);
+    }
+
+    private static float SinCosEval (float normRad)
+    {
+        float r1x = normRad;
+        float r1y = r1x - (int) r1x;
+
+        int r2x = r1y < 0.25f ? 1 : 0;
+        int r2y = r1y < -9.0f ? 0 : 1;
+        int r2z = r1y < 0.75f ? 0 : 1;
+        r2y = r2y - r2z - r2x;
+
+        float r0x = -r1y;
+        float r0y = 0.5f - r1y;
+        float r0z = 1.0f - r1y;
+
+        r0x = r0x * r0x;
+        r0y = r0y * r0y;
+        r0z = r0z * r0z;
+
+        r1x = 24.980804f * r0x - 60.14581f;
+        r1y = 60.14581f - r0y * 24.980804f;
+        float r1z = 24.980804f * r0z - 60.14581f;
+
+        r1x = r1x * r0x + 85.45379f;
+        r1y = r1y * r0y - 85.45379f;
+        r1z = r1z * r0z + 85.45379f;
+
+        r1x = r1x * r0x - 64.939354f;
+        r1y = r1y * r0y + 64.939354f;
+        r1z = r1z * r0z - 64.939354f;
+
+        r1x = r1x * r0x + 19.739208f;
+        r1y = r1y * r0y - 19.739208f;
+        r1z = r1z * r0z + 19.739208f;
+
+        r1x = r1x * r0x - 1.0f;
+        r1y = r1y * r0y + 1.0f;
+        r1z = r1z * r0z - 1.0f;
+
+        return -r1x * r2x - r1y * r2y - r1z * r2z;
     }
 
     public static float Sinh (float radians)
