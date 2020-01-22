@@ -383,6 +383,14 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return a.real * b.real + Vec3.Dot (a.real, b.real);
   }
 
+  public static Quat FromAngle (float radians)
+  {
+    float halfAngle = radians * 0.5f;
+    return new Quat (
+      Utils.Cos (halfAngle), 0.0f,
+      0.0f, Utils.Sin (halfAngle));
+  }
+
   public static Quat FromAxisAngle (float radians, in Vec3 axis)
   {
     float amSq = Vec3.MagSq (axis);

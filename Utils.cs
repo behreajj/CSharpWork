@@ -39,7 +39,6 @@ public static class Utils
 
     public static int And (float a, float b)
     {
-        // return (a != 0.0f ? 1 : 0) * (b != 0.0f ? 1 : 0);
         return ((a != 0.0f) & (b != 0.0f)) ? 1 : 0;
     }
 
@@ -121,14 +120,12 @@ public static class Utils
 
     public static float CopySign (float mag, float sign)
     {
-        // return Utils.Abs (magnitude) * Utils.Sign (sign);
         return (mag < 0.0f ? -mag : mag) * ((sign < 0.0f) ? -1.0f : (sign > 0.0f) ? 1.0f : 0.0f);
     }
 
     public static float Cos (float radians)
     {
-        // return (float) Math.Cos (radians);
-        return SinCosEval(Utils.OneTau * radians);
+        return Utils.SinCosEval (Utils.OneTau * radians);
     }
 
     public static float Cosh (float radians)
@@ -298,10 +295,6 @@ public static class Utils
 
     public static int Or (float a, float b)
     {
-        // int aBool = a != 0.0f ? 1 : 0;
-        // int bBool = b != 0.0f ? 1 : 0;
-        // return aBool + bBool - aBool * bBool;
-
         return ((a != 0.0f) | (b != 0.0f)) ? 1 : 0;
     }
 
@@ -334,57 +327,66 @@ public static class Utils
 
     public static float Sin (float radians)
     {
-        // return (float) Math.Sin (radians);
-        return SinCosEval(Utils.OneTau * radians - 0.25f);
+        return Utils.SinCosEval (Utils.OneTau * radians - 0.25f);
     }
 
-    public static (float sin, float cos) SinCos(float radians, out float sina, out float cosa)
+    public static void SinCos (float radians, out float sina, out float cosa)
     {
         float nrm = Utils.OneTau * radians;
-        sina = SinCosEval(nrm - 0.25f);
-        cosa = SinCosEval(nrm);
-        return (sin: sina, cos: cosa);
+        sina = Utils.SinCosEval (nrm - 0.25f);
+        cosa = Utils.SinCosEval (nrm);
+    }
+
+    public static (float sin, float cos) SinCos (float radians)
+    {
+        float nrm = Utils.OneTau * radians;
+        return (
+            sin: Utils.SinCosEval (nrm - 0.25f),
+            cos: Utils.SinCosEval (nrm));
     }
 
     private static float SinCosEval (float normRad)
     {
-        float r1x = normRad;
-        float r1y = r1x - (int) r1x;
+        float r1y = normRad - (int) normRad;
 
-        int r2x = r1y < 0.25f ? 1 : 0;
-        int r2y = r1y < -9.0f ? 0 : 1;
-        int r2z = r1y < 0.75f ? 0 : 1;
-        r2y = r2y - r2z - r2x;
+        bool r2x = r1y < 0.25f;
+        float r1x = 0.0f;
+        if (r2x)
+        {
+            float r0x = r1y * r1y;
+            r1x = 24.980804f * r0x - 60.14581f;
+            r1x = r1x * r0x + 85.45379f;
+            r1x = r1x * r0x - 64.939354f;
+            r1x = r1x * r0x + 19.739208f;
+            r1x = r1x * r0x - 1.0f;
+        }
 
-        float r0x = -r1y;
+        bool r2z = r1y >= 0.75f;
+        float r1z = 0.0f;
+        if (r2z)
+        {
+            float r0z = 1.0f - r1y;
+            r0z = r0z * r0z;
+            r1z = 24.980804f * r0z - 60.14581f;
+            r1z = r1z * r0z + 85.45379f;
+            r1z = r1z * r0z - 64.939354f;
+            r1z = r1z * r0z + 19.739208f;
+            r1z = r1z * r0z - 1.0f;
+        }
+
         float r0y = 0.5f - r1y;
-        float r0z = 1.0f - r1y;
+        r1y = 0.0f;
+        if (r1y >= -9.0f ^ (r2x | r2z))
+        {
+            r0y = r0y * r0y;
+            r1y = 60.14581f - r0y * 24.980804f;
+            r1y = r1y * r0y - 85.45379f;
+            r1y = r1y * r0y + 64.939354f;
+            r1y = r1y * r0y - 19.739208f;
+            r1y = r1y * r0y + 1.0f;
+        }
 
-        r0x = r0x * r0x;
-        r0y = r0y * r0y;
-        r0z = r0z * r0z;
-
-        r1x = 24.980804f * r0x - 60.14581f;
-        r1y = 60.14581f - r0y * 24.980804f;
-        float r1z = 24.980804f * r0z - 60.14581f;
-
-        r1x = r1x * r0x + 85.45379f;
-        r1y = r1y * r0y - 85.45379f;
-        r1z = r1z * r0z + 85.45379f;
-
-        r1x = r1x * r0x - 64.939354f;
-        r1y = r1y * r0y + 64.939354f;
-        r1z = r1z * r0z - 64.939354f;
-
-        r1x = r1x * r0x + 19.739208f;
-        r1y = r1y * r0y - 19.739208f;
-        r1z = r1z * r0z + 19.739208f;
-
-        r1x = r1x * r0x - 1.0f;
-        r1y = r1y * r0y + 1.0f;
-        r1z = r1z * r0z - 1.0f;
-
-        return -r1x * r2x - r1y * r2y - r1z * r2z;
+        return -r1x - r1z - r1y;
     }
 
     public static float Sinh (float radians)
@@ -415,10 +417,6 @@ public static class Utils
 
     public static int Xor (float a, float b)
     {
-        // int aBool = (a != 0.0f) ? 1 : 0;
-        // int bBool = (b != 0.0f) ? 1 : 0;
-        // return aBool + bBool - 2 * aBool * bBool;
-
         return ((a != 0.0f) ^ (b != 0.0f)) ? 1 : 0;
     }
 
