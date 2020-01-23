@@ -264,7 +264,8 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     public static Complex Cos (in Complex z)
     {
         return new Complex (
-            Utils.Cos (z.real) * Utils.Cosh (z.imag), -Utils.Sin (z.real) * Utils.Sinh (z.imag));
+            (float) (Math.Cos (z.real) * Math.Cosh (z.imag)),
+            (float) (-Math.Sin (z.real) * Math.Sinh (z.imag)));
     }
 
     public static Complex Exp (in Complex z)
@@ -333,13 +334,25 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
 
     public static Complex Rect (float r = 1.0f, float phi = 0.0f)
     {
-        return new Complex (r * Utils.Cos (phi), r * Utils.Sin (phi));
+        float sinp = 0.0f;
+        float cosp = 0.0f;
+        Utils.SinCos (phi, out sinp, out cosp);
+        return new Complex (r * cosp, r * sinp);
     }
-    
+
+    public static Complex Sqrt (float a)
+    {
+        return (a > 0.0f) ?
+            new Complex (Utils.Sqrt (a), 0.0f) :
+            (a < 0.0f) ?
+            new Complex (0.0f, Utils.Sqrt (-a)) :
+            new Complex ( );
+    }
+
     public static Complex Sin (in Complex z)
     {
         return new Complex (
-            Utils.Sin (z.real) * Utils.Cosh (z.imag),
-            Utils.Cos (z.real) * Utils.Sinh (z.imag));
+            (float) (Math.Sin (z.real) * Math.Cosh (z.imag)),
+            (float) (Math.Cos (z.real) * Math.Sinh (z.imag)));
     }
 }

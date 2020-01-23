@@ -1,8 +1,22 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 public static class Utils
 {
+    /// <summary>
+    /// CF. https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/attributes/how-to-create-a-c-cpp-union-by-using-attributes
+    /// </summary>
+    [StructLayout (LayoutKind.Explicit)]
+    private struct Union
+    {
+        [FieldOffset (0)]
+        public float f;
+
+        [FieldOffset (0)]
+        public int i;
+    }
+
     public const float HalfPi = 1.57079637f;
     public const int HashBase = -2128831035;
     public const int HashMul = 16777619;
@@ -168,8 +182,31 @@ public static class Utils
         return b == 0.0f ? a : a % b;
     }
 
+    public static float InvSqrt (float a)
+    {
+        // return a > 0.0f ? InvSqrtUnchecked (a) : 0.0f;
+        return a > 0.0f ? (float) (1.0d / Math.Sqrt (a)) : 0.0f;
+    }
+
+    public static float InvSqrtUnchecked (float a)
+    {
+        // Union u = new Union ( );
+        // u.f = a;
+        // u.i = 0x5f375a86 - (u.i >> 1);
+
+        // float y = u.f;
+        // float vhalf = a * 0.5f;
+        // y *= 1.5f - vhalf * y * y;
+        // y *= 1.5f - vhalf * y * y;
+        // y *= 1.5f - vhalf * y * y;
+        // return y;
+
+        return (float) (1.0d / Math.Sqrt (a));
+    }
+
     public static float LerpAngle (float origin, float dest, float t = 0.5f)
     {
+        // TODO: Can this be simplified by dividing by TAU, then using mod1?
         float a = Utils.ModRadians (origin);
         float b = Utils.ModRadians (dest);
         float diff = b - a;
@@ -402,7 +439,14 @@ public static class Utils
 
     public static float Sqrt (float v)
     {
-        return v <= 0.0f ? 0.0f : (float) Math.Sqrt (v);
+        return v > 0.0f ? (float) Math.Sqrt (v) : 0.0f;
+        // return v > 0.0f ? Utils.SqrtUnchecked (v) : 0.0f;
+    }
+
+    public static float SqrtUnchecked (float v)
+    {
+        // return v * Utils.InvSqrtUnchecked (v);
+        return (float) Math.Sqrt (v);
     }
 
     public static float Step (float edge, float x)
@@ -410,14 +454,14 @@ public static class Utils
         return x < edge ? 0.0f : 1.0f;
     }
 
-    public static float Trunc (float a)
+    public static bool ToBool (int v)
     {
-        return (int) a;
+        return v != 0;
     }
 
-    public static int Xor (float a, float b)
+    public static bool ToBool (float v)
     {
-        return ((a != 0.0f) ^ (b != 0.0f)) ? 1 : 0;
+        return v != 0.0f;
     }
 
     public static string ToFixed (float v, int places = 7)
@@ -488,5 +532,25 @@ public static class Utils
             sb.Append (tr);
         }
         return sb.ToString ( );
+    }
+
+    public static float ToFloat (bool v)
+    {
+        return v ? 1.0f : 0.0f;
+    }
+
+    public static int ToInt (bool v)
+    {
+        return v ? 1 : 0;
+    }
+
+    public static float Trunc (float a)
+    {
+        return (int) a;
+    }
+
+    public static int Xor (float a, float b)
+    {
+        return ((a != 0.0f) ^ (b != 0.0f)) ? 1 : 0;
     }
 }

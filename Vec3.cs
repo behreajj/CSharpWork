@@ -1194,16 +1194,19 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// 
     /// ( rho cos ( theta ), rho sin ( theta ) )
     /// </summary>
-    /// <param name="heading">the angle in radians</param>
+    /// <param name="azimuth">the angle in radians</param>
     /// <param name="radius">the radius</param>
     /// <returns>the vector</returns>
     public static Vec3 FromPolar (
-        float heading = 0.0f,
+        float azimuth = 0.0f,
         float radius = 1.0f)
     {
+        float sina = 0.0f;
+        float cosa = 0.0f;
+        Utils.SinCos (azimuth, out sina, out cosa);
         return new Vec3 (
-            radius * Utils.Cos (heading),
-            radius * Utils.Sin (heading), 0.0f);
+            radius * cosa,
+            radius * sina, 0.0f);
     }
 
     /// <summary>
@@ -1228,11 +1231,19 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float inclination = 0.0f,
         float radius = 1.0f)
     {
-        float rcp = radius * Utils.Cos (inclination);
-        return new Vec3 (
-            rcp * Utils.Cos (azimuth),
-            rcp * Utils.Sin (azimuth),
-            radius * -Utils.Sin (inclination));
+        float sint = 0.0f;
+        float cost = 0.0f;
+        Utils.SinCos (azimuth, out sint, out cost);
+
+        float sinp = 0.0f;
+        float cosp = 0.0f;
+        Utils.SinCos (inclination, out sinp, out cosp);
+
+        float rcp = radius * cosp;
+        return new Vec3(
+            rcp * cost,
+            rcp * sint,
+            radius * -sinp);
     }
 
     /// <summary>
@@ -1737,7 +1748,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the rotated vector</returns>
     public static Vec3 Rotate (in Vec3 v, float radians, in Vec3 axis)
     {
-        return Vec3.Rotate (v, Utils.Cos (radians), Utils.Sin (radians), axis);
+        float sina = 0.0f;
+        float cosa = 0.0f;
+        Utils.SinCos (radians, out sina, out cosa);
+        return Vec3.Rotate (v, cosa, sina, axis);
     }
 
     /// <summary>
@@ -1788,7 +1802,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the rotated vector</returns>
     public static Vec3 RotateX (in Vec3 v, float radians)
     {
-        return Vec3.RotateX (v, Utils.Cos (radians), Utils.Sin (radians));
+        float sina = 0.0f;
+        float cosa = 0.0f;
+        Utils.SinCos (radians, out sina, out cosa);
+        return Vec3.RotateX (v, cosa, sina);
     }
 
     /// <summary>
@@ -1820,7 +1837,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the rotated vector</returns>
     public static Vec3 RotateY (in Vec3 v, float radians)
     {
-        return Vec3.RotateY (v, Utils.Cos (radians), Utils.Sin (radians));
+        float sina = 0.0f;
+        float cosa = 0.0f;
+        Utils.SinCos (radians, out sina, out cosa);
+        return Vec3.RotateY (v, cosa, sina);
     }
 
     /// <summary>
@@ -1852,7 +1872,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the rotated vector</returns>
     public static Vec3 RotateZ (in Vec3 v, float radians)
     {
-        return Vec3.RotateZ (v, Utils.Cos (radians), Utils.Sin (radians));
+        float sina = 0.0f;
+        float cosa = 0.0f;
+        Utils.SinCos (radians, out sina, out cosa);
+        return Vec3.RotateZ (v, cosa, sina);
     }
 
     /// <summary>
@@ -1865,9 +1888,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
     /// <returns>the rotated vector</returns>
-    public static Vec3 RotateZ (in Vec3 v,
-        float cosa = 1.0f,
-        float sina = 0.0f)
+    public static Vec3 RotateZ (in Vec3 v, float cosa = 1.0f, float sina = 0.0f)
     {
         return new Vec3 (
             cosa * v._x - sina * v._y,

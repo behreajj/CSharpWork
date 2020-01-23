@@ -385,10 +385,10 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public static Quat FromAngle (float radians)
   {
-    float halfAngle = radians * 0.5f;
-    return new Quat (
-      Utils.Cos (halfAngle), 0.0f,
-      0.0f, Utils.Sin (halfAngle));
+    float sina = 0.0f;
+    float cosa = 0.0f;
+    Utils.SinCos (radians * 0.5f, out sina, out cosa);
+    return new Quat (cosa, 0.0f, 0.0f, sina);
   }
 
   public static Quat FromAxisAngle (float radians, in Vec3 axis)
@@ -408,10 +408,10 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       nz *= amInv;
     }
 
-    float halfAngle = 0.5f * radians;
-    float sinHalf = Utils.Sin (halfAngle);
-    return new Quat (
-      Utils.Cos (halfAngle),
+    float sinHalf = 0.0f;
+    float cosHalf = 0.0f;
+    Utils.SinCos (radians * 0.5f, out sinHalf, out cosHalf);
+    return new Quat (cosHalf,
       nx * sinHalf,
       ny * sinHalf,
       nz * sinHalf);
@@ -470,17 +470,27 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     float x0 = Utils.Sqrt (1.0f - r1);
     float x1 = Utils.Sqrt (r1);
 
+    float sint0 = 0.0f;
+    float cost0 = 0.0f;
+    Utils.SinCos(t0, out sint0, out cost0);
+
+    float sint1 = 0.0f;
+    float cost1 = 0.0f;
+    Utils.SinCos(t1, out sint1, out cost1);
+
     return new Quat (
-      x0 * Utils.Sin (t0),
-      x0 * Utils.Cos (t0),
-      x1 * Utils.Sin (t1),
-      x1 * Utils.Cos (t1));
+      x0 * sint0,
+      x0 * cost0,
+      x1 * sint1,
+      x1 * cost1);
   }
 
   public static Quat RotateX (in Quat q, float radians)
   {
-    float halfAngle = radians * 0.5f;
-    return Quat.RotateX (q, Utils.Cos (halfAngle), Utils.Sin (halfAngle));
+    float sina = 0.0f;
+    float cosa = 0.0f;
+    Utils.SinCos (radians * 0.5f, out sina, out cosa);
+    return Quat.RotateX (q, cosa, sina);
   }
 
   public static Quat RotateX (in Quat q, float cosah, float sinah)
@@ -495,8 +505,10 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public static Quat RotateY (in Quat q, float radians)
   {
-    float halfAngle = radians * 0.5f;
-    return Quat.RotateY (q, Utils.Cos (halfAngle), Utils.Sin (halfAngle));
+    float sina = 0.0f;
+    float cosa = 0.0f;
+    Utils.SinCos (radians * 0.5f, out sina, out cosa);
+    return Quat.RotateY (q, cosa, sina);
   }
 
   public static Quat RotateY (in Quat q, float cosah, float sinah)
@@ -511,8 +523,10 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public static Quat RotateZ (in Quat q, float radians)
   {
-    float halfAngle = radians * 0.5f;
-    return Quat.RotateZ (q, Utils.Cos (halfAngle), Utils.Sin (halfAngle));
+    float sina = 0.0f;
+    float cosa = 0.0f;
+    Utils.SinCos (radians * 0.5f, out sina, out cosa);
+    return Quat.RotateZ (q, cosa, sina);
   }
 
   public static Quat RotateZ (in Quat q, float cosah, float sinah)

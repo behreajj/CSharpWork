@@ -1016,9 +1016,13 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         float heading = 0.0f,
         float radius = 1.0f)
     {
+        float sina = 0.0f;
+        float cosa = 0.0f;
+        Utils.SinCos (heading, out sina, out cosa);
+        
         return new Vec2 (
-            radius * Utils.Cos (heading),
-            radius * Utils.Sin (heading));
+            radius * cosa,
+            radius * sina);
     }
 
     /// <summary>
@@ -1510,7 +1514,10 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the rotated vector</returns>
     public static Vec2 RotateZ (in Vec2 v, float radians)
     {
-        return Vec2.RotateZ (v, Utils.Cos (radians), Utils.Sin (radians));
+        float sina = 0.0f;
+        float cosa = 0.0f;
+        Utils.SinCos (radians, out sina, out cosa);
+        return Vec2.RotateZ (v, cosa, sina);
     }
 
     /// <summary>
@@ -1523,9 +1530,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
     /// <returns>the rotated vector</returns>
-    public static Vec2 RotateZ (in Vec2 v,
-        float cosa = 1.0f,
-        float sina = 0.0f)
+    public static Vec2 RotateZ (in Vec2 v, float cosa = 1.0f, float sina = 0.0f)
     {
         return new Vec2 (
             cosa * v._x - sina * v._y,
