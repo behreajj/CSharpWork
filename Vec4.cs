@@ -1550,6 +1550,26 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
+    /// Wraps a vector around a periodic range, as
+    /// represented by a lower and upper bound. The lower
+    /// bound is inclusive; the upper bound, exclusive.
+    /// 
+    /// In cases where the lower bound is 0.0, use Mod instead.
+    /// </summary>
+    /// <param name="v">the vector</param>
+    /// <param name="lb">the lower bound</param>
+    /// <param name="ub">the upper bound</param>
+    /// <returns></returns>
+    public static Vec4 Wrap (in Vec4 v, in Vec4 lb, in Vec4 ub)
+    {
+        return new Vec4 (
+            Utils.Wrap (v._x, lb._x, ub._x),
+            Utils.Wrap (v._y, lb._y, ub._y),
+            Utils.Wrap (v._z, lb._z, ub._z),
+            Utils.Wrap (v._w, lb._w, ub._w));
+    }
+
+    /// <summary>
     /// Returns a direction facing back, (0.0, -1.0, 0.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>

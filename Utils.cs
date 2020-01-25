@@ -5,7 +5,9 @@ using System.Text;
 public static class Utils
 {
     /// <summary>
-    /// CF. https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/attributes/how-to-create-a-c-cpp-union-by-using-attributes
+    /// CF. https://docs.microsoft.com/en-us/dotnet/csharp/
+    /// programming-guide/concepts/attributes/
+    /// how-to-create-a-c-cpp-union-by-using-attributes
     /// </summary>
     [StructLayout (LayoutKind.Explicit)]
     private struct Union
@@ -157,9 +159,9 @@ public static class Utils
         return b == 0.0f ? 0.0f : a / b;
     }
 
-    public static float Exp (float v)
+    public static float Exp (float a)
     {
-        return (float) Math.Exp (v);
+        return (float) Math.Exp (a);
     }
 
     public static int Floor (float v)
@@ -184,8 +186,7 @@ public static class Utils
 
     public static float InvSqrt (float a)
     {
-        // return a > 0.0f ? InvSqrtUnchecked (a) : 0.0f;
-        return a > 0.0f ? (float) (1.0d / Math.Sqrt (a)) : 0.0f;
+        return a > 0.0f ? Utils.InvSqrtUnchecked (a) : 0.0f;
     }
 
     public static float InvSqrtUnchecked (float a)
@@ -226,7 +227,10 @@ public static class Utils
         return modResult ? Utils.ModRadians (fac) : fac;
     }
 
-    public static float LinearStep (float edge0 = 0.0f, float edge1 = 1.0f, float x = 0.5f)
+    public static float LinearStep (
+        float edge0 = 0.0f,
+        float edge1 = 1.0f,
+        float x = 0.5f)
     {
         return Utils.Clamp (Utils.Div (x - edge0, edge1 - edge0), 0.0f, 1.0f);
     }
@@ -431,7 +435,10 @@ public static class Utils
         return (float) Math.Sinh (radians);
     }
 
-    public static float SmoothStep (float edge0 = 0.0f, float edge1 = 1.0f, float x = 0.5f)
+    public static float SmoothStep (
+        float edge0 = 0.0f,
+        float edge1 = 1.0f,
+        float x = 0.5f)
     {
         float t = Utils.LinearStep (edge0, edge1, x);
         return t * t * (3.0f - (t + t));
@@ -439,8 +446,7 @@ public static class Utils
 
     public static float Sqrt (float v)
     {
-        return v > 0.0f ? (float) Math.Sqrt (v) : 0.0f;
-        // return v > 0.0f ? Utils.SqrtUnchecked (v) : 0.0f;
+        return v > 0.0f ? Utils.Sqrt (v) : 0.0f;
     }
 
     public static float SqrtUnchecked (float v)
@@ -547,6 +553,41 @@ public static class Utils
     public static float Trunc (float a)
     {
         return (int) a;
+    }
+
+    public static float Wrap (
+        float value,
+        float lb = -1.0f,
+        float ub = 1.0f)
+    {
+        float lbc = 0.0f;
+        float ubc = 0.0f;
+        float span = ub - lb;
+
+        if (span < 0.0f)
+        {
+            lbc = ub;
+            ubc = lb;
+        }
+        else if (span > 0.0f)
+        {
+            lbc = lb;
+            ubc = ub;
+        }
+        else
+        {
+            return 0.0f;
+        }
+
+        if (value < lbc)
+        {
+            return ubc - (lbc - value) % span;
+        }
+        else if (value >= ubc)
+        {
+            return lbc + (value - lbc) % span;
+        }
+        return value;
     }
 
     public static int Xor (float a, float b)

@@ -1019,7 +1019,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         float sina = 0.0f;
         float cosa = 0.0f;
         Utils.SinCos (heading, out sina, out cosa);
-        
+
         return new Vec2 (
             radius * cosa,
             radius * sina);
@@ -1626,6 +1626,24 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     public static Vec2 Trunc (in Vec2 v)
     {
         return new Vec2 ((int) v._x, (int) v._y);
+    }
+
+    /// <summary>
+    /// Wraps a vector around a periodic range, as
+    /// represented by a lower and upper bound. The lower
+    /// bound is inclusive; the upper bound, exclusive.
+    /// 
+    /// In cases where the lower bound is 0.0, use Mod instead.
+    /// </summary>
+    /// <param name="v">the vector</param>
+    /// <param name="lb">the lower bound</param>
+    /// <param name="ub">the upper bound</param>
+    /// <returns></returns>
+    public static Vec2 Wrap (in Vec2 v, in Vec2 lb, in Vec2 ub)
+    {
+        return new Vec2 (
+            Utils.Wrap (v._x, lb._x, ub._x),
+            Utils.Wrap (v._y, lb._y, ub._y));
     }
 
     /// <summary>

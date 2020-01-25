@@ -479,6 +479,23 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Generates a clamped linear step for an input factor; to
+    /// be used in conjunction with a mixing function.
+    /// </summary>
+    /// <param name="edge0">left edge</param>
+    /// <param name="edge1">right edge</param>
+    /// <param name="x">factor</param>
+    /// <returns>the linear step</returns>
+    public static Clr LinearStep (in Clr edge0, in Clr edge1, in Clr x)
+    {
+        return new Clr (
+            Utils.Clamp (Utils.Div (x._r - edge0._r, edge1._r - edge0._r)),
+            Utils.Clamp (Utils.Div (x._g - edge0._g, edge1._g - edge0._g)),
+            Utils.Clamp (Utils.Div (x._b - edge0._b, edge1._b - edge0._b)),
+            Utils.Clamp (Utils.Div (x._a - edge0._a, edge1._a - edge0._a)));
+    }
+
     public static float Luminance (in Clr c)
     {
         return 0.2126f * c._r + 0.7152f * c._g + 0.0722f * c._b;
@@ -529,6 +546,13 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             u * a._a + t * b._a);
     }
 
+    /// <summary>
+    /// Mixes two colors using a third as a step.
+    /// </summary>
+    /// <param name="a">the origin color</param>
+    /// <param name="b">the destination color</param>
+    /// <param name="t">the step color</param>
+    /// <returns>the mixed color</returns>
     public static Clr MixRgba (in Clr a, in Clr b, in Clr t)
     {
         return new Clr (
@@ -538,6 +562,13 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             (1.0f - t._a) * a._a + t._a * b._a);
     }
 
+    /// <summary>
+    /// Mixes two colors using a Vec4 as a step.
+    /// </summary>
+    /// <param name="a">the origin color</param>
+    /// <param name="b">the destination color</param>
+    /// <param name="t">the step vector</param>
+    /// <returns>the mixed color</returns>
     public static Clr MixRgba (in Clr a, in Clr b, in Vec4 t)
     {
         return new Clr (
@@ -566,13 +597,13 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="a">the color</param>
     /// <param name="b">the power</param>
     /// <returns>the adjusted color</returns>
-    public static Clr Pow (in Clr a, float b = 0.4545f)
+    public static Clr Pow (in Clr a, float b)
     {
         return new Clr (
-            Utils.Pow (a._r, b),
-            Utils.Pow (a._g, b),
-            Utils.Pow (a._b, b),
-            a._a);
+            Utils.Clamp(Utils.Pow (a._r, b), 0.0f, 1.0f),
+            Utils.Clamp(Utils.Pow (a._g, b), 0.0f, 1.0f),
+            Utils.Clamp(Utils.Pow (a._b, b), 0.0f, 1.0f),
+            Utils.Clamp(a._a, 0.0f, 1.0f));
     }
 
     /// <summary>
@@ -709,6 +740,44 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
 
         float sat = bri == 0.0f ? 0.0f : delta / bri;
         return new Vec4 (hue, sat, bri, alpha);
+    }
+
+    /// <summary>
+    /// Generates a clamped Hermite step for an input factor; to
+    /// be used in conjunction with a mixing function.
+    /// </summary>
+    /// <param name="edge0">left edge</param>
+    /// <param name="edge1">right edge</param>
+    /// <param name="x">factor</param>
+    /// <returns>the smooth step</returns>
+    public static Clr SmoothStep (in Clr edge0, in Clr edge1, in Clr x)
+    {
+        float tx = Utils.Clamp (Utils.Div (x._r - edge0._r, edge1._r - edge0._r));
+        float ty = Utils.Clamp (Utils.Div (x._g - edge0._g, edge1._g - edge0._g));
+        float tz = Utils.Clamp (Utils.Div (x._b - edge0._b, edge1._b - edge0._b));
+        float tw = Utils.Clamp (Utils.Div (x._a - edge0._a, edge1._a - edge0._a));
+
+        return new Clr (
+            tx * tx * (3.0f - (tx + tx)),
+            ty * ty * (3.0f - (ty + ty)),
+            tz * tz * (3.0f - (tz + tz)),
+            tw * tw * (3.0f - (tw + tw)));
+    }
+
+    /// <summary>
+    /// Generates a clamped boolean step for an input factor; to
+    /// be used in conjunction with a mixing function.
+    /// </summary>
+    /// <param name="edge">edge</param>
+    /// <param name="x">factor</param>
+    /// <returns>the step</returns>
+    public static Clr Step (in Clr edge, in Clr x)
+    {
+        return new Clr (
+            x._r < edge._r ? 0.0f : 1.0f,
+            x._g < edge._g ? 0.0f : 1.0f,
+            x._b < edge._b ? 0.0f : 1.0f,
+            x._a < edge._a ? 0.0f : 1.0f);
     }
 
     /// <summary>
