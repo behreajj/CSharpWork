@@ -1028,12 +1028,12 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Generates a 2D array of vectors.
     /// </summary>
-    /// <param name="rows">number of rows</param>
     /// <param name="cols">number of columns</param>
+    /// <param name="rows">number of rows</param>
     /// <param name="lowerBound">lower bound</param>
     /// <param name="upperBound">upper bound</param>
     /// <returns>the array</returns>
-    public static Vec2[, ] Grid (int rows, int cols, in Vec2 lowerBound, in Vec2 upperBound)
+    public static Vec2[, ] Grid (int cols, int rows, in Vec2 lowerBound, in Vec2 upperBound)
     {
         int rval = rows < 3 ? 3 : rows;
         int cval = cols < 3 ? 3 : cols;

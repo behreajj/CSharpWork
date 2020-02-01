@@ -136,7 +136,8 @@ public static class Utils
 
     public static float CopySign (float mag, float sign)
     {
-        return (mag < 0.0f ? -mag : mag) * ((sign < 0.0f) ? -1.0f : (sign > 0.0f) ? 1.0f : 0.0f);
+        return (mag < 0.0f ? -mag : mag) *
+            ((sign < 0.0f) ? -1.0f : (sign > 0.0f) ? 1.0f : 0.0f);
     }
 
     public static float Cos (float radians)
@@ -232,7 +233,9 @@ public static class Utils
         float edge1 = 1.0f,
         float x = 0.5f)
     {
-        return Utils.Clamp (Utils.Div (x - edge0, edge1 - edge0), 0.0f, 1.0f);
+        float denom = edge1 - edge0;
+        if (denom == 0.0f) return 0.0f;
+        return Utils.Clamp ((x - edge0) / denom, 0.0f, 1.0f);
     }
 
     public static float Log (float v)

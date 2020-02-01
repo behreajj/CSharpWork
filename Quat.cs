@@ -472,17 +472,32 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
     float sint0 = 0.0f;
     float cost0 = 0.0f;
-    Utils.SinCos(t0, out sint0, out cost0);
+    Utils.SinCos (t0, out sint0, out cost0);
 
     float sint1 = 0.0f;
     float cost1 = 0.0f;
-    Utils.SinCos(t1, out sint1, out cost1);
+    Utils.SinCos (t1, out sint1, out cost1);
 
     return new Quat (
       x0 * sint0,
       x0 * cost0,
       x1 * sint1,
       x1 * cost1);
+  }
+
+  public static Quat Rotate (in Quat q, float radians, in Vec3 axis)
+  {
+    float mSq = Quat.MagSq (q);
+    if (mSq == 0.0f)
+    {
+      return Quat.FromAxisAngle (radians, axis);
+    }
+
+    float wNorm = q.real * Utils.InvSqrtUnchecked (mSq);
+    float halfAngle = Utils.Acos (wNorm);
+    return Quat.FromAxisAngle (
+      Utils.ModRadians (halfAngle + halfAngle + radians),
+      axis);
   }
 
   public static Quat RotateX (in Quat q, float radians)
@@ -537,6 +552,94 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       cosah * i.x + sinah * i.y,
       cosah * i.y - sinah * i.x,
       cosah * i.z + sinah * q.real);
+  }
+
+  public static (Vec3 right, Vec3 forward, Vec3 up) ToAxes (in Quat q)
+  {
+    float w = q.real;
+    Vec3 i = q.imag;
+    float x = i.x;
+    float y = i.y;
+    float z = i.z;
+
+    float x2 = x + x;
+    float y2 = y + y;
+    float z2 = z + z;
+
+    float xsq2 = x * x2;
+    float ysq2 = y * y2;
+    float zsq2 = z * z2;
+
+    float xy2 = x * y2;
+    float xz2 = x * z2;
+    float yz2 = y * z2;
+
+    float wx2 = w * x2;
+    float wy2 = w * y2;
+    float wz2 = w * z2;
+
+    return (
+      right: new Vec3 (
+        1.0f - ysq2 - zsq2,
+        xy2 + wz2,
+        xz2 - wy2),
+      forward : new Vec3 (
+        xy2 - wz2,
+        1.0f - xsq2 - zsq2,
+        yz2 + wx2),
+      up : new Vec3 (
+        xz2 + wy2,
+        yz2 - wx2,
+        1.0f - xsq2 - ysq2));
+  }
+
+  public static (float angle, Vec3 axis) ToAxisAngle (in Quat q)
+  {
+    float mSq = Quat.MagSq (q);
+    if (mSq == 0.0f)
+    {
+      return (
+        angle: 0.0f,
+        axis: Vec3.Forward);
+    }
+
+    float wNorm = Utils.Approx (mSq, 1.0f) ? q.real :
+      q.real * Utils.InvSqrtUnchecked (mSq);
+    float angle = 2.0f * Utils.Acos (wNorm);
+    float wAsin = Utils.Tau - angle;
+
+    if (wAsin == 0.0f)
+    {
+      return (
+        angle: angle,
+        axis: Vec3.Forward);
+    }
+
+    float sInv = 1.0f / wAsin;
+    Vec3 i = q.imag;
+    float ax = i.x * sInv;
+    float ay = i.y * sInv;
+    float az = i.z * sInv;
+
+    float amSq = ax * ax + ay * ay + az * az;
+    if (amSq == 0.0f)
+    {
+      return (
+        angle: angle,
+        axis: Vec3.Forward);
+    }
+
+    if (Utils.Approx (amSq, 1.0f))
+    {
+      return (
+        angle: angle,
+        axis: new Vec3 (ax, ay, az));
+    }
+
+    float mInv = Utils.InvSqrtUnchecked (amSq);
+    return (
+      angle: 0.0f,
+      axis: new Vec3 (ax * mInv, ay * mInv, az * mInv));
   }
 
   public static Quat Identity

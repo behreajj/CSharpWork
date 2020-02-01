@@ -1249,13 +1249,13 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Generates a 3D array of vectors.
     /// </summary>
-    /// <param name="rows">number of rows</param>
     /// <param name="cols">number of columns</param>
+    /// <param name="rows">number of rows</param>
     /// <param name="layers">number of layers</param>
     /// <param name="lowerBound">lower bound</param>
     /// <param name="upperBound">upper bound</param>
     /// <returns>the array</returns>
-    public static Vec3[, , ] Grid (int rows, int cols, int layers, in Vec3 lowerBound, in Vec3 upperBound)
+    public static Vec3[, , ] Grid (int cols, int rows, int layers, in Vec3 lowerBound, in Vec3 upperBound)
     {
 
         int rval = rows < 3 ? 3 : rows;

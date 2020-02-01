@@ -303,8 +303,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// channel, then clamps the product to [0.0, 1.0] .
     /// The left operand's alpha channel is retained.
     /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
+    /// <param name="a">left operand, numerator</param>
+    /// <param name="b">right operand, denominator</param>
     /// <returns>the quotient</returns>
     public static Clr operator / (in Clr a, in Clr b)
     {
@@ -448,10 +448,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         float bri = 1.0f,
         float alpha = 1.0f)
     {
-        if (sat <= 0.0f)
-        {
-            return new Clr (bri, bri, bri, alpha);
-        }
+        if (sat <= 0.0f) return new Clr (bri, bri, bri, alpha);
 
         float h = Utils.Mod1 (hue) * 6.0f;
         int sector = (int) h;
