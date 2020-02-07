@@ -107,18 +107,6 @@ public static class Utils
         return yLtZero ? -t2 : t2;
     }
 
-    // public static int BisectLeft<T> (T[ ] a, T x, int lo, int hi) where T : IComparable<T>
-    // {
-    //     if (lo < 0) lo = 0;
-    //     while (lo < hi)
-    //     {
-    //         int mid = (lo + hi) / 2 | 0;
-    //         if (x.CompareTo (a[mid]) > 0) lo = mid + 1;
-    //         else hi = mid;
-    //     }
-    //     return lo;
-    // }
-
     public static int Ceil (float v)
     {
         return v > 0.0f ? (int) (v + 1) : (int) v;
@@ -142,7 +130,8 @@ public static class Utils
 
     public static float Cos (float radians)
     {
-        return Utils.SinCosEval (Utils.OneTau * radians);
+        // return Utils.SinCosEval (Utils.OneTau * radians);
+        return (float) Math.Cos (radians);
     }
 
     public static float Cosh (float radians)
@@ -163,6 +152,11 @@ public static class Utils
     public static float Exp (float a)
     {
         return (float) Math.Exp (a);
+    }
+
+    public static float Filter (float v, float lb = 0.0f, float ub = 1.0f)
+    {
+        return v >= lb && v < ub ? v : 0.0f;
     }
 
     public static int Floor (float v)
@@ -371,7 +365,8 @@ public static class Utils
 
     public static float Sin (float radians)
     {
-        return Utils.SinCosEval (Utils.OneTau * radians - 0.25f);
+        // return Utils.SinCosEval (Utils.OneTau * radians - 0.25f);
+        return (float) Math.Sin (radians);
     }
 
     public static void SinCos (float radians, out float sina, out float cosa)
@@ -391,7 +386,7 @@ public static class Utils
 
     private static float SinCosEval (float normRad)
     {
-        float r1y = normRad - (int) normRad;
+        float r1y = Utils.Mod1 (normRad);
 
         bool r2x = r1y < 0.25f;
         float r1x = 0.0f;

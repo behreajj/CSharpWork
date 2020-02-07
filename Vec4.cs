@@ -1034,6 +1034,22 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
+    /// Filters each component of the input vector against a lower and upper
+    /// bound. If the component is within the range, its value is retained;
+    /// otherwise, it is set to 0.0 .
+    /// </summary>
+    /// <param name="v">the input vector</param>
+    /// <returns>the filtered vector</returns>
+    public static Vec4 Filter (in Vec4 v, in Vec4 lb, in Vec4 ub)
+    {
+        return new Vec4 (
+            Utils.Filter (v._x, lb._x, ub._x),
+            Utils.Filter (v._y, lb._y, ub._y),
+            Utils.Filter (v._z, lb._z, ub._z),
+            Utils.Filter (v._w, lb._w, ub._w));
+    }
+
+    /// <summary>
     /// Floors each component of the vector.
     /// </summary>
     /// <param name="v">the input vector</param>

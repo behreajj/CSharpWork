@@ -1146,6 +1146,21 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
+    /// Filters each component of the input vector against a lower and upper
+    /// bound. If the component is within the range, its value is retained;
+    /// otherwise, it is set to 0.0 .
+    /// </summary>
+    /// <param name="v">the input vector</param>
+    /// <returns>the filtered vector</returns>
+    public static Vec3 Filter (in Vec3 v, in Vec3 lb, in Vec3 ub)
+    {
+        return new Vec3 (
+            Utils.Filter (v._x, lb._x, ub._x),
+            Utils.Filter (v._y, lb._y, ub._y),
+            Utils.Filter (v._z, lb._z, ub._z));
+    }
+
+    /// <summary>
     /// Floors each component of the vector.
     /// </summary>
     /// <param name="v">the input vector</param>

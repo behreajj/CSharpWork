@@ -964,6 +964,20 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
+    /// Filters each component of the input vector against a lower and upper
+    /// bound. If the component is within the range, its value is retained;
+    /// otherwise, it is set to 0.0 .
+    /// </summary>
+    /// <param name="v">the input vector</param>
+    /// <returns>the filtered vector</returns>
+    public static Vec2 Filter (in Vec2 v, in Vec2 lb, in Vec2 ub)
+    {
+        return new Vec2 (
+            Utils.Filter (v._x, lb._x, ub._x),
+            Utils.Filter (v._y, lb._y, ub._y));
+    }
+
+    /// <summary>
     /// Floors each component of the vector.
     /// </summary>
     /// <param name="v">the input vector</param>
