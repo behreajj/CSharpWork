@@ -51,12 +51,7 @@ public class ColorGradient : IEnumerable
 
     public override int GetHashCode ( )
     {
-      unchecked
-      {
-        int hash = Utils.HashBase;
-        hash = hash * Utils.HashMul ^ this.step.GetHashCode ( );
-        return hash;
-      }
+      return this.step.GetHashCode ( );
     }
 
     public override string ToString ( )
@@ -141,7 +136,7 @@ public class ColorGradient : IEnumerable
 
   public ColorGradient (params Key[ ] keys)
   {
-    this.AppendAll (keys);
+    this.InsertAll (keys);
   }
 
   public ColorGradient (params Clr[ ] colors)
@@ -180,31 +175,17 @@ public class ColorGradient : IEnumerable
     return this.ToString (4);
   }
 
-  public ColorGradient Append (Key key)
-  {
-    int query = this.ContainsKey (key);
-    if (query != -1) this.keys.RemoveAt (query);
-    this.InsortRight (key);
-    return this;
-  }
-
   public ColorGradient Append (Clr color)
   {
-    this.ShiftKeysLeft (1);
+    this.CompressKeysLeft (1);
     this.keys.Add (new Key (1.0f, color));
-    return this;
-  }
-
-  public ColorGradient AppendAll (params Key[ ] keys)
-  {
-    foreach (Key key in keys) this.Append (key);
     return this;
   }
 
   public ColorGradient AppendAll (params Clr[ ] colors)
   {
     int len = colors.Length;
-    this.ShiftKeysLeft (len);
+    this.CompressKeysLeft (len);
     int oldLen = this.keys.Count;
     float denom = 1.0f / (oldLen + len - 1.0f);
     for (int i = 0; i < len; ++i)
@@ -216,7 +197,7 @@ public class ColorGradient : IEnumerable
     return this;
   }
 
-  public int BisectLeft (float step = 0.5f)
+  protected int BisectLeft (float step = 0.5f)
   {
     int low = 0;
     int high = this.keys.Count;
@@ -231,7 +212,7 @@ public class ColorGradient : IEnumerable
     return low;
   }
 
-  public int BisectRight (float step = 0.5f)
+  protected int BisectRight (float step = 0.5f)
   {
     int low = 0;
     int high = this.keys.Count;
@@ -244,6 +225,35 @@ public class ColorGradient : IEnumerable
         low = middle + 1;
     }
     return low;
+  }
+
+  protected ColorGradient CompressKeysLeft (int added = 1)
+  {
+    int len = this.keys.Count;
+    float scalar = 1.0f / (len + added - 1.0f);
+    for (int i = 0; i < len; ++i)
+    {
+      Key key = this.keys[i];
+      this.keys[i] = new Key (
+        key.Step * i * scalar,
+        key.Color);
+    }
+    return this;
+  }
+
+  protected ColorGradient CompressKeysRight (int added = 1)
+  {
+    int len = this.keys.Count;
+    float scalar = added / (len + added - 1.0f);
+    float coeff = 1.0f - scalar;
+    for (int i = 0; i < len; ++i)
+    {
+      Key key = this.keys[i];
+      this.keys[i] = new Key (
+        scalar + coeff * key.Step,
+        key.Color);
+    }
+    return this;
   }
 
   public int ContainsKey (Key key)
@@ -274,14 +284,14 @@ public class ColorGradient : IEnumerable
     return result;
   }
 
-  public Key FindGe (float query = 0.5f)
+  protected Key FindGe (float query = 0.5f)
   {
     int i = this.BisectLeft (query);
     if (i < this.keys.Count) return this.keys[i];
     return this.keys[this.keys.Count - 1];
   }
 
-  public Key FindLe (float query = 0.5f)
+  protected Key FindLe (float query = 0.5f)
   {
     int i = this.BisectRight (query);
     if (i > 0) return this.keys[i - 1];
@@ -298,17 +308,53 @@ public class ColorGradient : IEnumerable
     return this.keys[this.keys.Count - 1];
   }
 
-  public ColorGradient InsortLeft (Key key)
+  public ColorGradient Insert (Key key)
+  {
+    int query = this.ContainsKey (key);
+    if (query != -1) this.keys.RemoveAt (query);
+    this.InsortRight (key);
+    return this;
+  }
+
+  public ColorGradient InsertAll (params Key[ ] keys)
+  {
+    foreach (Key key in keys) this.Insert (key);
+    return this;
+  }
+
+  protected ColorGradient InsortLeft (Key key)
   {
     int i = this.BisectLeft (key.Step);
     this.keys.Insert (i, key);
     return this;
   }
 
-  public ColorGradient InsortRight (Key key)
+  protected ColorGradient InsortRight (Key key)
   {
     int i = this.BisectRight (key.Step);
     this.keys.Insert (i, key);
+    return this;
+  }
+
+  public ColorGradient Prepend (Clr color)
+  {
+    this.CompressKeysRight (1);
+    this.keys.Insert (0, new Key (0.0f, color));
+    return this;
+  }
+
+  public ColorGradient PrependAll (params Clr[ ] colors)
+  {
+    int len = colors.Length;
+    this.CompressKeysRight (len);
+    int oldLen = this.keys.Count;
+    float denom = 1.0f / (oldLen + len - 1.0f);
+    for (int i = 0; i < len; ++i)
+    {
+      this.keys.Insert (i, new Key (
+        i * denom,
+        colors[i]));
+    }
     return this;
   }
 
@@ -348,23 +394,6 @@ public class ColorGradient : IEnumerable
       this.keys[i] = new Key (1.0f - key.Step, key.Color);
     }
     return this;
-  }
-
-  protected ColorGradient ShiftKeysLeft (int added = 1)
-  {
-    int len = this.keys.Count;
-    float scalar = 1.0f / (len + added - 1.0f);
-    for (int i = 0; i < len; ++i)
-    {
-      Key key = this.keys[i];
-      this.keys[i] = new Key (key.Step * i * scalar, key.Color);
-    }
-    return this;
-  }
-
-  public Key[ ] ToArray ( )
-  {
-    return this.keys.ToArray ( );
   }
 
   public string ToString (int places = 4)

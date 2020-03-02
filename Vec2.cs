@@ -131,10 +131,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     {
         unchecked
         {
-            int hash = Utils.HashBase;
-            hash = hash * Utils.HashMul ^ this._x.GetHashCode ( );
-            hash = hash * Utils.HashMul ^ this._y.GetHashCode ( );
-            return hash;
+            return (Utils.MulBase ^ this._x.GetHashCode ( )) *
+                Utils.HashMul ^ this._y.GetHashCode ( );
         }
     }
 
@@ -175,8 +173,6 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the equivalence</returns>
     public bool Equals (Vec2 v)
     {
-        // return Vec2.Approx (this, v);
-
         if (this._y.GetHashCode ( ) != v._y.GetHashCode ( ))
         {
             return false;
@@ -376,26 +372,6 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Increments the vector by 1.0 , component-wise.
-    /// </summary>
-    /// <param name="v">the input vector</param>
-    /// <returns>the result</returns>
-    // public static Vec2 operator ++ (in Vec2 v)
-    // {
-    //     return new Vec2 (v._x + 1.0f, v._y + 1.0f);
-    // }
-
-    /// <summary>
-    /// Decrements the vector by 1.0 , component-wise.
-    /// </summary>
-    /// <param name="v">the input vector</param>
-    /// <returns>the result</returns>
-    // public static Vec2 operator -- (in Vec2 v)
-    // {
-    //     return new Vec2 (v._x - 1.0f, v._y - 1.0f);
-    // }
-
-    /// <summary>
     /// Multiplies two vectors, component-wise. Such
     /// multiplication is mathematically incorrect, but serves as
     /// a shortcut for transforming a vector by a scalar matrix.
@@ -536,7 +512,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Evaluates whether the left comparisand is less than the
     /// right comparisand.
     /// 
-    /// Note that the return type is not a boolean, but a vector,
+    /// The return type is not a boolean, but a vector,
     /// where 1.0 is true and 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -551,7 +527,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Evaluates whether the left comparisand is greater than the
     /// right comparisand.
     /// 
-    /// Note that the return type is not a boolean, but a vector,
+    /// The return type is not a boolean, but a vector,
     /// where 1.0 is true and 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -566,7 +542,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Evaluates whether the left comparisand is less than or
     /// equal to the right comparisand.
     /// 
-    /// Note that the return type is not a boolean, but a vector,
+    /// The return type is not a boolean, but a vector,
     /// where 1.0 is true and 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -581,7 +557,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Evaluates whether the left comparisand is greater than or
     /// equal to the right comparisand.
     /// 
-    /// Note that the return type is not a boolean, but a vector,
+    /// The return type is not a boolean, but a vector,
     /// where 1.0 is true and 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -595,7 +571,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Evaluates whether two vectors are not equal to each other.
     /// 
-    /// Note that the return type is not a boolean, but a vector,
+    /// The return type is not a boolean, but a vector,
     /// where 1.0 is true and 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -609,7 +585,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Evaluates whether two vectors are equal to each other.
     /// 
-    /// Note that the return type is not a boolean, but a vector,
+    /// The return type is not a boolean, but a vector,
     /// where 1.0 is true and 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -1049,8 +1025,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the array</returns>
     public static Vec2[, ] Grid (int cols, int rows, in Vec2 lowerBound, in Vec2 upperBound)
     {
-        int rval = rows < 3 ? 3 : rows;
-        int cval = cols < 3 ? 3 : cols;
+        int rval = rows < 2 ? 2 : rows;
+        int cval = cols < 2 ? 2 : cols;
 
         float iToStep = 1.0f / (rval - 1.0f);
         float jToStep = 1.0f / (cval - 1.0f);
@@ -1652,7 +1628,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="v">the vector</param>
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
-    /// <returns></returns>
+    /// <returns>the wrapped vector</returns>
     public static Vec2 Wrap (in Vec2 v, in Vec2 lb, in Vec2 ub)
     {
         return new Vec2 (

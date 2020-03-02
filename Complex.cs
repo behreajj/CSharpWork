@@ -67,10 +67,8 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     {
         unchecked
         {
-            int hash = Utils.HashBase;
-            hash = hash * Utils.HashMul ^ this.real.GetHashCode ( );
-            hash = hash * Utils.HashMul ^ this.imag.GetHashCode ( );
-            return hash;
+            return (Utils.MulBase ^ this.real.GetHashCode ( )) *
+                Utils.HashMul ^ this.imag.GetHashCode ( );
         }
     }
 
@@ -90,8 +88,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
 
     public bool Equals (Complex z)
     {
-        // return Complex.Approx (this, z);
-
         if (this.real.GetHashCode ( ) != z.real.GetHashCode ( ))
         {
             return false;

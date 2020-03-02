@@ -22,6 +22,7 @@ public static class Utils
     public const float HalfPi = 1.57079637f;
     public const int HashBase = -2128831035;
     public const int HashMul = 16777619;
+    public const int MulBase = 84696351;
     public const float OneTau = 0.159154937f;
     public const float One255 = 0.003921569f;
     public const float One360 = 0.00277777785f;
@@ -202,7 +203,6 @@ public static class Utils
 
     public static float LerpAngle (float origin, float dest, float t = 0.5f)
     {
-        // TODO: Can this be simplified by dividing by TAU, then using mod1?
         float a = Utils.ModRadians (origin);
         float b = Utils.ModRadians (dest);
         float diff = b - a;

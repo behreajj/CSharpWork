@@ -124,8 +124,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         {
             Vec3 v = (Vec3) value;
 
-            // return Vec3.Approx (this, v);
-
             if (this._z.GetHashCode ( ) != v._z.GetHashCode ( ))
             {
                 return false;
@@ -155,11 +153,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     {
         unchecked
         {
-            int hash = Utils.HashBase;
-            hash = hash * Utils.HashMul ^ this._x.GetHashCode ( );
-            hash = hash * Utils.HashMul ^ this._y.GetHashCode ( );
-            hash = hash * Utils.HashMul ^ this._z.GetHashCode ( );
-            return hash;
+            return ((Utils.MulBase ^ this._x.GetHashCode ( )) *
+                    Utils.HashMul ^ this._y.GetHashCode ( )) *
+                Utils.HashMul ^ this._z.GetHashCode ( );
         }
     }
 
@@ -202,8 +198,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the equivalence</returns>
     public bool Equals (Vec3 v)
     {
-        // return Vec3.Approx (this, v);
-
         if (this._z.GetHashCode ( ) != v._z.GetHashCode ( ))
         {
             return false;
@@ -424,32 +418,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Increments the vector by 1.0 , component-wise.
-    /// </summary>
-    /// <param name="v">the input vector</param>
-    /// <returns>the result</returns>
-    // public static Vec3 operator ++ (in Vec3 v)
-    // {
-    //     return new Vec3 (
-    //         v._x + 1.0f,
-    //         v._y + 1.0f,
-    //         v._z + 1.0f);
-    // }
-
-    /// <summary>
-    /// Decrements the vector by 1.0 , component-wise.
-    /// </summary>
-    /// <param name="v">the input vector</param>
-    /// <returns>the result</returns>
-    // public static Vec3 operator -- (in Vec3 v)
-    // {
-    //     return new Vec3 (
-    //         v._x - 1.0f,
-    //         v._y - 1.0f,
-    //         v._z - 1.0f);
-    // }
-
-    /// <summary>
     /// Multiplies two vectors, component-wise. Such
     /// multiplication is mathematically incorrect, but serves as
     /// a shortcut for transforming a vector by a scalar matrix.
@@ -612,7 +580,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Evaluates whether the left comparisand is less than the
     /// right comparisand.
     /// 
-    /// Note that the return type is not a boolean, but a vector,
+    /// The return type is not a boolean, but a vector,
     /// where 1.0 is true and 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -630,7 +598,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Evaluates whether the left comparisand is greater than the
     /// right comparisand.
     /// 
-    /// Note that the return type is not a boolean, but a vector,
+    /// The return type is not a boolean, but a vector,
     /// where 1.0 is true and 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -648,7 +616,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Evaluates whether the left comparisand is less than or
     /// equal to the right comparisand.
     /// 
-    /// Note that the return type is not a boolean, but a vector,
+    /// The return type is not a boolean, but a vector,
     /// where 1.0 is true and 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -666,7 +634,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Evaluates whether the left comparisand is greater than or
     /// equal to the right comparisand.
     /// 
-    /// Note that the return type is not a boolean, but a vector,
+    /// The return type is not a boolean, but a vector,
     /// where 1.0 is true and 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -683,7 +651,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Evaluates whether two vectors are not equal to each other.
     /// 
-    /// Note that the return type is not a boolean, but a vector,
+    /// The return type is not a boolean, but a vector,
     /// where 1.0 is true and 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -700,7 +668,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Evaluates whether two vectors are equal to each other.
     /// 
-    /// Note that the return type is not a boolean, but a vector,
+    /// The return type is not a boolean, but a vector,
     /// where 1.0 is true and 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -1273,9 +1241,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3[, , ] Grid (int cols, int rows, int layers, in Vec3 lowerBound, in Vec3 upperBound)
     {
 
-        int rval = rows < 3 ? 3 : rows;
-        int cval = cols < 3 ? 3 : cols;
-        int lval = layers < 3 ? 3 : layers;
+        int rval = rows < 2 ? 2 : rows;
+        int cval = cols < 2 ? 2 : cols;
+        int lval = layers < 2 ? 2 : layers;
 
         float hToStep = 1.0f / (lval - 1.0f);
         float iToStep = 1.0f / (rval - 1.0f);
@@ -2027,7 +1995,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">the vector</param>
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
-    /// <returns></returns>
+    /// <returns>the wrapped vector</returns>
     public static Vec3 Wrap (in Vec3 v, in Vec3 lb, in Vec3 ub)
     {
         return new Vec3 (
