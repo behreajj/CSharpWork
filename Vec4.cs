@@ -1630,4 +1630,16 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
             return new Vec4 (0.0f, 0.0f, 1.0f, 0.0f);
         }
     }
+
+    /// <summary>
+    /// Returns a vector with all components set to zero.
+    /// </summary>
+    /// <value>the vector</value>
+    public static Vec4 Zero
+    {
+        get
+        {
+            return new Vec4 (0.0f, 0.0f, 0.0f, 0.0f);
+        }
+    }
 }

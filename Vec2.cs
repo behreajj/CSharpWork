@@ -675,9 +675,9 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>the evaluation</returns>
-    public static bool AreParallel (in Vec2 a, in Vec2 b)
+    public static bool AreParallel (in Vec2 a, in Vec2 b, float tolerance = Utils.Epsilon)
     {
-        return a._x * b._y - a._y * b._x == 0.0f;
+        return Utils.Abs(a._x * b._y - a._y * b._x) < tolerance;
     }
 
     /// <summary>
@@ -828,6 +828,21 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         return new Vec2 (
             Utils.CopySign (a._x, b._x),
             Utils.CopySign (a._y, b._y));
+    }
+
+    /// <summary>
+    /// Returns the z component of the cross product between
+    /// two vectors. The x and y components of the cross 
+    /// between 2D vectors are always zero. For that reason,
+    /// the normalized cross product is equal to the sign of
+    /// the cross product.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the cross product z</returns>
+    public static float Cross (in Vec2 a, in Vec2 b)
+    {
+        return a._x * b._y - a._y * b._x;
     }
 
     /// <summary>
@@ -1681,6 +1696,18 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         get
         {
             return new Vec2 (1.0f, 0.0f);
+        }
+    }
+
+    /// <summary>
+    /// Returns a vector with all components set to zero.
+    /// </summary>
+    /// <value>the vector</value>
+    public static Vec2 Zero
+    {
+        get
+        {
+            return new Vec2 (0.0f, 0.0f);
         }
     }
 }

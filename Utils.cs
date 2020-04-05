@@ -19,17 +19,124 @@ public static class Utils
         public int i;
     }
 
-    public const float HalfPi = 1.57079637f;
-    public const int HashBase = -2128831035;
-    public const int HashMul = 16777619;
-    public const int MulBase = 84696351;
-    public const float OneTau = 0.159154937f;
-    public const float One255 = 0.003921569f;
-    public const float One360 = 0.00277777785f;
-    public const float OneSix = 0.166666667f;
-    public const float Pi = 3.14159274f;
-    public const float Tau = 6.28318548f;
+    /// <summary>
+    /// An angle in degrees is multiplied by this constant to convert it to
+    /// radians. PI / 180.0, approximately 0.0174532924 .
+    /// </summary>
+    public const float DegToRad = 0.0174532924f;
+
+    /// <summary>
+    /// The smallest positive non-zero value. Useful for testing approximation
+    /// between two floats. Set to 0.000001 .
+    /// </summary>
     public const float Epsilon = 0.000001f;
+
+    /// <summary>
+    /// Four-thirds, 4.0 / 3.0 . Approximately 1.33333333 . Useful when creating
+    /// a circular shape with a series of Bezier curves.
+    /// </summary>
+    public const float FourThirds = 1.33333333f;
+
+    /// <summary>
+    /// An approximation of TAU / ( PHI * PHI ) , 2.39996314 . Useful for
+    /// replicating phyllotaxis. In degrees, 137.50777 .
+    /// </summary>
+    public const float GoldenAngle = 2.39996314f;
+
+    /// <summary>
+    /// PI divided by 2.0 . Approximately 1.57079637 .
+    /// </summary>
+    public const float HalfPi = 1.57079637f;
+
+    /// <summary>
+    /// Base value used by hash code functions.
+    /// </summary>
+    public const int HashBase = -2128831035;
+
+    /// <summary>
+    /// Multiplier used by hash code functions.
+    /// </summary>
+    public const int HashMul = 16777619;
+
+    /// <summary>
+    /// The hash base multiplied by the hash multiplier.
+    /// </summary>
+    public const int MulBase = 84696351;
+
+    /// <summary>
+    /// One-255th, 1.0 / 255.0 . Useful when converting a color with channels in
+    /// the range [0, 255] to a color in the range [0.0, 1.0] . Approximately
+    /// 0.003921569 .
+    /// </summary>
+    public const float One255 = 0.003921569f;
+
+    /// <summary>
+    /// One divided by 360 degrees, 1.0 / 360.0 ; approximately 0.00277777785 .
+    /// Useful for converting an index in a for-loop to an angle in degrees.
+    /// </summary>
+    public const float One360 = 0.00277777785f;
+
+    /// <summary>
+    /// One divided by PI . Useful when converting inclinations to the range
+    /// [0.0, 1.0] . Approximately 0.318309873 .
+    /// </summary>
+    public const float OnePi = 0.318309873f;
+
+    /// <summary>
+    /// One-sixth, 1.0 / 6.0 . Useful when converting a color in RGB color space
+    /// to one in HSB, given the six sectors formed by primary and secondary
+    /// colors . Approximately 0.16666667 .
+    /// </summary>
+    public const float OneSix = 0.16666667f;
+
+    /// <summary>
+    /// An approximation of 1.0 / SQRT ( 2.0 ) , 0.707106769 .
+    /// </summary>
+    public const float OneSqrt2 = 0.707106769f;
+
+    /// <summary>
+    /// An approximation of 1.0 / SQRT ( 3.0 ) , 0.577350259 .
+    /// </summary>
+    public const float OneSqrt3 = 0.577350259f;
+
+    /// <summary>
+    /// One divided by TAU . Useful for converting an index in a for-loop to an
+    /// angle. Approximately 0.159154937 .
+    /// </summary>
+    public const float OneTau = 0.159154937f;
+
+    /// <summary>
+    /// One-third, 1.0 / 3.0 . Approximately 0.333333333 . Useful for setting
+    /// handles on the knot of a Bezier curve.
+    /// </summary>
+    public const float OneThird = 0.333333333f;
+
+    /// <summary>
+    /// An approximation of PHI , or ( 1.0 + SQRT ( 5.0 ) ) / 2.0 , 1.618034 .
+    /// </summary>
+    public const float Phi = 1.618034f;
+
+    /// <summary>
+    /// An approximation of PI, 3.14159274 .
+    /// </summary>
+    public const float Pi = 3.14159274f;
+
+    /// <summary>
+    /// An angle in radians is multiplied by this constant to convert it to
+    /// degrees. 180.0 / PI , approximately 57.29578 .
+    /// </summary>
+    public const float RadToDeg = 57.29578f;
+
+    /// <summary>
+    /// An approximation of TAU, 6.28318548 . Equal to 2.0 PI .
+    /// </summary>
+    public const float Tau = 6.28318548f;
+
+    /// <summary>
+    /// PI divided by 3.0 , 1.04719758 . Useful for describing the
+    /// field of view in a perspective camera.
+    /// </summary>
+    public const float ThirdPi = 1.04719758f;
 
     public static float Abs (float v)
     {
@@ -234,7 +341,7 @@ public static class Utils
 
     public static float Log (float v)
     {
-        return (float) Math.Log (v);
+        return v > 0.0f ? (float) Math.Log (v) : 0.0f;
     }
 
     public static float Map (
@@ -245,9 +352,9 @@ public static class Utils
         float ubDest = 1.0f)
     {
         float denom = ubOrigin - lbOrigin;
-        return denom == 0.0f ? lbDest :
+        return denom != 0.0f ?
             lbDest + (ubDest - lbDest) *
-            ((v - lbOrigin) / denom);
+            ((v - lbOrigin) / denom) : 0.0f;
     }
 
     public static float Max (float a, float b)
@@ -308,7 +415,7 @@ public static class Utils
 
     public static float Mod (float a, float b)
     {
-        return b == 0.0f ? a : a - b * Utils.Floor (a / b);
+        return b != 0.0f ? a - b * Utils.Floor (a / b) : a;
     }
 
     public static float Mod1 (float a)
@@ -334,6 +441,12 @@ public static class Utils
     public static int Or (float a, float b)
     {
         return ((a != 0.0f) | (b != 0.0f)) ? 1 : 0;
+    }
+
+    public static float PingPong(float a, float b, float t)
+    {
+        float x = 0.5f + 0.5f * Utils.SinCosEval (t);
+        return (1.0f - x) * a + x * b;
     }
 
     public static float Pow (float a, float b)

@@ -109,8 +109,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     {
       Quat q = (Quat) value;
 
-      // return Quat.Approx (this, q);
-
       if (this.real.GetHashCode ( ) != q.real.GetHashCode ( ))
       {
         return false;
@@ -145,8 +143,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public bool Equals (Quat q)
   {
-    // return Quat.Approx (this, q);
-
     if (this.real.GetHashCode ( ) != q.real.GetHashCode ( ))
     {
       return false;
@@ -391,6 +387,13 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return new Quat (cosa, 0.0f, 0.0f, sina);
   }
 
+  /// <summary>
+  /// Sets a quaternion from an axis and angle. Normalizes the axis prior to
+  /// calculating the quaternion.
+  /// </summary>
+  /// <param name="radians">the angle</param>
+  /// <param name="axis">the axis</param>
+  /// <returns>the quaternion</returns>
   public static Quat FromAxisAngle (float radians, in Vec3 axis)
   {
     float amSq = Vec3.MagSq (axis);
@@ -417,21 +420,115 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       nz * sinHalf);
   }
 
+  /// <summary>
+  /// Creates a quaternion with reference to two vectors. This function
+  /// creates normalized copies of the vectors. Uses the formula:
+  /// 
+  /// fromTo (a, b) := { a . b, a x b }
+  /// </summary>
+  /// <param name="origin">the origin</param>
+  /// <param name="dest">the destination</param>
+  /// <returns>the vector</returns>
+  public static Quat FromTo (in Vec3 origin, in Vec3 dest)
+  {
+    Vec3 a = Vec3.Normalize (origin);
+    Vec3 b = Vec3.Normalize (dest);
+
+    return new Quat (
+      Vec3.Dot (a, b),
+      Vec3.Cross (a, b));
+  }
+
+  /// <summary>
+  /// Finds the inverse, or reciprocal, of a quaternion, which is the its
+  /// conjugate divided by its magnitude squared.
+  ///
+  /// 1 / a := a* / ( a a* )
+  ///
+  /// If a quaternion is of unit length, its inverse is equal to its conjugate.
+  /// </summary>
+  /// <param name="q">the quaternion</param>
+  /// <returns>the inverse</returns>
   public static Quat Inverse (in Quat q)
   {
     return Quat.Conj (q) / Quat.MagSq (q);
   }
 
+  /// <summary>
+  /// Tests if the quaternion is the identity, where its real component is 1.0
+  /// and its imaginary components are all zero.
+  /// </summary>
+  /// <param name="q">the quaternion</param>
+  /// <returns>the evaluation</returns>
+  public static bool IsIdentity (in Quat q)
+  {
+    return q.real == 1.0f && Vec3.None (q.imag);
+  }
+
+  /// <summary>
+  /// Tests to see if a quaternion is pure, i.e. if its real component is zero.
+  /// </summary>
+  /// <param name="q">the quaternion</param>
+  /// <returns>the evaluation</returns>
+  public static bool IsPure (in Quat q)
+  {
+    return q.real == 0.0f;
+  }
+
+  /// <summary>
+  /// Tests if the quaternion is of unit magnitude.
+  /// </summary>
+  /// <param name="q">the quaternion</param>
+  /// <returns>the evaluation</returns>
+  public static bool IsUnit (in Quat q)
+  {
+    return Utils.Approx (Quat.MagSq (q), 1.0f);
+  }
+
+  /// <summary>
+  /// Finds the length, or magnitude, of a quaternion.
+  /// 
+  /// |a| := sqrt ( a . a )
+  /// 
+  /// |a| := sqrt ( a a* )
+  /// </summary>
+  /// <param name="q">the quaternion</param>
+  /// <returns>the magnitude</returns>
   public static float Mag (in Quat q)
   {
     return Utils.Sqrt (Quat.MagSq (q));
   }
 
+  /// <summary>
+  /// Finds the magnitude squared of a quaternion. Equivalent to the dot product
+  /// of a quaternion with itself and to the product of a quaternion with its
+  /// conjugate.
+  /// 
+  /// |a|<sup>2</sup> := a . a
+  /// 
+  /// |a|<sup>2</sup> := a a*
+  /// </summary>
+  /// <param name="q">the quaternion</param>
+  /// <returns>the magnitude squared</returns>
   public static float MagSq (in Quat q)
   {
     return q.real * q.real + Vec3.MagSq (q.imag);
   }
 
+  /// <summary>
+  /// Multiplies a vector by a quaternion, in effect rotating the vector by the
+  /// quaternion. Equivalent to promoting the vector to a pure quaternion,
+  /// multiplying the rotation quaternion and promoted vector, then multiplying
+  /// the product by the rotation's inverse.
+  ///
+  /// a b := ( a { 0.0, b } ) / a
+  ///
+  /// The result is then demoted to a vector, as the real component should be
+  /// 0.0 . This is often denoted as P' = RPR'.
+  /// </summary>
+  /// <param name="q">the quaternion</param>
+  /// <param name="source">the input vector</param>
+  /// <returns>the rotated vector</returns>
   public static Vec3 MulVector (in Quat q, in Vec3 source)
   {
     float w = q.real;
@@ -449,19 +546,45 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       ix * w + iz * qy - iw * qx - iy * qz,
       iy * w + ix * qz - iw * qy - iz * qx,
       iz * w + iy * qx - iw * qz - ix * qy);
+
+    // Quat product = (q * source) / q;
+    // return product.imag;
   }
 
+  /// <summary>
+  /// Tests if all components of the quaternion are zero.
+  /// </summary>
+  /// <param name="q">the quaternion</param>
+  /// <returns>the evaluation</returns>
   public static bool None (in Quat q)
   {
     return q.real == 0.0f && Vec3.None (q.imag);
   }
 
+  /// <summary>
+  /// Divides a quaternion by its magnitude, such that its new magnitude is one
+  /// and it lies on a 4D hyper-sphere. Uses the formula:
+  ///
+  /// a^ = a / |a|
+  ///
+  /// Quaternions with zero magnitude will return the identity.
+  /// </summary>
+  /// <param name="q">the input quaternion</param>
+  /// <returns>the normalized quaternion</returns>
   public static Quat Normalize (in Quat q)
   {
     return q / Quat.Mag (q);
   }
 
-  public static Quat Random (System.Random rng)
+  /// <summary>
+  /// Creates a random unit quaternion. Uses an algorithm by Ken Shoemake,
+  /// reproduced at this Math Stack Exchange discussion:
+  /// https://math.stackexchange.com/questions/131336/uniform-random-quaternion-in-a-restricted-angle-range
+  /// .
+  /// </summary>
+  /// <param name="rng">the random number generator</param>
+  /// <returns>the random quaternion</returns>
+  public static Quat Random (in System.Random rng)
   {
     float t0 = Utils.Tau * (float) rng.NextDouble ( );
     float t1 = Utils.Tau * (float) rng.NextDouble ( );
@@ -485,21 +608,27 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       x1 * cost1);
   }
 
+  /// <summary>
+  /// Rotates a quaternion around an arbitrary axis by an angle.
+  /// </summary>
+  /// <param name="q">the input quaternion</param>
+  /// <param name="radians">the angle in radians</param>
+  /// <param name="axis">the axis</param>
+  /// <returns>the rotated quaternion</returns>
   public static Quat Rotate (in Quat q, float radians, in Vec3 axis)
   {
-    float mSq = Quat.MagSq (q);
-    if (mSq == 0.0f)
-    {
-      return Quat.FromAxisAngle (radians, axis);
-    }
-
-    float wNorm = q.real * Utils.InvSqrtUnchecked (mSq);
-    float halfAngle = Utils.Acos (wNorm);
-    return Quat.FromAxisAngle (
-      Utils.ModRadians (halfAngle + halfAngle + radians),
-      axis);
+    return Quat.Normalize(q + Quat.FromAxisAngle(radians, axis));
   }
 
+  /// <summary>
+  /// Rotates a quaternion about the x axis by an angle.
+  ///
+  /// Do not use sequences of orthonormal rotations by Euler angles; this will
+  /// result in gimbal lock, defeating the purpose behind a quaternion.
+  /// </summary>
+  /// <param name="q">the input quaternion</param>
+  /// <param name="radians">the angle in radians</param>
+  /// <returns>the rotated quaternion</returns>
   public static Quat RotateX (in Quat q, float radians)
   {
     float sina = 0.0f;
@@ -508,6 +637,15 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return Quat.RotateX (q, cosa, sina);
   }
 
+  /// <summary>
+  /// Rotates a vector around the x axis. Accepts calculated sine and cosine of
+  /// half the angle so that collections of quaternions can be efficiently
+  /// rotated without repeatedly calling cos and sin.
+  /// </summary>
+  /// <param name="q">the input quaternion</param>
+  /// <param name="cosah">cosine of half the angle</param>
+  /// <param name="sinah">sine of half the angle</param>
+  /// <returns>the rotated quaternion</returns>
   public static Quat RotateX (in Quat q, float cosah, float sinah)
   {
     Vec3 i = q.imag;
@@ -518,6 +656,15 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       cosah * i.z - sinah * i.y);
   }
 
+  /// <summary>
+  /// Rotates a quaternion about the y axis by an angle.
+  ///
+  /// Do not use sequences of orthonormal rotations by Euler angles; this will
+  /// result in gimbal lock, defeating the purpose behind a quaternion.
+  /// </summary>
+  /// <param name="q">the input quaternion</param>
+  /// <param name="radians">the angle in radians</param>
+  /// <returns>the rotated quaternion</returns>
   public static Quat RotateY (in Quat q, float radians)
   {
     float sina = 0.0f;
@@ -526,6 +673,15 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return Quat.RotateY (q, cosa, sina);
   }
 
+  /// <summary>
+  /// Rotates a vector around the y axis. Accepts calculated sine and cosine of
+  /// half the angle so that collections of quaternions can be efficiently
+  /// rotated without repeatedly calling cos and sin.
+  /// </summary>
+  /// <param name="q">the input quaternion</param>
+  /// <param name="cosah">cosine of half the angle</param>
+  /// <param name="sinah">sine of half the angle</param>
+  /// <returns>the rotated quaternion</returns>
   public static Quat RotateY (in Quat q, float cosah, float sinah)
   {
     Vec3 i = q.imag;
@@ -536,6 +692,15 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       cosah * i.z + sinah * i.x);
   }
 
+  /// <summary>
+  /// Rotates a quaternion about the z axis by an angle.
+  ///
+  /// Do not use sequences of orthonormal rotations by Euler angles; this will
+  /// result in gimbal lock, defeating the purpose behind a quaternion.
+  /// </summary>
+  /// <param name="q">the input quaternion</param>
+  /// <param name="radians">the angle in radians</param>
+  /// <returns>the rotated quaternion</returns>
   public static Quat RotateZ (in Quat q, float radians)
   {
     float sina = 0.0f;
@@ -544,6 +709,15 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return Quat.RotateZ (q, cosa, sina);
   }
 
+  /// <summary>
+  /// Rotates a vector around the z axis. Accepts calculated sine and cosine of
+  /// half the angle so that collections of quaternions can be efficiently
+  /// rotated without repeatedly calling cos and sin.
+  /// </summary>
+  /// <param name="q">the input quaternion</param>
+  /// <param name="cosah">cosine of half the angle</param>
+  /// <param name="sinah">sine of half the angle</param>
+  /// <returns>the rotated quaternion</returns>
   public static Quat RotateZ (in Quat q, float cosah, float sinah)
   {
     Vec3 i = q.imag;
@@ -554,6 +728,14 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       cosah * i.z + sinah * q.real);
   }
 
+  /// <summary>
+  /// Converts a quaternion to three axes, which in turn may constitute a
+  /// rotation matrix.
+  ///
+  /// Returns a named value tuple containing the right, forward and up axes.
+  /// </summary>
+  /// <param name="q">the quaternion</param>
+  /// <returns>a tuple</returns>
   public static (Vec3 right, Vec3 forward, Vec3 up) ToAxes (in Quat q)
   {
     float w = q.real;
@@ -593,6 +775,14 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         1.0f - xsq2 - ysq2));
   }
 
+  /// <summary>
+  /// Converts a quaternion to an axis and angle. The angle is returned from the
+  /// function. The axis is assigned to an output vector.
+  ///
+  /// Returns a named value tuple containing the angle and axis.
+  /// </summary>
+  /// <param name="q">the quaternion</param>
+  /// <returns>a tuple</returns>
   public static (float angle, Vec3 axis) ToAxisAngle (in Quat q)
   {
     float mSq = Quat.MagSq (q);
@@ -606,7 +796,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     float wNorm = Utils.Approx (mSq, 1.0f) ? q.real :
       q.real * Utils.InvSqrtUnchecked (mSq);
     float angle = 2.0f * Utils.Acos (wNorm);
-    float wAsin = Utils.Tau - angle;
+    // float wAsin = Utils.Tau - angle;
+    float wAsin = Utils.Pi - angle;
 
     if (wAsin == 0.0f)
     {
@@ -642,6 +833,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       axis: new Vec3 (ax * mInv, ay * mInv, az * mInv));
   }
 
+  /// <summary>
+  /// Returns the identity quaternion, where the real component is 1 and the
+  /// imaginary components are 0, ( 1.0, 0.0, 0.0, 0.0 ).
+  /// </summary>
+  /// <value>the identity</value>
   public static Quat Identity
   {
     get

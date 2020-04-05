@@ -501,19 +501,19 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     public static Clr Max (in Clr a, in Clr b)
     {
         return new Clr (
-            Utils.Max (a._r, b._r),
-            Utils.Max (a._g, b._g),
-            Utils.Max (a._b, b._b),
-            Utils.Max (a._a, b._a));
+            Utils.Clamp (Utils.Max (a._r, b._r)),
+            Utils.Clamp (Utils.Max (a._g, b._g)),
+            Utils.Clamp (Utils.Max (a._b, b._b)),
+            Utils.Clamp (Utils.Max (a._a, b._a)));
     }
 
     public static Clr Min (in Clr a, in Clr b)
     {
         return new Clr (
-            Utils.Min (a._r, b._r),
-            Utils.Min (a._g, b._g),
-            Utils.Min (a._b, b._b),
-            Utils.Min (a._a, b._a));
+            Utils.Clamp (Utils.Min (a._r, b._r)),
+            Utils.Clamp (Utils.Min (a._g, b._g)),
+            Utils.Clamp (Utils.Min (a._b, b._b)),
+            Utils.Clamp (Utils.Min (a._a, b._a)));
     }
 
     public static Clr MixHsba (in Clr a, in Clr b, float t = 0.5f)
@@ -597,10 +597,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     public static Clr Pow (in Clr a, float b)
     {
         return new Clr (
-            Utils.Clamp(Utils.Pow (a._r, b), 0.0f, 1.0f),
-            Utils.Clamp(Utils.Pow (a._g, b), 0.0f, 1.0f),
-            Utils.Clamp(Utils.Pow (a._b, b), 0.0f, 1.0f),
-            Utils.Clamp(a._a, 0.0f, 1.0f));
+            Utils.Clamp (Utils.Pow (a._r, b), 0.0f, 1.0f),
+            Utils.Clamp (Utils.Pow (a._g, b), 0.0f, 1.0f),
+            Utils.Clamp (Utils.Pow (a._b, b), 0.0f, 1.0f),
+            Utils.Clamp (a._a, 0.0f, 1.0f));
     }
 
     /// <summary>

@@ -756,9 +756,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="b">the magnitude</param>
     /// <param name="tolerance">the tolerance</param>
     /// <returns>the evaluation</returns>
-    public static bool ApproxMag (in Vec3 a,
-        float b = 1.0f,
-        float tolerance = Utils.Epsilon)
+    public static bool ApproxMag (in Vec3 a, float b = 1.0f, float tolerance = Utils.Epsilon)
     {
         return Utils.Approx (Vec3.MagSq (a), b * b, tolerance);
     }
@@ -769,11 +767,11 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>the evaluation</returns>
-    public static bool AreParallel (in Vec3 a, in Vec3 b)
+    public static bool AreParallel (in Vec3 a, in Vec3 b, float tolerance = Utils.Epsilon)
     {
-        return a._y * b._z - a._z * b._y == 0.0f &&
-            a._z * b._x - a._x * b._z == 0.0f &&
-            a._x * b._y - a._y * b._x == 0.0f;
+        return (Utils.Abs (a._y * b._z - a._z * b._y) < tolerance) &&
+            (Utils.Abs (a._z * b._x - a._x * b._z) < tolerance) &&
+            (Utils.Abs (a._x * b._y - a._y * b._x) < tolerance);
     }
 
     /// <summary>
@@ -2073,6 +2071,18 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         get
         {
             return new Vec3 (0.0f, 0.0f, 1.0f);
+        }
+    }
+
+    /// <summary>
+    /// Returns a vector with all components set to zero.
+    /// </summary>
+    /// <value>the vector</value>
+    public static Vec3 Zero
+    {
+        get
+        {
+            return new Vec3 (0.0f, 0.0f, 0.0f);
         }
     }
 }
