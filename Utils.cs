@@ -133,16 +133,36 @@ public static class Utils
     public const float Tau = 6.28318548f;
 
     /// <summary>
-    /// PI divided by 3.0 , 1.04719758 . Useful for describing the
-    /// field of view in a perspective camera.
+    /// PI divided by 3.0 , 1.04719758 . Useful for describing the field of view
+    /// in a perspective camera.
     /// </summary>
     public const float ThirdPi = 1.04719758f;
 
+    /// <summary>
+    /// Finds the absolute value of a single precision real number. Equivalent
+    /// to MAX(-a, a).
+    /// </summary>
+    /// <param name="v">the input value</param>
+    /// <returns>the absolute value</returns>
     public static float Abs (float v)
     {
         return v < 0.0f ? -v : v;
     }
 
+    /// <summary>
+    /// A bounds checked approximation of the arc cosine for single precision
+    /// real numbers. Returns a value in the range [0.0, PI] : PI when the input
+    /// is less than or equal to -1.0; PI / 2.0 when the input is 0.0; 0.0 when
+    /// the input is greater than or equal to 1.0. 
+    ///
+    /// Based on the algorithm at the Nvidia Cg 3.1 Toolkit Documentation,
+    /// https://developer.download.nvidia.com/cg/acos.html . This cites M.
+    /// Abramowitz and I.A. Stegun, Eds., Handbook of Mathematical Functions,
+    /// possibly p. 83, which cites Approximations for Digital Computers by C.
+    /// Hastings, Jr.
+    /// </summary>
+    /// <param name="value">the input value</param>
+    /// <returns>the angle in radians</returns>
     public static float Acos (float value)
     {
         if (value <= -1.0f) return Utils.Pi;
@@ -161,17 +181,46 @@ public static class Utils
         return ltZero ? Utils.Pi - ret : ret;
     }
 
+    /// <summary>
+    /// Evaluates two floats like booleans using the AND logic gate.
+    /// </summary>
+    /// <param name="a">the left operand</param>
+    /// <param name="b">the right operand</param>
+    /// <returns>the evaluation</returns>
     public static int And (float a, float b)
     {
         return ((a != 0.0f) & (b != 0.0f)) ? 1 : 0;
     }
 
+    /// <summary>
+    /// A quick approximation test. Tests to see if the absolute of the
+    /// difference between two values is less than a tolerance. Does not handle
+    /// edge cases.
+    /// </summary>
+    /// <param name="a">left comparisand</param>
+    /// <param name="b">right comparisand</param>
+    /// <param name="tolerance">the tolerance</param>
+    /// <returns>the evaluation</returns>
     public static bool Approx (float a, float b, float tolerance = Utils.Epsilon)
     {
         float diff = b - a;
         return diff <= tolerance && diff >= -tolerance;
     }
 
+    /// <summary>
+    /// A bounds checked approximation of the arc-sine for single precision real
+    /// numbers. Returns a value in the range [-PI / 2.0, PI / 2.0] : -PI / 2.0
+    /// when the input is less than or equal to -1.0; 0.0 when the input is 0.0;
+    /// PI / 2.0 when the input is greater than or equal to 1.0.
+    ///
+    /// Based on the algorithm at the Nvidia Cg 3.1 Toolkit Documentation,
+    /// https://developer.download.nvidia.com/cg/acos.html . This cites M.
+    /// Abramowitz and I.A. Stegun, Eds., Handbook of Mathematical Functions,
+    /// possibly p. 83, which cites Approximations for Digital Computers by C.
+    /// Hastings, Jr.
+    /// </summary>
+    /// <param name="value">the input value</param>
+    /// <returns>the angle in radians</returns>
     public static float Asin (float value)
     {
         if (value <= -1.0f) return -Utils.HalfPi;
@@ -190,6 +239,17 @@ public static class Utils
         return ltZero ? -ret : ret;
     }
 
+    /// <summary>
+    /// Finds a single precision approximation of a signed angle given a
+    /// vertical and horizontal component. Note that the vertical component
+    /// precedes the horizontal. The return value falls in the range [-PI, PI] .
+    ///
+    /// Based on the algorithm at the Nvidia Cg 3.1 Toolkit Documentation,
+    /// https://developer.download.nvidia.com/cg/atan2.html .
+    /// </summary>
+    /// <param name="y">the y coordinate (the ordinate)</param>
+    /// <param name="x">the x coordinate (the abscissa)</param>
+    /// <returns>the angle in radians</returns>
     public static float Atan2 (float y, float x)
     {
         bool yLtZero = y < 0.0f;
@@ -279,12 +339,12 @@ public static class Utils
 
     public static int Fmod (int a, int b)
     {
-        return b == 0 ? a : a % b;
+        return b != 0 ? a % b : a;
     }
 
     public static float Fmod (float a, float b)
     {
-        return b == 0.0f ? a : a % b;
+        return b != 0.0f ? a % b : a;
     }
 
     public static float InvSqrt (float a)
@@ -443,7 +503,7 @@ public static class Utils
         return ((a != 0.0f) | (b != 0.0f)) ? 1 : 0;
     }
 
-    public static float PingPong(float a, float b, float t)
+    public static float PingPong (float a, float b, float t)
     {
         float x = 0.5f + 0.5f * Utils.SinCosEval (t);
         return (1.0f - x) * a + x * b;
@@ -583,13 +643,15 @@ public static class Utils
 
     public static string ToFixed (float v, int places = 7)
     {
+        // TODO: Compare against Java version when handling infinity, max and min value.
+
         /*
          * Dispense with v and places edge cases.
          */
         if (float.IsNaN (v)) return "0.0";
         if (places < 0) return ((int) v).ToString ( );
         if (places < 1) return ((float) ((int) v)).ToString ( );
-        if (v < float.MinValue || v > float.MaxValue)
+        if (v <= float.MinValue || v >= float.MaxValue)
         {
             return v.ToString ( );
         }
@@ -651,21 +713,85 @@ public static class Utils
         return sb.ToString ( );
     }
 
+    /// <summary>
+    /// Converts a boolean value to a float, where 1.0 is true and 0.0 is false.
+    /// </summary>
+    /// <param name="v">the input boolean</param>
+    /// <returns>the float value</returns>
     public static float ToFloat (bool v)
     {
         return v ? 1.0f : 0.0f;
     }
 
+    /// <summary>
+    /// Converts a boolean value to an integer, where 1 is true and 0 is false.
+    /// </summary>
+    /// <param name="v">the input boolean</param>
+    /// <returns>the integer value</returns>
     public static int ToInt (bool v)
     {
         return v ? 1 : 0;
     }
 
+    /// <summary>
+    /// Returns an integer formatted as a string padded by initial zeroes.
+    /// </summary>
+    /// <param name="value">the integer</param>
+    /// <param name="places">the number of places</param>
+    /// <returns>the string</returns>
+    public static String ToPadded (int value, int places = 4)
+    {
+        /*
+         * Double precision is needed to preserve accuracy. The max integer value
+         * is 2147483647, which is 10 digits long. The sign needs to be flipped
+         * because working with positive absolute value would allow
+         * Integer#MIN_VALUE to overflow to zero.
+         */
+
+        bool isNeg = value < 0;
+        int nAbsVal = isNeg ? value : -value;
+        int[ ] digits = new int[10];
+        int filled = 0;
+        while (nAbsVal < 0)
+        {
+            double y = nAbsVal * 0.1d;
+            nAbsVal = (int) y;
+            digits[filled++] = -(int) ((y - nAbsVal) * 10.0d - 0.5d);
+        }
+
+        StringBuilder sb = new StringBuilder (16);
+        if (isNeg) { sb.Append ('-'); }
+        int vplaces = filled > places ? filled : places;
+        for (int n = vplaces - 1; n > -1; --n)
+        {
+            sb.Append (digits[n]);
+        }
+
+        return sb.ToString ( );
+    }
+
+    /// <summary>
+    /// Truncates the input value. This is an alias for explicitly casting a
+    /// float to an integer, then implicitly casting the integral to a float.
+    /// </summary>
+    /// <param name="a">the input value</param>
+    /// <returns>the truncation</returns>
     public static float Trunc (float a)
     {
         return (int) a;
     }
 
+    /// <summary>
+    /// Wraps a value around a periodic range as defined by an upper and lower
+    /// bound: lower bounds inclusive; upper bounds exclusive. Due to single
+    /// precision accuracy, results will be inexact. In cases where the lower
+    /// bound is greater than the upper bound, the two will be swapped. In cases
+    /// where the range is 0.0, 0.0 will be returned.
+    /// </summary>
+    /// <param name="value">input value</param>
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
+    /// <returns>wrapped value</returns>
     public static float Wrap (
         float value,
         float lb = -1.0f,
@@ -701,6 +827,12 @@ public static class Utils
         return value;
     }
 
+    /// <summary>
+    /// Evaluates two floats like booleans, using the exclusive or (XOR) logic gate.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the evaluation</returns>
     public static int Xor (float a, float b)
     {
         return ((a != 0.0f) ^ (b != 0.0f)) ? 1 : 0;
