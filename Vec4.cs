@@ -59,8 +59,8 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public float w { get { return this._w; } }
 
     /// <summary>
-    /// When the provided index is 3 or -1, returns w; 2 or
-    /// -2, z; 1 or -3, y; 0 or -4, x.
+    /// Retrieves a component by index. When the provided index is 3 or -1,
+    /// returns w; 2 or -2, z; 1 or -3, y; 0 or -4, x.
     /// </summary>
     /// <value>the component</value>
     public float this [int i]
@@ -486,7 +486,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="a">left operand, the vector</param>
     /// <param name="b">right operand, the scalar</param>
     /// <returns>the product</returns>
-    public static Vec4 operator * (in Vec4 a, float b)
+    public static Vec4 operator * (in Vec4 a, in float b)
     {
         return new Vec4 (
             a._x * b,
@@ -501,7 +501,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="a">left operand, the scalar</param>
     /// <param name="b">right operand, the vector</param>
     /// <returns>the product</returns>
-    public static Vec4 operator * (float a, in Vec4 b)
+    public static Vec4 operator * (in float a, in Vec4 b)
     {
         return new Vec4 (
             a * b._x,
@@ -534,7 +534,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="a">vector, numerator</param>
     /// <param name="b">scalar, denominator</param>
     /// <returns>the product</returns>
-    public static Vec4 operator / (in Vec4 a, float b)
+    public static Vec4 operator / (in Vec4 a, in float b)
     {
         if (b == 0.0f) return new Vec4 (0.0f, 0.0f, 0.0f, 0.0f);
         float bInv = 1.0f / b;
@@ -551,7 +551,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="a">scalar, numerator</param>
     /// <param name="b">vector, denominator</param>
     /// <returns>the product</returns>
-    public static Vec4 operator / (float a, in Vec4 b)
+    public static Vec4 operator / (in float a, in Vec4 b)
     {
         return new Vec4 (
             Utils.Div (a, b._x),
@@ -579,7 +579,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
-    public static Vec4 operator % (in Vec4 a, float b)
+    public static Vec4 operator % (in Vec4 a, in float b)
     {
         if (b == 0.0f) return a;
         return new Vec4 (
@@ -596,7 +596,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
-    public static Vec4 operator % (float a, in Vec4 b)
+    public static Vec4 operator % (in float a, in Vec4 b)
     {
         return new Vec4 (
             Utils.Fmod (a, b._x),
@@ -797,7 +797,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="b">right comparisand</param>
     /// <param name="tolerance">the tolerance</param>
     /// <returns>the evaluation</returns>
-    public static bool Approx (in Vec4 a, in Vec4 b, float tolerance = Utils.Epsilon)
+    public static bool Approx (in Vec4 a, in Vec4 b, in float tolerance = Utils.Epsilon)
     {
         return Utils.Approx (a._x, b._x, tolerance) &&
             Utils.Approx (a._y, b._y, tolerance) &&
@@ -813,7 +813,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="b">the magnitude</param>
     /// <param name="tolerance">the tolerance</param>
     /// <returns>the evaluation</returns>
-    public static bool ApproxMag (in Vec4 a, float b = 1.0f, float tolerance = Utils.Epsilon)
+    public static bool ApproxMag (in Vec4 a, in float b = 1.0f, in float tolerance = Utils.Epsilon)
     {
         return Utils.Approx (Vec4.MagSq (a), b * b, tolerance);
     }
@@ -841,7 +841,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="lb">the range lower bound</param>
     /// <param name="ub">the range upper bound</param>
     /// <returns>the clamped vector</returns>
-    public static Vec4 Clamp (in Vec4 v, float lb = 0.0f, float ub = 1.0f)
+    public static Vec4 Clamp (in Vec4 v, in float lb = 0.0f, in float ub = 1.0f)
     {
         return new Vec4 (
             Utils.Clamp (v._x, lb, ub),
@@ -865,6 +865,21 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
             Utils.Clamp (v._y, lb._y, ub._y),
             Utils.Clamp (v._z, lb._z, ub._z),
             Utils.Clamp (v._w, lb._w, ub._w));
+    }
+
+    /// <summary>
+    /// Tests to see if the vector contains a value
+    /// </summary>
+    /// <param name="a">the vector</param>
+    /// <param name="b">the value</param>
+    /// <returns>the evaluation</returns>
+    public static bool Contains (in Vec4 a, in float b)
+    {
+        if (Utils.Approx (a._x, b)) { return true; }
+        if (Utils.Approx (a._y, b)) { return true; }
+        if (Utils.Approx (a._z, b)) { return true; }
+        if (Utils.Approx (a._w, b)) { return true; }
+        return false;
     }
 
     /// <summary>
@@ -959,7 +974,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="b">right operand</param>
     /// <param name="c">the exponent</param>
     /// <returns>the Minkowski distance</returns>
-    public static float DistMinkowski (in Vec4 a, in Vec4 b, float c = 2.0f)
+    public static float DistMinkowski (in Vec4 a, in Vec4 b, in float c = 2.0f)
     {
         if (c == 0.0f) return 0.0f;
 
@@ -1086,7 +1101,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="v">the input vector</param>
     /// <param name="limit">the limit</param>
     /// <returns>the limited vector</returns>
-    public static Vec4 Limit (in Vec4 v, float limit = float.MaxValue)
+    public static Vec4 Limit (in Vec4 v, in float limit = float.MaxValue)
     {
         float mSq = Vec4.MagSq (v);
         if (mSq > (limit * limit))
@@ -1202,7 +1217,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="b">the destination vector</param>
     /// <param name="t">the step</param>
     /// <returns>the mix</returns>
-    public static Vec4 Mix (in Vec4 a, in Vec4 b, float t = 0.5f)
+    public static Vec4 Mix (in Vec4 a, in Vec4 b, in float t = 0.5f)
     {
         float u = 1.0f - t;
         return new Vec4 (
@@ -1352,15 +1367,16 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="v">input vector</param>
     /// <param name="levels">levels</param>
     /// <returns>the quantized vector</returns>
-    public static Vec4 Quantize (in Vec4 v, int levels = 8)
+    public static Vec4 Quantize (in Vec4 v, in int levels = 8)
     {
         if (levels < 2) return new Vec4 (v._x, v._y, v._z, v._w);
-        float delta = 1.0f / levels;
+        float levf = (float) levels;
+        float delta = 1.0f / levf;
         return new Vec4 (
-            delta * Utils.Floor (0.5f + v._x * levels),
-            delta * Utils.Floor (0.5f + v._y * levels),
-            delta * Utils.Floor (0.5f + v._z * levels),
-            delta * Utils.Floor (0.5f + v._w * levels));
+            delta * Utils.Floor (0.5f + v._x * levf),
+            delta * Utils.Floor (0.5f + v._y * levf),
+            delta * Utils.Floor (0.5f + v._z * levf),
+            delta * Utils.Floor (0.5f + v._w * levf));
     }
 
     /// <summary>
@@ -1393,7 +1409,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the random vector</returns>
-    public static Vec4 RandomCartesian (in System.Random rng, float lb = 0.0f, float ub = 1.0f)
+    public static Vec4 RandomCartesian (in System.Random rng, in float lb = 0.0f, in float ub = 1.0f)
     {
         float xFac = (float) rng.NextDouble ( );
         float yFac = (float) rng.NextDouble ( );
@@ -1428,7 +1444,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="n">the normal vector</param>
     /// <param name="eta">ratio of refraction indices</param>
     /// <returns>the refracted vector</returns>
-    public static Vec4 Refract (in Vec4 i, in Vec4 n, float eta)
+    public static Vec4 Refract (in Vec4 i, in Vec4 n, in float eta)
     {
         float iDotN = Vec4.Dot (i, n);
         float k = 1.0f - eta * eta * (1.0f - iDotN * iDotN);
@@ -1444,7 +1460,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="v">the vector</param>
     /// <param name="scalar">the scalar</param>
     /// <returns>the rescaled vector</returns>
-    public static Vec4 Rescale (in Vec4 v, float scalar = 1.0f)
+    public static Vec4 Rescale (in Vec4 v, in float scalar = 1.0f)
     {
         return Utils.Div (scalar, Vec4.Mag (v)) * v;
     }
@@ -1471,7 +1487,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="v">the input vector</param>
     /// <param name="places">the number of places</param>
     /// <returns>the rounded vector</returns>
-    public static Vec4 Round (in Vec4 v, int places)
+    public static Vec4 Round (in Vec4 v, in int places)
     {
         return new Vec4 (
             Utils.Round (v._x, places),

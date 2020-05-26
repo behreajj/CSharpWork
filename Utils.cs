@@ -144,7 +144,7 @@ public static class Utils
     /// </summary>
     /// <param name="v">the input value</param>
     /// <returns>the absolute value</returns>
-    public static float Abs (float v)
+    public static float Abs (in float v)
     {
         return v < 0.0f ? -v : v;
     }
@@ -163,7 +163,7 @@ public static class Utils
     /// </summary>
     /// <param name="value">the input value</param>
     /// <returns>the angle in radians</returns>
-    public static float Acos (float value)
+    public static float Acos (in float value)
     {
         if (value <= -1.0f) return Utils.Pi;
         if (value >= 1.0f) return 0.0f;
@@ -177,7 +177,7 @@ public static class Utils
         ret -= 0.2121144f;
         ret *= x;
         ret += Utils.HalfPi;
-        ret *= (float) Math.Sqrt (1.0d - x);
+        ret *= (float) Math.Sqrt (1.0d - (double) x);
         return ltZero ? Utils.Pi - ret : ret;
     }
 
@@ -187,7 +187,7 @@ public static class Utils
     /// <param name="a">the left operand</param>
     /// <param name="b">the right operand</param>
     /// <returns>the evaluation</returns>
-    public static int And (float a, float b)
+    public static int And (in float a, in float b)
     {
         return ((a != 0.0f) & (b != 0.0f)) ? 1 : 0;
     }
@@ -201,7 +201,7 @@ public static class Utils
     /// <param name="b">right comparisand</param>
     /// <param name="tolerance">the tolerance</param>
     /// <returns>the evaluation</returns>
-    public static bool Approx (float a, float b, float tolerance = Utils.Epsilon)
+    public static bool Approx (in float a, in float b, in float tolerance = Utils.Epsilon)
     {
         float diff = b - a;
         return diff <= tolerance && diff >= -tolerance;
@@ -221,7 +221,7 @@ public static class Utils
     /// </summary>
     /// <param name="value">the input value</param>
     /// <returns>the angle in radians</returns>
-    public static float Asin (float value)
+    public static float Asin (in float value)
     {
         if (value <= -1.0f) return -Utils.HalfPi;
         if (value >= 1.0f) return Utils.HalfPi;
@@ -235,7 +235,7 @@ public static class Utils
         ret -= 0.2121144f;
         ret *= x;
         ret += Utils.HalfPi;
-        ret = Utils.HalfPi - ret * (float) Math.Sqrt (1.0d - x);
+        ret = Utils.HalfPi - ret * (float) Math.Sqrt (1.0d - (double) x);
         return ltZero ? -ret : ret;
     }
 
@@ -250,7 +250,7 @@ public static class Utils
     /// <param name="y">the y coordinate (the ordinate)</param>
     /// <param name="x">the x coordinate (the abscissa)</param>
     /// <returns>the angle in radians</returns>
-    public static float Atan2 (float y, float x)
+    public static float Atan2 (in float y, in float x)
     {
         bool yLtZero = y < 0.0f;
         bool xLtZero = x < 0.0f;
@@ -275,84 +275,202 @@ public static class Utils
         return yLtZero ? -t2 : t2;
     }
 
-    public static int Ceil (float v)
+    /// <summary>
+    /// Raises a real number to the next greatest integer.
+    /// </summary>
+    /// <param name="v">the input value</param>
+    /// <returns>the raised value</returns>
+    public static int Ceil (in float v)
     {
         return v > 0.0f ? (int) (v + 1) : (int) v;
     }
 
-    public static int Clamp (int v, int lb = int.MinValue, int ub = int.MaxValue)
+    /// <summary>
+    /// Clamps an real number between a lower and an upper bound.
+    /// </summary>
+    /// <param name="v">the input value</param>
+    /// <param name="lb">the lower bound</param>
+    /// <param name="ub">the upper bound</param>
+    /// <returns>the clamped value</returns>
+    public static float Clamp (in float v, in float lb = 0.0f, in float ub = 1.0f)
     {
         return (v < lb) ? lb : (v > ub) ? ub : v;
     }
 
-    public static float Clamp (float v, float lb = 0.0f, float ub = 1.0f)
+    /// <summary>
+    /// Clamps an integer between a lower and an upper bound.
+    /// </summary>
+    /// <param name="v">the input value</param>
+    /// <param name="lb">the lower bound</param>
+    /// <param name="ub">the upper bound</param>
+    /// <returns>the clamped value</returns>
+    public static int Clamp (in int v, in int lb = int.MinValue, in int ub = int.MaxValue)
     {
         return (v < lb) ? lb : (v > ub) ? ub : v;
     }
 
-    public static float CopySign (float mag, float sign)
+    /// <summary>
+    /// Returns the first floating-point argument with the sign of the second
+    /// floating-point argument. 
+    /// </summary>
+    /// <param name="mag">the magnitude</param>
+    /// <param name="sign">the sign</param>
+    /// <returns>the magnified sign</returns>
+    public static float CopySign (in float mag, in float sign)
     {
         return (mag < 0.0f ? -mag : mag) *
             ((sign < 0.0f) ? -1.0f : (sign > 0.0f) ? 1.0f : 0.0f);
     }
 
-    public static float Cos (float radians)
+    /// <summary>
+    /// Finds the single-precision cosine of an angle in radians. Returns a
+    /// value in the range [-1.0, 1.0] .
+    /// </summary>
+    /// <param name="radians">the angle in radians</param>
+    /// <returns>the cosine of the angle</returns>
+    public static float Cos (in float radians)
     {
         // return Utils.SinCosEval (Utils.OneTau * radians);
-        return (float) Math.Cos (radians);
+        return (float) Math.Cos ((double) radians);
     }
 
-    public static float Cosh (float radians)
+    /// <summary>
+    /// Finds the hyperbolic cosine of an angle in radians.
+    /// </summary>
+    /// <param name="radians">the angle in radians</param>
+    /// <returns>the cosine of the angle</returns>
+    public static float Cosh (in float radians)
     {
-        return (float) Math.Cosh (radians);
+        return (float) Math.Cosh ((double) radians);
     }
 
-    public static float Diff (float a, float b)
+    /// <summary>
+    /// Finds the approximate cotangent of the angle in radians. Equivalent to
+    /// dividing the cosine of the angle by the sine, or to 1.0 / tan ( a ) .
+    /// </summary>
+    /// <param name="radians">the angle in radians</param>
+    /// <returns>the cotangent</returns>
+    public static float Cot (in float radians)
+    {
+        double rd = (double) radians;
+        double sint = Math.Sin (rd);
+        return (sint != 0.0d) ? (float) (Math.Cos (rd) / sint) : 0.0f;
+    }
+
+    /// <summary>
+    /// Finds the absolute value of the left operand minus the right.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the difference</returns>
+    public static float Diff (in float a, in float b)
     {
         return Utils.Abs (a - b);
     }
 
-    public static float Div (float a, float b)
+    /// <summary>
+    /// Divides the left operand by the right, but returns zero when the
+    /// denominator is zero.
+    /// </summary>
+    /// <param name="a">numerator</param>
+    /// <param name="b">denominator</param>
+    /// <returns>the quotient</returns>
+    public static float Div (in float a, in float b)
     {
-        return b == 0.0f ? 0.0f : a / b;
+        return b != 0.0f ? a / b : 0.0f;
     }
 
-    public static float Exp (float a)
+    /// <summary>
+    /// Finds Euler's number, 2.7182817, raised to power of the input value.
+    /// </summary>
+    /// <param name="v">the input value</param>
+    /// <returns>the result</returns>
+    public static float Exp (in float v)
     {
-        return (float) Math.Exp (a);
+        return (float) Math.Exp ((double) v);
     }
 
-    public static float Filter (float v, float lb = 0.0f, float ub = 1.0f)
+    /// <summary>
+    /// Returns the value if it is greater than the lower bound, inclusive, and
+    /// less than the upper bound, exclusive. Otherwise, returns 0.0 .
+    /// </summary>
+    /// <param name="v">input value</param>
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
+    /// <returns>the filtered value</returns>
+    public static float Filter (in float v, in float lb = 0.0f, in float ub = 1.0f)
     {
         return v >= lb && v < ub ? v : 0.0f;
     }
 
-    public static int Floor (float v)
+    /// <summary>
+    /// Floors a real number to the next least integer.
+    /// </summary>
+    /// <param name="v">the input value</param>
+    /// <returns>the floored value</returns>
+    public static int Floor (in float v)
     {
         return v > 0.0f ? (int) v : (int) v - 1;
     }
 
-    public static float Fract (float v)
-    {
-        return v - (int) v;
-    }
-
-    public static int Fmod (int a, int b)
+    /// <summary>
+    /// Applies the modulo operator (%) to the operands.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the result</returns>
+    public static int Fmod (in int a, in int b)
     {
         return b != 0 ? a % b : a;
     }
 
-    public static float Fmod (float a, float b)
+    /// <summary>
+    /// Applies the modulo operator (%) to the operands, implicitly using the
+    /// formula fmod ( a, b ) := a - b trunc ( a / b ) .
+    ///
+    /// When the left operand is negative and the right operand is positive, the
+    /// result will be negative. For periodic values, such as an angle, where
+    /// the direction of change could be either clockwise or counterclockwise,
+    /// use mod.
+    ///
+    /// If the right operand is one, use fract ( a ) or a - trunc ( a ) instead.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the result</returns>
+    public static float Fmod (in float a, in float b)
     {
         return b != 0.0f ? a % b : a;
     }
 
-    public static float InvSqrt (float a)
+    /// <summary>
+    /// Finds the signed fractional portion of the input value by subtracting the value's truncation from the value.
+    /// </summary>
+    /// <param name="v">the input value</param>
+    /// <returns>the fractional portion</returns>
+    public static float Fract (in float v)
+    {
+        return v - (int) v;
+    }
+
+    /// <summary>
+    /// Finds one divided by the square root of an input value. Returns zero if
+    /// the input is zero.
+    /// </summary>
+    /// <param name="a">the input value</param>
+    /// <returns>the inverse square root</returns>
+    public static float InvSqrt (in float a)
     {
         return a > 0.0f ? Utils.InvSqrtUnchecked (a) : 0.0f;
     }
 
-    public static float InvSqrtUnchecked (float a)
+    /// <summary>
+    /// Finds one divided by the square root of an input value. Does not check
+    /// if the input is zero.
+    /// </summary>
+    /// <param name="a">the input value</param>
+    /// <returns>the inverse square root</returns>
+    public static float InvSqrtUnchecked (in float a)
     {
         // Union u = new Union ( );
         // u.f = a;
@@ -365,10 +483,19 @@ public static class Utils
         // y *= 1.5f - vhalf * y * y;
         // return y;
 
-        return (float) (1.0d / Math.Sqrt (a));
+        return (float) (1.0d / Math.Sqrt ((double) a));
     }
 
-    public static float LerpAngle (float origin, float dest, float t = 0.5f)
+    /// <summary>
+    /// Eases from an origin angle in radians to a destination angle using the
+    /// shortest direction (either clockwise or counter clockwise) according to
+    /// a factor in [0.0, 1.0] .
+    /// </summary>
+    /// <param name="origin">the origin angle</param>
+    /// <param name="dest">the destination angle</param>
+    /// <param name="t">the factor</param>
+    /// <returns></returns>
+    public static float LerpAngle (in float origin, in float dest, in float t = 0.5f)
     {
         float a = Utils.ModRadians (origin);
         float b = Utils.ModRadians (dest);
@@ -389,44 +516,79 @@ public static class Utils
         return modResult ? Utils.ModRadians (fac) : fac;
     }
 
-    public static float LinearStep (
-        float edge0 = 0.0f,
-        float edge1 = 1.0f,
-        float x = 0.5f)
+    /// <summary>
+    /// Finds the linear step between a left and right edge given an input
+    /// factor.
+    /// </summary>
+    /// <param name="edge0">the left edge</param>
+    /// <param name="edge1">the right edge</param>
+    /// <param name="x">the factor</param>
+    /// <returns>the linear step</returns>
+    public static float LinearStep (in float edge0 = 0.0f, in float edge1 = 1.0f, in float x = 0.5f)
     {
         float denom = edge1 - edge0;
         if (denom == 0.0f) return 0.0f;
         return Utils.Clamp ((x - edge0) / denom, 0.0f, 1.0f);
     }
 
-    public static float Log (float v)
+    /// <summary>
+    /// Finds the natural logarithm of the input value cast to a single
+    /// precision real number.
+    /// </summary>
+    /// <param name="v">the input value</param>
+    /// <returns>the natural logarithm</returns>
+    public static float Log (in float v)
     {
-        return v > 0.0f ? (float) Math.Log (v) : 0.0f;
+        return v > 0.0f ? (float) Math.Log ((double) v) : 0.0f;
     }
 
-    public static float Map (
-        float v,
-        float lbOrigin = -1.0f,
-        float ubOrigin = 1.0f,
-        float lbDest = 0.0f,
-        float ubDest = 1.0f)
+    /// <summary>
+    /// Maps an input value from an original range to a target range. If the
+    /// upper and lower bound of the original range are equal, will return the
+    /// lower bound of the destination range.
+    /// </summary>
+    /// <param name="v">the input value</param>
+    /// <param name="lbOrigin">lower bound of original range</param>
+    /// <param name="ubOrigin">upper bound of original range</param>
+    /// <param name="lbDest">lower bound of destination range</param>
+    /// <param name="ubDest">upper bound of destination range</param>
+    /// <returns>the mapped value</returns>
+    public static float Map (in float v, in float lbOrigin = -1.0f, in float ubOrigin = 1.0f, in float lbDest = 0.0f, in float ubDest = 1.0f)
     {
         float denom = ubOrigin - lbOrigin;
         return denom != 0.0f ?
             lbDest + (ubDest - lbDest) *
-            ((v - lbOrigin) / denom) : 0.0f;
+            ((v - lbOrigin) / denom) : lbDest;
     }
 
-    public static float Max (float a, float b)
+    /// <summary>
+    /// Finds the greater, or maximum, of two values.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the maximum value</returns>
+    public static float Max (in float a, in float b)
     {
         return a >= b ? a : a < b ? b : 0.0f;
     }
 
-    public static float Max (float a, float b, float c)
+    /// <summary>
+    /// Finds the greatest, or maximum, among three values.
+    /// </summary>
+    /// <param name="a">first operand</param>
+    /// <param name="b">second operand</param>
+    /// <param name="c">third operand</param>
+    /// <returns>the maximum value</returns>
+    public static float Max (in float a, in float b, in float c)
     {
         return Utils.Max (Utils.Max (a, b), c);
     }
 
+    /// <summary>
+    /// Finds the greatest, or maximum, among a list of values.
+    /// </summary>
+    /// <param name="values">the list of values</param>
+    /// <returns>the maximum value</returns>
     public static float Max (params float[ ] values)
     {
         int len = values.Length;
@@ -439,21 +601,34 @@ public static class Utils
         return result;
     }
 
-    public static float Mix (float a, float b, float t = 0.5f)
-    {
-        return (1.0f - t) * a + t * b;
-    }
-
-    public static float Min (float a, float b)
+    /// <summary>
+    /// Finds the lesser, or minimum, of two values.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the minimum value</returns>
+    public static float Min (in float a, in float b)
     {
         return a <= b ? a : a > b ? b : 0.0f;
     }
 
-    public static float Min (float a, float b, float c)
+    /// <summary>
+    /// Finds the least, or minimum, among three values.
+    /// </summary>
+    /// <param name="a">first operand</param>
+    /// <param name="b">second operand</param>
+    /// <param name="c">third operand</param>
+    /// <returns>the minimum value</returns>
+    public static float Min (in float a, in float b, in float c)
     {
         return Utils.Min (Utils.Min (a, b), c);
     }
 
+    /// <summary>
+    /// Finds the least, or minimum, among a list of values.
+    /// </summary>
+    /// <param name="values">the list of values</param>
+    /// <returns>the minimum value</returns>
     public static float Min (params float[ ] values)
     {
         int len = values.Length;
@@ -466,6 +641,25 @@ public static class Utils
         return result;
     }
 
+    /// <summary>
+    /// Mixes two values by a factor. The mix is unclamped by default.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <param name="t">factor</param>
+    /// <returns>the mix</returns>
+    public static float Mix (in float a, in float b, in float t = 0.5f)
+    {
+        return (1.0f - t) * a + t * b;
+    }
+
+    /// <summary>
+    /// Applies floor modulo to the operands. Returns the left operand when the
+    /// right operand is zero.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the result</returns>
     public static int Mod (int a, int b)
     {
         if (b == 0) return a;
@@ -473,83 +667,154 @@ public static class Utils
         return result < 0 ? result + b : result;
     }
 
-    public static float Mod (float a, float b)
+    /// <summary>
+    /// Applies floor modulo to the operands. Returns the left operand when the
+    /// right operand is zero.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the result</returns>
+    public static float Mod (in float a, in float b)
     {
         return b != 0.0f ? a - b * Utils.Floor (a / b) : a;
     }
 
-    public static float Mod1 (float a)
+    /// <summary>
+    /// Subtracts the floor of the input value from the value. Returns a
+    /// positive value in the range [0.0, 1.0] .
+    /// </summary>
+    /// <param name="a">the input value</param>
+    /// <returns>the wrapped value</returns>
+    public static float Mod1 (in float a)
     {
         return a - Utils.Floor (a);
     }
 
-    public static float ModDegrees (float deg)
+    /// <summary>
+    /// A specialized version of mod which shifts an angle in degrees to the
+    /// range [0.0, 360.0] .
+    /// </summary>
+    /// <param name="deg">angle in degrees</param>
+    /// <returns>the output angle</returns>
+    public static float ModDegrees (in float deg)
     {
         return deg - 360.0f * Utils.Floor (deg * Utils.One360);
     }
 
-    public static float ModRadians (float rad)
+    /// <summary>
+    /// A specialized version of mod which shifts an angle in radians to the
+    /// range [0.0, TAU] .
+    /// </summary>
+    /// <param name="rad">angle in radians</param>
+    /// <returns>the output angle</returns>
+    public static float ModRadians (in float rad)
     {
         return rad - Utils.Tau * Utils.Floor (rad * Utils.OneTau);
     }
 
-    public static int Not (float v)
+    /// <summary>
+    /// Finds the negation of a float holding a boolean value.
+    /// </summary>
+    /// <param name="v">the input value</param>
+    /// <returns>the negation</returns>
+    public static int Not (in float v)
     {
-        return v != 0.0f ? 1 : 0;
+        return v == 0.0f ? 1 : 0;
     }
 
-    public static int Or (float a, float b)
+    /// <summary>
+    /// Evaluates two floats like booleans, using the inclusive or (OR) logic
+    /// gate.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the evaluation</returns>
+    public static int Or (in float a, in float b)
     {
         return ((a != 0.0f) | (b != 0.0f)) ? 1 : 0;
     }
 
-    public static float PingPong (float a, float b, float t)
+    /// <summary>
+    /// Oscillates between [0.0, 1.0] based on an input step.
+    ///
+    /// Uses a different formula than the Unity math function of the same name:
+    /// 0.5 + 0.5 * cos ( step / TAU ) .
+    /// </summary>
+    /// <param name="t">the input value</param>
+    /// <returns>the oscillation</returns>
+    public static float PingPong (in float t)
+    {
+        return 0.5f + 0.5f * Utils.SinCosEval (t);
+    }
+
+    /// <summary>
+    /// Oscillates between a lower and upper bound based on an input step.
+    /// </summary>
+    /// <param name="a">lower bound</param>
+    /// <param name="b">upper bound</param>
+    /// <param name="t">factor</param>
+    /// <returns>the oscillation</returns>
+    public static int PingPong (in int a, in int b, in float t)
+    {
+        float x = 0.5f + 0.5f * Utils.SinCosEval (t);
+        return (int) ((1.0f - x) * a + x * b);
+    }
+
+    /// <summary>
+    /// Oscillates between a lower and upper bound based on an input step.
+    /// </summary>
+    /// <param name="a">lower bound</param>
+    /// <param name="b">upper bound</param>
+    /// <param name="t">factor</param>
+    /// <returns>the oscillation</returns>
+    public static float PingPong (in float a, in float b, in float t)
     {
         float x = 0.5f + 0.5f * Utils.SinCosEval (t);
         return (1.0f - x) * a + x * b;
     }
 
-    public static float Pow (float a, float b)
+    public static float Pow (in float a, in float b)
     {
-        return (float) Math.Pow (a, b);
+        return (float) Math.Pow ((double) a, (double) b);
     }
 
-    public static float Quantize (float v, int levels = 8)
+    public static float Quantize (in float v, in int levels = 8)
     {
         if (levels < 2) return v;
-        return Utils.Floor (0.5f + v * levels) / levels;
+        float lf = (float) levels;
+        return Utils.Floor (0.5f + v * lf) / lf;
     }
 
-    public static int Round (float v)
+    public static int Round (in float v)
     {
-        return (v < 0.0f) ? (int) (v - 0.5f) :
+        return (v < -0.0f) ? (int) (v - 0.5f) :
             (v > 0.0f) ? (int) (v + 0.5f) : 0;
     }
 
-    public static float Round (float v, int places)
+    public static float Round (in float v, in int places)
     {
-        return (float) Math.Round (v, places);
+        return (float) Math.Round ((double) v, places);
     }
 
-    public static int Sign (float v)
+    public static int Sign (in float v)
     {
-        return (v < 0.0f) ? -1 : (v > 0.0f) ? 1 : 0;
+        return (v < -0.0f) ? -1 : (v > 0.0f) ? 1 : 0;
     }
 
-    public static float Sin (float radians)
+    public static float Sin (in float radians)
     {
         // return Utils.SinCosEval (Utils.OneTau * radians - 0.25f);
-        return (float) Math.Sin (radians);
+        return (float) Math.Sin ((double) radians);
     }
 
-    public static void SinCos (float radians, out float sina, out float cosa)
+    public static void SinCos (in float radians, out float sina, out float cosa)
     {
         float nrm = Utils.OneTau * radians;
         sina = Utils.SinCosEval (nrm - 0.25f);
         cosa = Utils.SinCosEval (nrm);
     }
 
-    public static (float sin, float cos) SinCos (float radians)
+    public static (float sin, float cos) SinCos (in float radians)
     {
         float nrm = Utils.OneTau * radians;
         return (
@@ -557,7 +822,7 @@ public static class Utils
             cos: Utils.SinCosEval (nrm));
     }
 
-    private static float SinCosEval (float normRad)
+    private static float SinCosEval (in float normRad)
     {
         float r1y = Utils.Mod1 (normRad);
 
@@ -601,50 +866,74 @@ public static class Utils
         return -r1x - r1z - r1y;
     }
 
-    public static float Sinh (float radians)
+    /// <summary>
+    /// Finds the hyperbolic sine of an angle in radians cast to a single
+    /// precision real number.
+    /// </summary>
+    /// <param name="radians">the angle</param>
+    /// <returns>the hyperbolic sine</returns>
+    public static float Sinh (in float radians)
     {
-        return (float) Math.Sinh (radians);
+        return (float) Math.Sinh ((double) radians);
     }
 
-    public static float SmoothStep (
-        float edge0 = 0.0f,
-        float edge1 = 1.0f,
-        float x = 0.5f)
+    /// <summary>
+    /// Finds the smooth step between a left and right edge given an input
+    /// factor.
+    /// </summary>
+    /// <param name="edge0">the left edge</param>
+    /// <param name="edge1">the right edge</param>
+    /// <param name="x">the factor</param>
+    /// <returns>the smooth step</returns>
+    public static float SmoothStep (in float edge0 = 0.0f, in float edge1 = 1.0f, in float x = 0.5f)
     {
         float t = Utils.LinearStep (edge0, edge1, x);
         return t * t * (3.0f - (t + t));
     }
 
+    /// <summary>
+    /// Returns the square root of a value cast to a float. If the value is less
+    /// than or equal to zero, returns zero.
+    /// </summary>
+    /// <param name="v"></param>
+    /// <returns></returns>
     public static float Sqrt (float v)
     {
         return v > 0.0f ? Utils.Sqrt (v) : 0.0f;
     }
 
-    public static float SqrtUnchecked (float v)
+    /// <summary>
+    /// Returns the square root of a value cast to a float. Does not check to
+    /// see if the input is greater than zero.
+    /// </summary>
+    /// <param name="v">the input value</param>
+    /// <returns>the square root</returns>
+    public static float SqrtUnchecked (in float v)
     {
         // return v * Utils.InvSqrtUnchecked (v);
-        return (float) Math.Sqrt (v);
+        return (float) Math.Sqrt ((double) v);
     }
 
-    public static float Step (float edge, float x)
+    /// <summary>
+    /// Finds a step, either 0.0 or 1.0, based on an edge and factor.
+    /// </summary>
+    /// <param name="edge">the edge</param>
+    /// <param name="x">the factor</param>
+    /// <returns>the step</returns>
+    public static float Step (in float edge, in float x = 0.5f)
     {
         return x < edge ? 0.0f : 1.0f;
     }
 
-    public static bool ToBool (int v)
+    /// <summary>
+    /// Returns a String representation of a single precision real number
+    /// truncated to the number of places.
+    /// </summary>
+    /// <param name="v">the input value</param>
+    /// <param name="places">the number of places</param>
+    /// <returns>the string</returns>
+    public static string ToFixed (in float v, in int places = 7)
     {
-        return v != 0;
-    }
-
-    public static bool ToBool (float v)
-    {
-        return v != 0.0f;
-    }
-
-    public static string ToFixed (float v, int places = 7)
-    {
-        // TODO: Compare against Java version when handling infinity, max and min value.
-
         /*
          * Dispense with v and places edge cases.
          */
@@ -714,38 +1003,18 @@ public static class Utils
     }
 
     /// <summary>
-    /// Converts a boolean value to a float, where 1.0 is true and 0.0 is false.
-    /// </summary>
-    /// <param name="v">the input boolean</param>
-    /// <returns>the float value</returns>
-    public static float ToFloat (bool v)
-    {
-        return v ? 1.0f : 0.0f;
-    }
-
-    /// <summary>
-    /// Converts a boolean value to an integer, where 1 is true and 0 is false.
-    /// </summary>
-    /// <param name="v">the input boolean</param>
-    /// <returns>the integer value</returns>
-    public static int ToInt (bool v)
-    {
-        return v ? 1 : 0;
-    }
-
-    /// <summary>
     /// Returns an integer formatted as a string padded by initial zeroes.
     /// </summary>
     /// <param name="value">the integer</param>
     /// <param name="places">the number of places</param>
     /// <returns>the string</returns>
-    public static String ToPadded (int value, int places = 4)
+    public static String ToPadded (in int value, in int places = 3)
     {
         /*
          * Double precision is needed to preserve accuracy. The max integer value
          * is 2147483647, which is 10 digits long. The sign needs to be flipped
          * because working with positive absolute value would allow
-         * Integer#MIN_VALUE to overflow to zero.
+         * the minimum value to overflow to zero.
          */
 
         bool isNeg = value < 0;
@@ -776,7 +1045,7 @@ public static class Utils
     /// </summary>
     /// <param name="a">the input value</param>
     /// <returns>the truncation</returns>
-    public static float Trunc (float a)
+    public static float Trunc (in float a)
     {
         return (int) a;
     }
@@ -792,10 +1061,7 @@ public static class Utils
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>wrapped value</returns>
-    public static float Wrap (
-        float value,
-        float lb = -1.0f,
-        float ub = 1.0f)
+    public static float Wrap (in float value, in float lb = -1.0f, in float ub = 1.0f)
     {
         float lbc = 0.0f;
         float ubc = 0.0f;
@@ -833,7 +1099,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the evaluation</returns>
-    public static int Xor (float a, float b)
+    public static int Xor (in float a, in float b)
     {
         return ((a != 0.0f) ^ (b != 0.0f)) ? 1 : 0;
     }
