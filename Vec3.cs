@@ -3,28 +3,25 @@ using System.Collections;
 using System.Text;
 
 /// <summary>
-/// A readonly struct influenced by GLSL, OSL and
-/// Processing's PVector. This is intended for storing points
-/// and directions in three-dimensional graphics programs.
+/// A readonly struct influenced by GLSL, OSL and Processing's PVector. This is
+/// intended for storing points and directions in three-dimensional graphics
+/// programs.
 /// </summary>
 [Serializable]
 public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 {
     /// <summary>
-    /// Component on the x axis in the Cartesian coordinate
-    /// system.
+    /// Component on the x axis in the Cartesian coordinate system.
     /// </summary>
     private readonly float _x;
 
     /// <summary>
-    /// Component on the y axis in the Cartesian coordinate
-    /// system.
+    /// Component on the y axis in the Cartesian coordinate system.
     /// </summary>
     private readonly float _y;
 
     /// <summary>
-    /// Component on the z axis in the Cartesian coordinate
-    /// system.
+    /// Component on the z axis in the Cartesian coordinate system.
     /// </summary>
     private readonly float _z;
 
@@ -35,22 +32,19 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public int Length { get { return 3; } }
 
     /// <summary>
-    /// Component on the z axis in the Cartesian coordinate
-    /// system.
+    /// Component on the z axis in the Cartesian coordinate system.
     /// </summary>
     /// <value>x</value>
     public float x { get { return this._x; } }
 
     /// <summary>
-    /// Component on the y axis in the Cartesian coordinate
-    /// system.
+    /// Component on the y axis in the Cartesian coordinate system.
     /// </summary>
     /// <value>y</value>
     public float y { get { return this._y; } }
 
     /// <summary>
-    /// Component on the z axis in the Cartesian coordinate
-    /// system.
+    /// Component on the z axis in the Cartesian coordinate system.
     /// </summary>
     /// <value>z</value>
     public float z { get { return this._z; } }
@@ -95,8 +89,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Constructs a vector from boolean values, where
-    /// true is 1.0 and false is 0.0 .
+    /// Constructs a vector from boolean values, where true is 1.0 and false is
+    /// 0.0 .
     /// </summary>
     /// <param name="x">the x component</param>
     /// <param name="y">the y component</param>
@@ -109,9 +103,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Tests this vector for equivalence with an object. For
-    /// approximate equality  with another vector, use the
-    /// static approx function instead.
+    /// Tests this vector for equivalence with an object. For approximate
+    /// equality  with another vector, use the static approx function instead.
     /// </summary>
     /// <param name="value">the object</param>
     /// <returns>the equivalence</returns>
@@ -169,11 +162,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Compares this vector to another in compliance with the
-    /// IComparable interface. Returns 1 when a component of 
-    /// this vector is greater than another; -1 when lesser. 
-    /// Prioritizes the highest dimension first:
-    /// z, y, x . Returns 0 as a last resort.
+    /// Compares this vector to another in compliance with the IComparable
+    /// interface. Returns 1 when a component of this vector is greater than
+    /// another; -1 when lesser. Prioritizes the highest dimension first: z, y,
+    /// x . Returns 0 as a last resort.
     /// </summary>
     /// <param name="v">the comparisand</param>
     /// <returns>the evaluation</returns>
@@ -189,10 +181,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Tests this vector for equivalence with another in
-    /// compliance with the IEquatable interface. For
-    /// approximate equality with another vector, use the 
-    /// static approx function instead.
+    /// Tests this vector for equivalence with another in compliance with the
+    /// IEquatable interface. For approximate equality with another vector, use
+    /// the static approx function instead.
     /// </summary>
     /// <param name="value">the object</param>
     /// <returns>the equivalence</returns>
@@ -217,9 +208,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Returns an enumerator (or iterator) for this vector,
-    /// allowing its components to be accessed in a foreach
-    /// loop.
+    /// Returns an enumerator (or iterator) for this vector, allowing its
+    /// components to be accessed in a foreach loop.
     /// </summary>
     /// <returns>the enumerator</returns>
     public IEnumerator GetEnumerator ( )
@@ -230,8 +220,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Returns a float array of length 3 containing this
-    /// vector's components.
+    /// Returns a float array of length 3 containing this vector's components.
     /// </summary>
     /// <returns>the array</returns>
     public float[ ] ToArray ( )
@@ -244,7 +233,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="places">number of decimal places</param>
     /// <returns>the string</returns>
-    public string ToString (int places = 4)
+    public string ToString (in int places = 4)
     {
         return new StringBuilder (80)
             .Append ("{ x: ")
@@ -258,8 +247,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Returns a named value tuple containing this vector's
-    /// components.
+    /// Returns a named value tuple containing this vector's components.
     /// </summary>
     /// <returns>the tuple</returns>
     public (float x, float y, float z) ToTuple ( )
@@ -268,9 +256,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Converts a boolean to a vector by supplying the boolean
-    /// to all the vector's components: 1.0 for true; 0.0 for
-    /// false.
+    /// Converts a boolean to a vector by supplying the boolean to all the
+    /// vector's components: 1.0 for true; 0.0 for false.
     /// </summary>
     /// <param name="b">the boolean</param>
     public static implicit operator Vec3 (bool b)
@@ -280,8 +267,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Converts a float to a vector by supplying the scalar
-    /// to all the vector's components.
+    /// Converts a float to a vector by supplying the scalar to all the vector's
+    /// components.
     /// </summary>
     /// <param name="s">the scalar</param>
     public static implicit operator Vec3 (float s)
@@ -290,8 +277,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Promotes a 2D vector to a 3D vector; the z component
-    /// is assumed to be 0.0 .
+    /// Promotes a 2D vector to a 3D vector; the z component is assumed to be
+    /// 0.0 .
     /// </summary>
     /// <param name="v">the 2D vector</param>
     public static implicit operator Vec3 (in Vec2 v)
@@ -300,8 +287,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Converts a vector to a boolean by finding whether all
-    /// of its components are non-zero.
+    /// Converts a vector to a boolean by finding whether all of its components
+    /// are non-zero.
     /// </summary>
     /// <param name="v">the input vector</param>
     public static explicit operator bool (in Vec3 v)
@@ -319,8 +306,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// A vector evaluates to true when all of its components
-    /// are not equal to zero.
+    /// A vector evaluates to true when all of its components are not equal to
+    /// zero.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the evaluation</returns>
@@ -330,8 +317,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// A vector evaluates to false when all of its components
-    /// are equal to zero.
+    /// A vector evaluates to false when all of its components are equal to
+    /// zero.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the evaluation</returns>
@@ -341,8 +328,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Evaluates a vector as a boolean. Equivalent to using
-    /// the ~ operator.
+    /// Evaluates a vector as a boolean. Equivalent to using the ~ operator.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the opposite</returns>
@@ -352,8 +338,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Evaluates a vector as a boolean. Equivalent to using
-    /// the ! operator.
+    /// Evaluates a vector as a boolean. Equivalent to using the ! operator.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the complement</returns>
@@ -363,8 +348,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Evaluates two vectors like booleans, using the
-    /// inclusive and (AND) logic gate.
+    /// Evaluates two vectors like booleans, using the inclusive and (AND) logic
+    /// gate.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -378,8 +363,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Evaluates two vectors like booleans, using the
-    /// inclusive or (OR) logic gate.
+    /// Evaluates two vectors like booleans, using the inclusive or (OR) logic
+    /// gate.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -393,8 +378,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Evaluates two vectors like booleans, using the
-    /// exclusive or (XOR) logic gate.
+    /// Evaluates two vectors like booleans, using the exclusive or (XOR) logic
+    /// gate.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -418,9 +403,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Multiplies two vectors, component-wise. Such
-    /// multiplication is mathematically incorrect, but serves as
-    /// a shortcut for transforming a vector by a scalar matrix.
+    /// Multiplies two vectors, component-wise. Such multiplication is
+    /// mathematically incorrect, but serves as a shortcut for transforming a
+    /// vector by a scalar matrix.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -462,10 +447,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Divides the left operand by the right, component-wise.
-    /// This is mathematically incorrect, but serves as a
-    /// shortcut for transforming a vector by the inverse of a
-    /// scalar matrix.
+    /// Divides the left operand by the right, component-wise. This is
+    /// mathematically incorrect, but serves as a shortcut for transforming a
+    /// vector by the inverse of a scalar matrix.
     /// </summary>
     /// <param name="a">numerator</param>
     /// <param name="b">denominator</param>
@@ -509,8 +493,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Applies truncation-based modulo (fmod) to the left
-    /// and right vectors.
+    /// Applies truncation-based modulo (fmod) to the left and right vectors.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -521,8 +504,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Applies truncation-based modulo (fmod) to the left
-    /// and right operands.
+    /// Applies truncation-based modulo (fmod) to the left and right operands.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -534,13 +516,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Applies truncation-based modulo (fmod) to the left
-    /// and right operands.
+    /// Applies truncation-based modulo (fmod) to the left and right operands.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
-    public static Vec3 operator % (float a, in Vec3 b)
+    public static Vec3 operator % (in float a, in Vec3 b)
     {
         return new Vec3 (
             Utils.Fmod (a, b._x),
@@ -577,11 +558,11 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Evaluates whether the left comparisand is less than the
-    /// right comparisand.
-    /// 
-    /// The return type is not a boolean, but a vector,
-    /// where 1.0 is true and 0.0 is false.
+    /// Evaluates whether the left comparisand is less than the right
+    /// comparisand.
+    ///
+    /// The return type is not a boolean, but a vector, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -595,11 +576,11 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Evaluates whether the left comparisand is greater than the
-    /// right comparisand.
-    /// 
-    /// The return type is not a boolean, but a vector,
-    /// where 1.0 is true and 0.0 is false.
+    /// Evaluates whether the left comparisand is greater than the right
+    /// comparisand.
+    ///
+    /// The return type is not a boolean, but a vector, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -613,11 +594,11 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Evaluates whether the left comparisand is less than or
-    /// equal to the right comparisand.
-    /// 
-    /// The return type is not a boolean, but a vector,
-    /// where 1.0 is true and 0.0 is false.
+    /// Evaluates whether the left comparisand is less than or equal to the
+    /// right comparisand.
+    ///
+    /// The return type is not a boolean, but a vector, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -631,11 +612,11 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Evaluates whether the left comparisand is greater than or
-    /// equal to the right comparisand.
-    /// 
-    /// The return type is not a boolean, but a vector,
-    /// where 1.0 is true and 0.0 is false.
+    /// Evaluates whether the left comparisand is greater than or equal to the
+    /// right comparisand.
+    ///
+    /// The return type is not a boolean, but a vector, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -650,9 +631,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 
     /// <summary>
     /// Evaluates whether two vectors are not equal to each other.
-    /// 
-    /// The return type is not a boolean, but a vector,
-    /// where 1.0 is true and 0.0 is false.
+    ///
+    /// The return type is not a boolean, but a vector, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -667,9 +648,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 
     /// <summary>
     /// Evaluates whether two vectors are equal to each other.
-    /// 
-    /// The return type is not a boolean, but a vector,
-    /// where 1.0 is true and 0.0 is false.
+    ///
+    /// The return type is not a boolean, but a vector, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -696,9 +677,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Tests to see if all the vector's components are non-zero.
-    /// Useful when testing valid dimensions (width and depth) 
-    /// stored in vectors.
+    /// Tests to see if all the vector's components are non-zero. Useful when
+    /// testing valid dimensions (width and depth) stored in vectors.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the evaluation</returns>
@@ -722,8 +702,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Tests to see if any of the vector's components are
-    /// non-zero.
+    /// Tests to see if any of the vector's components are non-zero.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the evaluation</returns>
@@ -749,8 +728,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Tests to see if a vector has, approximately, the
-    /// specified magnitude.
+    /// Tests to see if a vector has, approximately, the specified magnitude.
     /// </summary>
     /// <param name="a">the input vector</param>
     /// <param name="b">the magnitude</param>
@@ -769,9 +747,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the evaluation</returns>
     public static bool AreParallel (in Vec3 a, in Vec3 b, in float tolerance = Utils.Epsilon)
     {
-        return (Utils.Abs (a._y * b._z - a._z * b._y) < tolerance) &&
-            (Utils.Abs (a._z * b._x - a._x * b._z) < tolerance) &&
-            (Utils.Abs (a._x * b._y - a._y * b._x) < tolerance);
+        return (Utils.Abs (a._y * b._z - a._z * b._y) <= tolerance) &&
+            (Utils.Abs (a._z * b._x - a._x * b._z) <= tolerance) &&
+            (Utils.Abs (a._x * b._y - a._y * b._x) <= tolerance);
     }
 
     /// <summary>
@@ -791,23 +769,21 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the angle in radians</returns>
     public static float AzimuthUnsigned (in Vec3 v)
     {
-        return Utils.ModRadians (Utils.Atan2 (v._y, v._x));
+        return Utils.ModRadians (Vec3.AzimuthSigned (v));
     }
 
     /// <summary>
-    /// Returns a point on a Bezier curve described by two anchor
-    /// points and two control points according to a step in
-    /// [0.0, 1.0] .
+    /// Returns a point on a Bezier curve described by two anchor points and two
+    /// control points according to a step in [0.0, 1.0] .
     ///
-    /// When the step is less than one, returns the first anchor
-    /// point. When the step is greater than one, returns the
-    /// second anchor point.
+    /// When the step is less than one, returns the first anchor point. When the
+    /// step is greater than one, returns the second anchor point.
     /// </summary>
-    /// <param name="ap0">the first anchor point</param>
-    /// <param name="cp0">the first control point</param>
-    /// <param name="cp1">the second control point</param>
-    /// <param name="ap1">the second anchor point</param>
-    /// <param name="step">the step</param>
+    /// <param name="ap0">first anchor point</param>
+    /// <param name="cp0">first control point</param>
+    /// <param name="cp1">second control point</param>
+    /// <param name="ap1">second anchor point</param>
+    /// <param name="step">step</param>
     /// <returns>the point along the curve</returns>
     public static Vec3 BezierPoint (in Vec3 ap0 = new Vec3 ( ), in Vec3 cp0 = new Vec3 ( ), in Vec3 cp1 = new Vec3 ( ), in Vec3 ap1 = new Vec3 ( ), in float step = 0.5f)
     {
@@ -840,20 +816,19 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Returns a tangent on a Bezier curve described by two
-    /// anchor points and two control points according to a step
-    /// in [0.0, 1.0] .
+    /// Returns a tangent on a Bezier curve described by two anchor points and
+    /// two control points according to a step in [0.0, 1.0] .
     ///
-    /// When the step is less than one, returns the first anchor
-    /// point subtracted from the first control point. When the
-    /// step is greater than one, returns the second anchor point
-    /// subtracted from the second control point.
+    /// When the step is less than one, returns the first anchor point
+    /// subtracted from the first control point. When the step is greater than
+    /// one, returns the second anchor point subtracted from the second control
+    /// point.
     /// </summary>
-    /// <param name="ap0">the first anchor point</param>
-    /// <param name="cp0">the first control point</param>
-    /// <param name="cp1">the second control point</param>
-    /// <param name="ap1">the second anchor point</param>
-    /// <param name="step">the step</param>
+    /// <param name="ap0">first anchor point</param>
+    /// <param name="cp0">first control point</param>
+    /// <param name="cp1">second control point</param>
+    /// <param name="ap1">second anchor point</param>
+    /// <param name="step">step</param>
     /// <returns>the tangent along the curve</returns>
     public static Vec3 BezierTangent (in Vec3 ap0 = new Vec3 ( ), in Vec3 cp0 = new Vec3 ( ), in Vec3 cp1 = new Vec3 ( ), in Vec3 ap1 = new Vec3 ( ), in float step = 0.5f)
     {
@@ -884,11 +859,11 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Returns a normalized tangent on a Bezier curve.
     /// </summary>
-    /// <param name="ap0">the first anchor point</param>
-    /// <param name="cp0">the first control point</param>
-    /// <param name="cp1">the second control point</param>
-    /// <param name="ap1">the second anchor point</param>
-    /// <param name="step">the step</param>
+    /// <param name="ap0">first anchor point</param>
+    /// <param name="cp0">first control point</param>
+    /// <param name="cp1">second control point</param>
+    /// <param name="ap1">second anchor point</param>
+    /// <param name="step">step</param>
     /// <returns>the tangent along the curve</returns>
     public static Vec3 BezierTanUnit (in Vec3 ap0 = new Vec3 ( ), in Vec3 cp0 = new Vec3 ( ), in Vec3 cp1 = new Vec3 ( ), in Vec3 ap1 = new Vec3 ( ), in float step = 0.5f)
     {
@@ -897,8 +872,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Raises each component of the vector to the nearest
-    /// greater integer.
+    /// Raises each component of the vector to the nearest greater integer.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the result</returns>
@@ -911,8 +885,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Clamps a vector to a range within the lower and upper
-    /// bound.
+    /// Clamps a vector to a range within the lower and upper bound.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="lb">the range lower bound</param>
@@ -927,8 +900,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Clamps a vector to a range within the lower and upper
-    /// bound.
+    /// Clamps a vector to a range within the lower and upper bound.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="lb">the range lower bound</param>
@@ -957,8 +929,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Finds first vector argument with the sign of the second
-    /// vector argument.
+    /// Finds first vector argument with the sign of the second vector argument.
     /// </summary>
     /// <param name="a">the magnitude</param>
     /// <param name="b">the sign</param>
@@ -972,29 +943,25 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// The cross product returns a vector perpendicular to both
-    /// a and b, and therefore normal to the plane on which a and
-    /// b rest. The cross product is anti-commutative,
-    /// meaning a x b = - ( b x a ) . A unit vector does
+    /// The cross product returns a vector perpendicular to both a and b, and
+    /// therefore normal to the plane on which a and b rest. The cross product
+    /// is anti-commutative, meaning a x b = - ( b x a ) . A unit vector does
     /// not necessarily result from the cross of two unit vectors.
-    /// 
+    ///
     /// Crossed orthonormal vectors are as follows:
-    /// 
+    ///
     /// right x forward = up,
-    /// 
-    /// ( 1.0, 0.0, 0.0 ) x ( 0.0, 1.0, 0.0 ) = ( 0.0, 0.0,
-    /// 1.0 )
+    ///
+    /// ( 1.0, 0.0, 0.0 ) x ( 0.0, 1.0, 0.0 ) = ( 0.0, 0.0, 1.0 )
     ///
     /// forward x up = right,
-    /// 
-    /// ( 0.0, 1.0, 0.0 ) x ( 0.0, 0.0, 1.0 ) = ( 1.0, 0.0,
-    /// 0.0 )
+    ///
+    /// ( 0.0, 1.0, 0.0 ) x ( 0.0, 0.0, 1.0 ) = ( 1.0, 0.0, 0.0 )
     ///
     /// up x right = forward,
-    /// 
-    /// ( 0.0, 0.0, 1.0 ) x ( 1.0, 0.0, 0.0 ) = ( 0.0, 1.0,
-    /// 0.0 )
-    /// 
+    ///
+    /// ( 0.0, 0.0, 1.0 ) x ( 1.0, 0.0, 0.0 ) = ( 0.0, 1.0, 0.0 )
+    ///
     /// The 3D equivalent to the 2D vector's perpendicular.
     /// </summary>
     /// <param name="a">left operand</param>
@@ -1009,8 +976,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the absolute value of the difference between two
-    /// vectors.
+    /// Finds the absolute value of the difference between two vectors.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -1024,8 +990,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the Chebyshev distance between two vectors. Forms a
-    /// square pattern when plotted.
+    /// Finds the Chebyshev distance between two vectors. Forms a square pattern
+    /// when plotted.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -1039,24 +1005,23 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the Euclidean distance between two vectors. Where
-    /// possible, use distance squared to avoid the computational
-    /// cost of the square-root.
+    /// Finds the Euclidean distance between two vectors. Where possible, use
+    /// distance squared to avoid the computational cost of the square-root.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the Euclidean distance</returns>
     public static float DistEuclidean (in Vec3 a, in Vec3 b)
     {
-        float dx = b._x - a._x;
-        float dy = b._y - a._y;
-        float dz = b._z - a._z;
-        return Utils.Sqrt (dx * dx + dy * dy + dz * dz);
+        // double dx = b._x - a._x; double dy = b._y - a._y; double dz = b._z -
+        // a._z; return (float) Math.Sqrt (dx * dx + dy * dy + dz * dz);
+
+        return Utils.Sqrt (Vec3.DistSq (a, b));
     }
 
     /// <summary>
-    /// Finds the Manhattan distance between two vectors. Forms a
-    /// diamond pattern when plotted.
+    /// Finds the Manhattan distance between two vectors. Forms a diamond
+    /// pattern when plotted.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -1070,11 +1035,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the Minkowski distance between two vectors. This is
-    /// a generalization of other distance formulae. When the
-    /// exponent value, c, is 1.0, the Minkowski distance equals
-    /// the Manhattan distance; when it is 2.0, Minkowski equals
-    /// the Euclidean distance.
+    /// Finds the Minkowski distance between two vectors. This is a
+    /// generalization of other distance formulae. When the exponent value, c,
+    /// is 1.0, the Minkowski distance equals the Manhattan distance; when it is
+    /// 2.0, Minkowski equals the Euclidean distance.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -1091,9 +1055,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the Euclidean distance squared between two vectors.
-    /// Equivalent to subtracting one vector from the other, then
-    /// finding the dot product of the difference with itself.
+    /// Finds the Euclidean distance squared between two vectors. Equivalent to
+    /// subtracting one vector from the other, then finding the dot product of
+    /// the difference with itself.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -1107,13 +1071,13 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the dot product of two vectors by summing the
-    /// products of their corresponding components.
-    /// 
+    /// Finds the dot product of two vectors by summing the products of their
+    /// corresponding components.
+    ///
     /// dot ( a, b ) := a.x b.x + a.y b.y + a.z b.z
-    ///  
-    /// The dot product of a vector with itself is equal to its
-    /// magnitude squared.
+    ///
+    /// The dot product of a vector with itself is equal to its magnitude
+    /// squared.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -1154,8 +1118,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Applies the % operator (truncation-based modulo) to the
-    /// left operand.
+    /// Applies the % operator (truncation-based modulo) to the left operand.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -1169,24 +1132,23 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Returns the fractional portion of the vector's
-    /// components.
+    /// Returns the fractional portion of the vector's components.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the fractional portion</returns>
     public static Vec3 Fract (in Vec3 v)
     {
         return new Vec3 (
-            v._x - (int) v._x,
-            v._y - (int) v._y,
-            v._z - (int) v._z);
+            Utils.Fract (v._x),
+            Utils.Fract (v._y),
+            Utils.Fract (v._z));
     }
 
     /// <summary>
-    /// Creates a vector from polar coordinates: (1) theta,
-    /// an angle in radians, the vector's heading; (2) rho,
-    /// a radius, the vector's magnitude. Uses the formula
-    /// 
+    /// Creates a vector from polar coordinates: (1) theta, an angle in radians,
+    /// the vector's heading; (2) rho, a radius, the vector's magnitude. Uses
+    /// the formula
+    ///
     /// ( rho cos ( theta ), rho sin ( theta ) )
     /// </summary>
     /// <param name="azimuth">the angle in radians</param>
@@ -1203,17 +1165,15 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a vector from spherical coordinates: (1) theta,
-    /// the azimuth or longitude; (2) phi, the inclination or
-    /// latitude; (3) rho, the radius or magnitude. Uses the 
-    /// formula
-    /// 
-    /// ( rho cos ( theta ) cos ( phi ),
-    /// rho sin ( theta ) cos ( phi ), -
-    /// rho sin ( phi ) )
-    /// 
-    /// The poles will be upright in a z-up coordinate system;
-    /// sideways in a y-up coordinate system.
+    /// Creates a vector from spherical coordinates: (1) theta, the azimuth or
+    /// longitude; (2) phi, the inclination or latitude; (3) rho, the radius or
+    /// magnitude. Uses the formula
+    ///
+    /// ( rho cos ( theta ) cos ( phi ), rho sin ( theta ) cos ( phi ), - rho
+    /// sin ( phi ) )
+    ///
+    /// The poles will be upright in a z-up coordinate system; sideways in a
+    /// y-up coordinate system.
     /// </summary>
     /// <param name="azimuth">the angle theta in radians</param>
     /// <param name="inclination">the angle phi in radians</param>
@@ -1247,7 +1207,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the array</returns>
     public static Vec3[, , ] Grid (in int cols, in int rows, in int layers, in Vec3 lowerBound, in Vec3 upperBound)
     {
-
         int rval = rows < 2 ? 2 : rows;
         int cval = cols < 2 ? 2 : cols;
         int lval = layers < 2 ? 2 : layers;
@@ -1297,9 +1256,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the vector's inclination in the range [-PI /
-    /// 2.0, PI / 2.0] . It is necessary to calculate the
-    /// vector's magnitude in order to find its inclination.
+    /// Finds the vector's inclination in the range [-PI / 2.0, PI / 2.0] . It
+    /// is necessary to calculate the vector's magnitude in order to find its
+    /// inclination.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the signed inclination</returns>
@@ -1314,8 +1273,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the vector's inclination in the range [3.0 PI /
-    /// 2.0, PI / 2.0] .
+    /// Finds the vector's inclination in the range [3.0 PI / 2.0, PI / 2.0] .
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the unsigned inclination</returns>
@@ -1325,8 +1283,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Tests to see if the vector is on the unit circle, i.e.,
-    /// has a magnitude of approximately 1.0 .
+    /// Tests to see if the vector is on the unit circle, i.e., has a magnitude
+    /// of approximately 1.0 .
     /// </summary>
     /// <param name="v"></param>
     /// <returns>the evaluation</returns>
@@ -1336,8 +1294,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Limits a vector's magnitude to a scalar. Does nothing if
-    /// the vector is beneath the limit.
+    /// Limits a vector's magnitude to a scalar. Does nothing if the vector is
+    /// beneath the limit.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="limit">the limit</param>
@@ -1353,8 +1311,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Generates a clamped linear step for an input factor; to
-    /// be used in conjunction with a mixing function.
+    /// Generates a clamped linear step for an input factor; to be used in
+    /// conjunction with a mixing function.
     /// </summary>
     /// <param name="edge0">left edge</param>
     /// <param name="edge1">right edge</param>
@@ -1362,31 +1320,33 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the linear step</returns>
     public static Vec3 LinearStep (in Vec3 edge0, in Vec3 edge1, in Vec3 x)
     {
-        return Vec3.Clamp ((x - edge0) / (edge1 - edge0));
+        return new Vec3 (
+            Utils.LinearStep (edge0._x, edge1._x, x._x),
+            Utils.LinearStep (edge0._y, edge1._y, x._y),
+            Utils.LinearStep (edge0._z, edge1._z, x._z));
     }
 
     /// <summary>
-    /// Finds the length, or magnitude, of a vector. Also
-    /// referred to as the radius when using polar coordinates.
-    /// Uses the formula sqrt ( dot ( a, a ) )
-    /// Where possible, use magSq or dot to avoid the
-    /// computational cost of the square-root.
+    /// Finds the length, or magnitude, of a vector. Also referred to as the
+    /// radius when using polar coordinates. Uses the formula sqrt ( dot ( a, a
+    /// ) ) Where possible, use magSq or dot to avoid the computational cost of
+    /// the square-root.
     /// </summary>
     /// <param name="v"></param>
     /// <returns>the magnitude</returns>
     public static float Mag (in Vec3 v)
     {
-        return Utils.Sqrt (
-            v._x * v._x +
-            v._y * v._y +
-            v._z * v._z);
+        return Utils.Sqrt (Vec3.MagSq (v));
+
+        // double xd = v._x; double yd = v._y; double zd = v._z;
+
+        // return (float) Math.Sqrt (xd * xd + yd * yd + zd * zd);
     }
 
     /// <summary>
-    /// Finds the length-, or magnitude-, squared of a vector.
-    /// Returns the same result as dot ( a, a ) . Useful when
-    /// calculating the lengths of many vectors, so as to avoid
-    /// the computational cost of the square-root.
+    /// Finds the length-, or magnitude-, squared of a vector. Returns the same
+    /// result as dot ( a, a ) . Useful when calculating the lengths of many
+    /// vectors, so as to avoid the computational cost of the square-root.
     /// </summary>
     /// <param name="v"></param>
     /// <returns>the magnitude squared</returns>
@@ -1398,8 +1358,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Maps an input vector from an original range to a target
-    /// range.
+    /// Maps an input vector from an original range to a target range.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="lbOrigin">lower bound of original range</param>
@@ -1416,8 +1375,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Sets the target vector to the maximum of the input vector
-    /// and an upper bound.
+    /// Sets the target vector to the maximum of the input vector and an upper
+    /// bound.
     /// </summary>
     /// <param name="a">the input value</param>
     /// <param name="b">the upper bound</param>
@@ -1431,8 +1390,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Sets the target vector to the minimum of the input vector
-    /// and a lower bound.
+    /// Sets the target vector to the minimum of the input vector and a lower
+    /// bound.
     /// </summary>
     /// <param name="a">the input value</param>
     /// <param name="b">the lower bound</param>
@@ -1446,8 +1405,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Mixes two vectors together by a step. Uses the formula
-    /// (1.0 - t) a + t b . The step is unclamped.
+    /// Mixes two vectors together by a step. Uses the formula (1.0 - t) a + t b
+    /// . The step is unclamped.
     /// </summary>
     /// <param name="a">the original vector</param>
     /// <param name="b">the destination vector</param>
@@ -1463,10 +1422,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Mixes two vectors together by a step. Uses the formula
-    /// (1.0 - t) a + t b . The step is unclamped; to find an
-    /// appropriate clamped step, use mix in conjunction with
-    /// step, linearstep or smoothstep.
+    /// Mixes two vectors together by a step. Uses the formula (1.0 - t) a + t b
+    /// . The step is unclamped; to find an appropriate clamped step, use mix in
+    /// conjunction with step, linearstep or smoothstep.
     /// </summary>
     /// <param name="a">the original vector</param>
     /// <param name="b">the destination vector</param>
@@ -1481,8 +1439,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Mods each component of the left vector by those of the
-    /// right.
+    /// Mods each component of the left vector by those of the right.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -1496,8 +1453,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// A specialized form of mod which subtracts the floor of
-    /// the vector from the vector.
+    /// A specialized form of mod which subtracts the floor of the vector from
+    /// the vector.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the result</returns>
@@ -1510,8 +1467,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Tests to see if all the vector's components are zero.
-    /// Useful when safeguarding against invalid directions.
+    /// Tests to see if all the vector's components are zero. Useful when
+    /// safeguarding against invalid directions.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the evaluation</returns>
@@ -1523,9 +1480,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Divides a vector by its magnitude, such that the new
-    /// magnitude is 1.0 . The result is a unit vector, as it
-    /// lies on the circumference of a unit circle.
+    /// Divides a vector by its magnitude, such that the new magnitude is 1.0 .
+    /// The result is a unit vector, as it lies on the circumference of a unit
+    /// circle.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the unit vector</returns>
@@ -1535,8 +1492,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Evaluates a vector like a boolean, where n != 0.0 is
-    /// true.
+    /// Evaluates a vector like a boolean, where n != 0.0 is true.
     /// </summary>
     /// <param name="v">the vector</param>
     /// <returns>the truth table opposite</returns>
@@ -1577,7 +1533,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 
     /// <summary>
     /// Projects one vector onto another. Defined as
-    /// 
+    ///
     /// proj ( a , b ) := b ( dot( a, b ) / dot ( b, b ) )
     /// </summary>
     /// <param name="a">left operand</param>
@@ -1607,8 +1563,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a random point in the Cartesian coordinate system
-    /// given a lower and an upper bound.
+    /// Creates a random point in the Cartesian coordinate system given a lower
+    /// and an upper bound.
     /// </summary>
     /// <param name="rng">the random number generator</param>
     /// <param name="lb">the lower bound</param>
@@ -1627,8 +1583,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a random point in the Cartesian coordinate system
-    /// given a lower and an upper bound.
+    /// Creates a random point in the Cartesian coordinate system given a lower
+    /// and an upper bound.
     /// </summary>
     /// <param name="rng">the random number generator</param>
     /// <param name="lb">the lower bound</param>
@@ -1664,8 +1620,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a vector at a random azimuth, inclination and
-    /// radius.
+    /// Creates a vector at a random azimuth, inclination and radius.
     /// </summary>
     /// <param name="rng">the random number generator</param>
     /// <param name="rhoMin">the minimum radius</param>
@@ -1685,9 +1640,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Reflects an incident vector off a normal vector. Uses the
-    /// formula
-    /// 
+    /// Reflects an incident vector off a normal vector. Uses the formula
+    ///
     /// i - 2.0 ( dot( n, i ) n )
     /// </summary>
     /// <param name="i">the incident vector</param>
@@ -1715,8 +1669,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Normalizes a vector, then multiplies it by a scalar, in
-    /// effect setting its magnitude to that scalar.
+    /// Normalizes a vector, then multiplies it by a scalar, in effect setting
+    /// its magnitude to that scalar.
     /// </summary>
     /// <param name="v">the vector</param>
     /// <param name="scalar">the scalar</param>
@@ -1727,11 +1681,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a vector around an arbitrary axis by using an angle in
-    /// radians.
-    /// 
-    /// The axis is assumed to have already been normalized prior
-    /// to being given to the function.
+    /// Rotates a vector around an arbitrary axis by using an angle in radians.
+    ///
+    /// The axis is assumed to have already been normalized prior to being given
+    /// to the function.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="radians">the angle in radians</param>
@@ -1746,13 +1699,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a vector around the an arbirary axis. Accepts
-    /// pre-calculated sine and cosine of an angle, so that
-    /// collections of vectors can be efficiently rotated without
-    /// repeatedly calling cos and sin.
-    /// 
-    /// The axis is assumed to have already been normalized prior
-    /// to being given to the function.
+    /// Rotates a vector around the an arbirary axis. Accepts pre-calculated
+    /// sine and cosine of an angle, so that collections of vectors can be
+    /// efficiently rotated without repeatedly calling cos and sin.
+    ///
+    /// The axis is assumed to have already been normalized prior to being given
+    /// to the function.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="cosa">the cosine of the angle</param>
@@ -1785,8 +1737,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a vector around the x axis by using an angle in
-    /// radians.
+    /// Rotates a vector around the x axis by using an angle in radians.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="radians">the angle in radians</param>
@@ -1800,10 +1751,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a vector around the x axis. Accepts
-    /// pre-calculated sine and cosine of an angle, so that
-    /// collections of vectors can be efficiently rotated without
-    /// repeatedly calling cos and sin.
+    /// Rotates a vector around the x axis. Accepts pre-calculated sine and
+    /// cosine of an angle, so that collections of vectors can be efficiently
+    /// rotated without repeatedly calling cos and sin.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="cosa">the cosine of the angle</param>
@@ -1818,8 +1768,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a vector around the y axis by using an angle in
-    /// radians.
+    /// Rotates a vector around the y axis by using an angle in radians.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="radians">the angle in radians</param>
@@ -1833,10 +1782,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a vector around the y axis. Accepts
-    /// pre-calculated sine and cosine of an angle, so that
-    /// collections of vectors can be efficiently rotated without
-    /// repeatedly calling cos and sin.
+    /// Rotates a vector around the y axis. Accepts pre-calculated sine and
+    /// cosine of an angle, so that collections of vectors can be efficiently
+    /// rotated without repeatedly calling cos and sin.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="cosa">the cosine of the angle</param>
@@ -1851,8 +1799,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a vector around the z axis by using an angle in
-    /// radians.
+    /// Rotates a vector around the z axis by using an angle in radians.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="radians">the angle in radians</param>
@@ -1866,10 +1813,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a vector around the z axis. Accepts
-    /// pre-calculated sine and cosine of an angle, so that
-    /// collections of vectors can be efficiently rotated without
-    /// repeatedly calling cos and sin.
+    /// Rotates a vector around the z axis. Accepts pre-calculated sine and
+    /// cosine of an angle, so that collections of vectors can be efficiently
+    /// rotated without repeatedly calling cos and sin.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="cosa">the cosine of the angle</param>
@@ -1884,8 +1830,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Rounds each component of the vector to the nearest whole
-    /// number.
+    /// Rounds each component of the vector to the nearest whole number.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the rounded vector</returns>
@@ -1898,8 +1843,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Rounds each component of the vector to a specified number
-    /// of places.
+    /// Rounds each component of the vector to a specified number of places.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="places">the number of places</param>
@@ -1913,8 +1857,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the sign of the vector: -1, if negative; 1, if
-    /// positive.
+    /// Finds the sign of the vector: -1, if negative; 1, if positive.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the sign</returns>
@@ -1927,8 +1870,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Generates a clamped Hermite step for an input factor; to
-    /// be used in conjunction with a mixing function.
+    /// Generates a clamped Hermite step for an input factor; to be used in
+    /// conjunction with a mixing function.
     /// </summary>
     /// <param name="edge0">left edge</param>
     /// <param name="edge1">right edge</param>
@@ -1936,13 +1879,15 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the smooth step</returns>
     public static Vec3 SmoothStep (in Vec3 edge0, in Vec3 edge1, in Vec3 x)
     {
-        Vec3 t = Vec3.Clamp ((x - edge0) / (edge1 - edge0));
-        return t * t * (new Vec3 (3.0f, 3.0f, 3.0f) - (t + t));
+        return new Vec3 (
+            Utils.SmoothStep (edge0._x, edge1._x, x._x),
+            Utils.SmoothStep (edge0._y, edge1._y, x._y),
+            Utils.SmoothStep (edge0._z, edge1._z, x._z));
     }
 
     /// <summary>
-    /// Generates a clamped boolean step for an input factor; to
-    /// be used in conjunction with a mixing function.
+    /// Generates a clamped boolean step for an input factor; to be used in
+    /// conjunction with a mixing function.
     /// </summary>
     /// <param name="edge">edge</param>
     /// <param name="x">factor</param>
@@ -1950,15 +1895,14 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Step (in Vec3 edge, in Vec3 x)
     {
         return new Vec3 (
-            x._x < edge._x ? 0.0f : 1.0f,
-            x._y < edge._y ? 0.0f : 1.0f,
-            x._z < edge._z ? 0.0f : 1.0f);
+            Utils.Step (edge._x, x._x),
+            Utils.Step (edge._y, x._y),
+            Utils.Step (edge._z, x._z));
     }
 
     /// <summary>
-    /// Returns a named value tuple containing the vector's
-    /// signed azimuth, theta; signed inclination, phi;
-    /// and magnitude, rho.
+    /// Returns a named value tuple containing the vector's signed azimuth,
+    /// theta; signed inclination, phi; and magnitude, rho.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the tuple</returns>
@@ -1984,16 +1928,15 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Trunc (in Vec3 v)
     {
         return new Vec3 (
-            (int) v._x,
-            (int) v._y,
-            (int) v._z);
+            Utils.Trunc (v._x),
+            Utils.Trunc (v._y),
+            Utils.Trunc (v._z));
     }
 
     /// <summary>
-    /// Wraps a vector around a periodic range, as
-    /// represented by a lower and upper bound. The lower
-    /// bound is inclusive; the upper bound, exclusive.
-    /// 
+    /// Wraps a vector around a periodic range, as represented by a lower and
+    /// upper bound. The lower bound is inclusive; the upper bound, exclusive.
+    ///
     /// In cases where the lower bound is 0.0, use Mod instead.
     /// </summary>
     /// <param name="v">the vector</param>
@@ -2077,18 +2020,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         get
         {
             return new Vec3 (0.0f, 0.0f, 1.0f);
-        }
-    }
-
-    /// <summary>
-    /// Returns a vector with all components set to zero.
-    /// </summary>
-    /// <value>the vector</value>
-    public static Vec3 Zero
-    {
-        get
-        {
-            return new Vec3 (0.0f, 0.0f, 0.0f);
         }
     }
 }

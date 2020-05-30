@@ -1,24 +1,9 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 public static class Utils
 {
-    /// <summary>
-    /// CF. https://docs.microsoft.com/en-us/dotnet/csharp/
-    /// programming-guide/concepts/attributes/
-    /// how-to-create-a-c-cpp-union-by-using-attributes
-    /// </summary>
-    [StructLayout (LayoutKind.Explicit)]
-    private struct Union
-    {
-        [FieldOffset (0)]
-        public float f;
-
-        [FieldOffset (0)]
-        public int i;
-    }
-
     /// <summary>
     /// An angle in degrees is multiplied by this constant to convert it to
     /// radians. PI / 180.0, approximately 0.0174532924 .
@@ -144,6 +129,7 @@ public static class Utils
     /// </summary>
     /// <param name="v">the input value</param>
     /// <returns>the absolute value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Abs (in float v)
     {
         return v < 0.0f ? -v : v;
@@ -187,6 +173,7 @@ public static class Utils
     /// <param name="a">the left operand</param>
     /// <param name="b">the right operand</param>
     /// <returns>the evaluation</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int And (in float a, in float b)
     {
         return ((a != 0.0f) & (b != 0.0f)) ? 1 : 0;
@@ -280,6 +267,7 @@ public static class Utils
     /// </summary>
     /// <param name="v">the input value</param>
     /// <returns>the raised value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Ceil (in float v)
     {
         return v > 0.0f ? (int) (v + 1) : (int) v;
@@ -292,6 +280,7 @@ public static class Utils
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the clamped value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Clamp (in float v, in float lb = 0.0f, in float ub = 1.0f)
     {
         return (v < lb) ? lb : (v > ub) ? ub : v;
@@ -304,6 +293,7 @@ public static class Utils
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the clamped value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Clamp (in int v, in int lb = int.MinValue, in int ub = int.MaxValue)
     {
         return (v < lb) ? lb : (v > ub) ? ub : v;
@@ -316,10 +306,10 @@ public static class Utils
     /// <param name="mag">the magnitude</param>
     /// <param name="sign">the sign</param>
     /// <returns>the magnified sign</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float CopySign (in float mag, in float sign)
     {
-        return (mag < 0.0f ? -mag : mag) *
-            ((sign < 0.0f) ? -1.0f : (sign > 0.0f) ? 1.0f : 0.0f);
+        return Utils.Abs (mag) * Utils.Sign (sign);
     }
 
     /// <summary>
@@ -328,9 +318,9 @@ public static class Utils
     /// </summary>
     /// <param name="radians">the angle in radians</param>
     /// <returns>the cosine of the angle</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Cos (in float radians)
     {
-        // return Utils.SinCosEval (Utils.OneTau * radians);
         return (float) Math.Cos ((double) radians);
     }
 
@@ -339,6 +329,7 @@ public static class Utils
     /// </summary>
     /// <param name="radians">the angle in radians</param>
     /// <returns>the cosine of the angle</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Cosh (in float radians)
     {
         return (float) Math.Cosh ((double) radians);
@@ -363,6 +354,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the difference</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Diff (in float a, in float b)
     {
         return Utils.Abs (a - b);
@@ -375,6 +367,20 @@ public static class Utils
     /// <param name="a">numerator</param>
     /// <param name="b">denominator</param>
     /// <returns>the quotient</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static int Div (in int a, in int b)
+    {
+        return b != 0 ? a / b : 0;
+    }
+
+    /// <summary>
+    /// Divides the left operand by the right, but returns zero when the
+    /// denominator is zero.
+    /// </summary>
+    /// <param name="a">numerator</param>
+    /// <param name="b">denominator</param>
+    /// <returns>the quotient</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Div (in float a, in float b)
     {
         return b != 0.0f ? a / b : 0.0f;
@@ -385,6 +391,7 @@ public static class Utils
     /// </summary>
     /// <param name="v">the input value</param>
     /// <returns>the result</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Exp (in float v)
     {
         return (float) Math.Exp ((double) v);
@@ -398,6 +405,7 @@ public static class Utils
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>the filtered value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Filter (in float v, in float lb = 0.0f, in float ub = 1.0f)
     {
         return v >= lb && v < ub ? v : 0.0f;
@@ -408,6 +416,7 @@ public static class Utils
     /// </summary>
     /// <param name="v">the input value</param>
     /// <returns>the floored value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Floor (in float v)
     {
         return v > 0.0f ? (int) v : (int) v - 1;
@@ -419,6 +428,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Fmod (in int a, in int b)
     {
         return b != 0 ? a % b : a;
@@ -438,6 +448,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Fmod (in float a, in float b)
     {
         return b != 0.0f ? a % b : a;
@@ -448,20 +459,22 @@ public static class Utils
     /// </summary>
     /// <param name="v">the input value</param>
     /// <returns>the fractional portion</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Fract (in float v)
     {
-        return v - (int) v;
+        return v - Utils.Trunc (v);
     }
 
     /// <summary>
     /// Finds one divided by the square root of an input value. Returns zero if
     /// the input is zero.
     /// </summary>
-    /// <param name="a">the input value</param>
+    /// <param name="v">input value</param>
     /// <returns>the inverse square root</returns>
-    public static float InvSqrt (in float a)
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static float InvSqrt (in float v)
     {
-        return a > 0.0f ? Utils.InvSqrtUnchecked (a) : 0.0f;
+        return v > 0.0f ? Utils.InvSqrtUnchecked (v) : 0.0f;
     }
 
     /// <summary>
@@ -472,18 +485,14 @@ public static class Utils
     /// <returns>the inverse square root</returns>
     public static float InvSqrtUnchecked (in float a)
     {
-        // Union u = new Union ( );
-        // u.f = a;
-        // u.i = 0x5f375a86 - (u.i >> 1);
+        // return (float) (1.0d / Math.Sqrt ((double) a));
 
-        // float y = u.f;
-        // float vhalf = a * 0.5f;
-        // y *= 1.5f - vhalf * y * y;
-        // y *= 1.5f - vhalf * y * y;
-        // y *= 1.5f - vhalf * y * y;
-        // return y;
-
-        return (float) (1.0d / Math.Sqrt ((double) a));
+        float vhalf = a * 0.5f;
+        float y = 1.792843f - 0.8537347f * a;
+        y *= 1.5f - vhalf * y * y;
+        y *= 1.5f - vhalf * y * y;
+        y *= 1.5f - vhalf * y * y;
+        return y;
     }
 
     /// <summary>
@@ -491,10 +500,10 @@ public static class Utils
     /// shortest direction (either clockwise or counter clockwise) according to
     /// a factor in [0.0, 1.0] .
     /// </summary>
-    /// <param name="origin">the origin angle</param>
-    /// <param name="dest">the destination angle</param>
-    /// <param name="t">the factor</param>
-    /// <returns></returns>
+    /// <param name="origin">origin angle</param>
+    /// <param name="dest">destination angle</param>
+    /// <param name="t">factor</param>
+    /// <returns>the angle</returns>
     public static float LerpAngle (in float origin, in float dest, in float t = 0.5f)
     {
         float a = Utils.ModRadians (origin);
@@ -520,10 +529,11 @@ public static class Utils
     /// Finds the linear step between a left and right edge given an input
     /// factor.
     /// </summary>
-    /// <param name="edge0">the left edge</param>
-    /// <param name="edge1">the right edge</param>
-    /// <param name="x">the factor</param>
+    /// <param name="edge0">left edge</param>
+    /// <param name="edge1">right edge</param>
+    /// <param name="x">factor</param>
     /// <returns>the linear step</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float LinearStep (in float edge0 = 0.0f, in float edge1 = 1.0f, in float x = 0.5f)
     {
         float denom = edge1 - edge0;
@@ -535,8 +545,9 @@ public static class Utils
     /// Finds the natural logarithm of the input value cast to a single
     /// precision real number.
     /// </summary>
-    /// <param name="v">the input value</param>
+    /// <param name="v">input value</param>
     /// <returns>the natural logarithm</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Log (in float v)
     {
         return v > 0.0f ? (float) Math.Log ((double) v) : 0.0f;
@@ -567,6 +578,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the maximum value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Max (in float a, in float b)
     {
         return a >= b ? a : a < b ? b : 0.0f;
@@ -579,6 +591,7 @@ public static class Utils
     /// <param name="b">second operand</param>
     /// <param name="c">third operand</param>
     /// <returns>the maximum value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Max (in float a, in float b, in float c)
     {
         return Utils.Max (Utils.Max (a, b), c);
@@ -607,6 +620,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the minimum value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Min (in float a, in float b)
     {
         return a <= b ? a : a > b ? b : 0.0f;
@@ -619,6 +633,7 @@ public static class Utils
     /// <param name="b">second operand</param>
     /// <param name="c">third operand</param>
     /// <returns>the minimum value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Min (in float a, in float b, in float c)
     {
         return Utils.Min (Utils.Min (a, b), c);
@@ -648,6 +663,7 @@ public static class Utils
     /// <param name="b">right operand</param>
     /// <param name="t">factor</param>
     /// <returns>the mix</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Mix (in float a, in float b, in float t = 0.5f)
     {
         return (1.0f - t) * a + t * b;
@@ -660,11 +676,15 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
-    public static int Mod (int a, int b)
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static int Mod (in int a, in int b)
     {
-        if (b == 0) return a;
-        int result = a - b * (a / b);
-        return result < 0 ? result + b : result;
+        if (b != 0)
+        {
+            int result = a - b * (a / b);
+            return result < 0 ? result + b : result;
+        }
+        return a;
     }
 
     /// <summary>
@@ -674,6 +694,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Mod (in float a, in float b)
     {
         return b != 0.0f ? a - b * Utils.Floor (a / b) : a;
@@ -683,11 +704,12 @@ public static class Utils
     /// Subtracts the floor of the input value from the value. Returns a
     /// positive value in the range [0.0, 1.0] .
     /// </summary>
-    /// <param name="a">the input value</param>
+    /// <param name="v">input value</param>
     /// <returns>the wrapped value</returns>
-    public static float Mod1 (in float a)
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static float Mod1 (in float v)
     {
-        return a - Utils.Floor (a);
+        return v - Utils.Floor (v);
     }
 
     /// <summary>
@@ -717,9 +739,10 @@ public static class Utils
     /// </summary>
     /// <param name="v">the input value</param>
     /// <returns>the negation</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Not (in float v)
     {
-        return v == 0.0f ? 1 : 0;
+        return v != 0.0f ? 0 : 1;
     }
 
     /// <summary>
@@ -729,6 +752,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the evaluation</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Or (in float a, in float b)
     {
         return ((a != 0.0f) | (b != 0.0f)) ? 1 : 0;
@@ -742,6 +766,7 @@ public static class Utils
     /// </summary>
     /// <param name="t">the input value</param>
     /// <returns>the oscillation</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float PingPong (in float t)
     {
         return 0.5f + 0.5f * Utils.SinCosEval (t);
@@ -754,10 +779,10 @@ public static class Utils
     /// <param name="b">upper bound</param>
     /// <param name="t">factor</param>
     /// <returns>the oscillation</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int PingPong (in int a, in int b, in float t)
     {
-        float x = 0.5f + 0.5f * Utils.SinCosEval (t);
-        return (int) ((1.0f - x) * a + x * b);
+        return (int) Utils.PingPong ((float) a, (float) b, t);
     }
 
     /// <summary>
@@ -773,40 +798,90 @@ public static class Utils
         return (1.0f - x) * a + x * b;
     }
 
+    /// <summary>
+    /// Finds the single-precision of a number raised to the power of another.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the power</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Pow (in float a, in float b)
     {
         return (float) Math.Pow ((double) a, (double) b);
     }
 
-    public static float Quantize (in float v, in int levels = 8)
+    /// <summary>
+    /// Reduces the signal, or granularity, of a value. Applied to a color, this
+    /// yields the 'posterization' effect. Applied to a vector, this yields a
+    /// crenelated effect. Any level less than 2 returns the value unaltered.
+    /// </summary>
+    /// <param name="v">input value</param>
+    /// <param name="levels">levels</param>
+    /// <returns>the quantized value</returns>
+    public static float Quantize (in float v, in int levels)
     {
         if (levels < 2) return v;
         float lf = (float) levels;
         return Utils.Floor (0.5f + v * lf) / lf;
     }
 
+    /// <summary>
+    /// Rounds a value to an integer based on whether its fractional portion is
+    /// greater than or equal to plus or minus 0.5 .
+    /// </summary>
+    /// <param name="v">input value</param>
+    /// <returns>rounded value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Round (in float v)
     {
         return (v < -0.0f) ? (int) (v - 0.5f) :
             (v > 0.0f) ? (int) (v + 0.5f) : 0;
     }
 
+    /// <summary>
+    /// Rounds a value to a number of places right of the decimal point.
+    /// Promotes the float to a double, rounds it, then demotes back to a
+    /// float.</summary>
+    /// <param name="v">input value</param>
+    /// <param name="places">number of places</param>
+    /// <returns>the rounded value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Round (in float v, in int places)
     {
         return (float) Math.Round ((double) v, places);
     }
 
+    /// <summary>
+    /// Finds the sign of an input value. Returns the integer 0 for both -0.0
+    /// (signed negative zero) and 0.0 (signed positive zero).
+    /// </summary>
+    /// <param name="v">input value</param>
+    /// <returns>the sign</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Sign (in float v)
     {
         return (v < -0.0f) ? -1 : (v > 0.0f) ? 1 : 0;
     }
 
+    /// <summary>
+    /// Finds the single precision sine of an angle in radians. Returns a value
+    /// in the range [-1.0, 1.0] .
+    /// </summary>
+    /// <param name="radians">angle in radians</param>
+    /// <returns>the sine of the angle</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Sin (in float radians)
     {
-        // return Utils.SinCosEval (Utils.OneTau * radians - 0.25f);
         return (float) Math.Sin ((double) radians);
     }
 
+    /// <summary>
+    /// Finds the sine and cosine of an angle in radians. Assigns the values to
+    /// output variables.
+    /// </summary>
+    /// <param name="radians">angle in radians</param>
+    /// <param name="sina">sine</param>
+    /// <param name="cosa">cosine</param>
     public static void SinCos (in float radians, out float sina, out float cosa)
     {
         float nrm = Utils.OneTau * radians;
@@ -814,6 +889,11 @@ public static class Utils
         cosa = Utils.SinCosEval (nrm);
     }
 
+    /// <summary>
+    /// Finds the sine and cosine of an angle in radians. Returns a named tuple.
+    /// </summary>
+    /// <param name="radians">angle in radians</param>
+    /// <returns>the tuple</returns>
     public static (float sin, float cos) SinCos (in float radians)
     {
         float nrm = Utils.OneTau * radians;
@@ -822,6 +902,18 @@ public static class Utils
             cos: Utils.SinCosEval (nrm));
     }
 
+    /// <summary>
+    /// A helper method to facilitate the approximate sine and cosine of an
+    /// angle with single precision real numbers. The radians supplied to this
+    /// function should be normalized through division by Tau . Subtract 0.25
+    /// from the input value to return the sine instead of the cosine. 
+    ///
+    /// This is based on the algorithm described at
+    /// Nvidia Cg 3.1 Toolkit Documentation,
+    /// https://developer.download.nvidia.com/cg/sin.html .
+    /// </summary>
+    /// <param name="normRad">the normalized radians</param>
+    /// <returns>the approximate value</returns>
     private static float SinCosEval (in float normRad)
     {
         float r1y = Utils.Mod1 (normRad);
@@ -872,6 +964,7 @@ public static class Utils
     /// </summary>
     /// <param name="radians">the angle</param>
     /// <returns>the hyperbolic sine</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Sinh (in float radians)
     {
         return (float) Math.Sinh ((double) radians);
@@ -881,10 +974,11 @@ public static class Utils
     /// Finds the smooth step between a left and right edge given an input
     /// factor.
     /// </summary>
-    /// <param name="edge0">the left edge</param>
-    /// <param name="edge1">the right edge</param>
-    /// <param name="x">the factor</param>
+    /// <param name="edge0">left edge</param>
+    /// <param name="edge1">right edge</param>
+    /// <param name="x">factor</param>
     /// <returns>the smooth step</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float SmoothStep (in float edge0 = 0.0f, in float edge1 = 1.0f, in float x = 0.5f)
     {
         float t = Utils.LinearStep (edge0, edge1, x);
@@ -895,11 +989,12 @@ public static class Utils
     /// Returns the square root of a value cast to a float. If the value is less
     /// than or equal to zero, returns zero.
     /// </summary>
-    /// <param name="v"></param>
-    /// <returns></returns>
-    public static float Sqrt (float v)
+    /// <param name="v">the input value</param>
+    /// <returns>the square root</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static float Sqrt (in float v)
     {
-        return v > 0.0f ? Utils.Sqrt (v) : 0.0f;
+        return v > 0.0f ? Utils.SqrtUnchecked (v) : 0.0f;
     }
 
     /// <summary>
@@ -908,6 +1003,7 @@ public static class Utils
     /// </summary>
     /// <param name="v">the input value</param>
     /// <returns>the square root</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float SqrtUnchecked (in float v)
     {
         // return v * Utils.InvSqrtUnchecked (v);
@@ -920,6 +1016,7 @@ public static class Utils
     /// <param name="edge">the edge</param>
     /// <param name="x">the factor</param>
     /// <returns>the step</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Step (in float edge, in float x = 0.5f)
     {
         return x < edge ? 0.0f : 1.0f;
@@ -996,7 +1093,7 @@ public static class Utils
         {
             frac *= 10.0f;
             int tr = (int) frac;
-            frac -= tr;
+            frac -= (float) tr;
             sb.Append (tr);
         }
         return sb.ToString ( );
@@ -1005,8 +1102,8 @@ public static class Utils
     /// <summary>
     /// Returns an integer formatted as a string padded by initial zeroes.
     /// </summary>
-    /// <param name="value">the integer</param>
-    /// <param name="places">the number of places</param>
+    /// <param name="value">integer</param>
+    /// <param name="places">number of places</param>
     /// <returns>the string</returns>
     public static String ToPadded (in int value, in int places = 3)
     {
@@ -1045,9 +1142,10 @@ public static class Utils
     /// </summary>
     /// <param name="a">the input value</param>
     /// <returns>the truncation</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Trunc (in float a)
     {
-        return (int) a;
+        return (float) ((int) a);
     }
 
     /// <summary>
@@ -1099,6 +1197,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the evaluation</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Xor (in float a, in float b)
     {
         return ((a != 0.0f) ^ (b != 0.0f)) ? 1 : 0;

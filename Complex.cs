@@ -112,7 +112,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         return new float[ ] { this.real, this.imag };
     }
 
-    public string ToString (int places = 4)
+    public string ToString (in int places = 4)
     {
         return new StringBuilder (64)
             .Append ("{ real: ")
@@ -170,12 +170,12 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
             a.real * b.imag + a.imag * b.real);
     }
 
-    public static Complex operator * (in Complex a, float b)
+    public static Complex operator * (in Complex a, in float b)
     {
         return new Complex (a.real * b, a.imag * b);
     }
 
-    public static Complex operator * (float a, in Complex b)
+    public static Complex operator * (in float a, in Complex b)
     {
         return new Complex (a * b.real, a * b.imag);
     }
@@ -185,13 +185,13 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         return a * Complex.Inverse (b);
     }
 
-    public static Complex operator / (in Complex a, float b)
+    public static Complex operator / (in Complex a, in float b)
     {
         if (b == 0.0f) return new Complex (0.0f, 0.0f);
         return new Complex (a.real / b, a.imag / b);
     }
 
-    public static Complex operator / (float a, in Complex b)
+    public static Complex operator / (in float a, in Complex b)
     {
         return a * Complex.Inverse (b);
     }
@@ -201,12 +201,12 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         return new Complex (a.real + b.real, a.imag + b.imag);
     }
 
-    public static Complex operator + (in Complex a, float b)
+    public static Complex operator + (in Complex a, in float b)
     {
         return new Complex (a.real + b, a.imag);
     }
 
-    public static Complex operator + (float a, in Complex b)
+    public static Complex operator + (in float a, in Complex b)
     {
         return new Complex (a + b.real, b.imag);
     }
@@ -216,12 +216,12 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         return new Complex (a.real - b.real, a.imag - b.imag);
     }
 
-    public static Complex operator - (in Complex a, float b)
+    public static Complex operator - (in Complex a, in float b)
     {
         return new Complex (a.real - b, a.imag);
     }
 
-    public static Complex operator - (float a, in Complex b)
+    public static Complex operator - (in float a, in Complex b)
     {
         return new Complex (a - b.real, -b.imag);
     }
@@ -246,7 +246,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         return z.real != 0.0f || z.imag != 0.0f;
     }
 
-    public static bool Approx (in Complex a, in Complex b, float tolerance = Utils.Epsilon)
+    public static bool Approx (in Complex a, in Complex b, in float tolerance = Utils.Epsilon)
     {
         return Utils.Approx (a.real, b.real, tolerance) &&
             Utils.Approx (a.imag, b.imag, tolerance);
@@ -303,22 +303,22 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         return Complex.Exp (b * Complex.Log (a));
     }
 
-    public static Complex Pow (in Complex a, float b)
+    public static Complex Pow (in Complex a, in float b)
     {
         return Complex.Exp (b * Complex.Log (a));
     }
 
-    public static Complex Pow (float a, in Complex b)
+    public static Complex Pow (in float a, in Complex b)
     {
         return Complex.Exp (b * Complex.Log (a));
     }
 
-    public static (float r, float phi) Polar (Complex z)
+    public static (float r, float phi) Polar (in Complex z)
     {
         return (r: Complex.Phase (z), phi: Complex.Abs (z));
     }
 
-    public static Complex Random (in System.Random rng, float rhoMin = 1.0f, float rhoMax = 1.0f)
+    public static Complex Random (in System.Random rng, in float rhoMin = 1.0f, in float rhoMax = 1.0f)
     {
         return Complex.Rect (
             Utils.Mix (rhoMin, rhoMax,
@@ -328,7 +328,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
                 (float) rng.NextDouble ( )));
     }
 
-    public static Complex Rect (float r = 1.0f, float phi = 0.0f)
+    public static Complex Rect (in float r = 1.0f, in float phi = 0.0f)
     {
         float sinp = 0.0f;
         float cosp = 0.0f;
@@ -336,7 +336,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         return new Complex (r * cosp, r * sinp);
     }
 
-    public static Complex Sqrt (float a)
+    public static Complex Sqrt (in float a)
     {
         return (a > 0.0f) ?
             new Complex (Utils.Sqrt (a), 0.0f) :
