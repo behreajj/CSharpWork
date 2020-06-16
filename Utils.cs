@@ -124,6 +124,11 @@ public static class Utils
     public const float ThirdPi = 1.04719758f;
 
     /// <summary>
+    /// Two-thirds, 2.0 / 3.0 . Approximately 0.6666667 .
+    /// </summary>
+    public const float TwoThirds = 0.6666667f;
+
+    /// <summary>
     /// Finds the absolute value of a single precision real number. Equivalent
     /// to MAX(-a, a).
     /// </summary>

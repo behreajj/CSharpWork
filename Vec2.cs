@@ -1509,7 +1509,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
     /// <returns>the rotated vector</returns>
-    public static Vec2 RotateZ (in Vec2 v, in float cosa = 1.0f, in float sina = 0.0f)
+    public static Vec2 RotateZ (in Vec2 v, in float cosa, in float sina)
     {
         return new Vec2 (
             cosa * v._x - sina * v._y,

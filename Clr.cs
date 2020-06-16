@@ -449,10 +449,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the inversion</returns>
     public static Clr operator - (in Clr c)
     {
-        // return new Clr (Utils.Max (1.0f - c._r, 0.0f), Utils.Max (1.0f -
-        //     c._g, 0.0f), Utils.Max (1.0f - c._b, 0.0f), Utils.Clamp (c._a,
-        //     0.0f, 1.0f));
-
         return new Clr (
             1.0f - c._r,
             1.0f - c._g,
@@ -471,10 +467,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the product</returns>
     public static Clr operator * (in Clr a, in Clr b)
     {
-        // return new Clr (Utils.Clamp (a._r * b._r, 0.0f, 1.0f), Utils.Clamp
-        //     (a._g * b._g, 0.0f, 1.0f), Utils.Clamp (a._b * b._b, 0.0f, 1.0f),
-        //     Utils.Clamp (a._a, 0.0f, 1.0f));
-
         return new Clr (
             a._r * b._r,
             a._g * b._g,
@@ -491,11 +483,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the quotient</returns>
     public static Clr operator / (in Clr a, in Clr b)
     {
-        // return new Clr (Utils.Clamp (Utils.Div (a._r, b._r), 0.0f, 1.0f),
-        //     Utils.Clamp (Utils.Div (a._g, b._g), 0.0f, 1.0f), Utils.Clamp
-        //     (Utils.Div (a._b, b._b), 0.0f, 1.0f), Utils.Clamp (a._a, 0.0f,
-        //     1.0f));
-
         return new Clr (
             Utils.Div (a._r, b._r),
             Utils.Div (a._g, b._g),
@@ -512,11 +499,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr operator % (in Clr a, in Clr b)
     {
-        // return new Clr (Utils.Clamp (Utils.Mod (a._r, b._r), 0.0f, 1.0f),
-        //     Utils.Clamp (Utils.Mod (a._g, b._g), 0.0f, 1.0f), Utils.Clamp
-        //     (Utils.Mod (a._b, b._b), 0.0f, 1.0f), Utils.Clamp (a._a, 0.0f,
-        //     1.0f));
-
         return new Clr (
             Utils.Fmod (a._r, b._r),
             Utils.Fmod (a._g, b._g),
@@ -535,10 +517,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the sum</returns>
     public static Clr operator + (in Clr a, in Clr b)
     {
-        // return new Clr (Utils.Clamp (a._r + b._r, 0.0f, 1.0f), Utils.Clamp
-        //     (a._g + b._g, 0.0f, 1.0f), Utils.Clamp (a._b + b._b, 0.0f, 1.0f),
-        //     Utils.Clamp (a._a, 0.0f, 1.0f));
-
         return new Clr (
             a._r + b._r,
             a._g + b._g,
@@ -555,10 +533,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the difference</returns>
     public static Clr operator - (in Clr a, in Clr b)
     {
-        // return new Clr (Utils.Clamp (a._r - b._r, 0.0f, 1.0f), Utils.Clamp
-        //     (a._g - b._g, 0.0f, 1.0f), Utils.Clamp (a._b - b._b, 0.0f, 1.0f),
-        //     Utils.Clamp (a._a, 0.0f, 1.0f));
-
         return new Clr (
             a._r - b._r,
             a._g - b._g,
@@ -886,11 +860,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the adjusted color</returns>
     public static Clr Pow (in Clr a, in float b)
     {
-        // return new Clr (Utils.Clamp (Utils.Pow (a._r, b), 0.0f, 1.0f),
-        //     Utils.Clamp (Utils.Pow (a._g, b), 0.0f, 1.0f), Utils.Clamp
-        //     (Utils.Pow (a._b, b), 0.0f, 1.0f), Utils.Clamp (a._a, 0.0f,
-        //     1.0f));
-
         return new Clr (
             Utils.Pow (a._r, b),
             Utils.Pow (a._g, b),
@@ -906,9 +875,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the premultiplied color</returns>
     public static Clr PreMul (in Clr c)
     {
-        // if (c._a <= 0.0f) return Clr.ClearBlack; else if (c._a >= 1.0f)
-        // return new Clr (c._r, c._g, c._b, 1.0f);
-
         return new Clr (
             c._r * c._a,
             c._g * c._a,
@@ -929,6 +895,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         {
             return new Clr (c._r, c._g, c._b, c._a);
         }
+
         float levf = (float) levels;
         float delta = 1.0f / levf;
         return new Clr (
@@ -1017,10 +984,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
                 hue = 4.0f + (red - green) / delta;
 
             hue *= Utils.OneSix;
-            if (hue < 0.0f) hue += 1.0f;
+            if (hue < 0.0f) ++hue;
         }
 
-        float sat = bri == 0.0f ? 0.0f : delta / bri;
+        float sat = bri != 0.0f ? delta / bri : 0.0f;
         return new Vec4 (hue, sat, bri, alpha);
     }
 

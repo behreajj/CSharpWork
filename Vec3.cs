@@ -1821,7 +1821,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
     /// <returns>the rotated vector</returns>
-    public static Vec3 RotateZ (in Vec3 v, in float cosa = 1.0f, in float sina = 0.0f)
+    public static Vec3 RotateZ (in Vec3 v, in float cosa, in float sina)
     {
         return new Vec3 (
             cosa * v._x - sina * v._y,
