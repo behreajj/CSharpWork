@@ -40,26 +40,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     {
         if (Object.ReferenceEquals (this, value)) return true;
         if (Object.ReferenceEquals (null, value)) return false;
-
-        if (value is Complex)
-        {
-            Complex z = (Complex) value;
-
-            // return Complex.Approx (this, z);
-
-            if (this.real.GetHashCode ( ) != z.real.GetHashCode ( ))
-            {
-                return false;
-            }
-
-            if (this.imag.GetHashCode ( ) != z.imag.GetHashCode ( ))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
+        if (value is Complex) return this.Equals ((Complex) value);
         return false;
     }
 
@@ -74,7 +55,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
 
     public override string ToString ( )
     {
-        return ToString (4);
+        return this.ToString (4);
     }
 
     public int CompareTo (Complex z)

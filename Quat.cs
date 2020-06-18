@@ -41,6 +41,81 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   public Vec3 Imag { get { return this.imag; } }
 
   /// <summary>
+  /// The right axis.
+  /// </summary>
+  /// <value>right</value>
+  public Vec3 Right
+  {
+    get
+    {
+      float w = this.real;
+      float x = this.imag.x;
+      float y = this.imag.y;
+      float z = this.imag.z;
+
+      float xy = x * y;
+      float xz = x * z;
+      float yw = y * w;
+      float zw = z * w;
+
+      return new Vec3 (
+        w * w + x * x - y * y - z * z,
+        zw + zw + xy + xy,
+        xz + xz - (yw + yw));
+    }
+  }
+
+  /// <summary>
+  /// The forward axis.
+  /// </summary>
+  /// <value>forward</value>
+  public Vec3 Forward
+  {
+    get
+    {
+      float w = this.real;
+      float x = this.imag.x;
+      float y = this.imag.y;
+      float z = this.imag.z;
+
+      float xy = x * y;
+      float xw = x * w;
+      float yz = y * z;
+      float zw = z * w;
+
+      return new Vec3 (
+        xy + xy - (zw + zw),
+        w * w + y * y - x * x - z * z,
+        xw + xw + yz + yz);
+    }
+  }
+
+  /// <summary>
+  /// The up axis.
+  /// </summary>
+  /// <value>up</value>
+  public Vec3 Up
+  {
+    get
+    {
+      float w = this.real;
+      float x = this.imag.x;
+      float y = this.imag.y;
+      float z = this.imag.z;
+
+      float xz = x * z;
+      float xw = x * w;
+      float yz = y * z;
+      float yw = y * w;
+
+      return new Vec3 (
+        yw + yw + xz + xz,
+        yz + yz - (xw + xw),
+        w * w + z * z - x * x - y * y);
+    }
+  }
+
+  /// <summary>
   /// The real component.
   /// </summary>
   /// <value>w</value>
@@ -104,24 +179,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   {
     if (Object.ReferenceEquals (this, value)) return true;
     if (Object.ReferenceEquals (null, value)) return false;
-
-    if (value is Quat)
-    {
-      Quat q = (Quat) value;
-
-      if (this.real.GetHashCode ( ) != q.real.GetHashCode ( ))
-      {
-        return false;
-      }
-
-      if (this.imag.GetHashCode ( ) != q.imag.GetHashCode ( ))
-      {
-        return false;
-      }
-
-      return true;
-    }
-
+    if (value is Quat) return this.Equals ((Quat) value);
     return false;
   }
 
@@ -617,7 +675,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <returns>the rotated quaternion</returns>
   public static Quat Rotate (in Quat q, float radians, in Vec3 axis)
   {
-    return Quat.Normalize(q + Quat.FromAxisAngle(radians, axis));
+    return Quat.Normalize (q + Quat.FromAxisAngle (radians, axis));
   }
 
   /// <summary>

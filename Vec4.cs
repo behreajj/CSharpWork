@@ -126,43 +126,9 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the equivalence</returns>
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value))
-        {
-            return true;
-        }
-
-        if (Object.ReferenceEquals (null, value))
-        {
-            return false;
-        }
-
-        if (value is Vec4)
-        {
-            Vec4 v = (Vec4) value;
-
-            if (this._w.GetHashCode ( ) != v._w.GetHashCode ( ))
-            {
-                return false;
-            }
-
-            if (this._z.GetHashCode ( ) != v._z.GetHashCode ( ))
-            {
-                return false;
-            }
-
-            if (this._y.GetHashCode ( ) != v._y.GetHashCode ( ))
-            {
-                return false;
-            }
-
-            if (this._x.GetHashCode ( ) != v._x.GetHashCode ( ))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
+        if (Object.ReferenceEquals (this, value)) return true;
+        if (Object.ReferenceEquals (null, value)) return false;
+        if (value is Vec4) return this.Equals ((Vec4) value);
         return false;
     }
 
@@ -187,7 +153,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return ToString (4);
+        return this.ToString (4);
     }
 
     /// <summary>
@@ -216,7 +182,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// IEquatable interface. For approximate equality with another vector, use
     /// the static approx function instead.
     /// </summary>
-    /// <param name="value">the object</param>
+    /// <param name="v">vector</param>
     /// <returns>the equivalence</returns>
     public bool Equals (Vec4 v)
     {

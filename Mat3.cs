@@ -55,15 +55,101 @@ public readonly struct Mat3 : IEnumerable
   /// </summary>
   private readonly float _m22;
 
+  /// <summary>
+  /// Returns the number of values in this matrix.
+  /// </summary>
+  /// <value>the length</value>
+  public int Length { get { return 9; } }
+
+  /// <summary>
+  /// Component in row 0, column 0. The right axis x component.
+  /// </summary>
+  /// <value>right axis x</value>
   public float m00 { get { return this._m00; } }
+
+  /// <summary>
+  /// Component in row 0, column 1. The forward axis x component.
+  /// </summary>
+  /// <value>forward axis x</value>
   public float m01 { get { return this._m01; } }
+
+  /// <summary>
+  /// Component in row 0, column 2. The translation x component.
+  /// </summary>
+  /// <value>translation x</value>
   public float m02 { get { return this._m02; } }
+
+  /// <summary>
+  /// Component in row 1, column 0. The right axis y component.
+  /// </summary>
+  /// <value>right axis y</value>
   public float m10 { get { return this._m10; } }
+
+  /// <summary>
+  /// Component in row 1, column 1. The forward axis y component.
+  /// </summary>
+  /// <value>forward y</value>
   public float m11 { get { return this._m11; } }
+
+  /// <summary>
+  /// Component in row 1, column 2. The translation y component.
+  /// </summary>
+  /// <value>translation y</value>
   public float m12 { get { return this._m12; } }
+
+  /// <summary>
+  /// Component in row 2, column 0. The right axis z component.
+  /// </summary>
+  /// <value>right axis z</value>
   public float m20 { get { return this._m20; } }
+
+  /// <summary>
+  /// Component in row 2, column 1. The forward axis z component.
+  /// </summary>
+  /// <value>forward axis z</value>
   public float m21 { get { return this._m21; } }
+
+  /// <summary>
+  /// Component in row 2, column 2. The translation z component.
+  /// </summary>
+  /// <value>translation z</value>
   public float m22 { get { return this._m22; } }
+
+  /// <summary>
+  /// The first column, or right axis.
+  /// </summary>
+  /// <returns>right axis</returns>
+  public Vec3 Right
+  {
+    get
+    {
+      return new Vec3 (this._m00, this._m10, this._m20);
+    }
+  }
+
+  /// <summary>
+  /// The second column, or forward axis.
+  /// </summary>
+  /// <returns>forward</returns>
+  public Vec3 Forward
+  {
+    get
+    {
+      return new Vec3 (this._m01, this._m11, this._m21);
+    }
+  }
+
+  /// <summary>
+  /// The third column, or translation.
+  /// </summary>
+  /// <returns>translation</returns>
+  public Vec3 Translation
+  {
+    get
+    {
+      return new Vec3 (this._m02, this._m12, this._m22);
+    }
+  }
 
   /// <summary>
   /// Retrieves an element by index.
@@ -205,11 +291,95 @@ public readonly struct Mat3 : IEnumerable
     this._m22 = m22;
   }
 
+  public override bool Equals (object value)
+  {
+    if (Object.ReferenceEquals (this, value)) return true;
+    if (Object.ReferenceEquals (null, value)) return false;
+    if (value is Mat3) return this.Equals ((Mat3) value);
+    return false;
+  }
+
+  public override int GetHashCode ( )
+  {
+    int hash = Utils.MulBase ^ this._m00.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m01.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m02.GetHashCode ( );
+
+    hash = hash * Utils.HashMul ^ this._m10.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m11.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m12.GetHashCode ( );
+
+    hash = hash * Utils.HashMul ^ this._m20.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m21.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m22.GetHashCode ( );
+
+    return hash;
+  }
+
+  /// <summary>
+  /// Returns a string representation of this matrix.
+  /// </summary>
+  /// <returns>the string</returns>
   public override string ToString ( )
   {
     return ToString (4);
   }
 
+  public bool Equals (Mat3 m)
+  {
+    if (this._m00.GetHashCode ( ) != m._m00.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m01.GetHashCode ( ) != m._m01.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m02.GetHashCode ( ) != m._m02.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m10.GetHashCode ( ) != m._m10.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m11.GetHashCode ( ) != m._m11.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m12.GetHashCode ( ) != m._m12.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m20.GetHashCode ( ) != m._m20.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m21.GetHashCode ( ) != m._m21.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m22.GetHashCode ( ) != m._m22.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    return true;
+  }
+
+  /// <summary>
+  /// Returns an enumerator (or iterator) for this matrix, allowing its
+  /// components to be accessed in a foreach loop.
+  /// </summary>
+  /// <returns>the enumerator</returns>
   public IEnumerator GetEnumerator ( )
   {
     yield return this._m00;
@@ -225,6 +395,10 @@ public readonly struct Mat3 : IEnumerable
     yield return this._m22;
   }
 
+  /// <summary>
+  /// Returns a float array of length 9 containing this matrix's components.
+  /// </summary>
+  /// <returns>the array</returns>
   public float[ ] ToArray ( )
   {
     return new float[ ]
@@ -235,9 +409,14 @@ public readonly struct Mat3 : IEnumerable
     };
   }
 
+  /// <summary>
+  /// Returns a string representation of this matrix.
+  /// </summary>
+  /// <param name="places">number of decimal places</param>
+  /// <returns>the string</returns>
   public string ToString (in int places = 4)
   {
-    return new StringBuilder (512)
+    return new StringBuilder (128)
       .Append ("{ m00: ")
       .Append (Utils.ToFixed (this._m00, places))
       .Append (", m01: ")

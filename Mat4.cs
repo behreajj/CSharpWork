@@ -8,9 +8,8 @@ using System.Text;
 /// transform matrix, where the last row is (0.0, 0.0, 0.0, 1.0) .
 /// </summary>
 [Serializable]
-public readonly struct Mat4 : IEnumerable
+public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
 {
-
   /// <summary>
   /// Component in row 0, column 0. The right axis x component.
   /// </summary>
@@ -91,23 +90,335 @@ public readonly struct Mat4 : IEnumerable
   /// </summary>
   private readonly float _m33;
 
+  /// <summary>
+  /// Returns the number of values in this matrix.
+  /// </summary>
+  /// <value>the length</value>
+  public int Length { get { return 16; } }
+
+  /// <summary>
+  /// Component in row 0, column 0. The right axis x component.
+  /// </summary>
+  /// <value>right axis x</value>
   public float m00 { get { return this._m00; } }
+
+  /// <summary>
+  /// Component in row 0, column 1. The forward axis x component.
+  /// </summary>
+  /// <value>forward axis x</value>
   public float m01 { get { return this._m01; } }
+
+  /// <summary>
+  /// Component in row 0, column 2. The up axis x component.
+  /// </summary>
+  /// <value>up axis x</value>
   public float m02 { get { return this._m02; } }
+
+  /// <summary>
+  /// Component in row 0, column 3. The translation x component.
+  /// </summary>
+  /// <value>translation x</value>
   public float m03 { get { return this._m03; } }
+
+  /// <summary>
+  /// Component in row 1, column 0. The right axis y component.
+  /// </summary>
+  /// <value>right axis y</value>
   public float m10 { get { return this._m10; } }
+
+  /// <summary>
+  /// Component in row 1, column 1. The forward axis y component.
+  /// </summary>
+  /// <value>forward axis y</value>
   public float m11 { get { return this._m11; } }
+
+  /// <summary>
+  /// Component in row 1, column 2. The up axis y component.
+  /// </summary>
+  /// <value>up axis y</value>
   public float m12 { get { return this._m12; } }
+
+  /// <summary>
+  /// Component in row 1, column 3. The translation y component.
+  /// </summary>
+  /// <value>translation y</value>
   public float m13 { get { return this._m13; } }
+
+  /// <summary>
+  /// Component in row 2, column 0. The right axis z component.
+  /// </summary>
+  /// <value>right axis z</value>
   public float m20 { get { return this._m20; } }
+
+  /// <summary>
+  /// Component in row 2, column 1. The forward axis z component.
+  /// </summary>
+  /// <value>forward axis z</value>
   public float m21 { get { return this._m21; } }
+
+  /// <summary>
+  /// Component in row 2, column 2. The up axis z component.
+  /// </summary>
+  /// <value>up axis z</value>
   public float m22 { get { return this._m22; } }
+
+  /// <summary>
+  /// Component in row 2, column 3. The translation z component.
+  /// </summary>
+  /// <value>translation z</value>
   public float m23 { get { return this._m23; } }
+
+  /// <summary>
+  /// Component in row 3, column 0. The right axis w component.
+  /// </summary>
+  /// <value>right axis w</value>
   public float m30 { get { return this._m30; } }
+
+  /// <summary>
+  /// Component in row 3, column 1. The forward axis w component.
+  /// </summary>
+  /// <value>forward axis w</value>
   public float m31 { get { return this._m31; } }
+
+  /// <summary>
+  /// Component in row 3, column 2. The up axis w component.
+  /// </summary>
+  /// <value>up axis w</value>
   public float m32 { get { return this._m32; } }
+
+  /// <summary>
+  /// Component in row 3, column 3. The translation w component.
+  /// </summary>
+  /// <value>translation w</value>
   public float m33 { get { return this._m33; } }
 
+  /// <summary>
+  /// The first column, or right axis.
+  /// </summary>
+  /// <returns>right axis</returns>
+  public Vec4 Right
+  {
+    get
+    {
+      return new Vec4 (this._m00, this._m10, this._m20, this._m30);
+    }
+  }
+
+  /// <summary>
+  /// The second column, or forward axis.
+  /// </summary>
+  /// <returns>forward</returns>
+  public Vec4 Forward
+  {
+    get
+    {
+      return new Vec4 (this._m01, this._m11, this._m21, this._m31);
+    }
+  }
+
+  /// <summary>
+  /// The third column, or up axis.
+  /// </summary>
+  /// <returns>up</returns>
+  public Vec4 Up
+  {
+    get
+    {
+      return new Vec4 (this._m02, this._m12, this._m22, this._m32);
+    }
+  }
+
+  /// <summary>
+  /// The fourth column, or translation.
+  /// </summary>
+  /// <returns>translation</returns>
+  public Vec4 Translation
+  {
+    get
+    {
+      return new Vec4 (this._m03, this._m13, this._m23, this._m33);
+    }
+  }
+
+  /// <summary>
+  /// Retrieves an element by index.
+  /// </summary>
+  /// <value>the element</value>
+  public float this [int i]
+  {
+    get
+    {
+      switch (i)
+      {
+        case 0:
+        case -16:
+          return this._m00;
+        case 1:
+        case -15:
+          return this._m01;
+        case 2:
+        case -14:
+          return this._m02;
+        case 3:
+        case -13:
+          return this._m03;
+
+        case 4:
+        case -12:
+          return this._m10;
+        case 5:
+        case -11:
+          return this._m11;
+        case 6:
+        case -10:
+          return this._m12;
+        case 7:
+        case -9:
+          return this._m13;
+
+        case 8:
+        case -8:
+          return this._m20;
+        case 9:
+        case -7:
+          return this._m21;
+        case 10:
+        case -6:
+          return this._m22;
+        case 11:
+        case -5:
+          return this._m23;
+
+        case 12:
+        case -4:
+          return this._m30;
+        case 13:
+        case -3:
+          return this._m31;
+        case 14:
+        case -2:
+          return this._m32;
+        case 15:
+        case -1:
+          return this._m33;
+
+        default:
+          return 0.0f;
+      }
+    }
+  }
+
+  /// <summary>
+  /// Retrieves an element by indices.
+  /// </summary>
+  /// <value>the element</value>
+  public float this [int i, int j]
+  {
+    get
+    {
+      switch (i)
+      {
+        case 0:
+        case -4:
+          switch (j)
+          {
+            case 0:
+            case -4:
+              return this._m00;
+            case 1:
+            case -3:
+              return this._m01;
+            case 2:
+            case -2:
+              return this._m02;
+            case 3:
+            case -1:
+              return this._m03;
+            default:
+              return 0.0f;
+          }
+        case 1:
+        case -3:
+          switch (j)
+          {
+            case 0:
+            case -4:
+              return this._m10;
+            case 1:
+            case -3:
+              return this._m11;
+            case 2:
+            case -2:
+              return this._m12;
+            case 3:
+            case -1:
+              return this._m13;
+            default:
+              return 0.0f;
+          }
+        case 2:
+        case -2:
+          switch (j)
+          {
+            case 0:
+            case -4:
+              return this._m20;
+            case 1:
+            case -3:
+              return this._m21;
+            case 2:
+            case -2:
+              return this._m22;
+            case 3:
+            case -1:
+              return this._m23;
+            default:
+              return 0.0f;
+          }
+        case 3:
+        case -1:
+          switch (j)
+          {
+            case 0:
+            case -4:
+              return this._m30;
+            case 1:
+            case -3:
+              return this._m31;
+            case 2:
+            case -2:
+              return this._m32;
+            case 3:
+            case -1:
+              return this._m33;
+            default:
+              return 0.0f;
+          }
+        default:
+          return 0.0f;
+      }
+    }
+  }
+
+  /// <summary>
+  /// Constructs a matrix from float values.
+  /// </summary>
+  /// <param name="m00">row 0, column 0</param>
+  /// <param name="m01">row 0, column 1</param>
+  /// <param name="m02">row 0, column 2</param>
+  /// <param name="m03">row 0, column 3</param>
+  /// <param name="m10">row 1, column 0</param>
+  /// <param name="m11">row 1, column 1</param>
+  /// <param name="m12">row 1, column 2</param>
+  /// <param name="m13">row 1, column 3</param>
+  /// <param name="m20">row 2, column 0</param>
+  /// <param name="m21">row 2, column 1</param>
+  /// <param name="m22">row 2, column 2</param>
+  /// <param name="m23">row 2, column 3</param>
+  /// <param name="m30">row 3, column 0</param>
+  /// <param name="m31">row 3, column 1</param>
+  /// <param name="m32">row 3, column 2</param>
+  /// <param name="m33">row 3, column 3</param>
   public Mat4 (
     float m00 = 1.0f, float m01 = 0.0f, float m02 = 0.0f, float m03 = 0.0f,
     float m10 = 0.0f, float m11 = 1.0f, float m12 = 0.0f, float m13 = 0.0f,
@@ -135,11 +446,138 @@ public readonly struct Mat4 : IEnumerable
     this._m33 = m33;
   }
 
+  public override bool Equals (object value)
+  {
+    if (Object.ReferenceEquals (this, value)) return true;
+    if (Object.ReferenceEquals (null, value)) return false;
+    if (value is Mat4) return this.Equals ((Mat4) value);
+    return false;
+  }
+
+  public override int GetHashCode ( )
+  {
+    int hash = Utils.MulBase ^ this._m00.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m01.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m02.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m03.GetHashCode ( );
+
+    hash = hash * Utils.HashMul ^ this._m10.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m11.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m12.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m13.GetHashCode ( );
+
+    hash = hash * Utils.HashMul ^ this._m20.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m21.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m22.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m23.GetHashCode ( );
+
+    hash = hash * Utils.HashMul ^ this._m30.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m31.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m32.GetHashCode ( );
+    hash = hash * Utils.HashMul ^ this._m33.GetHashCode ( );
+
+    return hash;
+  }
+
+  /// <summary>
+  /// Returns a string representation of this matrix.
+  /// </summary>
+  /// <returns>the string</returns>
   public override string ToString ( )
   {
     return ToString (4);
   }
 
+  public bool Equals (Mat4 m)
+  {
+    if (this._m00.GetHashCode ( ) != m._m00.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m01.GetHashCode ( ) != m._m01.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m02.GetHashCode ( ) != m._m02.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m03.GetHashCode ( ) != m._m03.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m10.GetHashCode ( ) != m._m10.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m11.GetHashCode ( ) != m._m11.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m12.GetHashCode ( ) != m._m12.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m13.GetHashCode ( ) != m._m13.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m20.GetHashCode ( ) != m._m20.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m21.GetHashCode ( ) != m._m21.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m22.GetHashCode ( ) != m._m22.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m23.GetHashCode ( ) != m._m23.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m30.GetHashCode ( ) != m._m30.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m31.GetHashCode ( ) != m._m31.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m32.GetHashCode ( ) != m._m32.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    if (this._m33.GetHashCode ( ) != m._m33.GetHashCode ( ))
+    {
+      return false;
+    }
+
+    return true;
+  }
+
+  /// <summary>
+  /// Returns an enumerator (or iterator) for this matrix, allowing its
+  /// components to be accessed in a foreach loop.
+  /// </summary>
+  /// <returns>the enumerator</returns>
   public IEnumerator GetEnumerator ( )
   {
     yield return this._m00;
@@ -163,6 +601,10 @@ public readonly struct Mat4 : IEnumerable
     yield return this._m33;
   }
 
+  /// <summary>
+  /// Returns a float array of length 16 containing this matrix's components.
+  /// </summary>
+  /// <returns>the array</returns>
   public float[ ] ToArray ( )
   {
     return new float[ ]
@@ -174,6 +616,11 @@ public readonly struct Mat4 : IEnumerable
     };
   }
 
+  /// <summary>
+  /// Returns a string representation of this matrix.
+  /// </summary>
+  /// <param name="places">number of decimal places</param>
+  /// <returns>the string</returns>
   public string ToString (in int places = 4)
   {
     return new StringBuilder (512)
@@ -217,11 +664,21 @@ public readonly struct Mat4 : IEnumerable
       .ToString ( );
   }
 
+  /// <summary>
+  /// Converts a rotation from quaternion to matrix representation.
+  /// </summary>
+  /// <param name="q">quaternion</param>
   public static implicit operator Mat4 (in Quat q)
   {
-    return Mat4.FromRotation(q);
+    return Mat4.FromRotation (q);
   }
 
+  /// <summary>
+  /// Subtracts the right matrix from the left matrix.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>result</returns>
   public static Mat4 operator - (in Mat4 a, in Mat4 b)
   {
     return new Mat4 (
@@ -231,6 +688,12 @@ public readonly struct Mat4 : IEnumerable
       a._m30 - b._m30, a._m31 - b._m31, a._m32 - b._m32, a._m33 - b._m33);
   }
 
+  /// <summary>
+  /// Multiplies two matrices.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>product</returns>
   public static Mat4 operator * (in Mat4 a, in Mat4 b)
   {
     return new Mat4 (
@@ -255,6 +718,12 @@ public readonly struct Mat4 : IEnumerable
       a._m30 * b._m03 + a._m31 * b._m13 + a._m32 * b._m23 + a._m33 * b._m33);
   }
 
+  /// <summary>
+  /// Multiplies each component in a matrix by a scalar.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>product</returns>
   public static Mat4 operator * (in Mat4 a, in float b)
   {
     return new Mat4 (
@@ -264,6 +733,12 @@ public readonly struct Mat4 : IEnumerable
       a._m30 * b, a._m31 * b, a._m32 * b, a._m33 * b);
   }
 
+  /// <summary>
+  /// Multiplies each component in a matrix by a scalar.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>product</returns>
   public static Mat4 operator * (in float a, in Mat4 b)
   {
     return new Mat4 (
@@ -273,6 +748,12 @@ public readonly struct Mat4 : IEnumerable
       a * b._m30, a * b._m31, a * b._m32, a * b._m33);
   }
 
+  /// <summary>
+  /// Multiplies a matrix and a vector.
+  /// </summary>
+  /// <param name="a">matrix</param>
+  /// <param name="b">vector</param>
+  /// <returns>product</returns>
   public static Vec4 operator * (in Mat4 a, in Vec4 b)
   {
     return new Vec4 (
@@ -282,21 +763,47 @@ public readonly struct Mat4 : IEnumerable
       a._m30 * b.x + a._m31 * b.y + a._m32 * b.z + a._m33 * b.w);
   }
 
+  /// <summary>
+  /// Divides one matrix by another. Equivalent to multiplying the numerator and
+  /// the inverse of the denominator.
+  /// </summary>
+  /// <param name="a">numerator</param>
+  /// <param name="b">denominator</param>
+  /// <returns>quotient</returns>
   public static Mat4 operator / (in Mat4 a, in Mat4 b)
   {
     return a * Mat4.Inverse (b);
   }
 
+  /// <summary>
+  /// Divides a matrix by a scalar.
+  /// </summary>
+  /// <param name="a">numerator</param>
+  /// <param name="b">denominator</param>
+  /// <returns>quotient</returns>
   public static Mat4 operator / (in Mat4 a, in float b)
   {
     return (b != 0.0f) ? a * (1.0f / b) : Mat4.Identity;
   }
 
+  /// <summary>
+  /// Divides a scalar by a matrix. Equivalent to multiplying the numerator and
+  /// the inverse of the denominator.
+  /// </summary>
+  /// <param name="a">numerator</param>
+  /// <param name="b">denominator</param>
+  /// <returns>quotient</returns>
   public static Mat4 operator / (in float a, in Mat4 b)
   {
     return a * Mat4.Inverse (b);
   }
 
+  /// <summary>
+  /// Adds two matrices together.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>sum</returns>
   public static Mat4 operator + (in Mat4 a, in Mat4 b)
   {
     return new Mat4 (
@@ -339,6 +846,14 @@ public readonly struct Mat4 : IEnumerable
         m._m11 * m._m20 * m._m32);
   }
 
+  /// <summary>
+  /// Creates a matrix from two axes. The third axis, up, is assumed to be (0.0,
+  /// 0.0, 1.0, 0.0) . The fourth row and column are assumed to be (0.0, 0.0,
+  /// 0.0, 1.0) .
+  /// </summary>
+  /// <param name="right">right axis</param>
+  /// <param name="forward">forward axis</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromAxes (in Vec2 right, in Vec2 forward)
   {
     return new Mat4 (
@@ -348,6 +863,15 @@ public readonly struct Mat4 : IEnumerable
       0.0f, 0.0f, 0.0f, 1.0f);
   }
 
+  /// <summary>
+  /// Creates a matrix from two axes and a translation. The third axis, up, is
+  /// assumed to be (0.0, 0.0, 1.0, 0.0) . The fourth row, w, is assumed to be
+  /// (0.0, 0.0, 0.0, 1.0) .
+  /// </summary>
+  /// <param name="right">right axis</param>
+  /// <param name="forward">forward axis</param>
+  /// <param name="translation">translation</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromAxes (in Vec2 right, in Vec2 forward, in Vec2 translation)
   {
     return new Mat4 (
@@ -357,6 +881,14 @@ public readonly struct Mat4 : IEnumerable
       0.0f, 0.0f, 0.0f, 1.0f);
   }
 
+  /// <summary>
+  /// Creates a matrix from three axes. The fourth row and column are assumed to
+  /// be (0.0, 0.0, 0.0, 1.0) .
+  /// </summary>
+  /// <param name="right">right axis</param>
+  /// <param name="forward">forward axis</param>
+  /// <param name="up">up axis</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromAxes (in Vec3 right, in Vec3 forward, in Vec3 up)
   {
     return new Mat4 (
@@ -366,6 +898,15 @@ public readonly struct Mat4 : IEnumerable
       0.0f, 0.0f, 0.0f, 1.0f);
   }
 
+  /// <summary>
+  /// Creates a matrix from three axes and a translation. The fourth row, w, is
+  /// assumed to be (0.0, 0.0, 0.0, 1.0) .
+  /// </summary>
+  /// <param name="right">right axis</param>
+  /// <param name="forward">forward axis</param>
+  /// <param name="up">up axis</param>
+  /// <param name="translation">translation axis</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromAxes (in Vec3 right, in Vec3 forward, in Vec3 up, in Vec3 translation)
   {
     return new Mat4 (
@@ -375,6 +916,14 @@ public readonly struct Mat4 : IEnumerable
       0.0f, 0.0f, 0.0f, 1.0f);
   }
 
+  /// <summary>
+  /// Creates a matrix from three axes. The fourth column, translation, is
+  /// assumed to be (0.0, 0.0, 0.0, 1.0) .
+  /// </summary>
+  /// <param name="right">right axis</param>
+  /// <param name="forward">forward axis</param>
+  /// <param name="up">up axis</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromAxes (in Vec4 right, in Vec4 forward, in Vec4 up)
   {
     return new Mat4 (
@@ -384,6 +933,14 @@ public readonly struct Mat4 : IEnumerable
       right.w, forward.w, up.w, 1.0f);
   }
 
+  /// <summary>
+  /// Creates a matrix from three axes and a translation.
+  /// </summary>
+  /// <param name="right">right axis</param>
+  /// <param name="forward">forward axis</param>
+  /// <param name="up">up axis</param>
+  /// <param name="translation">translation</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromAxes (in Vec4 right, in Vec4 forward, in Vec4 up, in Vec4 translation)
   {
     return new Mat4 (
@@ -393,6 +950,11 @@ public readonly struct Mat4 : IEnumerable
       right.w, forward.w, up.w, translation.w);
   }
 
+  /// <summary>
+  /// Creates a rotation matrix from a quaternion.
+  /// </summary>
+  /// <param name="source">quaternion</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromRotation (in Quat source)
   {
     float w = source.Real;
@@ -421,6 +983,62 @@ public readonly struct Mat4 : IEnumerable
       0.0f, 0.0f, 0.0f, 1.0f);
   }
 
+  /// <summary>
+  /// Creates a rotation matrix from an angle in radians around an axis. The
+  /// axis will be normalized by the function.
+  /// </summary>
+  /// <param name="radians">angle</param>
+  /// <param name="axis">axis</param>
+  /// <returns>matrix</returns>
+  public static Mat4 FromRotation (in float radians, in Vec3 axis)
+  {
+    float sina = 0.0f;
+    float cosa = 0.0f;
+    Utils.SinCos (radians, out sina, out cosa);
+    return Mat4.FromRotation (cosa, sina, axis);
+  }
+
+  /// <summary>
+  /// Creates a rotation matrix from the cosine and sine of an angle around an
+  /// axis. The axis will be normalized by the function.
+  /// </summary>
+  /// <param name="cosa">cosine of an angle</param>
+  /// <param name="sina">sine of an angle</param>
+  /// <param name="axis">axis</param>
+  /// <returns>matrix</returns>
+  public static Mat4 FromRotation (in float cosa, in float sina, in Vec3 axis)
+  {
+    float mSq = Vec3.MagSq (axis);
+    if (mSq != 0.0f)
+    {
+      float mInv = Utils.InvSqrtUnchecked (mSq);
+      float ax = axis.x * mInv;
+      float ay = axis.y * mInv;
+      float az = axis.z * mInv;
+
+      float d = 1.0f - cosa;
+      float x = ax * d;
+      float y = ay * d;
+      float z = az * d;
+
+      float axay = x * ay;
+      float axaz = x * az;
+      float ayaz = y * az;
+
+      return new Mat4 (
+        cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
+        axay + sina * az, cosa + y * ay, ayaz - sina * ax, 0.0f,
+        axaz - sina * ay, ayaz + sina * ax, cosa + z * az, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f);
+    }
+    return Mat4.Identity;
+  }
+
+  /// <summary>
+  /// Creates a rotation matrix from an angle in radians around the x axis.
+  /// </summary>
+  /// <param name="radians">angle</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromRotX (in float radians)
   {
     float sina = 0.0f;
@@ -429,6 +1047,12 @@ public readonly struct Mat4 : IEnumerable
     return Mat4.FromRotX (cosa, sina);
   }
 
+  /// <summary>
+  /// Creates a rotation matrix from a cosine and sine around the x axis.
+  /// </summary>
+  /// <param name="cosa">cosine of an angle</param>
+  /// <param name="sina">sine of an angle</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromRotX (in float cosa, in float sina)
   {
     return new Mat4 (
@@ -438,6 +1062,11 @@ public readonly struct Mat4 : IEnumerable
       0.0f, 0.0f, 0.0f, 1.0f);
   }
 
+  /// <summary>
+  /// Creates a rotation matrix from an angle in radians around the y axis.
+  /// </summary>
+  /// <param name="radians">angle</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromRotY (in float radians)
   {
     float sina = 0.0f;
@@ -446,6 +1075,12 @@ public readonly struct Mat4 : IEnumerable
     return Mat4.FromRotY (cosa, sina);
   }
 
+  /// <summary>
+  /// Creates a rotation matrix from a cosine and sine around the y axis.
+  /// </summary>
+  /// <param name="cosa">cosine of an angle</param>
+  /// <param name="sina">sine of an angle</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromRotY (in float cosa, in float sina)
   {
     return new Mat4 (
@@ -454,6 +1089,11 @@ public readonly struct Mat4 : IEnumerable
       0.0f, 0.0f, 0.0f, 1.0f);
   }
 
+  /// <summary>
+  /// Creates a rotation matrix from an angle in radians around the z axis.
+  /// </summary>
+  /// <param name="radians">angle</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromRotZ (in float radians)
   {
     float sina = 0.0f;
@@ -462,6 +1102,12 @@ public readonly struct Mat4 : IEnumerable
     return Mat4.FromRotZ (cosa, sina);
   }
 
+  /// <summary>
+  /// Creates a rotation matrix from a cosine and sine around the z axis.
+  /// </summary>
+  /// <param name="cosa">cosine of an angle</param>
+  /// <param name="sina">sine of an angle</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromRotZ (in float cosa, in float sina)
   {
     return new Mat4 (
@@ -471,6 +1117,12 @@ public readonly struct Mat4 : IEnumerable
       0.0f, 0.0f, 0.0f, 1.0f);
   }
 
+  /// <summary>
+  /// Creates a scale matrix from a scalar. The bottom right corner, m33, is set
+  /// to 1.0 .
+  /// </summary>
+  /// <param name="scalar">scalar</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromScale (in float scalar)
   {
     if (scalar != 0.0f)
@@ -484,6 +1136,11 @@ public readonly struct Mat4 : IEnumerable
     return Mat4.Identity;
   }
 
+  /// <summary>
+  /// Creates a scale matrix from a nonuniform scalar stored in a vector.
+  /// </summary>
+  /// <param name="scalar">nonuniform scalar</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromScale (in Vec2 scalar)
   {
     if (Vec2.All (scalar))
@@ -497,6 +1154,11 @@ public readonly struct Mat4 : IEnumerable
     return Mat4.Identity;
   }
 
+  /// <summary>
+  /// Creates a scale matrix from a nonuniform scalar stored in a vector.
+  /// </summary>
+  /// <param name="scalar">nonuniform scalar</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromScale (in Vec3 scalar)
   {
     if (Vec3.All (scalar))
@@ -510,6 +1172,11 @@ public readonly struct Mat4 : IEnumerable
     return Mat4.Identity;
   }
 
+  /// <summary>
+  /// Creates a translation matrix from a vector.
+  /// </summary>
+  /// <param name="translation">translation</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromTranslation (in Vec2 translation)
   {
     return new Mat4 (
@@ -519,6 +1186,11 @@ public readonly struct Mat4 : IEnumerable
       0.0f, 0.0f, 0.0f, 1.0f);
   }
 
+  /// <summary>
+  /// Creates a translation matrix from a vector.
+  /// </summary>
+  /// <param name="translation">translation</param>
+  /// <returns>matrix</returns>
   public static Mat4 FromTranslation (in Vec3 translation)
   {
     return new Mat4 (
@@ -528,6 +1200,16 @@ public readonly struct Mat4 : IEnumerable
       0.0f, 0.0f, 0.0f, 1.0f);
   }
 
+  /// <summary>
+  /// Creates a view frustum given the edges of the view port.
+  /// </summary>
+  /// <param name="left">window left edge</param>
+  /// <param name="right">window right edge</param>
+  /// <param name="bottom">window bottom edge</param>
+  /// <param name="top">window top edge</param>
+  /// <param name="near">near clip plane</param>
+  /// <param name="far">far clip plane</param>
+  /// <returns>orthographic projection</returns>
   public static Mat4 Frustum (in float left, in float right, in float bottom, in float top, in float near, in float far)
   {
     float n2 = near + near;
@@ -547,6 +1229,11 @@ public readonly struct Mat4 : IEnumerable
       0.0f, 0.0f, -1.0f, 0.0f);
   }
 
+  /// <summary>
+  /// Inverts the input matrix.
+  /// </summary>
+  /// <param name="m">matrix</param>
+  /// <returns>inverse</returns>
   public static Mat4 Inverse (in Mat4 m)
   {
     float b00 = m._m00 * m._m11 - m._m01 * m._m10;
@@ -588,6 +1275,92 @@ public readonly struct Mat4 : IEnumerable
     }
 
     return Mat4.Identity;
+  }
+
+  /// <summary>
+  /// Multiplies a matrix and a point. The z component of the point is assumed
+  /// to be 0.0 . The w component of the point is assumed to be 1.0 , so the
+  /// point is impacted by the matrix's translation.
+  /// </summary>
+  /// <param name="a">matrix</param>
+  /// <param name="b">vector</param>
+  /// <returns>product</returns>
+  public static Vec3 MulPoint (in Mat4 a, in Vec2 b)
+  {
+    float w = a._m30 * b.x + a._m31 * b.y + a._m33;
+    if (w != 0.0f)
+    {
+      float wInv = 1.0f / w;
+      return new Vec3 (
+        (a._m00 * b.x + a._m01 * b.y + a._m03) * wInv,
+        (a._m10 * b.x + a._m11 * b.y + a._m13) * wInv,
+        (a._m20 * b.x + a._m21 * b.y + a._m23) * wInv);
+    }
+    return new Vec3 (0.0f, 0.0f, 0.0f);
+  }
+
+  /// <summary>
+  /// Multiplies a matrix and a point. The w component of the point is assumed
+  /// to be 1.0 , so the point is impacted by the matrix's translation.
+  /// </summary>
+  /// <param name="a">matrix</param>
+  /// <param name="b">vector</param>
+  /// <returns>product</returns>
+  public static Vec3 MulPoint (in Mat4 a, in Vec3 b)
+  {
+    float w = a._m30 * b.x + a._m31 * b.y + a._m32 * b.z + a._m33;
+    if (w != 0.0f)
+    {
+      float wInv = 1.0f / w;
+      return new Vec3 (
+        (a._m00 * b.x + a._m01 * b.y + a._m02 * b.z + a._m03) * wInv,
+        (a._m10 * b.x + a._m11 * b.y + a._m12 * b.z + a._m13) * wInv,
+        (a._m20 * b.x + a._m21 * b.y + a._m22 * b.z + a._m23) * wInv);
+    }
+    return new Vec3 (0.0f, 0.0f, 0.0f);
+  }
+
+  /// <summary>
+  /// Multiplies a matrix and a vector. The z and w components of the vector are
+  /// assumed to be 0.0 , so the vector is not impacted by the matrix's
+  /// translation.
+  /// </summary>
+  /// <param name="a">matrix</param>
+  /// <param name="b">vector</param>
+  /// <returns>product</returns>
+  public static Vec3 MulVector (in Mat4 a, in Vec2 b)
+  {
+    float w = a._m30 * b.x + a._m31 * b.y + a._m33;
+    if (w != 0.0f)
+    {
+      float wInv = 1.0f / w;
+      return new Vec3 (
+        (a._m00 * b.x + a._m01 * b.y) * wInv,
+        (a._m10 * b.x + a._m11 * b.y) * wInv,
+        (a._m20 * b.x + a._m21 * b.y) * wInv);
+    }
+    return new Vec3 (0.0f, 0.0f, 0.0f);
+  }
+
+  /// <summary>
+  /// Multiplies a matrix and a vector. The w component of the vector is assumed
+  /// to be 0.0 , so the vector is not impacted by the matrix's translation.
+  /// </summary>
+  /// <param name="a">matrix</param>
+  /// <param name="b">vector</param>
+  /// <returns>product</returns>
+  public static Vec3 MulVector (in Mat4 a, in Vec3 b)
+  {
+    float w = a._m30 * b.x + a._m31 * b.y + a._m32 * b.z + a._m33;
+    if (w != 0.0f)
+    {
+      float wInv = 1.0f / w;
+      return new Vec3 (
+        (a._m00 * b.x + a._m01 * b.y + a._m02 * b.z) * wInv,
+        (a._m10 * b.x + a._m11 * b.y + a._m12 * b.z) * wInv,
+        (a._m20 * b.x + a._m21 * b.y + a._m22 * b.z) * wInv);
+    }
+    return new Vec3 (0.0f, 0.0f, 0.0f);
   }
 
   /// <summary>

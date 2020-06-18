@@ -112,29 +112,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     {
         if (Object.ReferenceEquals (this, value)) return true;
         if (Object.ReferenceEquals (null, value)) return false;
-
-        if (value is Vec3)
-        {
-            Vec3 v = (Vec3) value;
-
-            if (this._z.GetHashCode ( ) != v._z.GetHashCode ( ))
-            {
-                return false;
-            }
-
-            if (this._y.GetHashCode ( ) != v._y.GetHashCode ( ))
-            {
-                return false;
-            }
-
-            if (this._x.GetHashCode ( ) != v._x.GetHashCode ( ))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
+        if (value is Vec3) return this.Equals ((Vec3) value);
         return false;
     }
 
@@ -158,7 +136,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return ToString (4);
+        return this.ToString (4);
     }
 
     /// <summary>
@@ -185,7 +163,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// IEquatable interface. For approximate equality with another vector, use
     /// the static approx function instead.
     /// </summary>
-    /// <param name="value">the object</param>
+    /// <param name="v">vector</param>
     /// <returns>the equivalence</returns>
     public bool Equals (Vec3 v)
     {

@@ -94,24 +94,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     {
         if (Object.ReferenceEquals (this, value)) return true;
         if (Object.ReferenceEquals (null, value)) return false;
-
-        if (value is Vec2)
-        {
-            Vec2 v = (Vec2) value;
-
-            if (this._y.GetHashCode ( ) != v._y.GetHashCode ( ))
-            {
-                return false;
-            }
-
-            if (this._x.GetHashCode ( ) != v._x.GetHashCode ( ))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
+        if (value is Vec2) return this.Equals ((Vec2) value);
         return false;
     }
 
@@ -134,7 +117,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return ToString (4);
+        return this.ToString (4);
     }
 
     /// <summary>
@@ -159,7 +142,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// IEquatable interface. For approximate equality with another vector, use
     /// the static approx function instead.
     /// </summary>
-    /// <param name="value">the object</param>
+    /// <param name="v">vector</param>
     /// <returns>the equivalence</returns>
     public bool Equals (Vec2 v)
     {
@@ -1121,7 +1104,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the magnitude</returns>
     public static float Mag (in Vec2 v)
     {
-        return Utils.Sqrt (Vec2.MagSq(v));
+        return Utils.Sqrt (Vec2.MagSq (v));
 
         // double xd = v._x; double yd = v._y;
 

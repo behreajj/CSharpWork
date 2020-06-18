@@ -47,6 +47,12 @@ public class Transform3
     }
   }
 
+  public Vec3 Right { get { return this.rotation.Right; } }
+
+  public Vec3 Forward { get { return this.rotation.Forward; } }
+
+  public Vec3 Up { get { return this.rotation.Up; } }
+
   public Transform3 ( ) { }
 
   public Transform3 (
@@ -54,7 +60,7 @@ public class Transform3
     Quat rotation,
     Vec3 scale)
   {
-    this.location = location;
+    this.Location = location;
     this.Rotation = rotation;
     this.Scale = scale;
   }
@@ -65,7 +71,7 @@ public class Transform3
     float xImag = 0.0f, float yImag = 0.0f, float zImag = 0.0f,
     float width = 1.0f, float height = 1.0f, float depth = 1.0f)
   {
-    this.location = new Vec3 (x, y, z);
+    this.Location = new Vec3 (x, y, z);
     this.Rotation = new Quat (real, xImag, yImag, zImag);
     this.Scale = new Vec3 (width, height, depth);
   }
@@ -84,100 +90,50 @@ public class Transform3
 
   public override string ToString ( )
   {
-    return ToString (4);
+    return this.ToString (4);
   }
 
   public Transform3 MoveBy (in Vec3 v)
   {
-    this.location += v;
+    this.Location += v;
     return this;
   }
 
-  public Transform3 MoveTo (in Vec3 v, float step = 1.0f)
+  public Transform3 MoveTo (in Vec3 v, in Vec3 step)
   {
-    if (step <= 0.0f) return this;
-    if (step >= 1.0f) { this.location = v; return this; }
-
-    this.location = Vec3.Mix (this.location, v, step);
+    this.Location = Vec3.Mix (this.location, v, step);
     return this;
   }
 
-  public Transform3 MoveTo (in Vec3 v, in Vec3 step, Func<Vec3, Vec3, Vec3, Vec3> Easing)
+  public Transform3 MoveTo (in Vec3 v, in Vec3 step, in Func<Vec3, Vec3, Vec3, Vec3> Easing)
   {
     Vec3 t = Easing (this.location, v, step);
-    this.location = Vec3.Mix (this.location, v, t);
-    return this;
-  }
-
-  public Transform3 Reset ( )
-  {
-    this.location = new Vec3 (0.0f, 0.0f, 0.0f);
-    this.rotation = new Quat (1.0f, 0.0f, 0.0f, 0.0f);
-    this.scale = new Vec3 (1.0f, 1.0f, 1.0f);
-
+    this.Location = Vec3.Mix (this.location, v, t);
     return this;
   }
 
   public Transform3 ScaleBy (in Vec3 v)
   {
-    this.Scale = this.scale + v;
+    this.Scale += v;
     return this;
   }
 
-  public Transform3 ScaleTo (in Vec3 v, float step = 1.0f)
+  public Transform3 ScaleTo (in Vec3 v, in Vec3 step)
   {
-    if (step <= 0.0f) return this;
-    if (step >= 1.0f) { this.Scale = v; return this; }
-
     this.Scale = Vec3.Mix (this.scale, v, step);
     return this;
   }
 
-  public Transform3 ScaleTo (in Vec3 v, in Vec3 step, Func<Vec3, Vec3, Vec3, Vec3> Easing)
+  public Transform3 ScaleTo (in Vec3 v, in Vec3 step, in Func<Vec3, Vec3, Vec3, Vec3> Easing)
   {
     Vec3 t = Easing (this.scale, v, step);
     this.Scale = Vec3.Mix (this.scale, v, t);
     return this;
   }
 
-  public Transform3 Set (in Transform2 t)
+  public string ToString (in int places = 4)
   {
-    float halfAng = 0.5f * t.Rotation;
-    Vec2 scl2 = t.Scale;
-    this.location = t.Location;
-    this.rotation = new Quat (
-      Utils.Cos (halfAng), 0.0f,
-      0.0f, Utils.Sin (halfAng));
-    this.Scale = new Vec3 (scl2.x, scl2.y, 1.0f);
-    return this;
-  }
-
-  public Transform3 Set (
-    Vec3 location,
-    Quat rotation,
-    Vec3 scale)
-  {
-    this.location = location;
-    this.Rotation = rotation;
-    this.Scale = scale;
-    return this;
-  }
-
-  public Transform3 Set (
-    float x = 0.0f, float y = 0.0f, float z = 0.0f,
-    float real = 1.0f,
-    float xImag = 0.0f, float yImag = 0.0f, float zImag = 0.0f,
-    float width = 1.0f, float height = 1.0f, float depth = 1.0f)
-  {
-    this.location = new Vec3 (x, y, z);
-    this.Rotation = new Quat (real, xImag, yImag, zImag);
-    this.Scale = new Vec3 (width, height, depth);
-    return this;
-  }
-
-  public string ToString (int places = 4)
-  {
-    return new StringBuilder ( )
+    return new StringBuilder (354)
       .Append ("{ location: ")
       .Append (this.location.ToString (places))
       .Append (", rotation: ")
@@ -188,7 +144,27 @@ public class Transform3
       .ToString ( );
   }
 
-  static Transform3 Identity
+  public static Vec3 MulDir (in Transform3 transform, in Vec3 dir)
+  {
+    return Quat.MulVector (transform.rotation, dir);
+  }
+
+  public static Vec3 MulPoint (in Transform3 transform, in Vec3 point)
+  {
+    return transform.location + transform.scale * Quat.MulVector (transform.rotation, point);
+  }
+
+  public static Vec3 MulVector (in Transform3 transform, in Vec3 vec)
+  {
+    return transform.scale * Quat.MulVector (transform.rotation, vec);
+  }
+
+  public static (Vec3 right, Vec3 forward, Vec3 up) ToAxes (in Transform3 tr)
+  {
+    return Quat.ToAxes (tr.rotation);
+  }
+
+  public static Transform3 Identity
   {
     get
     {

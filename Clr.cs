@@ -145,13 +145,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         if (Object.ReferenceEquals (this, value)) return true;
         if (Object.ReferenceEquals (null, value)) return false;
-
-        if (value is Clr)
-        {
-            Clr c = (Clr) value;
-            return ((int) this) == ((int) c);
-        }
-
+        if (value is Clr) return this.Equals ((Clr) value);
         return false;
     }
 
@@ -170,7 +164,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return ToString (4);
+        return this.ToString (4);
     }
 
     /// <summary>
