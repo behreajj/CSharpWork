@@ -1198,9 +1198,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         for (int j = 0; j < cval; ++j)
         {
             xs[j] = Utils.Mix (
-                lowerBound.x,
-                upperBound.x,
-                j * jToStep);
+                lowerBound._x,
+                upperBound._x,
+                (float) j * jToStep);
         }
 
         /* Calculate y values in separate loop. */
@@ -1208,18 +1208,18 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         for (int i = 0; i < rval; ++i)
         {
             ys[i] = Utils.Mix (
-                lowerBound.y,
-                upperBound.y,
-                i * iToStep);
+                lowerBound._y,
+                upperBound._y,
+                (float) i * iToStep);
         }
 
         Vec3[, , ] result = new Vec3[lval, rval, cval];
         for (int h = 0; h < lval; ++h)
         {
             float z = Utils.Mix (
-                lowerBound.z,
-                upperBound.z,
-                h * hToStep);
+                lowerBound._z,
+                upperBound._z,
+                (float) h * hToStep);
 
             for (int i = 0; i < rval; ++i)
             {
@@ -1411,9 +1411,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Mix (in Vec3 a, in Vec3 b, in Vec3 t)
     {
         return new Vec3 (
-            (1.0f - t._x) * a._x + t._x * b._x,
-            (1.0f - t._y) * a._y + t._y * b._y,
-            (1.0f - t._z) * a._z + t._z * b._z);
+            Utils.Mix (a._x, b._x, t._x),
+            Utils.Mix (a._y, b._y, t._y),
+            Utils.Mix (a._z, b._z, t._z));
     }
 
     /// <summary>
@@ -1550,14 +1550,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the random vector</returns>
     public static Vec3 RandomCartesian (in System.Random rng, in Vec3 lb, in Vec3 ub)
     {
-        float xFac = (float) rng.NextDouble ( );
-        float yFac = (float) rng.NextDouble ( );
-        float zFac = (float) rng.NextDouble ( );
-
         return new Vec3 (
-            Utils.Mix (lb._x, ub._x, xFac),
-            Utils.Mix (lb._y, ub._y, yFac),
-            Utils.Mix (lb._z, ub._z, zFac));
+            Utils.Mix (lb._x, ub._x, (float) rng.NextDouble ( )),
+            Utils.Mix (lb._y, ub._y, (float) rng.NextDouble ( )),
+            Utils.Mix (lb._z, ub._z, (float) rng.NextDouble ( )));
     }
 
     /// <summary>
@@ -1570,14 +1566,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the random vector</returns>
     public static Vec3 RandomCartesian (in System.Random rng, in float lb = 0.0f, in float ub = 1.0f)
     {
-        float xFac = (float) rng.NextDouble ( );
-        float yFac = (float) rng.NextDouble ( );
-        float zFac = (float) rng.NextDouble ( );
-
         return new Vec3 (
-            Utils.Mix (lb, ub, xFac),
-            Utils.Mix (lb, ub, yFac),
-            Utils.Mix (lb, ub, zFac));
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )),
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )),
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )));
     }
 
     /// <summary>

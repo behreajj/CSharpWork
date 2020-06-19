@@ -617,6 +617,19 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
   }
 
   /// <summary>
+  /// Returns a named value tuple containing this matrix's components.
+  /// </summary>
+  /// <returns>the tuple</returns>
+  public (float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33) ToTuple ( )
+  {
+    return (
+      m00: this._m00, m01: this._m01, m02: this._m02, m03: this._m03,
+      m10: this._m10, m11: this._m11, m12: this._m12, m13: this._m13,
+      m20: this._m20, m21: this._m21, m22: this._m22, m23: this._m23,
+      m30: this._m30, m31: this._m31, m32: this._m32, m33: this._m33);
+  }
+
+  /// <summary>
   /// Returns a string representation of this matrix.
   /// </summary>
   /// <param name="places">number of decimal places</param>

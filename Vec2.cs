@@ -1012,7 +1012,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
             xs[j] = Utils.Mix (
                 lowerBound._x,
                 upperBound._x,
-                j * jToStep);
+                (float) j * jToStep);
         }
 
         Vec2[, ] result = new Vec2[rval, cval];
@@ -1021,7 +1021,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
             float y = Utils.Mix (
                 lowerBound._y,
                 upperBound._y,
-                i * iToStep);
+                (float) i * iToStep);
 
             for (int j = 0; j < cval; ++j)
             {
@@ -1195,8 +1195,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     public static Vec2 Mix (in Vec2 a, in Vec2 b, in Vec2 t)
     {
         return new Vec2 (
-            (1.0f - t._x) * a._x + t._x * b._x,
-            (1.0f - t._y) * a._y + t._y * b._y);
+            Utils.Mix (a._x, b._x, t._x),
+            Utils.Mix (a._y, b._y, t._y));
     }
 
     /// <summary>
@@ -1385,12 +1385,9 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the random vector</returns>
     public static Vec2 RandomCartesian (in System.Random rng, in Vec2 lb, in Vec2 ub)
     {
-        float xFac = (float) rng.NextDouble ( );
-        float yFac = (float) rng.NextDouble ( );
-
         return new Vec2 (
-            Utils.Mix (lb._x, ub._x, xFac),
-            Utils.Mix (lb._y, ub._y, yFac));
+            Utils.Mix (lb._x, ub._x, (float) rng.NextDouble ( )),
+            Utils.Mix (lb._y, ub._y, (float) rng.NextDouble ( )));
     }
 
     /// <summary>
@@ -1403,12 +1400,9 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the random vector</returns>
     public static Vec2 RandomCartesian (in System.Random rng, in float lb = 0.0f, in float ub = 1.0f)
     {
-        float xFac = (float) rng.NextDouble ( );
-        float yFac = (float) rng.NextDouble ( );
-
         return new Vec2 (
-            Utils.Mix (lb, ub, xFac),
-            Utils.Mix (lb, ub, yFac));
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )),
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )));
     }
 
     /// <summary>

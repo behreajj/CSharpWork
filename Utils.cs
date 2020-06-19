@@ -723,6 +723,7 @@ public static class Utils
     /// </summary>
     /// <param name="deg">angle in degrees</param>
     /// <returns>the output angle</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float ModDegrees (in float deg)
     {
         return deg - 360.0f * Utils.Floor (deg * Utils.One360);
@@ -734,6 +735,7 @@ public static class Utils
     /// </summary>
     /// <param name="rad">angle in radians</param>
     /// <returns>the output angle</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float ModRadians (in float rad)
     {
         return rad - Utils.Tau * Utils.Floor (rad * Utils.OneTau);

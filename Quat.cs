@@ -3,11 +3,11 @@ using System.Collections;
 using System.Text;
 
 /// <summary>
-/// A four-dimensional complex number. The x, y and z components are coefficients
-/// of the imaginary i, j, and k. Discovered by William R. Hamilton with the
-/// formula i i = j j = k k = i j k = -1.0 . Quaternions with a magnitude of 1.0
-/// are commonly used to rotate 3D objects from one orientation to another
-/// without suffering gimbal lock.
+/// A four-dimensional complex number. The x, y and z components are
+/// coefficients of the imaginary i, j, and k. Discovered by William R. Hamilton
+/// with the formula i i = j j = k k = i j k = -1.0 . Quaternions with a
+/// magnitude of 1.0 are commonly used to rotate 3D objects from one orientation
+/// to another without suffering gimbal lock.
 /// </summary>
 [Serializable]
 public readonly struct Quat : IEquatable<Quat>, IEnumerable
@@ -296,11 +296,26 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return Quat.None (q);
   }
 
-  public static Quat operator - (in Quat z)
+  /// <summary>
+  /// Negates the real and imaginary components of a quaternion.
+  /// </summary>
+  /// <param name="q">quaternion</param>
+  /// <returns>negation</returns>
+  public static Quat operator - (in Quat q)
   {
-    return new Quat (-z.real, -z.imag);
+    return new Quat (-q.real, -q.imag);
   }
 
+  /// <summary>
+  /// Multiplies two quaternions. Uses the formula:
+  /// 
+  /// a b := { a.real b.real - dot ( a.imag, b.imag ), cross ( a.imag, b.imag ) + a.real b.imag + b.real a.imag }
+  /// 
+  /// Quaternion multiplication is not commutative.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns></returns>
   public static Quat operator * (in Quat a, in Quat b)
   {
     return new Quat (
@@ -361,83 +376,185 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return a * Quat.Inverse (b);
   }
 
+  /// <summary>
+  /// Adds two quaternions.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>sum</returns>
   public static Quat operator + (in Quat a, in Quat b)
   {
     return new Quat (a.real + b.real, a.imag + b.imag);
   }
 
+  /// <summary>
+  /// Adds a real number and a quaternion.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>sum</returns>
   public static Quat operator + (in Quat a, float b)
   {
     return new Quat (a.real + b, a.imag);
   }
 
+  /// <summary>
+  /// Adds a real number and a quaternion.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>sum</returns>
   public static Quat operator + (float a, in Quat b)
   {
     return new Quat (a + b.real, b.imag);
   }
 
+  /// <summary>
+  /// Adds an imaginary vector and a quaternion.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>sum</returns>
   public static Quat operator + (in Quat a, in Vec3 b)
   {
     return new Quat (a.real, a.imag + b);
   }
 
+  /// <summary>
+  /// Adds an imaginary vector and a quaternion.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>sum</returns>
   public static Quat operator + (in Vec3 a, in Quat b)
   {
     return new Quat (b.real, a + b.imag);
   }
 
+  /// <summary>
+  /// Subtracts the right quaternion from the left.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>difference</returns>
   public static Quat operator - (in Quat a, in Quat b)
   {
     return new Quat (a.real - b.real, a.imag - b.imag);
   }
 
+  /// <summary>
+  /// Subtracts a real number from a quaternion.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>difference</returns>
   public static Quat operator - (in Quat a, float b)
   {
     return new Quat (a.real - b, a.imag);
   }
 
+  /// <summary>
+  /// Subtracts a quaternion from a real number.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>difference</returns>
   public static Quat operator - (float a, in Quat b)
   {
     return new Quat (a - b.real, -b.imag);
   }
 
+  /// <summary>
+  /// Subtracts an imaginary vector from a quaternion.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>difference</returns>
   public static Quat operator - (in Quat a, in Vec3 b)
   {
     return new Quat (a.real, a.imag - b);
   }
 
+  /// <summary>
+  /// Subtracts a quaternion from an imaginary vector.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>difference</returns>
   public static Quat operator - (in Vec3 a, in Quat b)
   {
     return new Quat (-b.real, a - b.imag);
   }
 
+  /// <summary>
+  /// Tests to see if all the quaternion's components are non-zero.
+  /// </summary>
+  /// <param name="q">quaternion</param>
+  /// <returns>evaluation</returns>
   public static bool All (in Quat q)
   {
     return q.real != 0.0f && Vec3.All (q.imag);
   }
 
+  /// <summary>
+  /// Tests to see if any of the quaternion's components are non-zero.
+  /// </summary>
+  /// <param name="q">quaternion</param>
+  /// <returns>evaluation</returns>
   public static bool Any (in Quat q)
   {
     return q.real != 0.0f || Vec3.Any (q.imag);
   }
 
+  /// <summary>
+  /// Evaluates whether or not two quaternions approximate each other.
+  /// </summary>
+  /// <param name="a">left comparisand</param>
+  /// <param name="b">right comparisand</param>
+  /// <returns>evaluation</returns>
   public static bool Approx (in Quat a, in Quat b)
   {
     return Utils.Approx (a.real, b.real) &&
       Vec3.Approx (a.imag, b.imag);
   }
 
+  /// <summary>
+  /// Returns the conjugate of the quaternion, where the imaginary component is
+  /// negated.
+  ///
+  /// a* := { a.real, -a.imag }
+  /// </summary>
+  /// <param name="q">quaternion</param>
+  /// <returns>conjugate</returns>
   public static Quat Conj (in Quat q)
   {
     return new Quat (q.real, -q.imag);
   }
 
+  /// <summary>
+  /// Finds the dot product of two quaternions by summing the products of their
+  /// corresponding components.
+  /// 
+  /// dot ( a, b ) := a.real b.real + dot ( a.imag, b.imag )
+  /// </summary>
+  /// <param name="a"></param>
+  /// <param name="b"></param>
+  /// <returns></returns>
   public static float Dot (in Quat a, in Quat b)
   {
     return a.real * b.real + Vec3.Dot (a.real, b.real);
   }
 
-  public static Quat FromAngle (float radians)
+  /// <summary>
+  /// Sets a quaternion from an angle. The axis is assumed to be (0.0, 0.0, 1.0)
+  /// . Sets the real component of the quaternion to cosine of the angle; the
+  /// imaginary z component is set to the sine. Useful when working in 2.5D,
+  /// where a two-dimensional angle may need to be transferred to a
+  /// three-dimensional transform.
+  /// </summary>
+  /// <param name="radians">angle</param>
+  /// <returns>quaternion</returns>
+  public static Quat FromAngle (in float radians)
   {
     float sina = 0.0f;
     float cosa = 0.0f;
@@ -452,7 +569,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="radians">the angle</param>
   /// <param name="axis">the axis</param>
   /// <returns>the quaternion</returns>
-  public static Quat FromAxisAngle (float radians, in Vec3 axis)
+  public static Quat FromAxisAngle (in float radians, in Vec3 axis)
   {
     float amSq = Vec3.MagSq (axis);
     if (amSq == 0.0f) return Quat.Identity;
@@ -479,9 +596,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   }
 
   /// <summary>
-  /// Creates a quaternion with reference to two vectors. This function
-  /// creates normalized copies of the vectors. Uses the formula:
-  /// 
+  /// Creates a quaternion with reference to two vectors. This function creates
+  /// normalized copies of the vectors. Uses the formula:
+  ///
   /// fromTo (a, b) := { a . b, a x b }
   /// </summary>
   /// <param name="origin">the origin</param>
@@ -510,6 +627,39 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   public static Quat Inverse (in Quat q)
   {
     return Quat.Conj (q) / Quat.MagSq (q);
+  }
+
+  /// <summary>
+  /// Multiplies a vector by a quaternion's inverse, allowing a prior rotation,
+  /// allowing a prior rotation to be undone.
+  /// </summary>
+  /// <param name="q">the quaternion</param>
+  /// <param name="v">the input vector</param>
+  /// <returns>the unrotated vector</returns>
+  public static Vec3 InvMulVector (in Quat q, in Vec3 v)
+  {
+    float mSq = Quat.MagSq (q);
+    if (mSq != 0.0f)
+    {
+      float mSqInv = 1.0f / mSq;
+
+      float w = q.real * mSqInv;
+      Vec3 i = q.imag;
+      float qx = -i.x * mSqInv;
+      float qy = -i.y * mSqInv;
+      float qz = -i.z * mSqInv;
+
+      float iw = -qx * v.x - qy * v.y - qz * v.z;
+      float ix = w * v.x + qy * v.z - qz * v.y;
+      float iy = w * v.y + qz * v.x - qx * v.z;
+      float iz = w * v.z + qx * v.y - qy * v.x;
+
+      return new Vec3 (
+        ix * w + iz * qy - iw * qx - iy * qz,
+        iy * w + ix * qz - iw * qy - iz * qx,
+        iz * w + iy * qx - iw * qz - ix * qy);
+    }
+    return new Vec3 (0.0f, 0.0f, 0.0f);
   }
 
   /// <summary>
@@ -545,9 +695,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   /// <summary>
   /// Finds the length, or magnitude, of a quaternion.
-  /// 
-  /// |a| := sqrt ( a . a )
-  /// 
+  ///
+  /// |a| := sqrt ( dot ( a, a ) )
+  ///
   /// |a| := sqrt ( a a* )
   /// </summary>
   /// <param name="q">the quaternion</param>
@@ -561,9 +711,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// Finds the magnitude squared of a quaternion. Equivalent to the dot product
   /// of a quaternion with itself and to the product of a quaternion with its
   /// conjugate.
-  /// 
-  /// |a|<sup>2</sup> := a . a
-  /// 
+  ///
+  /// |a|<sup>2</sup> := dot ( a, a )
+  ///
   /// |a|<sup>2</sup> := a a*
   /// </summary>
   /// <param name="q">the quaternion</param>
@@ -571,6 +721,100 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   public static float MagSq (in Quat q)
   {
     return q.real * q.real + Vec3.MagSq (q.imag);
+  }
+
+  /// <summary>
+  /// Eases between two quaternions by spherical linear interpolation (slerp).
+  /// Chooses the shortest path between two orientations and maintains constant
+  /// speed for a step in [0.0, 1.0] .
+  /// </summary>
+  /// <param name="origin">origin</param>
+  /// <param name="dest">destination</param>
+  /// <param name="step">step</param>
+  /// <returns>quaternion</returns>
+  public static Quat Mix (in Quat origin, in Quat dest, in float step = 0.5f)
+  {
+    // Decompose origin quaternion.
+    Vec3 ai = origin.imag;
+    float aw = origin.real;
+    float ax = ai.x;
+    float ay = ai.y;
+    float az = ai.z;
+
+    // Decompose destination quaternion.
+    Vec3 bi = dest.imag;
+    float bw = dest.real;
+    float bx = bi.x;
+    float by = bi.y;
+    float bz = bi.z;
+
+    // Clamped dot product.
+    float dotp = Utils.Clamp (
+      aw * bw +
+      ax * bx +
+      ay * by +
+      az * bz, -1.0f, 1.0f);
+
+    // Flip values if the orientation is negative.
+    if (dotp < 0.0f)
+    {
+      bw = -bw;
+      bx = -bx;
+      by = -by;
+      bz = -bz;
+      dotp = -dotp;
+    }
+
+    float theta = Utils.Acos (dotp);
+    float sinTheta = Utils.Sqrt (1.0f - dotp * dotp);
+
+    // The complementary step, i.e., 1.0 - step.
+    float u = 1.0f;
+
+    // The step.
+    float v = 0.0f;
+
+    if (sinTheta > Utils.Epsilon)
+    {
+      float sInv = 1.0f / sinTheta;
+      float ang = step * theta;
+      u = Utils.Sin (theta - ang) * sInv;
+      v = Utils.Sin (ang) * sInv;
+    }
+    else
+    {
+      u = 1.0f - step;
+      v = step;
+    }
+
+    // Unclamped linear interpolation.
+    float cw = u * aw + v * bw;
+    float cx = u * ax + v * bx;
+    float cy = u * ay + v * by;
+    float cz = u * az + v * bz;
+
+    // Find magnitude squared.
+    float mSq = cw * cw + cx * cx + cy * cy + cz * cz;
+
+    // If 0, then invalid, reset to identity.
+    if (Utils.Abs (mSq) < Utils.Epsilon)
+    {
+      return Quat.Identity;
+    }
+
+    // If 1, no need to normalize.
+    if (Utils.Abs (1.0f - mSq) < Utils.Epsilon)
+    {
+      return new Quat (cw, cx, cy, cz);
+    }
+
+    // Normalize.
+    float mInv = 1.0f / Utils.Sqrt (mSq);
+    return new Quat (
+      cw * mInv,
+      cx * mInv,
+      cy * mInv,
+      cz * mInv);
   }
 
   /// <summary>
@@ -585,9 +829,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// 0.0 . This is often denoted as P' = RPR'.
   /// </summary>
   /// <param name="q">the quaternion</param>
-  /// <param name="source">the input vector</param>
+  /// <param name="v">the input vector</param>
   /// <returns>the rotated vector</returns>
-  public static Vec3 MulVector (in Quat q, in Vec3 source)
+  public static Vec3 MulVector (in Quat q, in Vec3 v)
   {
     float w = q.real;
     Vec3 i = q.imag;
@@ -595,18 +839,17 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     float qy = i.y;
     float qz = i.z;
 
-    float iw = -qx * source.x - qy * source.y - qz * source.z;
-    float ix = w * source.x + qy * source.z - qz * source.y;
-    float iy = w * source.y + qz * source.x - qx * source.z;
-    float iz = w * source.z + qx * source.y - qy * source.x;
+    float iw = -qx * v.x - qy * v.y - qz * v.z;
+    float ix = w * v.x + qy * v.z - qz * v.y;
+    float iy = w * v.y + qz * v.x - qx * v.z;
+    float iz = w * v.z + qx * v.y - qy * v.x;
 
     return new Vec3 (
       ix * w + iz * qy - iw * qx - iy * qz,
       iy * w + ix * qz - iw * qy - iz * qx,
       iz * w + iy * qx - iw * qz - ix * qy);
 
-    // Quat product = (q * source) / q;
-    // return product.imag;
+    // Quat product = (q * source) / q; return product.imag;
   }
 
   /// <summary>
@@ -673,7 +916,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="radians">the angle in radians</param>
   /// <param name="axis">the axis</param>
   /// <returns>the rotated quaternion</returns>
-  public static Quat Rotate (in Quat q, float radians, in Vec3 axis)
+  public static Quat Rotate (in Quat q, in float radians, in Vec3 axis)
   {
     return Quat.Normalize (q + Quat.FromAxisAngle (radians, axis));
   }
@@ -687,7 +930,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="q">the input quaternion</param>
   /// <param name="radians">the angle in radians</param>
   /// <returns>the rotated quaternion</returns>
-  public static Quat RotateX (in Quat q, float radians)
+  public static Quat RotateX (in Quat q, in float radians)
   {
     float sina = 0.0f;
     float cosa = 0.0f;
@@ -704,7 +947,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="cosah">cosine of half the angle</param>
   /// <param name="sinah">sine of half the angle</param>
   /// <returns>the rotated quaternion</returns>
-  public static Quat RotateX (in Quat q, float cosah, float sinah)
+  public static Quat RotateX (in Quat q, in float cosah, in float sinah)
   {
     Vec3 i = q.imag;
     return new Quat (
@@ -723,7 +966,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="q">the input quaternion</param>
   /// <param name="radians">the angle in radians</param>
   /// <returns>the rotated quaternion</returns>
-  public static Quat RotateY (in Quat q, float radians)
+  public static Quat RotateY (in Quat q, in float radians)
   {
     float sina = 0.0f;
     float cosa = 0.0f;
@@ -740,7 +983,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="cosah">cosine of half the angle</param>
   /// <param name="sinah">sine of half the angle</param>
   /// <returns>the rotated quaternion</returns>
-  public static Quat RotateY (in Quat q, float cosah, float sinah)
+  public static Quat RotateY (in Quat q, in float cosah, in float sinah)
   {
     Vec3 i = q.imag;
     return new Quat (
@@ -759,7 +1002,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="q">the input quaternion</param>
   /// <param name="radians">the angle in radians</param>
   /// <returns>the rotated quaternion</returns>
-  public static Quat RotateZ (in Quat q, float radians)
+  public static Quat RotateZ (in Quat q, in float radians)
   {
     float sina = 0.0f;
     float cosa = 0.0f;
@@ -776,7 +1019,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="cosah">cosine of half the angle</param>
   /// <param name="sinah">sine of half the angle</param>
   /// <returns>the rotated quaternion</returns>
-  public static Quat RotateZ (in Quat q, float cosah, float sinah)
+  public static Quat RotateZ (in Quat q, in float cosah, in float sinah)
   {
     Vec3 i = q.imag;
     return new Quat (
@@ -792,8 +1035,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   ///
   /// Returns a named value tuple containing the right, forward and up axes.
   /// </summary>
-  /// <param name="q">the quaternion</param>
-  /// <returns>a tuple</returns>
+  /// <param name="q">quaternion</param>
+  /// <returns>tuple</returns>
   public static (Vec3 right, Vec3 forward, Vec3 up) ToAxes (in Quat q)
   {
     float w = q.real;

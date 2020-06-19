@@ -1188,10 +1188,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static Vec4 Mix (in Vec4 a, in Vec4 b, in Vec4 t)
     {
         return new Vec4 (
-            (1.0f - t._x) * a._x + t._x * b._x,
-            (1.0f - t._y) * a._y + t._y * b._y,
-            (1.0f - t._z) * a._z + t._z * b._z,
-            (1.0f - t._w) * a._w + t._w * b._w);
+            Utils.Mix (a._x, b._x, t._x),
+            Utils.Mix (a._y, b._y, t._y),
+            Utils.Mix (a._z, b._z, t._z),
+            Utils.Mix (a._w, b._w, t._w));
     }
 
     /// <summary>
@@ -1335,16 +1335,11 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the random vector</returns>
     public static Vec4 RandomCartesian (in System.Random rng, in Vec4 lb, in Vec4 ub)
     {
-        float xFac = (float) rng.NextDouble ( );
-        float yFac = (float) rng.NextDouble ( );
-        float zFac = (float) rng.NextDouble ( );
-        float wFac = (float) rng.NextDouble ( );
-
         return new Vec4 (
-            Utils.Mix (lb._x, ub._x, xFac),
-            Utils.Mix (lb._y, ub._y, yFac),
-            Utils.Mix (lb._z, ub._z, zFac),
-            Utils.Mix (lb._w, ub._w, wFac));
+            Utils.Mix (lb._x, ub._x, (float) rng.NextDouble ( )),
+            Utils.Mix (lb._y, ub._y, (float) rng.NextDouble ( )),
+            Utils.Mix (lb._z, ub._z, (float) rng.NextDouble ( )),
+            Utils.Mix (lb._w, ub._w, (float) rng.NextDouble ( )));
     }
 
     /// <summary>
@@ -1357,16 +1352,11 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the random vector</returns>
     public static Vec4 RandomCartesian (in System.Random rng, in float lb = 0.0f, in float ub = 1.0f)
     {
-        float xFac = (float) rng.NextDouble ( );
-        float yFac = (float) rng.NextDouble ( );
-        float zFac = (float) rng.NextDouble ( );
-        float wFac = (float) rng.NextDouble ( );
-
         return new Vec4 (
-            Utils.Mix (lb, ub, xFac),
-            Utils.Mix (lb, ub, yFac),
-            Utils.Mix (lb, ub, zFac),
-            Utils.Mix (lb, ub, wFac));
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )),
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )),
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )),
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )));
     }
 
     /// <summary>

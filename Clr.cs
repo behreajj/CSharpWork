@@ -908,16 +908,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr RandomRgba (in Random rng, in float lb = 0.0f, in float ub = 1.0f)
     {
-        float xFac = (float) rng.NextDouble ( );
-        float yFac = (float) rng.NextDouble ( );
-        float zFac = (float) rng.NextDouble ( );
-        float wFac = (float) rng.NextDouble ( );
-
         return new Clr (
-            Utils.Mix (lb, ub, xFac),
-            Utils.Mix (lb, ub, yFac),
-            Utils.Mix (lb, ub, zFac),
-            Utils.Mix (lb, ub, wFac));
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )),
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )),
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )),
+            Utils.Mix (lb, ub, (float) rng.NextDouble ( )));
     }
 
     /// <summary>
@@ -929,16 +924,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr RandomRgba (in Random rng, in Clr lb, in Clr ub)
     {
-        float xFac = (float) rng.NextDouble ( );
-        float yFac = (float) rng.NextDouble ( );
-        float zFac = (float) rng.NextDouble ( );
-        float wFac = (float) rng.NextDouble ( );
-
         return new Clr (
-            Utils.Mix (lb._r, ub._r, xFac),
-            Utils.Mix (lb._g, ub._g, yFac),
-            Utils.Mix (lb._b, ub._b, zFac),
-            Utils.Mix (lb._a, ub._a, wFac));
+            Utils.Mix (lb._r, ub._r, (float) rng.NextDouble ( )),
+            Utils.Mix (lb._g, ub._g, (float) rng.NextDouble ( )),
+            Utils.Mix (lb._b, ub._b, (float) rng.NextDouble ( )),
+            Utils.Mix (lb._a, ub._a, (float) rng.NextDouble ( )));
     }
 
     /// <summary>

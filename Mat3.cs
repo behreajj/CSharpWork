@@ -410,6 +410,18 @@ public readonly struct Mat3 : IEnumerable
   }
 
   /// <summary>
+  /// Returns a named value tuple containing this matrix's components.
+  /// </summary>
+  /// <returns>the tuple</returns>
+  public (float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) ToTuple ( )
+  {
+    return (
+      m00: this._m00, m01: this._m01, m02: this._m02,
+      m10: this._m10, m11: this._m11, m12: this._m12,
+      m20: this._m20, m21: this._m21, m22: this._m22);
+  }
+
+  /// <summary>
   /// Returns a string representation of this matrix.
   /// </summary>
   /// <param name="places">number of decimal places</param>
