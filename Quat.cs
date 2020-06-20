@@ -356,9 +356,12 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   public static Quat operator / (in Quat a, float b)
   {
-    if (b == 0.0f) return new Quat (0.0f, 0.0f, 0.0f, 0.0f);
-    float bInv = 1.0f / b;
-    return new Quat (a.real * bInv, a.imag * bInv);
+    if (b != 0.0f)
+    {
+      float bInv = 1.0f / b;
+      return new Quat (a.real * bInv, a.imag * bInv);
+    }
+    return new Quat ();
   }
 
   public static Quat operator / (in Quat a, in Vec3 b)

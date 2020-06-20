@@ -184,16 +184,6 @@ public class Transform2
     }
 
     /// <summary>
-    /// Moves the transform by a direction to a new location.
-    /// </summary>
-    /// <param name="v">direction</param>
-    /// <returns>this transform</returns>
-    public Transform2 MoveBy (in Vec2 v)
-    {
-        return this.MoveByGlobal (v);
-    }
-
-    /// <summary>
     /// Moves the transform by a direction to a new location in the global
     /// coordinate system.
     /// </summary>
@@ -358,6 +348,26 @@ public class Transform2
     public static Vec2 InvMulVector (in Transform2 transform, in Vec2 vec)
     {
         return Vec2.RotateZ (vec / transform.scale, -transform.rotation);
+    }
+
+    /// <summary>
+    /// Returns the maximum dimension occupied by a transform.
+    /// </summary>
+    /// <param name="t">transform</param>
+    /// <returns>maximum</returns>
+    public static float MaxDimension (in Transform2 t)
+    {
+        return Utils.Max (t.scale.x, t.scale.y);
+    }
+
+    /// <summary>
+    /// Returns the minimum dimension occupied by a transform.
+    /// </summary>
+    /// <param name="t">transform</param>
+    /// <returns>minimum</returns>
+    public static float MinDimension (in Transform2 t)
+    {
+        return Utils.Min (t.scale.x, t.scale.y);
     }
 
     /// <summary>

@@ -291,7 +291,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the vector</returns>
     public static implicit operator Vec4 (in Vec2 v)
     {
-        return new Vec4 (v.x, v.y, 0.0f, 0.0f);
+        return Vec4.Promote (v);
     }
 
     /// <summary>
@@ -302,7 +302,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the vector</returns>
     public static implicit operator Vec4 (in Vec3 v)
     {
-        return new Vec4 (v.x, v.y, v.z, 0.0f);
+        return Vec4.Promote (v);
     }
 
     /// <summary>
@@ -925,13 +925,15 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the Minkowski distance</returns>
     public static float DistMinkowski (in Vec4 a, in Vec4 b, in float c = 2.0f)
     {
-        if (c == 0.0f) return 0.0f;
-
-        float dx = Utils.Pow (Utils.Diff (b._x, a._x), c);
-        float dy = Utils.Pow (Utils.Diff (b._y, a._y), c);
-        float dz = Utils.Pow (Utils.Diff (b._z, a._z), c);
-        float dw = Utils.Pow (Utils.Diff (b._w, a._w), c);
-        return Utils.Pow (dx + dy + dz + dw, 1.0f / c);
+        if (c != 0.0f)
+        {
+            float dx = Utils.Pow (Utils.Diff (b._x, a._x), c);
+            float dy = Utils.Pow (Utils.Diff (b._y, a._y), c);
+            float dz = Utils.Pow (Utils.Diff (b._z, a._z), c);
+            float dw = Utils.Pow (Utils.Diff (b._w, a._w), c);
+            return Utils.Pow (dx + dy + dz + dw, 1.0f / c);
+        }
+        return 0.0f;
     }
 
     /// <summary>
@@ -1028,6 +1030,83 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
             Utils.Fract (v._y),
             Utils.Fract (v._z),
             Utils.Fract (v._w));
+    }
+
+    /// <summary>
+    /// Generates a 4D array of vectors.
+    /// </summary>
+    /// <param name="cols">number of columns</param>
+    /// <param name="rows">number of rows</param>
+    /// <param name="layers">number of layers</param>
+    /// <param name="steps">number of steps</param>
+    /// <param name="lowerBound">lower bound</param>
+    /// <param name="upperBound">upper bound</param>
+    /// <returns>the array</returns>
+    public static Vec4[, , , ] Grid (in int cols, in int rows, in int layers, in int steps, in Vec4 lowerBound, in Vec4 upperBound)
+    {
+        int sval = steps < 2 ? 2 : steps;
+        int lval = layers < 2 ? 2 : layers;
+        int rval = rows < 2 ? 2 : rows;
+        int cval = cols < 2 ? 2 : cols;
+
+        float gToStep = 1.0f / (sval - 1.0f);
+        float hToStep = 1.0f / (lval - 1.0f);
+        float iToStep = 1.0f / (rval - 1.0f);
+        float jToStep = 1.0f / (cval - 1.0f);
+
+        /* Calculate x values in separate loop. */
+        float[ ] xs = new float[cval];
+        for (int j = 0; j < cval; ++j)
+        {
+            xs[j] = Utils.Mix (
+                lowerBound._x,
+                upperBound._x,
+                (float) j * jToStep);
+        }
+
+        /* Calculate y values in separate loop. */
+        float[ ] ys = new float[rval];
+        for (int i = 0; i < rval; ++i)
+        {
+            ys[i] = Utils.Mix (
+                lowerBound._y,
+                upperBound._y,
+                (float) i * iToStep);
+        }
+
+        /* Calculate y values in separate loop. */
+        float[ ] zs = new float[lval];
+        for (int h = 0; h < lval; ++h)
+        {
+            zs[h] = Utils.Mix (
+                lowerBound._z,
+                upperBound._z,
+                (float) h * hToStep);
+        }
+
+        Vec4[, , , ] result = new Vec4[sval, lval, rval, cval];
+        for (int g = 0; g < sval; ++g)
+        {
+            float w = Utils.Mix (
+                lowerBound._w,
+                upperBound._w,
+                (float) g * gToStep);
+
+            for (int h = 0; h < lval; ++h)
+            {
+                float z = zs[h];
+                for (int i = 0; i < rval; ++i)
+                {
+                    float y = ys[i];
+                    for (int j = 0; j < cval; ++j)
+                    {
+                        result[g, h, i, j] = new Vec4 (xs[j], y, z, w);
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -1304,6 +1383,29 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static Vec4 ProjectVector (in Vec4 a, in Vec4 b)
     {
         return b * Vec4.ProjectScalar (a, b);
+    }
+
+    /// <summary>
+    /// Promotes a 2D vector to a 4D vector.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <param name="z">z component</param>
+    /// <param name="w">w component</param>
+    /// <returns>vector</returns>
+    public static Vec4 Promote (in Vec2 v, in float z = 0.0f, in float w = 0.0f)
+    {
+        return new Vec4 (v.x, v.y, z, w);
+    }
+
+    /// <summary>
+    /// Promotes a 3D vector to a 4D vector.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <param name="w">w component</param>
+    /// <returns>vector</returns>
+    public static Vec4 Promote (in Vec3 v, in float w = 0.0f)
+    {
+        return new Vec4 (v.x, v.y, v.z, w);
     }
 
     /// <summary>

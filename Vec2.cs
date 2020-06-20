@@ -878,11 +878,13 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the Minkowski distance</returns>
     public static float DistMinkowski (in Vec2 a, in Vec2 b, in float c = 2.0f)
     {
-        if (c == 0.0f) return 0.0f;
-
-        float dx = Utils.Pow (Utils.Diff (b._x, a._x), c);
-        float dy = Utils.Pow (Utils.Diff (b._y, a._y), c);
-        return Utils.Pow (dx + dy, 1.0f / c);
+        if (c != 0.0f)
+        {
+            float dx = Utils.Pow (Utils.Diff (b._x, a._x), c);
+            float dy = Utils.Pow (Utils.Diff (b._y, a._y), c);
+            return Utils.Pow (dx + dy, 1.0f / c);
+        }
+        return 0.0f;
     }
 
     /// <summary>
@@ -1028,6 +1030,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
                 result[i, j] = new Vec2 (xs[j], y);
             }
         }
+
         return result;
     }
 

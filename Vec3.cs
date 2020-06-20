@@ -261,7 +261,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">the 2D vector</param>
     public static implicit operator Vec3 (in Vec2 v)
     {
-        return new Vec3 (v.x, v.y, 0.0f);
+        return Vec3.Promote(v);
     }
 
     /// <summary>
@@ -1024,12 +1024,14 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the Minkowski distance</returns>
     public static float DistMinkowski (in Vec3 a, in Vec3 b, in float c = 2.0f)
     {
-        if (c == 0.0f) return 0.0f;
-
-        float dx = Utils.Pow (Utils.Diff (b._x, a._x), c);
-        float dy = Utils.Pow (Utils.Diff (b._y, a._y), c);
-        float dz = Utils.Pow (Utils.Diff (b._z, a._z), c);
-        return Utils.Pow (dx + dy + dz, 1.0f / c);
+        if (c != 0.0f)
+        {
+            float dx = Utils.Pow (Utils.Diff (b._x, a._x), c);
+            float dy = Utils.Pow (Utils.Diff (b._y, a._y), c);
+            float dz = Utils.Pow (Utils.Diff (b._z, a._z), c);
+            return Utils.Pow (dx + dy + dz, 1.0f / c);
+        }
+        return 0.0f;
     }
 
     /// <summary>
@@ -1185,9 +1187,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the array</returns>
     public static Vec3[, , ] Grid (in int cols, in int rows, in int layers, in Vec3 lowerBound, in Vec3 upperBound)
     {
+        int lval = layers < 2 ? 2 : layers;
         int rval = rows < 2 ? 2 : rows;
         int cval = cols < 2 ? 2 : cols;
-        int lval = layers < 2 ? 2 : layers;
 
         float hToStep = 1.0f / (lval - 1.0f);
         float iToStep = 1.0f / (rval - 1.0f);
@@ -1230,6 +1232,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
                 }
             }
         }
+
         return result;
     }
 
@@ -1523,6 +1526,17 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
+    /// Promotes a 2D vector to a 3D vector.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <param name="z">z component</param>
+    /// <returns>vector</returns>
+    public static Vec3 Promote(in Vec2 v, in float z = 0.0f)
+    {
+        return new Vec3(v.x, v.y, z);
+    }
+
+    /// <summary>
     /// Reduces the signal, or granularity, of a vector's components. Any level
     /// less than 2 returns the target set to the input.
     /// </summary>
@@ -1645,7 +1659,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">the vector</param>
     /// <param name="scalar">the scalar</param>
     /// <returns>the rescaled vector</returns>
-    public static Vec3 Rescale (in Vec3 v, in float scalar = 1.0f)
+    public static Vec3 Rescale (in Vec3 v, in float scalar)
     {
         return Utils.Div (scalar, Vec3.Mag (v)) * v;
     }
@@ -1729,7 +1743,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
     /// <returns>the rotated vector</returns>
-    public static Vec3 RotateX (in Vec3 v, in float cosa = 1.0f, in float sina = 0.0f)
+    public static Vec3 RotateX (in Vec3 v, in float cosa, in float sina)
     {
         return new Vec3 (
             v._x,
@@ -1760,7 +1774,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
     /// <returns>the rotated vector</returns>
-    public static Vec3 RotateY (in Vec3 v, in float cosa = 1.0f, in float sina = 0.0f)
+    public static Vec3 RotateY (in Vec3 v, in float cosa, in float sina)
     {
         return new Vec3 (
             cosa * v._x + sina * v._z,
@@ -1879,15 +1893,15 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static (float theta, float phi, float rho) ToSpherical (in Vec3 v)
     {
         float mSq = Vec3.MagSq (v);
-        if (mSq == 0.0f)
+        if (mSq != 0.0f)
         {
-            return (theta: 0.0f, phi: 0.0f, rho: 0.0f);
+            float m = Utils.Sqrt (mSq);
+            return (
+                theta: Vec3.AzimuthSigned (v),
+                phi: Utils.Asin (v._z / m),
+                rho: m);
         }
-        float m = Utils.Sqrt (mSq);
-        return (
-            theta: Vec3.AzimuthSigned (v),
-            phi: Utils.Asin (v._z / m),
-            rho: m);
+        return (theta: 0.0f, phi: 0.0f, rho: 0.0f);
     }
 
     /// <summary>

@@ -971,7 +971,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             if (hue < 0.0f) ++hue;
         }
 
-        float sat = bri != 0.0f ? delta / bri : 0.0f;
+        float sat = (bri != 0.0f) ? delta / bri : 0.0f;
         return new Vec4 (hue, sat, bri, alpha);
     }
 

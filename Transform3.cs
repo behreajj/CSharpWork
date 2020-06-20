@@ -162,16 +162,6 @@ public class Transform3
   }
 
   /// <summary>
-  /// Moves the transform by a direction to a new location.
-  /// </summary>
-  /// <param name="v">direction</param>
-  /// <returns>this transform</returns>
-  public Transform3 MoveBy (in Vec3 v)
-  {
-    return this.MoveByGlobal (v);
-  }
-
-  /// <summary>
   /// Moves the transform by a direction to a new location in the global
   /// coordinate system.
   /// </summary>
@@ -222,42 +212,114 @@ public class Transform3
     return this;
   }
 
-  public Transform3 RotateTo(in Quat q)
+  /// <summary>
+  /// Rotates the transform by adding a rotation, then normalizing. Updates the
+  /// transform's axes.
+  /// </summary>
+  /// <param name="q">orientation</param>
+  /// <returns>this transform</returns>
+  public Transform3 RotateBy (in Quat q)
+  {
+    this.Rotation = Quat.Normalize (this.rotation + q);
+    return this;
+  }
+
+  /// <summary>
+  /// Rotates the transform to a new orientation, then updates the transform's
+  /// axes.
+  /// </summary>
+  /// <param name="q">orientation</param>
+  /// <returns>this transform</returns>
+  public Transform3 RotateTo (in Quat q)
   {
     this.Rotation = q;
     return this;
   }
 
+  /// <summary>
+  /// Eases the transform toward a new orientation by a step in [0.0, 1.0] .
+  /// </summary>
+  /// <param name="q">orientation</param>
+  /// <param name="step">step</param>
+  /// <returns>this transform</returns>
+  public Transform3 RotateTo (in Quat q, in float step)
+  {
+    this.Rotation = Quat.Mix (this.rotation, q, step);
+    return this;
+  }
+
+  /// <summary>
+  /// Rotates this transform around the x axis by an angle in radians.
+  ///
+  /// Beware that using sequences of orthonormal rotations will result in gimbal
+  /// lock.
+  /// </summary>
+  /// <param name="radians">angle</param>
+  /// <returns>this transform</returns>
   public Transform3 RotateX (in float radians)
   {
     this.rotation = Quat.RotateX (this.rotation, radians);
     return this;
   }
 
+  /// <summary>
+  /// Rotates this transform around the y axis by an angle in radians.
+  ///
+  /// Beware that using sequences of orthonormal rotations will result in gimbal
+  /// lock.
+  /// </summary>
+  /// <param name="radians">angle</param>
+  /// <returns>this transform</returns>
   public Transform3 RotateY (in float radians)
   {
     this.rotation = Quat.RotateY (this.rotation, radians);
     return this;
   }
 
+  /// <summary>
+  /// Rotates this transform around the z axis by an angle in radians.
+  ///
+  /// Beware that using sequences of orthonormal rotations will result in gimbal
+  /// lock.
+  /// </summary>
+  /// <param name="radians">angle</param>
+  /// <returns>this transform</returns>
   public Transform3 RotateZ (in float radians)
   {
     this.rotation = Quat.RotateZ (this.rotation, radians);
     return this;
   }
 
+  /// <summary>
+  /// Scales the transform by a nonuniform scalar.
+  /// </summary>
+  /// <param name="v">nonuniform scalar</param>
+  /// <returns>this transform</returns>
   public Transform3 ScaleBy (in Vec3 v)
   {
     this.Scale += v;
     return this;
   }
 
+  /// <summary>
+  /// Eases the transform to a scale by a step.
+  /// </summary>
+  /// <param name="v">nonuniform scale</param>
+  /// <param name="step">step</param>
+  /// <returns>this transform</returns>
   public Transform3 ScaleTo (in Vec3 v, in Vec3 step)
   {
     this.Scale = Vec3.Mix (this.scale, v, step);
     return this;
   }
 
+  /// <summary>
+  /// Eases the transform to a scale by a step according to an easing function.
+  /// </summary>
+  /// <param name="v">nonuniform scale</param>
+  /// <param name="step">step</param>
+  /// <param name="easing">easing function</param>
+  /// <returns>this transform</returns>
   public Transform3 ScaleTo (in Vec3 v, in Vec3 step, in Func<Vec3, Vec3, Vec3, Vec3> easing)
   {
     Vec3 t = easing (this.scale, v, step);
@@ -265,6 +327,11 @@ public class Transform3
     return this;
   }
 
+  /// <summary>
+  /// Returns a string representation of this transform.
+  /// </summary>
+  /// <param name="places">number of decimal places</param>
+  /// <returns>the string</returns>
   public string ToString (in int places = 4)
   {
     return new StringBuilder (354)
@@ -278,44 +345,119 @@ public class Transform3
       .ToString ( );
   }
 
+  /// <summary>
+  /// Converts a 2D transform to a 3D transform.
+  /// </summary>
+  /// <param name="t">transform</param>
   public static implicit operator Transform3 (Transform2 t)
   {
     return new Transform3 (
       t.Location,
       Quat.FromAngle (t.Rotation),
-      new Vec3 (t.Scale.x, t.Scale.y, 1.0f));
+      Vec3.Promote (t.Scale, 1.0f));
   }
 
+  /// <summary>
+  /// Multiplies a direction by a transform's inverse. This rotates the
+  /// direction by the transform's negative angle.
+  /// </summary>
+  /// <param name="transform">transform</param>
+  /// <param name="dir">direction</param>
+  /// <returns>direction</returns>
   public static Vec3 InvMulDir (in Transform3 transform, in Vec3 dir)
   {
     return Quat.InvMulVector (transform.rotation, dir);
   }
 
+  /// <summary>
+  /// Multiplies a point by a transform's inverse. This subtracts the
+  /// translation from the point, divides the point by the scale, then rotates
+  /// by the negative angle.
+  /// </summary>
+  /// <param name="transform">transform</param>
+  /// <param name="point">point</param>
+  /// <returns>point</returns>
   public static Vec3 InvMulPoint (in Transform3 transform, in Vec3 point)
   {
     return Quat.InvMulVector (transform.rotation, (point - transform.location) / transform.scale);
   }
 
+  /// <summary>
+  /// Multiplies a vector by a transform's inverse. This divides the vector by
+  /// the scale, then rotates by the negative angle.
+  /// </summary>
+  /// <param name="transform">transform</param>
+  /// <param name="vec">vector</param>
+  /// <returns>vector</returns>
   public static Vec3 InvMulVector (in Transform3 transform, in Vec3 vec)
   {
     return Quat.InvMulVector (transform.rotation, vec / transform.scale);
   }
 
+  /// <summary>
+  /// Returns the maximum dimension occupied by a transform.
+  /// </summary>
+  /// <param name="t">transform</param>
+  /// <returns>maximum</returns>
+  public static float MaxDimension (in Transform3 t)
+  {
+    return Utils.Max (t.scale.x, t.scale.y, t.scale.z);
+  }
+
+  /// <summary>
+  /// Returns the minimum dimension occupied by a transform.
+  /// </summary>
+  /// <param name="t">transform</param>
+  /// <returns>minimum</returns>
+  public static float MinDimension (in Transform3 t)
+  {
+    return Utils.Min (t.scale.x, t.scale.y, t.scale.z);
+  }
+
+  /// <summary>
+  /// Multiplies a direction by a transform. This rotates the direction by the
+  /// transform's rotation.
+  /// </summary>
+  /// <param name="transform">transform</param>
+  /// <param name="dir">direction</param>
+  /// <returns>direction</returns>
   public static Vec3 MulDir (in Transform3 transform, in Vec3 dir)
   {
     return Quat.MulVector (transform.rotation, dir);
   }
 
+  /// <summary>
+  /// Multiplies a point by a transform. This rotates the point, multiplies the
+  /// point by the scale, then adds the translation.
+  /// </summary>
+  /// <param name="transform">transform</param>
+  /// <param name="point">point</param>
+  /// <returns>point</returns>
   public static Vec3 MulPoint (in Transform3 transform, in Vec3 point)
   {
     return transform.location + transform.scale * Quat.MulVector (transform.rotation, point);
   }
 
+  /// <summary>
+  /// Multiplies a vector by a transform. This rotates the vector by the
+  /// transform's rotation and then multiplies it by the transform's scale.
+  /// </summary>
+  /// <param name="transform">transform</param>
+  /// <param name="vec">vector</param>
+  /// <returns>vector</returns>
   public static Vec3 MulVector (in Transform3 transform, in Vec3 vec)
   {
     return transform.scale * Quat.MulVector (transform.rotation, vec);
   }
 
+  /// <summary>
+  /// Converts a transform to two axes, which in turn may constitute a rotation
+  /// matrix.
+  ///
+  /// Returns a named value tuple containing the right, forward and up axes.
+  /// </summary>
+  /// <param name="tr">transform</param>
+  /// <returns>tuple</returns>
   public static (Vec3 right, Vec3 forward, Vec3 up) ToAxes (in Transform3 tr)
   {
     return Quat.ToAxes (tr.rotation);

@@ -375,7 +375,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Div (in int a, in int b)
     {
-        return b != 0 ? a / b : 0;
+        return (b != 0) ? a / b : 0;
     }
 
     /// <summary>
@@ -388,7 +388,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Div (in float a, in float b)
     {
-        return b != 0.0f ? a / b : 0.0f;
+        return (b != 0.0f) ? a / b : 0.0f;
     }
 
     /// <summary>
@@ -436,7 +436,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Fmod (in int a, in int b)
     {
-        return b != 0 ? a % b : a;
+        return (b != 0) ? a % b : a;
     }
 
     /// <summary>
@@ -456,7 +456,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Fmod (in float a, in float b)
     {
-        return b != 0.0f ? a % b : a;
+        return (b != 0.0f) ? a % b : a;
     }
 
     /// <summary>
@@ -479,7 +479,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float InvSqrt (in float v)
     {
-        return v > 0.0f ? Utils.InvSqrtUnchecked (v) : 0.0f;
+        return (v > 0.0f) ? Utils.InvSqrtUnchecked (v) : 0.0f;
     }
 
     /// <summary>
@@ -555,7 +555,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Log (in float v)
     {
-        return v > 0.0f ? (float) Math.Log ((double) v) : 0.0f;
+        return (v > 0.0f) ? (float) Math.Log ((double) v) : 0.0f;
     }
 
     /// <summary>
