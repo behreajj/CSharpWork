@@ -127,9 +127,9 @@ public class Transform2
     /// <param name="width">x scale</param>
     /// <param name="height">y scale</param>
     public Transform2 (
-        float x = 0.0f, float y = 0.0f,
-        float rotation = 0.0f,
-        float width = 1.0f, float height = 1.0f)
+        float x, float y,
+        float rotation,
+        float width, float height)
     {
         this.Location = new Vec2 (x, y);
         this.Rotation = rotation;
@@ -254,6 +254,17 @@ public class Transform2
     public Transform2 RotateZ (in float radians)
     {
         this.Rotation += radians;
+        return this;
+    }
+
+    /// <summary>
+    /// Scales the transform by a uniform scalar.
+    /// </summary>
+    /// <param name="v">uniform scalar</param>
+    /// <returns>this transform</returns>    
+    public Transform3 ScaleBy (in float v)
+    {
+        this.Scale += new Vec2 (v, v);
         return this;
     }
 

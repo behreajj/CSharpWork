@@ -485,90 +485,30 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
   /// <returns>the string</returns>
   public override string ToString ( )
   {
-    return ToString (4);
+    return this.ToString (4);
   }
 
   public bool Equals (Mat4 m)
   {
-    if (this._m00.GetHashCode ( ) != m._m00.GetHashCode ( ))
-    {
-      return false;
-    }
+    if (this._m00.GetHashCode ( ) != m._m00.GetHashCode ( )) return false;
+    if (this._m01.GetHashCode ( ) != m._m01.GetHashCode ( )) return false;
+    if (this._m02.GetHashCode ( ) != m._m02.GetHashCode ( )) return false;
+    if (this._m03.GetHashCode ( ) != m._m03.GetHashCode ( )) return false;
 
-    if (this._m01.GetHashCode ( ) != m._m01.GetHashCode ( ))
-    {
-      return false;
-    }
+    if (this._m10.GetHashCode ( ) != m._m10.GetHashCode ( )) return false;
+    if (this._m11.GetHashCode ( ) != m._m11.GetHashCode ( )) return false;
+    if (this._m12.GetHashCode ( ) != m._m12.GetHashCode ( )) return false;
+    if (this._m13.GetHashCode ( ) != m._m13.GetHashCode ( )) return false;
 
-    if (this._m02.GetHashCode ( ) != m._m02.GetHashCode ( ))
-    {
-      return false;
-    }
+    if (this._m20.GetHashCode ( ) != m._m20.GetHashCode ( )) return false;
+    if (this._m21.GetHashCode ( ) != m._m21.GetHashCode ( )) return false;
+    if (this._m22.GetHashCode ( ) != m._m22.GetHashCode ( )) return false;
+    if (this._m23.GetHashCode ( ) != m._m23.GetHashCode ( )) return false;
 
-    if (this._m03.GetHashCode ( ) != m._m03.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m10.GetHashCode ( ) != m._m10.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m11.GetHashCode ( ) != m._m11.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m12.GetHashCode ( ) != m._m12.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m13.GetHashCode ( ) != m._m13.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m20.GetHashCode ( ) != m._m20.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m21.GetHashCode ( ) != m._m21.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m22.GetHashCode ( ) != m._m22.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m23.GetHashCode ( ) != m._m23.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m30.GetHashCode ( ) != m._m30.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m31.GetHashCode ( ) != m._m31.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m32.GetHashCode ( ) != m._m32.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m33.GetHashCode ( ) != m._m33.GetHashCode ( ))
-    {
-      return false;
-    }
+    if (this._m30.GetHashCode ( ) != m._m30.GetHashCode ( )) return false;
+    if (this._m31.GetHashCode ( ) != m._m31.GetHashCode ( )) return false;
+    if (this._m32.GetHashCode ( ) != m._m32.GetHashCode ( )) return false;
+    if (this._m33.GetHashCode ( ) != m._m33.GetHashCode ( )) return false;
 
     return true;
   }

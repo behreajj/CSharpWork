@@ -322,55 +322,22 @@ public readonly struct Mat3 : IEnumerable
   /// <returns>the string</returns>
   public override string ToString ( )
   {
-    return ToString (4);
+    return this.ToString (4);
   }
 
   public bool Equals (Mat3 m)
   {
-    if (this._m00.GetHashCode ( ) != m._m00.GetHashCode ( ))
-    {
-      return false;
-    }
+    if (this._m00.GetHashCode ( ) != m._m00.GetHashCode ( )) return false;
+    if (this._m01.GetHashCode ( ) != m._m01.GetHashCode ( )) return false;
+    if (this._m02.GetHashCode ( ) != m._m02.GetHashCode ( )) return false;
 
-    if (this._m01.GetHashCode ( ) != m._m01.GetHashCode ( ))
-    {
-      return false;
-    }
+    if (this._m10.GetHashCode ( ) != m._m10.GetHashCode ( )) return false;
+    if (this._m11.GetHashCode ( ) != m._m11.GetHashCode ( )) return false;
+    if (this._m12.GetHashCode ( ) != m._m12.GetHashCode ( )) return false;
 
-    if (this._m02.GetHashCode ( ) != m._m02.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m10.GetHashCode ( ) != m._m10.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m11.GetHashCode ( ) != m._m11.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m12.GetHashCode ( ) != m._m12.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m20.GetHashCode ( ) != m._m20.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m21.GetHashCode ( ) != m._m21.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this._m22.GetHashCode ( ) != m._m22.GetHashCode ( ))
-    {
-      return false;
-    }
+    if (this._m20.GetHashCode ( ) != m._m20.GetHashCode ( )) return false;
+    if (this._m21.GetHashCode ( ) != m._m21.GetHashCode ( )) return false;
+    if (this._m22.GetHashCode ( ) != m._m22.GetHashCode ( )) return false;
 
     return true;
   }

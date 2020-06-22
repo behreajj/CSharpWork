@@ -15,7 +15,7 @@ public class Transform3
   /// <summary>
   /// The transform's rotation in radians.
   /// </summary>
-  protected Quat rotation = new Quat (1.0f, 0.0f, 0.0f, 0.0f);
+  protected Quat rotation = Quat.Identity;
 
   /// <summary>
   /// The transform's scale.
@@ -126,13 +126,13 @@ public class Transform3
   /// <param name="height">y scale</param>
   /// <param name="depth">z scale</param>
   public Transform3 (
-    float x = 0.0f, float y = 0.0f, float z = 0.0f,
-    float real = 1.0f,
-    float xImag = 0.0f, float yImag = 0.0f, float zImag = 0.0f,
-    float width = 1.0f, float height = 1.0f, float depth = 1.0f)
+    float x, float y, float z,
+    float real,
+    float xImag, float yImag, float zImag,
+    float width, float height, float depth)
   {
     this.Location = new Vec3 (x, y, z);
-    this.Rotation = new Quat (real, xImag, yImag, zImag);
+    this.Rotation = new Quat (real, new Vec3 (xImag, yImag, zImag));
     this.Scale = new Vec3 (width, height, depth);
   }
 
@@ -213,8 +213,7 @@ public class Transform3
   }
 
   /// <summary>
-  /// Rotates the transform by adding a rotation, then normalizing. Updates the
-  /// transform's axes.
+  /// Rotates the transform by adding a rotation, then normalizing.
   /// </summary>
   /// <param name="q">orientation</param>
   /// <returns>this transform</returns>
@@ -287,6 +286,17 @@ public class Transform3
   public Transform3 RotateZ (in float radians)
   {
     this.rotation = Quat.RotateZ (this.rotation, radians);
+    return this;
+  }
+
+  /// <summary>
+  /// Scales the transform by a uniform scalar.
+  /// </summary>
+  /// <param name="v">uniform scalar</param>
+  /// <returns>this transform</returns>    
+  public Transform3 ScaleBy (in float v)
+  {
+    this.Scale += new Vec3 (v, v, v);
     return this;
   }
 
@@ -473,7 +483,7 @@ public class Transform3
     {
       return new Transform3 (
         new Vec3 (0.0f, 0.0f, 0.0f),
-        new Quat (1.0f, 0.0f, 0.0f, 0.0f),
+        new Quat (1.0f, new Vec3(0.0f, 0.0f, 0.0f)),
         new Vec3 (1.0f, 1.0f, 1.0f));
     }
   }

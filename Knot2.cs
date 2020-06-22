@@ -8,7 +8,7 @@ using System.Text;
 /// preceding control point).
 /// </summary>
 [Serializable]
-public class Knot2 : IEnumerable
+public class Knot2
 {
   /// <summary>
   /// The spatial coordinate of the knot.
@@ -81,15 +81,31 @@ public class Knot2 : IEnumerable
   }
 
   /// <summary>
+  /// The default constructor.
+  /// </summary>
+  public Knot2 ( ) { }
+
+  /// <summary>
+  /// Creates a knot from a vector.
+  /// </summary>
+  /// <param name="coord">coordinate</param>
+  public Knot2 (Vec2 coord)
+  {
+    this.coord = coord;
+    this.foreHandle = this.coord + Utils.Epsilon;
+    this.rearHandle = this.coord - Utils.Epsilon;
+  }
+
+  /// <summary>
   /// Creates a knot from a series of vectors.
   /// </summary>
   /// <param name="coord">coordinate</param>
   /// <param name="foreHandle">fore handle</param>
   /// <param name="rearHandle">rear handle</param>
   public Knot2 (
-    Vec2 coord = new Vec2 ( ),
-    Vec2 foreHandle = new Vec2 ( ),
-    Vec2 rearHandle = new Vec2 ( ))
+    Vec2 coord,
+    Vec2 foreHandle,
+    Vec2 rearHandle)
   {
     this.coord = coord;
     this.foreHandle = foreHandle;
@@ -201,21 +217,6 @@ public class Knot2 : IEnumerable
     float flipRescale = Utils.Div (-Vec2.Mag (rdir), Vec2.Mag (fdir));
     this.rearHandle = this.coord + (flipRescale * fdir);
     return this;
-  }
-
-  /// <summary>
-  /// Returns an enumerator (or iterator) for this knot, allowing its components
-  /// to be accessed in a foreach loop.
-  /// </summary>
-  /// <returns>the enumerator</returns>
-  public IEnumerator GetEnumerator ( )
-  {
-    yield return this.coord.x;
-    yield return this.coord.y;
-    yield return this.foreHandle.x;
-    yield return this.foreHandle.y;
-    yield return this.rearHandle.x;
-    yield return this.rearHandle.y;
   }
 
   /// <summary>
@@ -331,7 +332,7 @@ public class Knot2 : IEnumerable
   /// </summary>
   /// <param name="magnitude">magnitude</param>
   /// <returns>the knot</returns>
-  public Knot2 ScaleHandlesBy (in float scalar = 1.0f)
+  public Knot2 ScaleHandlesBy (in float scalar)
   {
     this.ScaleForeHandleBy (scalar);
     this.ScaleRearHandleBy (scalar);

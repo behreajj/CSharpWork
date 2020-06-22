@@ -23,6 +23,37 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   private readonly Vec3 imag;
 
   /// <summary>
+  /// The forward axis.
+  /// </summary>
+  /// <value>forward</value>
+  public Vec3 Forward
+  {
+    get
+    {
+      float w = this.real;
+      float x = this.imag.x;
+      float y = this.imag.y;
+      float z = this.imag.z;
+
+      float xy = x * y;
+      float xw = x * w;
+      float yz = y * z;
+      float zw = z * w;
+
+      return new Vec3 (
+        xy + xy - (zw + zw),
+        w * w + y * y - x * x - z * z,
+        xw + xw + yz + yz);
+    }
+  }
+
+  /// <summary>
+  /// The coefficients of the imaginary components i, j and k.
+  /// </summary>
+  /// <value>the imaginary vector</value>
+  public Vec3 Imag { get { return this.imag; } }
+
+  /// <summary>
   /// Returns the number of elements in this quaternion.
   /// </summary>
   /// <value>the length</value>
@@ -33,12 +64,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// </summary>
   /// <value>the real scalar</value>
   public float Real { get { return this.real; } }
-
-  /// <summary>
-  /// The coefficients of the imaginary components i, j and k.
-  /// </summary>
-  /// <value>the imaginary vector</value>
-  public Vec3 Imag { get { return this.imag; } }
 
   /// <summary>
   /// The right axis.
@@ -62,31 +87,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         w * w + x * x - y * y - z * z,
         zw + zw + xy + xy,
         xz + xz - (yw + yw));
-    }
-  }
-
-  /// <summary>
-  /// The forward axis.
-  /// </summary>
-  /// <value>forward</value>
-  public Vec3 Forward
-  {
-    get
-    {
-      float w = this.real;
-      float x = this.imag.x;
-      float y = this.imag.y;
-      float z = this.imag.z;
-
-      float xy = x * y;
-      float xw = x * w;
-      float yz = y * z;
-      float zw = z * w;
-
-      return new Vec3 (
-        xy + xy - (zw + zw),
-        w * w + y * y - x * x - z * z,
-        xw + xw + yz + yz);
     }
   }
 
@@ -139,6 +139,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <value>z</value>
   public float z { get { return this.imag.z; } }
 
+  /// <summary>
+  /// Retrieves an element by index. The real component is assumed to be the
+  /// first element.
+  /// </summary>
+  /// <value>the element</value>
   public float this [int i]
   {
     get
@@ -163,18 +168,36 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
   }
 
+  /// <summary>
+  /// Constructs a quaternion from a real number and an imaginary vector.
+  /// </summary>
+  /// <param name="real">real number</param>
+  /// <param name="imag">imaginary vector</param>
   public Quat (float real = 1.0f, Vec3 imag = new Vec3 ( ))
   {
     this.real = real;
     this.imag = imag;
   }
 
+  /// <summary>
+  /// Constructs a quaternion from a real number, w, and three imginary numbers:
+  /// x, y and z.
+  /// </summary>
+  /// <param name="w">real number</param>
+  /// <param name="x">x imaginary</param>
+  /// <param name="y">y imaginary</param>
+  /// <param name="z">z imaginary</param>
   public Quat (float w = 1.0f, float x = 0.0f, float y = 0.0f, float z = 0.0f)
   {
     this.real = w;
     this.imag = new Vec3 (x, y, z);
   }
 
+  /// <summary>
+  /// Tests this quaternion for equivalence with an object.
+  /// </summary>
+  /// <param name="value">the object</param>
+  /// <returns>the equivalence</returns>F
   public override bool Equals (object value)
   {
     if (Object.ReferenceEquals (this, value)) return true;
@@ -183,6 +206,10 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return false;
   }
 
+  /// <summary>
+  /// Returns a hash code representing this quaternion.
+  /// </summary>
+  /// <returns>the hash code</returns>
   public override int GetHashCode ( )
   {
     unchecked
@@ -194,11 +221,21 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
   }
 
+  /// <summary>
+  /// Returns a string representation of this quaternion.
+  /// </summary>
+  /// <returns>the string</returns>
   public override string ToString ( )
   {
     return ToString (4);
   }
 
+  /// <summary>
+  /// Tests this quaternion for equivalence with another in compliance with the
+  /// IEquatable interface.
+  /// </summary>
+  /// <param name="q">quaternion</param>
+  /// <returns>the equivalence</returns>
   public bool Equals (Quat q)
   {
     if (this.real.GetHashCode ( ) != q.real.GetHashCode ( ))
@@ -214,6 +251,12 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     return true;
   }
 
+  /// <summary>
+  /// Returns an enumerator (or iterator) for this quaternion, allowing its
+  /// components to be accessed in a foreach loop. The real component, w, is
+  /// treated as the first element.
+  /// </summary>
+  /// <returns>the enumerator</returns>
   public IEnumerator GetEnumerator ( )
   {
     yield return this.real;
@@ -222,6 +265,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     yield return this.imag.z;
   }
 
+  /// <summary>
+  /// Returns a float array of length 4 containing this quaternion's components.
+  /// The real component, w, is treated as the first element.
+  /// </summary>
+  /// <returns>the array</returns>
   public float[ ] ToArray ( )
   {
     return new float[ ]
@@ -233,6 +281,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     };
   }
 
+  /// <summary>
+  /// Returns a string representation of this quaternion.
+  /// </summary>
+  /// <param name="places">number of decimal places</param>
+  /// <returns>the string</returns>
   public string ToString (int places = 4)
   {
     return new StringBuilder (128)
@@ -244,6 +297,10 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       .ToString ( );
   }
 
+  /// <summary>
+  /// Returns a named value tuple containing this quaternion's components.
+  /// </summary>
+  /// <returns>the tuple</returns>
   public (float w, float x, float y, float z) ToTuple ( )
   {
     return (w: this.real,
@@ -252,22 +309,40 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       z: this.imag.z);
   }
 
+  /// <summary>
+  /// Promotes a real number to a quaternion.
+  /// </summary>
+  /// <param name="v">real number</param>
   public static implicit operator Quat (float v)
   {
-    return new Quat (v, new Vec3 ( ));
+    return new Quat (v, new Vec3 (0.0f, 0.0f, 0.0f));
   }
 
+  /// <summary>
+  /// Promotes a vector to a pure quaternion.
+  /// </summary>
+  /// <param name="v">vector</param>
   public static implicit operator Quat (in Vec3 v)
   {
-    return new Quat (0.0f, v.x, v.y, v.z);
+    return new Quat (0.0f, new Vec3 (v.x, v.y, v.z));
   }
 
-  public static implicit operator Quat (in Vec4 v)
+  /// <summary>
+  /// Converts a four dimensional vector to a quaternion. The vector's w
+  /// component is interpreted to be the real component.
+  /// </summary>
+  /// <param name="v">vector</param>
+  public static explicit operator Quat (in Vec4 v)
   {
-    return new Quat (v.w, v.x, v.y, v.z);
+    return new Quat (v.w, new Vec3 (v.x, v.y, v.z));
   }
 
-  public static implicit operator Vec4 (in Quat q)
+  /// <summary>
+  /// Converts a quaternion to a four dimensional vector. The quaternion's real
+  /// component is interpreted to be the w component.
+  /// </summary>
+  /// <param name="q">quaternion</param>
+  public static explicit operator Vec4 (in Quat q)
   {
     return new Vec4 (
       q.imag.x,
@@ -276,21 +351,41 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       q.real);
   }
 
+  /// <summary>
+  /// Converts a quaternion to a boolean by finding whether any of its
+  /// components are non-zero.
+  /// </summary>
+  /// <param name="q">quaternion</param>
   public static explicit operator bool (in Quat q)
   {
     return Quat.Any (q);
   }
 
+  /// <summary>
+  /// Converts a quaternion to a real number by finding its magnitude.
+  /// </summary>
+  /// <param name="q">quaternion</param>
   public static explicit operator float (in Quat q)
   {
     return Quat.Mag (q);
   }
 
+  /// <summary>
+  /// A quaternion evaluates to true when any of its components are not equal to
+  /// zero.
+  /// </summary>
+  /// <param name="q">quaternion</param>
+  /// <returns>the evaluation</returns>
   public static bool operator true (in Quat q)
   {
     return Quat.Any (q);
   }
 
+  /// <summary>
+  /// A quaternion evaluates to false when all of its components are zero.
+  /// </summary>
+  /// <param name="q">quaternion</param>
+  /// <returns>the evaluation</returns>
   public static bool operator false (in Quat q)
   {
     return Quat.None (q);
@@ -308,14 +403,15 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
   /// <summary>
   /// Multiplies two quaternions. Uses the formula:
-  /// 
-  /// a b := { a.real b.real - dot ( a.imag, b.imag ), cross ( a.imag, b.imag ) + a.real b.imag + b.real a.imag }
-  /// 
+  ///
+  /// a b := { a.real b.real - dot ( a.imag, b.imag ), cross ( a.imag, b.imag )
+  /// + a.real b.imag + b.real a.imag }
+  ///
   /// Quaternion multiplication is not commutative.
   /// </summary>
   /// <param name="a">left operand</param>
   /// <param name="b">right operand</param>
-  /// <returns></returns>
+  /// <returns>product</returns>
   public static Quat operator * (in Quat a, in Quat b)
   {
     return new Quat (
@@ -327,33 +423,72 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       (b.real * a.imag));
   }
 
+  /// <summary>
+  /// Multiplies a quaternion and a scalar.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>product</returns>
   public static Quat operator * (in Quat a, float b)
   {
     return new Quat (a.real * b, a.imag * b);
   }
 
+  /// <summary>
+  /// Multiplies a scalar and a quaternion.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>product</returns>
   public static Quat operator * (float a, in Quat b)
   {
     return new Quat (a * b.real, a * b.imag);
   }
 
+  /// <summary>
+  /// Multiplies a quaternion and a vector; the latter is treated as a pure
+  /// quaternion.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>product</returns>
   public static Quat operator * (in Quat a, in Vec3 b)
   {
     return new Quat (-Vec3.Dot (a.imag, b),
       Vec3.Cross (a.imag, b) + (a.real * b));
   }
 
+  /// <summary>
+  /// Multiplies a vector and a quaternion; the former is treated as a pure
+  /// quaternion.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>product</returns>
   public static Quat operator * (in Vec3 a, in Quat b)
   {
     return new Quat (-Vec3.Dot (a, b.imag),
       Vec3.Cross (a, b.imag) + (b.real * a));
   }
 
+  /// <summary>
+  /// Divides two quaternions. Equivalent to multiplying the numerator and the
+  /// inverse of the denominator.
+  /// </summary>
+  /// <param name="a">numerator</param>
+  /// <param name="b">denominator</param>
+  /// <returns>quotient</returns>
   public static Quat operator / (in Quat a, in Quat b)
   {
     return a * Quat.Inverse (b);
   }
 
+  /// <summary>
+  /// Divides a quaternion by a real number.
+  /// </summary>
+  /// <param name="a">numerator</param>
+  /// <param name="b">denominator</param>
+  /// <returns>quotient</returns>
   public static Quat operator / (in Quat a, float b)
   {
     if (b != 0.0f)
@@ -361,20 +496,41 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
       float bInv = 1.0f / b;
       return new Quat (a.real * bInv, a.imag * bInv);
     }
-    return new Quat ();
+    // return Quat.Identity;
+    return new Quat ( );
   }
 
+  /// <summary>
+  /// Divides a real number by a quaternion.
+  /// </summary>
+  /// <param name="a">numerator</param>
+  /// <param name="b">denominator</param>
+  /// <returns>quotient</returns>
+  public static Quat operator / (float a, in Quat b)
+  {
+    return a * Quat.Inverse (b);
+  }
+
+  /// <summary>
+  /// Divides a quaternion by a vector. the denominator is treated as a pure
+  /// quaternion.
+  /// </summary>
+  /// <param name="a">numerator</param>
+  /// <param name="b">denominator</param>
+  /// <returns>quotient</returns>
   public static Quat operator / (in Quat a, in Vec3 b)
   {
     return a * (-b / Vec3.Dot (b, b));
   }
 
+  /// <summary>
+  /// Divides a vector by a quaternion; the numerator is treated as a pure
+  /// quaternion.
+  /// </summary>
+  /// <param name="a">numerator</param>
+  /// <param name="b">denominator</param>
+  /// <returns>quotient</returns>
   public static Quat operator / (in Vec3 a, in Quat b)
-  {
-    return a * Quat.Inverse (b);
-  }
-
-  public static Quat operator / (float a, in Quat b)
   {
     return a * Quat.Inverse (b);
   }
@@ -496,7 +652,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <returns>evaluation</returns>
   public static bool All (in Quat q)
   {
-    return q.real != 0.0f && Vec3.All (q.imag);
+    return (q.real != 0.0f) && Vec3.All (q.imag);
   }
 
   /// <summary>
@@ -506,7 +662,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <returns>evaluation</returns>
   public static bool Any (in Quat q)
   {
-    return q.real != 0.0f || Vec3.Any (q.imag);
+    return (q.real != 0.0f) || Vec3.Any (q.imag);
   }
 
   /// <summary>
@@ -537,7 +693,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <summary>
   /// Finds the dot product of two quaternions by summing the products of their
   /// corresponding components.
-  /// 
+  ///
   /// dot ( a, b ) := a.real b.real + dot ( a.imag, b.imag )
   /// </summary>
   /// <param name="a"></param>
@@ -593,9 +749,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     float cosHalf = 0.0f;
     Utils.SinCos (radians * 0.5f, out sinHalf, out cosHalf);
     return new Quat (cosHalf,
-      nx * sinHalf,
-      ny * sinHalf,
-      nz * sinHalf);
+      new Vec3 (nx * sinHalf,
+        ny * sinHalf,
+        nz * sinHalf));
   }
 
   /// <summary>
