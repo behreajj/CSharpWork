@@ -291,6 +291,41 @@ public readonly struct Mat3 : IEnumerable
     this._m22 = m22;
   }
 
+  /// <summary>
+  /// Constructs a matrix from Boolean values.
+  /// </summary>
+  /// <param name="m00">row 0, column 0</param>
+  /// <param name="m01">row 0, column 1</param>
+  /// <param name="m02">row 0, column 2</param>
+  /// <param name="m10">row 1, column 0</param>
+  /// <param name="m11">row 1, column 1</param>
+  /// <param name="m12">row 1, column 2</param>
+  /// <param name="m20">row 2, column 0</param>
+  /// <param name="m21">row 2, column 1</param>
+  /// <param name="m22">row 2, column 2</param>
+  public Mat3 (
+    bool m00 = true, bool m01 = false, bool m02 = false,
+    bool m10 = false, bool m11 = true, bool m12 = false,
+    bool m20 = false, bool m21 = false, bool m22 = true)
+  {
+    this._m00 = m00 ? 1.0f : 0.0f;
+    this._m01 = m01 ? 1.0f : 0.0f;
+    this._m02 = m02 ? 1.0f : 0.0f;
+
+    this._m10 = m10 ? 1.0f : 0.0f;
+    this._m11 = m11 ? 1.0f : 0.0f;
+    this._m12 = m12 ? 1.0f : 0.0f;
+
+    this._m20 = m20 ? 1.0f : 0.0f;
+    this._m21 = m21 ? 1.0f : 0.0f;
+    this._m22 = m22 ? 1.0f : 0.0f;
+  }
+
+  /// <summary>
+  /// Tests this matrix for equivalence with an object.
+  /// </summary>
+  /// <param name="value">the object</param>
+  /// <returns>the equivalence</returns>
   public override bool Equals (object value)
   {
     if (Object.ReferenceEquals (this, value)) return true;
@@ -299,6 +334,10 @@ public readonly struct Mat3 : IEnumerable
     return false;
   }
 
+  /// <summary>
+  /// Returns a hash code representing this matrix.
+  /// </summary>
+  /// <returns>the hash code</returns>
   public override int GetHashCode ( )
   {
     int hash = Utils.MulBase ^ this._m00.GetHashCode ( );
@@ -325,6 +364,12 @@ public readonly struct Mat3 : IEnumerable
     return this.ToString (4);
   }
 
+  /// <summary>
+  /// Tests this matrix for equivalence with another in compliance with the
+  /// IEquatable interface.
+  /// </summary>
+  /// <param name="m">matrix</param>
+  /// <returns>the equivalence</returns>
   public bool Equals (Mat3 m)
   {
     if (this._m00.GetHashCode ( ) != m._m00.GetHashCode ( )) return false;
@@ -421,18 +466,14 @@ public readonly struct Mat3 : IEnumerable
       .ToString ( );
   }
 
-  /// <summary>
-  /// Subtracts the right matrix from the left matrix.
-  /// </summary>
-  /// <param name="a">left operand</param>
-  /// <param name="b">right operand</param>
-  /// <returns>result</returns>
-  public static Mat3 operator - (in Mat3 a, in Mat3 b)
+  public static bool operator true (in Mat3 m)
   {
-    return new Mat3 (
-      a._m00 - b._m00, a._m01 - b._m01, a._m02 - b._m02,
-      a._m10 - b._m10, a._m11 - b._m11, a._m12 - b._m12,
-      a._m20 - b._m20, a._m21 - b._m21, a._m22 - b._m22);
+    return Mat3.All (m);
+  }
+
+  public static bool operator false (in Mat3 m)
+  {
+    return Mat3.None (m);
   }
 
   /// <summary>
@@ -546,6 +587,92 @@ public readonly struct Mat3 : IEnumerable
       a._m00 + b._m00, a._m01 + b._m01, a._m02 + b._m02,
       a._m10 + b._m10, a._m11 + b._m11, a._m12 + b._m12,
       a._m20 + b._m20, a._m21 + b._m21, a._m22 + b._m22);
+  }
+
+  /// <summary>
+  /// Subtracts the right matrix from the left matrix.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>result</returns>
+  public static Mat3 operator - (in Mat3 a, in Mat3 b)
+  {
+    return new Mat3 (
+      a._m00 - b._m00, a._m01 - b._m01, a._m02 - b._m02,
+      a._m10 - b._m10, a._m11 - b._m11, a._m12 - b._m12,
+      a._m20 - b._m20, a._m21 - b._m21, a._m22 - b._m22);
+  }
+
+  public static Mat3 operator < (in Mat3 a, in Mat3 b)
+  {
+    return new Mat3 (
+      a._m00 < b._m00, a._m01 < b._m01, a._m02 < b._m02,
+      a._m10 < b._m10, a._m11 < b._m11, a._m12 < b._m12,
+      a._m20 < b._m20, a._m21 < b._m21, a._m22 < b._m22);
+  }
+
+  public static Mat3 operator > (in Mat3 a, in Mat3 b)
+  {
+    return new Mat3 (
+      a._m00 > b._m00, a._m01 > b._m01, a._m02 > b._m02,
+      a._m10 > b._m10, a._m11 > b._m11, a._m12 > b._m12,
+      a._m20 > b._m20, a._m21 > b._m21, a._m22 > b._m22);
+  }
+
+  public static Mat3 operator <= (in Mat3 a, in Mat3 b)
+  {
+    return new Mat3 (
+      a._m00 <= b._m00, a._m01 <= b._m01, a._m02 <= b._m02,
+      a._m10 <= b._m10, a._m11 <= b._m11, a._m12 <= b._m12,
+      a._m20 <= b._m20, a._m21 <= b._m21, a._m22 <= b._m22);
+  }
+
+  public static Mat3 operator >= (in Mat3 a, in Mat3 b)
+  {
+    return new Mat3 (
+      a._m00 >= b._m00, a._m01 >= b._m01, a._m02 >= b._m02,
+      a._m10 >= b._m10, a._m11 >= b._m11, a._m12 >= b._m12,
+      a._m20 >= b._m20, a._m21 >= b._m21, a._m22 >= b._m22);
+  }
+
+  public static Mat3 operator != (in Mat3 a, in Mat3 b)
+  {
+    return new Mat3 (
+      a._m00 != b._m00, a._m01 != b._m01, a._m02 != b._m02,
+      a._m10 != b._m10, a._m11 != b._m11, a._m12 != b._m12,
+      a._m20 != b._m20, a._m21 != b._m21, a._m22 != b._m22);
+  }
+
+  public static Mat3 operator == (in Mat3 a, in Mat3 b)
+  {
+    return new Mat3 (
+      a._m00 == b._m00, a._m01 == b._m01, a._m02 == b._m02,
+      a._m10 == b._m10, a._m11 == b._m11, a._m12 == b._m12,
+      a._m20 == b._m20, a._m21 == b._m21, a._m22 == b._m22);
+  }
+
+  /// <summary>
+  /// Evaluates whether all elements of a matrix are not equal to zero. 
+  /// </summary>
+  /// <param name="m">matrix</param>
+  /// <returns>the evaluation</returns>
+  public static bool All (in Mat3 m)
+  {
+    return (m._m00 != 0.0f) && (m._m01 != 0.0f) && (m._m02 != 0.0f) &&
+      (m._m10 != 0.0f) && (m._m11 != 0.0f) && (m._m12 != 0.0f) &&
+      (m._m20 != 0.0f) && (m._m21 != 0.0f) && (m._m22 != 0.0f);
+  }
+
+  /// <summary>
+  /// Evaluates whether any elements of a matrix are not equal to zero. 
+  /// </summary>
+  /// <param name="m">matrix</param>
+  /// <returns>the evaluation</returns>
+  public static bool Any (in Mat3 m)
+  {
+    return (m._m00 != 0.0f) || (m._m01 != 0.0f) || (m._m02 != 0.0f) ||
+      (m._m10 != 0.0f) || (m._m11 != 0.0f) || (m._m12 != 0.0f) ||
+      (m._m20 != 0.0f) || (m._m21 != 0.0f) || (m._m22 != 0.0f);
   }
 
   /// <summary>
@@ -743,7 +870,7 @@ public readonly struct Mat3 : IEnumerable
         (a._m00 * b.x + a._m01 * b.y + a._m02) * wInv,
         (a._m10 * b.x + a._m11 * b.y + a._m12) * wInv);
     }
-    return new Vec2 (0.0f, 0.0f);
+    return new Vec2 ( );
   }
 
   /// <summary>
@@ -763,7 +890,19 @@ public readonly struct Mat3 : IEnumerable
         (a._m00 * b.x + a._m01 * b.y) * wInv,
         (a._m10 * b.x + a._m11 * b.y) * wInv);
     }
-    return new Vec2 (0.0f, 0.0f);
+    return new Vec2 ( );
+  }
+
+  /// <summary>
+  /// Evaluates whether all elements of a matrix are equal to zero. 
+  /// </summary>
+  /// <param name="m">matrix</param>
+  /// <returns>the evaluation</returns>
+  public static bool None (in Mat3 m)
+  {
+    return (m._m00 == 0.0f) && (m._m01 == 0.0f) && (m._m02 == 0.0f) &&
+      (m._m10 == 0.0f) && (m._m11 == 0.0f) && (m._m12 == 0.0f) &&
+      (m._m20 == 0.0f) && (m._m21 == 0.0f) && (m._m22 == 0.0f);
   }
 
   /// <summary>

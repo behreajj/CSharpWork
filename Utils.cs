@@ -542,8 +542,8 @@ public static class Utils
     public static float LinearStep (in float edge0 = 0.0f, in float edge1 = 1.0f, in float x = 0.5f)
     {
         float denom = edge1 - edge0;
-        if (denom == 0.0f) return 0.0f;
-        return Utils.Clamp ((x - edge0) / denom, 0.0f, 1.0f);
+        if (denom != 0.0f) return Utils.Clamp ((x - edge0) / denom, 0.0f, 1.0f);
+        return 0.0f;
     }
 
     /// <summary>
@@ -614,7 +614,7 @@ public static class Utils
         for (int i = 0; i < len; ++i)
         {
             float v = values[i];
-            result = (v >= result) ? v : result;
+            result = (v > result) ? v : result;
         }
         return result;
     }
@@ -656,7 +656,7 @@ public static class Utils
         for (int i = 0; i < len; ++i)
         {
             float v = values[i];
-            result = (v <= result) ? v : result;
+            result = (v < result) ? v : result;
         }
         return result;
     }

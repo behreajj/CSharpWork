@@ -209,7 +209,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// vector's components: 1.0 for true; 0.0 for false.
     /// </summary>
     /// <param name="b">the boolean</param>
-    public static implicit operator Vec2 (bool b)
+    public static implicit operator Vec2 (in bool b)
     {
         float eval = b ? 1.0f : 0.0f;
         return new Vec2 (eval, eval);
@@ -396,8 +396,14 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the product</returns>
     public static Vec2 operator / (in Vec2 a, in float b)
     {
-        if (b != 0.0f) return new Vec2 (a._x / b, a._y / b);
-        return new Vec2 (0.0f, 0.0f);
+        if (b != 0.0f)
+        {
+            float bInv = 1.0f / b;
+            return new Vec2 (
+                a._x * bInv,
+                a._y * bInv);
+        }
+        return new Vec2 ( );
     }
 
     /// <summary>
@@ -1077,7 +1083,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         float mSq = Vec2.MagSq (v);
         if (mSq > (limit * limit))
         {
-            return Utils.Div (limit, Vec2.Mag (v)) * v;
+            return Utils.Div (limit, Utils.SqrtUnchecked(mSq)) * v;
         }
         return v;
     }

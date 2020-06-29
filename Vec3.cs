@@ -238,7 +238,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// vector's components: 1.0 for true; 0.0 for false.
     /// </summary>
     /// <param name="b">the boolean</param>
-    public static implicit operator Vec3 (bool b)
+    public static implicit operator Vec3 (in bool b)
     {
         float eval = b ? 1.0f : 0.0f;
         return new Vec3 (eval, eval, eval);
@@ -261,7 +261,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">the 2D vector</param>
     public static implicit operator Vec3 (in Vec2 v)
     {
-        return Vec3.Promote(v);
+        return Vec3.Promote (v);
     }
 
     /// <summary>
@@ -448,12 +448,15 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the product</returns>
     public static Vec3 operator / (in Vec3 a, in float b)
     {
-        if (b == 0.0f) return new Vec3 ( );
-        float bInv = 1.0f / b;
-        return new Vec3 (
-            a._x * bInv,
-            a._y * bInv,
-            a._z * bInv);
+        if (b != 0.0f)
+        {
+            float bInv = 1.0f / b;
+            return new Vec3 (
+                a._x * bInv,
+                a._y * bInv,
+                a._z * bInv);
+        }
+        return new Vec3 ( );
     }
 
     /// <summary>
@@ -489,8 +492,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the result</returns>
     public static Vec3 operator % (in Vec3 a, in float b)
     {
-        if (b == 0.0f) return a;
-        return new Vec3 (a._x % b, a._y % b, a._z % b);
+        if (b != 0.0f) return new Vec3 (a._x % b, a._y % b, a._z % b);
+        return a;
     }
 
     /// <summary>
@@ -1286,7 +1289,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float mSq = Vec3.MagSq (v);
         if (mSq > (limit * limit))
         {
-            return Utils.Div (limit, Vec3.Mag (v)) * v;
+            return Utils.Div (limit, Utils.SqrtUnchecked(mSq)) * v;
         }
         return v;
     }
@@ -1531,9 +1534,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">vector</param>
     /// <param name="z">z component</param>
     /// <returns>vector</returns>
-    public static Vec3 Promote(in Vec2 v, in float z = 0.0f)
+    public static Vec3 Promote (in Vec2 v, in float z = 0.0f)
     {
-        return new Vec3(v.x, v.y, z);
+        return new Vec3 (v.x, v.y, z);
     }
 
     /// <summary>

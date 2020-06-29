@@ -446,6 +446,57 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     this._m33 = m33;
   }
 
+  /// <summary>
+  /// Constructs a matrix from Boolean values.
+  /// </summary>
+  /// <param name="m00">row 0, column 0</param>
+  /// <param name="m01">row 0, column 1</param>
+  /// <param name="m02">row 0, column 2</param>
+  /// <param name="m03">row 0, column 3</param>
+  /// <param name="m10">row 1, column 0</param>
+  /// <param name="m11">row 1, column 1</param>
+  /// <param name="m12">row 1, column 2</param>
+  /// <param name="m13">row 1, column 3</param>
+  /// <param name="m20">row 2, column 0</param>
+  /// <param name="m21">row 2, column 1</param>
+  /// <param name="m22">row 2, column 2</param>
+  /// <param name="m23">row 2, column 3</param>
+  /// <param name="m30">row 3, column 0</param>
+  /// <param name="m31">row 3, column 1</param>
+  /// <param name="m32">row 3, column 2</param>
+  /// <param name="m33">row 3, column 3</param>
+  public Mat4 (
+    bool m00 = true, bool m01 = false, bool m02 = false, bool m03 = false,
+    bool m10 = false, bool m11 = true, bool m12 = false, bool m13 = false,
+    bool m20 = false, bool m21 = false, bool m22 = true, bool m23 = false,
+    bool m30 = false, bool m31 = false, bool m32 = false, bool m33 = true)
+  {
+    this._m00 = m00 ? 1.0f : 0.0f;
+    this._m01 = m01 ? 1.0f : 0.0f;
+    this._m02 = m02 ? 1.0f : 0.0f;
+    this._m03 = m03 ? 1.0f : 0.0f;
+
+    this._m10 = m10 ? 1.0f : 0.0f;
+    this._m11 = m11 ? 1.0f : 0.0f;
+    this._m12 = m12 ? 1.0f : 0.0f;
+    this._m13 = m13 ? 1.0f : 0.0f;
+
+    this._m20 = m20 ? 1.0f : 0.0f;
+    this._m21 = m21 ? 1.0f : 0.0f;
+    this._m22 = m22 ? 1.0f : 0.0f;
+    this._m23 = m23 ? 1.0f : 0.0f;
+
+    this._m30 = m30 ? 1.0f : 0.0f;
+    this._m31 = m31 ? 1.0f : 0.0f;
+    this._m32 = m32 ? 1.0f : 0.0f;
+    this._m33 = m33 ? 1.0f : 0.0f;
+  }
+
+  /// <summary>
+  /// Tests this matrix for equivalence with an object.
+  /// </summary>
+  /// <param name="value">the object</param>
+  /// <returns>the equivalence</returns>
   public override bool Equals (object value)
   {
     if (Object.ReferenceEquals (this, value)) return true;
@@ -454,6 +505,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     return false;
   }
 
+  /// <summary>
+  /// Returns a hash code representing this matrix.
+  /// </summary>
+  /// <returns>the hash code</returns>
   public override int GetHashCode ( )
   {
     int hash = Utils.MulBase ^ this._m00.GetHashCode ( );
@@ -626,19 +681,14 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     return Mat4.FromRotation (q);
   }
 
-  /// <summary>
-  /// Subtracts the right matrix from the left matrix.
-  /// </summary>
-  /// <param name="a">left operand</param>
-  /// <param name="b">right operand</param>
-  /// <returns>result</returns>
-  public static Mat4 operator - (in Mat4 a, in Mat4 b)
+  public static bool operator true (in Mat4 m)
   {
-    return new Mat4 (
-      a._m00 - b._m00, a._m01 - b._m01, a._m02 - b._m02, a._m03 - b._m03,
-      a._m10 - b._m10, a._m11 - b._m11, a._m12 - b._m12, a._m13 - b._m13,
-      a._m20 - b._m20, a._m21 - b._m21, a._m22 - b._m22, a._m23 - b._m23,
-      a._m30 - b._m30, a._m31 - b._m31, a._m32 - b._m32, a._m33 - b._m33);
+    return Mat4.All (m);
+  }
+
+  public static bool operator false (in Mat4 m)
+  {
+    return Mat4.None (m);
   }
 
   /// <summary>
@@ -764,6 +814,101 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
       a._m10 + b._m10, a._m11 + b._m11, a._m12 + b._m12, a._m13 + b._m13,
       a._m20 + b._m20, a._m21 + b._m21, a._m22 + b._m22, a._m23 + b._m23,
       a._m30 + b._m30, a._m31 + b._m31, a._m32 + b._m32, a._m33 + b._m33);
+  }
+
+  /// <summary>
+  /// Subtracts the right matrix from the left matrix.
+  /// </summary>
+  /// <param name="a">left operand</param>
+  /// <param name="b">right operand</param>
+  /// <returns>result</returns>
+  public static Mat4 operator - (in Mat4 a, in Mat4 b)
+  {
+    return new Mat4 (
+      a._m00 - b._m00, a._m01 - b._m01, a._m02 - b._m02, a._m03 - b._m03,
+      a._m10 - b._m10, a._m11 - b._m11, a._m12 - b._m12, a._m13 - b._m13,
+      a._m20 - b._m20, a._m21 - b._m21, a._m22 - b._m22, a._m23 - b._m23,
+      a._m30 - b._m30, a._m31 - b._m31, a._m32 - b._m32, a._m33 - b._m33);
+  }
+
+  public static Mat4 operator < (in Mat4 a, in Mat4 b)
+  {
+    return new Mat4 (
+      a._m00 < b._m00, a._m01 < b._m01, a._m02 < b._m02, a._m03 < b._m03,
+      a._m10 < b._m10, a._m11 < b._m11, a._m12 < b._m12, a._m13 < b._m13,
+      a._m20 < b._m20, a._m21 < b._m21, a._m22 < b._m22, a._m23 < b._m23,
+      a._m30 < b._m30, a._m31 < b._m31, a._m32 < b._m32, a._m33 < b._m33);
+  }
+
+  public static Mat4 operator > (in Mat4 a, in Mat4 b)
+  {
+    return new Mat4 (
+      a._m00 > b._m00, a._m01 > b._m01, a._m02 > b._m02, a._m03 > b._m03,
+      a._m10 > b._m10, a._m11 > b._m11, a._m12 > b._m12, a._m13 > b._m13,
+      a._m20 > b._m20, a._m21 > b._m21, a._m22 > b._m22, a._m23 > b._m23,
+      a._m30 > b._m30, a._m31 > b._m31, a._m32 > b._m32, a._m33 > b._m33);
+  }
+
+  public static Mat4 operator <= (in Mat4 a, in Mat4 b)
+  {
+    return new Mat4 (
+      a._m00 <= b._m00, a._m01 <= b._m01, a._m02 <= b._m02, a._m03 <= b._m03,
+      a._m10 <= b._m10, a._m11 <= b._m11, a._m12 <= b._m12, a._m13 <= b._m13,
+      a._m20 <= b._m20, a._m21 <= b._m21, a._m22 <= b._m22, a._m23 <= b._m23,
+      a._m30 <= b._m30, a._m31 <= b._m31, a._m32 <= b._m32, a._m33 <= b._m33);
+  }
+
+  public static Mat4 operator >= (in Mat4 a, in Mat4 b)
+  {
+    return new Mat4 (
+      a._m00 >= b._m00, a._m01 >= b._m01, a._m02 >= b._m02, a._m03 >= b._m03,
+      a._m10 >= b._m10, a._m11 >= b._m11, a._m12 >= b._m12, a._m13 >= b._m13,
+      a._m20 >= b._m20, a._m21 >= b._m21, a._m22 >= b._m22, a._m23 >= b._m23,
+      a._m30 >= b._m30, a._m31 >= b._m31, a._m32 >= b._m32, a._m33 >= b._m33);
+  }
+
+  public static Mat4 operator != (in Mat4 a, in Mat4 b)
+  {
+    return new Mat4 (
+      a._m00 != b._m00, a._m01 != b._m01, a._m02 != b._m02, a._m03 != b._m03,
+      a._m10 != b._m10, a._m11 != b._m11, a._m12 != b._m12, a._m13 != b._m13,
+      a._m20 != b._m20, a._m21 != b._m21, a._m22 != b._m22, a._m23 != b._m23,
+      a._m30 != b._m30, a._m31 != b._m31, a._m32 != b._m32, a._m33 != b._m33);
+  }
+
+  public static Mat4 operator == (in Mat4 a, in Mat4 b)
+  {
+    return new Mat4 (
+      a._m00 == b._m00, a._m01 == b._m01, a._m02 == b._m02, a._m03 == b._m03,
+      a._m10 == b._m10, a._m11 == b._m11, a._m12 == b._m12, a._m13 == b._m13,
+      a._m20 == b._m20, a._m21 == b._m21, a._m22 == b._m22, a._m23 == b._m23,
+      a._m30 == b._m30, a._m31 == b._m31, a._m32 == b._m32, a._m33 == b._m33);
+  }
+
+  /// <summary>
+  /// Evaluates whether all elements of a matrix are not equal to zero. 
+  /// </summary>
+  /// <param name="m">matrix</param>
+  /// <returns>the evaluation</returns>
+  public static bool All (in Mat4 m)
+  {
+    return (m._m00 != 0.0f) && (m._m01 != 0.0f) && (m._m02 != 0.0f) && (m._m03 != 0.0f) &&
+      (m._m10 != 0.0f) && (m._m11 != 0.0f) && (m._m12 != 0.0f) && (m._m13 != 0.0f) &&
+      (m._m20 != 0.0f) && (m._m21 != 0.0f) && (m._m22 != 0.0f) && (m._m23 != 0.0f) &&
+      (m._m30 != 0.0f) && (m._m31 != 0.0f) && (m._m32 != 0.0f) && (m._m33 != 0.0f);
+  }
+
+  /// <summary>
+  /// Evaluates whether any elements of a matrix are not equal to zero. 
+  /// </summary>
+  /// <param name="m">matrix</param>
+  /// <returns>the evaluation</returns>
+  public static bool Any (in Mat4 m)
+  {
+    return (m._m00 != 0.0f) || (m._m01 != 0.0f) || (m._m02 != 0.0f) || (m._m03 != 0.0f) ||
+      (m._m10 != 0.0f) || (m._m11 != 0.0f) || (m._m12 != 0.0f) || (m._m13 != 0.0f) ||
+      (m._m20 != 0.0f) || (m._m21 != 0.0f) || (m._m22 != 0.0f) || (m._m23 != 0.0f) ||
+      (m._m30 != 0.0f) || (m._m31 != 0.0f) || (m._m32 != 0.0f) || (m._m33 != 0.0f);
   }
 
   /// <summary>
@@ -1314,6 +1459,19 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         (a._m20 * b.x + a._m21 * b.y + a._m22 * b.z) * wInv);
     }
     return new Vec3 (0.0f, 0.0f, 0.0f);
+  }
+
+  /// <summary>
+  /// Evaluates whether all elements of a matrix are equal to zero. 
+  /// </summary>
+  /// <param name="m">matrix</param>
+  /// <returns>the evaluation</returns>
+  public static bool None (in Mat4 m)
+  {
+    return (m._m00 == 0.0f) && (m._m01 == 0.0f) && (m._m02 == 0.0f) && (m._m03 == 0.0f) &&
+      (m._m10 == 0.0f) && (m._m11 == 0.0f) && (m._m12 == 0.0f) && (m._m13 == 0.0f) &&
+      (m._m20 == 0.0f) && (m._m21 == 0.0f) && (m._m22 == 0.0f) && (m._m23 == 0.0f) &&
+      (m._m30 == 0.0f) && (m._m31 == 0.0f) && (m._m32 == 0.0f) && (m._m33 == 0.0f);
   }
 
   /// <summary>

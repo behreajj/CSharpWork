@@ -86,7 +86,7 @@ public class Knot2
   public Knot2 ( ) { }
 
   /// <summary>
-  /// Creates a knot from a vector.
+  /// Creates a knot from a coordinate.
   /// </summary>
   /// <param name="coord">coordinate</param>
   public Knot2 (Vec2 coord)
@@ -264,9 +264,9 @@ public class Knot2
   /// <returns>this knot</returns>
   public Knot2 RotateZ (in float cosa, in float sina)
   {
-    Vec2.RotateZ (this.coord, cosa, sina);
-    Vec2.RotateZ (this.foreHandle, cosa, sina);
-    Vec2.RotateZ (this.rearHandle, cosa, sina);
+    this.coord = Vec2.RotateZ (this.coord, cosa, sina);
+    this.foreHandle = Vec2.RotateZ (this.foreHandle, cosa, sina);
+    this.rearHandle = Vec2.RotateZ (this.rearHandle, cosa, sina);
 
     return this;
   }

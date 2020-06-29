@@ -266,7 +266,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// </summary>
     /// <param name="b">the boolean</param>
     /// <returns>the vector</returns>
-    public static implicit operator Vec4 (bool b)
+    public static implicit operator Vec4 (in bool b)
     {
         float eval = b ? 1.0f : 0.0f;
         return new Vec4 (eval, eval, eval, eval);
@@ -498,13 +498,16 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the product</returns>
     public static Vec4 operator / (in Vec4 a, in float b)
     {
-        if (b == 0.0f) return new Vec4 (0.0f, 0.0f, 0.0f, 0.0f);
-        float bInv = 1.0f / b;
-        return new Vec4 (
-            a._x * bInv,
-            a._y * bInv,
-            a._z * bInv,
-            a._w * bInv);
+        if (b != 0.0f)
+        {
+            float bInv = 1.0f / b;
+            return new Vec4 (
+                a._x * bInv,
+                a._y * bInv,
+                a._z * bInv,
+                a._w * bInv);
+        }
+        return new Vec4 ( );
     }
 
     /// <summary>
@@ -541,12 +544,8 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the result</returns>
     public static Vec4 operator % (in Vec4 a, in float b)
     {
-        if (b == 0.0f) return a;
-        return new Vec4 (
-            a._x % b,
-            a._y % b,
-            a._z % b,
-            a._w % b);
+        if (b != 0.0f) return new Vec4 (a._x % b, a._y % b, a._z % b, a._w % b);
+        return a;
     }
 
     /// <summary>
@@ -1132,7 +1131,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         float mSq = Vec4.MagSq (v);
         if (mSq > (limit * limit))
         {
-            return Utils.Div (limit, Vec4.Mag (v)) * v;
+            return Utils.Div (limit, Utils.SqrtUnchecked(mSq)) * v;
         }
         return v;
     }
