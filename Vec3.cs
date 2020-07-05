@@ -95,7 +95,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="x">the x component</param>
     /// <param name="y">the y component</param>
     /// <param name="z">the z component</param>
-    public Vec3 (bool x = false, bool y = false, bool z = false)
+    public Vec3 (in bool x = false, in bool y = false, in bool z = false)
     {
         this._x = x ? 1.0f : 0.0f;
         this._y = y ? 1.0f : 0.0f;
@@ -167,21 +167,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the equivalence</returns>
     public bool Equals (Vec3 v)
     {
-        if (this._z.GetHashCode ( ) != v._z.GetHashCode ( ))
-        {
-            return false;
-        }
-
-        if (this._y.GetHashCode ( ) != v._y.GetHashCode ( ))
-        {
-            return false;
-        }
-
-        if (this._x.GetHashCode ( ) != v._x.GetHashCode ( ))
-        {
-            return false;
-        }
-
+        if (this._z.GetHashCode ( ) != v._z.GetHashCode ( )) return false;
+        if (this._y.GetHashCode ( ) != v._y.GetHashCode ( )) return false;
+        if (this._x.GetHashCode ( ) != v._x.GetHashCode ( )) return false;
         return true;
     }
 
@@ -1249,11 +1237,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static float InclinationSigned (in Vec3 v)
     {
         float mSq = Vec3.MagSq (v);
-        if (mSq == 0.0f)
-        {
-            return 0.0f;
-        }
-        return Utils.Asin (v._z / Utils.Sqrt (mSq));
+        if (mSq > 0.0f) return Utils.Asin (v._z / Utils.SqrtUnchecked (mSq));
+        return 0.0f;
     }
 
     /// <summary>
@@ -1289,7 +1274,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float mSq = Vec3.MagSq (v);
         if (mSq > (limit * limit))
         {
-            return Utils.Div (limit, Utils.SqrtUnchecked(mSq)) * v;
+            return Utils.Div (limit, Utils.SqrtUnchecked (mSq)) * v;
         }
         return v;
     }
@@ -1896,9 +1881,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static (float theta, float phi, float rho) ToSpherical (in Vec3 v)
     {
         float mSq = Vec3.MagSq (v);
-        if (mSq != 0.0f)
+        if (mSq > 0.0f)
         {
-            float m = Utils.Sqrt (mSq);
+            float m = Utils.SqrtUnchecked (mSq);
             return (
                 theta: Vec3.AzimuthSigned (v),
                 phi: Utils.Asin (v._z / m),

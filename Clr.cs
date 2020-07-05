@@ -155,7 +155,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the hash code</returns>
     public override int GetHashCode ( )
     {
-        return (int) this;
+        return Clr.ToHexInt (this);
     }
 
     /// <summary>
@@ -191,12 +191,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the equivalence</returns>
     public bool Equals (Clr c)
     {
-        return ((int) this) == ((int) c);
+        return Clr.ToHexInt (this) == Clr.ToHexInt (c);
     }
 
     /// <summary>
     /// Returns an enumerator (or iterator) for this color, allowing its
-    /// components to be accessed in a foreach loop.
+    /// components to be accessed in a foreach loop. The alpha channel is last.
     /// </summary>
     /// <returns>the enumerator</returns>
     public IEnumerator GetEnumerator ( )
@@ -208,7 +208,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Returns a float array of length 4 containing this color's components. The alpha channel is last.
+    /// Returns a float array of length 4 containing this color's components.
+    /// The alpha channel is last.
     /// </summary>
     /// <returns>the array</returns>
     public float[ ] ToArray ( )
@@ -251,7 +252,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="b">the boolean</param>
     /// <returns>the color</returns>
-    public static explicit operator Clr (bool b)
+    public static explicit operator Clr (in bool b)
     {
         float v = b ? 1.0f : 0.0f;
         return new Clr (v, v, v, v);

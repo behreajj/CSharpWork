@@ -411,7 +411,7 @@ public readonly struct Mat3 : IEnumerable
   /// Returns a float array of length 9 containing this matrix's components.
   /// </summary>
   /// <returns>the array</returns>
-  public float[ ] ToArray ( )
+  public float[ ] ToArray1 ( )
   {
     return new float[ ]
     {
@@ -422,15 +422,14 @@ public readonly struct Mat3 : IEnumerable
   }
 
   /// <summary>
-  /// Returns a named value tuple containing this matrix's components.
+  /// Returns a 3 x 3 float array containing this matrix's components.
   /// </summary>
-  /// <returns>the tuple</returns>
-  public (float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) ToTuple ( )
+  /// <returns>the array</returns>
+  public float[, ] ToArray2 ( )
   {
-    return (
-      m00: this._m00, m01: this._m01, m02: this._m02,
-      m10: this._m10, m11: this._m11, m12: this._m12,
-      m20: this._m20, m21: this._m21, m22: this._m22);
+    return new float[, ]
+    { { this._m00, this._m01, this._m02 }, { this._m10, this._m11, this._m12 }, { this._m20, this._m21, this._m22 }
+    };
   }
 
   /// <summary>
@@ -465,15 +464,125 @@ public readonly struct Mat3 : IEnumerable
       .Append (" }")
       .ToString ( );
   }
+  
+  /// <summary>
+  /// Returns a named value tuple containing this matrix's components.
+  /// </summary>
+  /// <returns>the tuple</returns>
+  public (float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) ToTuple ( )
+  {
+    return (
+      m00: this._m00, m01: this._m01, m02: this._m02,
+      m10: this._m10, m11: this._m11, m12: this._m12,
+      m20: this._m20, m21: this._m21, m22: this._m22);
+  }
 
+  /// <summary>
+  /// Converts a boolean to a matrix by supplying the boolean to all the
+  /// matrix's components: 1.0 for true; 0.0 for false.
+  /// </summary>
+  /// <param name="b">the boolean</param>
+  /// <returns>the vector</returns>
+  public static implicit operator Mat3 (in bool b)
+  {
+    float eval = b ? 1.0f : 0.0f;
+    return new Mat3 (
+      eval, eval, eval,
+      eval, eval, eval,
+      eval, eval, eval);
+  }
+
+  /// <summary>
+  /// A matrix evaluates to true when all of its components are not equal to
+  /// zero.
+  /// </summary>
+  /// <param name="m">the input matrix</param>
+  /// <returns>the evaluation</returns>
   public static bool operator true (in Mat3 m)
   {
     return Mat3.All (m);
   }
 
+  /// <summary>
+  /// A matrix evaluates to false when all of its elements are equal to zero.
+  /// </summary>
+  /// <param name="m">the input matrix</param>
+  /// <returns>the evaluation</returns>
   public static bool operator false (in Mat3 m)
   {
     return Mat3.None (m);
+  }
+
+  /// <summary>
+  /// Evaluates two matrices like booleans, using the and logic gate.
+  /// </summary>
+  ///   <param name="a">left operand</param>
+  ///   <param name="b">right operand</param>
+  ///   <returns>the evaluation</returns>
+  public static Mat3 operator & (in Mat3 a, in Mat3 b)
+  {
+    return new Mat3 (
+      Utils.And (a._m00, b._m00),
+      Utils.And (a._m01, b._m01),
+      Utils.And (a._m02, b._m02),
+      Utils.And (a._m10, b._m10),
+      Utils.And (a._m11, b._m11),
+      Utils.And (a._m12, b._m12),
+      Utils.And (a._m20, b._m20),
+      Utils.And (a._m21, b._m21),
+      Utils.And (a._m22, b._m22));
+  }
+
+  /// <summary>
+  /// Evaluates two matrices like booleans, using the inclusive or (OR) logic
+  /// gate.
+  /// </summary>
+  ///   <param name="a">left operand</param>
+  ///   <param name="b">right operand</param>
+  ///   <returns>the evaluation</returns>
+  public static Mat3 operator | (in Mat3 a, in Mat3 b)
+  {
+    return new Mat3 (
+      Utils.Or (a._m00, b._m00),
+      Utils.Or (a._m01, b._m01),
+      Utils.Or (a._m02, b._m02),
+      Utils.Or (a._m10, b._m10),
+      Utils.Or (a._m11, b._m11),
+      Utils.Or (a._m12, b._m12),
+      Utils.Or (a._m20, b._m20),
+      Utils.Or (a._m21, b._m21),
+      Utils.Or (a._m22, b._m22));
+  }
+
+  /// <summary>
+  /// Evaluates two matrices like booleans, using the exclusive or (XOR) logic
+  /// gate.
+  /// </summary>
+  ///   <param name="a">left operand</param>
+  ///   <param name="b">right operand</param>
+  ///   <returns>the evaluation</returns>
+  public static Mat3 operator ^ (in Mat3 a, in Mat3 b)
+  {
+    return new Mat3 (
+      Utils.Xor (a._m00, b._m00),
+      Utils.Xor (a._m01, b._m01),
+      Utils.Xor (a._m02, b._m02),
+      Utils.Xor (a._m10, b._m10),
+      Utils.Xor (a._m11, b._m11),
+      Utils.Xor (a._m12, b._m12),
+      Utils.Xor (a._m20, b._m20),
+      Utils.Xor (a._m21, b._m21),
+      Utils.Xor (a._m22, b._m22));
+  }
+
+  /// <summary>
+  /// Negates the input matrix.
+  /// </summary>
+  /// <param name="m">matrix</param>
+  /// <returns>negation</returns>
+  public static Mat3 operator - (in Mat3 m)
+  {
+    return new Mat3 (-m._m00, -m._m01, -m._m02, -m._m10, -m._m11, -m._m12, -m._m20, -m._m21, -m._m22);
   }
 
   /// <summary>
@@ -603,6 +712,15 @@ public readonly struct Mat3 : IEnumerable
       a._m20 - b._m20, a._m21 - b._m21, a._m22 - b._m22);
   }
 
+  /// <summary>
+  /// Evaluates whether the left operand is less than the right operand.
+  ///
+  /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
+  /// is false.
+  /// </summary>
+  /// <param name="a">left comparisand</param>
+  /// <param name="b">right comparisand</param>
+  /// <returns>evaluation</returns>
   public static Mat3 operator < (in Mat3 a, in Mat3 b)
   {
     return new Mat3 (
@@ -611,6 +729,15 @@ public readonly struct Mat3 : IEnumerable
       a._m20 < b._m20, a._m21 < b._m21, a._m22 < b._m22);
   }
 
+  /// <summary>
+  /// Evaluates whether the left operand is greater than the right operand.
+  ///
+  /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
+  /// is false.
+  /// </summary>
+  /// <param name="a">left comparisand</param>
+  /// <param name="b">right comparisand</param>
+  /// <returns>evaluation</returns>
   public static Mat3 operator > (in Mat3 a, in Mat3 b)
   {
     return new Mat3 (
@@ -619,6 +746,16 @@ public readonly struct Mat3 : IEnumerable
       a._m20 > b._m20, a._m21 > b._m21, a._m22 > b._m22);
   }
 
+  /// <summary>
+  /// Evaluates whether the left operand is less than or equal to the right
+  /// operand.
+  ///
+  /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
+  /// is false.
+  /// </summary>
+  /// <param name="a">left comparisand</param>
+  /// <param name="b">right comparisand</param>
+  /// <returns>evaluation</returns>
   public static Mat3 operator <= (in Mat3 a, in Mat3 b)
   {
     return new Mat3 (
@@ -627,6 +764,16 @@ public readonly struct Mat3 : IEnumerable
       a._m20 <= b._m20, a._m21 <= b._m21, a._m22 <= b._m22);
   }
 
+  /// <summary>
+  /// Evaluates whether the left operand is greater than or equal to the right
+  /// operand.
+  ///
+  /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
+  /// is false.
+  /// </summary>
+  /// <param name="a">left comparisand</param>
+  /// <param name="b">right comparisand</param>
+  /// <returns>evaluation</returns>
   public static Mat3 operator >= (in Mat3 a, in Mat3 b)
   {
     return new Mat3 (
@@ -635,6 +782,15 @@ public readonly struct Mat3 : IEnumerable
       a._m20 >= b._m20, a._m21 >= b._m21, a._m22 >= b._m22);
   }
 
+  /// <summary>
+  /// Evaluates whether two matrices do not equal to each other.
+  /// 
+  /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
+  /// is false.
+  /// </summary>
+  /// <param name="a">left comparisand</param>
+  /// <param name="b">right comparisand</param>
+  /// <returns>evaluation</returns>
   public static Mat3 operator != (in Mat3 a, in Mat3 b)
   {
     return new Mat3 (
@@ -643,6 +799,15 @@ public readonly struct Mat3 : IEnumerable
       a._m20 != b._m20, a._m21 != b._m21, a._m22 != b._m22);
   }
 
+  /// <summary>
+  /// Evaluates whether two matrices are equal to each other.
+  ///
+  /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
+  /// is false.
+  /// </summary>
+  /// <param name="a">left comparisand</param>
+  /// <param name="b">right comparisand</param>
+  /// <returns>evaluation</returns>
   public static Mat3 operator == (in Mat3 a, in Mat3 b)
   {
     return new Mat3 (
@@ -903,6 +1068,32 @@ public readonly struct Mat3 : IEnumerable
     return (m._m00 == 0.0f) && (m._m01 == 0.0f) && (m._m02 == 0.0f) &&
       (m._m10 == 0.0f) && (m._m11 == 0.0f) && (m._m12 == 0.0f) &&
       (m._m20 == 0.0f) && (m._m21 == 0.0f) && (m._m22 == 0.0f);
+  }
+
+  /// <summary>
+  /// Rotates the elements of the input matrix 90 degrees counter-clockwise.
+  /// </summary>
+  /// <param name="m">input matrix</param>
+  /// <returns>rotated matrix</returns>
+  public static Mat3 RotateElmsCcw (in Mat3 m)
+  {
+    return new Mat3 (
+      m._m02, m._m12, m._m22,
+      m._m01, m._m11, m._m21,
+      m._m00, m._m10, m._m20);
+  }
+
+  /// <summary>
+  /// Rotates the elements of the input matrix 90 degrees clockwise.
+  /// </summary>
+  /// <param name="m">input matrix</param>
+  /// <returns>rotated matrix</returns>
+  public static Mat3 RotateElmsCw (in Mat3 m)
+  {
+    return new Mat3 (
+      m._m20, m._m10, m._m00,
+      m._m21, m._m11, m._m01,
+      m._m22, m._m12, m._m02);
   }
 
   /// <summary>

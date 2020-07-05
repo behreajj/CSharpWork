@@ -110,7 +110,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="y">the y component</param>
     /// <param name="z">the z component</param>
     /// <param name="w">the w component</param>
-    public Vec4 (bool x = false, bool y = false, bool z = false, bool w = false)
+    public Vec4 (in bool x = false, in bool y = false, in bool z = false, in bool w = false)
     {
         this._x = x ? 1.0f : 0.0f;
         this._y = y ? 1.0f : 0.0f;
@@ -186,26 +186,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the equivalence</returns>
     public bool Equals (Vec4 v)
     {
-        if (this._w.GetHashCode ( ) != v._w.GetHashCode ( ))
-        {
-            return false;
-        }
-
-        if (this._z.GetHashCode ( ) != v._z.GetHashCode ( ))
-        {
-            return false;
-        }
-
-        if (this._y.GetHashCode ( ) != v._y.GetHashCode ( ))
-        {
-            return false;
-        }
-
-        if (this._x.GetHashCode ( ) != v._x.GetHashCode ( ))
-        {
-            return false;
-        }
-
+        if (this._w.GetHashCode ( ) != v._w.GetHashCode ( )) return false;
+        if (this._z.GetHashCode ( ) != v._z.GetHashCode ( )) return false;
+        if (this._y.GetHashCode ( ) != v._y.GetHashCode ( )) return false;
+        if (this._x.GetHashCode ( ) != v._x.GetHashCode ( )) return false;
         return true;
     }
 

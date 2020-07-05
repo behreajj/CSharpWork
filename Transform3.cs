@@ -290,24 +290,26 @@ public class Transform3
   }
 
   /// <summary>
-  /// Scales the transform by a uniform scalar.
+  ///   Scales the transform by a uniform scalar, i.e., multiplies the scale by
+  ///   the argument.
   /// </summary>
   /// <param name="v">uniform scalar</param>
   /// <returns>this transform</returns>    
   public Transform3 ScaleBy (in float v)
   {
-    this.Scale += new Vec3 (v, v, v);
+    this.Scale *= v;
     return this;
   }
 
   /// <summary>
-  /// Scales the transform by a nonuniform scalar.
+  ///   Scales the transform by a nonuniform scalar, i.e., multiplies the scale
+  ///   by the argument.
   /// </summary>
   /// <param name="v">nonuniform scalar</param>
   /// <returns>this transform</returns>
   public Transform3 ScaleBy (in Vec3 v)
   {
-    this.Scale += v;
+    this.Scale *= v;
     return this;
   }
 
@@ -483,7 +485,7 @@ public class Transform3
     {
       return new Transform3 (
         new Vec3 (0.0f, 0.0f, 0.0f),
-        new Quat (1.0f, new Vec3(0.0f, 0.0f, 0.0f)),
+        new Quat (1.0f, new Vec3 (0.0f, 0.0f, 0.0f)),
         new Vec3 (1.0f, 1.0f, 1.0f));
     }
   }

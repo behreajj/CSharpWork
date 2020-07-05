@@ -258,24 +258,26 @@ public class Transform2
     }
 
     /// <summary>
-    /// Scales the transform by a uniform scalar.
+    /// Scales the transform by a uniform scalar, i.e., multiplies the scale by
+    /// the argument.
     /// </summary>
     /// <param name="v">uniform scalar</param>
     /// <returns>this transform</returns>    
-    public Transform3 ScaleBy (in float v)
+    public Transform2 ScaleBy (in float v)
     {
-        this.Scale += new Vec2 (v, v);
+        this.Scale *= v;
         return this;
     }
 
     /// <summary>
-    /// Scales the transform by a nonuniform scalar.
+    /// Scales the transform by a nonuniform scalar, i.e., multiplies the scale
+    /// by the argument.
     /// </summary>
     /// <param name="v">nonuniform scalar</param>
     /// <returns>this transform</returns>
     public Transform2 ScaleBy (in Vec2 v)
     {
-        this.Scale += v;
+        this.Scale *= v;
         return this;
     }
 

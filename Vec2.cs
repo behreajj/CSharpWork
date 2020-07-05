@@ -78,7 +78,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// </summary>
     /// <param name="x">the x component</param>
     /// <param name="y">the y component</param>
-    public Vec2 (bool x = false, bool y = false)
+    public Vec2 (in bool x = false, in bool y = false)
     {
         this._x = x ? 1.0f : 0.0f;
         this._y = y ? 1.0f : 0.0f;
@@ -146,16 +146,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the equivalence</returns>
     public bool Equals (Vec2 v)
     {
-        if (this._y.GetHashCode ( ) != v._y.GetHashCode ( ))
-        {
-            return false;
-        }
-
-        if (this._x.GetHashCode ( ) != v._x.GetHashCode ( ))
-        {
-            return false;
-        }
-
+        if (this._y.GetHashCode ( ) != v._y.GetHashCode ( )) return false;
+        if (this._x.GetHashCode ( ) != v._x.GetHashCode ( )) return false;
         return true;
     }
 
