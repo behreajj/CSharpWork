@@ -13,14 +13,14 @@ using System.Text;
 public readonly struct Quat : IEquatable<Quat>, IEnumerable
 {
   /// <summary>
-  /// The real component.
-  /// </summary>
-  private readonly float real;
-
-  /// <summary>
   /// The coefficients of the imaginary components i, j and k.
   /// </summary>
   private readonly Vec3 imag;
+
+  /// <summary>
+  /// The real component.
+  /// </summary>
+  private readonly float real;
 
   /// <summary>
   /// The forward axis.
@@ -238,16 +238,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <returns>the equivalence</returns>
   public bool Equals (Quat q)
   {
-    if (this.real.GetHashCode ( ) != q.real.GetHashCode ( ))
-    {
-      return false;
-    }
-
-    if (this.imag.GetHashCode ( ) != q.imag.GetHashCode ( ))
-    {
-      return false;
-    }
-
+    if (this.real.GetHashCode ( ) != q.real.GetHashCode ( )) return false;
+    if (this.imag.GetHashCode ( ) != q.imag.GetHashCode ( )) return false;
     return true;
   }
 
@@ -344,11 +336,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="q">quaternion</param>
   public static explicit operator Vec4 (in Quat q)
   {
-    return new Vec4 (
-      q.imag.x,
-      q.imag.y,
-      q.imag.z,
-      q.real);
+    Vec3 i = q.imag;
+    return new Vec4 (i.x, i.y, i.z, q.real);
   }
 
   /// <summary>
@@ -429,7 +418,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="a">left operand</param>
   /// <param name="b">right operand</param>
   /// <returns>product</returns>
-  public static Quat operator * (in Quat a, float b)
+  public static Quat operator * (in Quat a, in float b)
   {
     return new Quat (a.real * b, a.imag * b);
   }
@@ -440,7 +429,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="a">left operand</param>
   /// <param name="b">right operand</param>
   /// <returns>product</returns>
-  public static Quat operator * (float a, in Quat b)
+  public static Quat operator * (in float a, in Quat b)
   {
     return new Quat (a * b.real, a * b.imag);
   }
@@ -489,14 +478,13 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="a">numerator</param>
   /// <param name="b">denominator</param>
   /// <returns>quotient</returns>
-  public static Quat operator / (in Quat a, float b)
+  public static Quat operator / (in Quat a, in float b)
   {
     if (b != 0.0f)
     {
       float bInv = 1.0f / b;
       return new Quat (a.real * bInv, a.imag * bInv);
     }
-    // return Quat.Identity;
     return new Quat ( );
   }
 
@@ -506,7 +494,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="a">numerator</param>
   /// <param name="b">denominator</param>
   /// <returns>quotient</returns>
-  public static Quat operator / (float a, in Quat b)
+  public static Quat operator / (in float a, in Quat b)
   {
     return a * Quat.Inverse (b);
   }
@@ -520,7 +508,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <returns>quotient</returns>
   public static Quat operator / (in Quat a, in Vec3 b)
   {
-    return a * (-b / Vec3.Dot (b, b));
+    return a * (-b / Vec3.MagSq (b));
   }
 
   /// <summary>
@@ -552,7 +540,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="a">left operand</param>
   /// <param name="b">right operand</param>
   /// <returns>sum</returns>
-  public static Quat operator + (in Quat a, float b)
+  public static Quat operator + (in Quat a, in float b)
   {
     return new Quat (a.real + b, a.imag);
   }
@@ -563,7 +551,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="a">left operand</param>
   /// <param name="b">right operand</param>
   /// <returns>sum</returns>
-  public static Quat operator + (float a, in Quat b)
+  public static Quat operator + (in float a, in Quat b)
   {
     return new Quat (a + b.real, b.imag);
   }
@@ -607,7 +595,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="a">left operand</param>
   /// <param name="b">right operand</param>
   /// <returns>difference</returns>
-  public static Quat operator - (in Quat a, float b)
+  public static Quat operator - (in Quat a, in float b)
   {
     return new Quat (a.real - b, a.imag);
   }
@@ -618,7 +606,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <param name="a">left operand</param>
   /// <param name="b">right operand</param>
   /// <returns>difference</returns>
-  public static Quat operator - (float a, in Quat b)
+  public static Quat operator - (in float a, in Quat b)
   {
     return new Quat (a - b.real, -b.imag);
   }
@@ -701,7 +689,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
   /// <returns></returns>
   public static float Dot (in Quat a, in Quat b)
   {
-    return a.real * b.real + Vec3.Dot (a.real, b.real);
+    return a.real * b.real + Vec3.Dot (a.imag, b.imag);
   }
 
   /// <summary>
@@ -818,7 +806,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         iy * w + ix * qz - iw * qy - iz * qx,
         iz * w + iy * qx - iw * qz - ix * qy);
     }
-    return new Vec3 (0.0f, 0.0f, 0.0f);
+    return new Vec3 ( );
   }
 
   /// <summary>

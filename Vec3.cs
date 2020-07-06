@@ -104,7 +104,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 
     /// <summary>
     /// Tests this vector for equivalence with an object. For approximate
-    /// equality  with another vector, use the static approx function instead.
+    /// equality with another vector, use the static approx function instead.
     /// </summary>
     /// <param name="value">the object</param>
     /// <returns>the equivalence</returns>
@@ -1297,8 +1297,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 
     /// <summary>
     /// Finds the length, or magnitude, of a vector. Also referred to as the
-    /// radius when using polar coordinates. Uses the formula sqrt ( dot ( a, a
-    /// ) ) Where possible, use magSq or dot to avoid the computational cost of
+    /// radius when using polar coordinates. Uses the formula sqrt ( dot ( a, a)
+    /// ) Where possible, use magSq or dot to avoid the computational cost of
     /// the square-root.
     /// </summary>
     /// <param name="v"></param>

@@ -71,7 +71,7 @@ public class ColorGradient : IEnumerable
     /// <summary>
     /// Returns a string representation of this key.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>the string</returns>
     public override string ToString ( )
     {
       return ToString (4);
@@ -212,16 +212,30 @@ public class ColorGradient : IEnumerable
     this.keys.Add (new Key (1.0f, Clr.White));
   }
 
+  /// <summary>
+  /// Constructs a color gradient from a list of color keys.
+  /// </summary>
+  /// <param name="keys">color keys</param>
   public ColorGradient (params Key[ ] keys)
   {
     this.InsertAll (keys);
   }
 
+  /// <summary>
+  /// Constructs a color gradient from a list of colors. The color keys will be
+  /// evenly distributed across the gradient.
+  /// </summary>
+  /// <param name="keys">color keys</param>
   public ColorGradient (params Clr[ ] colors)
   {
     this.AppendAll (colors);
   }
 
+  /// <summary>
+  /// Retrieves a color key by index. Wraps the index by the number of color
+  /// keys.
+  /// </summary>
+  /// <value>the color key</value>
   public Key this [int i]
   {
     get
@@ -230,6 +244,10 @@ public class ColorGradient : IEnumerable
     }
   }
 
+  /// <summary>
+  /// Retrieves a color given a step in the range [0.0, 1.0] .
+  /// </summary>
+  /// <value></value>
   public Clr this [float step]
   {
     get
@@ -238,21 +256,38 @@ public class ColorGradient : IEnumerable
     }
   }
 
+  /// <summary>
+  /// Gets the enumerator for the keys of this gradient.
+  /// </summary>
+  /// <returns>the enumerator</returns>
   public IEnumerator GetEnumerator ( )
   {
     return this.keys.GetEnumerator ( );
   }
 
+  /// <summary>
+  /// Gets the hash code for the keys of this gradient.
+  /// </summary>
+  /// <returns>the hash code</returns>
   public override int GetHashCode ( )
   {
     return this.keys.GetHashCode ( );
   }
 
+  /// <summary>
+  /// Returns a string representation of this gradient.
+  /// </summary>
+  /// <returns>the string</returns>
   public override string ToString ( )
   {
     return this.ToString (4);
   }
 
+  /// <summary>
+  /// Appends a color at the end of the gradient.
+  /// </summary>
+  /// <param name="color">color</param>
+  /// <returns>this gradient</returns>
   public ColorGradient Append (Clr color)
   {
     this.CompressKeysLeft (1);
@@ -260,6 +295,13 @@ public class ColorGradient : IEnumerable
     return this;
   }
 
+  /// <summary>
+  /// Appends a list of colors at the end of the gradient.
+  ///
+  /// The color keys will be evenly distributed across the gradient.
+  /// </summary>
+  /// <param name="colors">colors</param>
+  /// <returns>this gradient</returns>
   public ColorGradient AppendAll (params Clr[ ] colors)
   {
     int len = colors.Length;
@@ -275,7 +317,7 @@ public class ColorGradient : IEnumerable
     return this;
   }
 
-  protected int BisectLeft (float step = 0.5f)
+  protected int BisectLeft (in float step = 0.5f)
   {
     int low = 0;
     int high = this.keys.Count;
@@ -290,7 +332,7 @@ public class ColorGradient : IEnumerable
     return low;
   }
 
-  protected int BisectRight (float step = 0.5f)
+  protected int BisectRight (in float step = 0.5f)
   {
     int low = 0;
     int high = this.keys.Count;
@@ -305,7 +347,7 @@ public class ColorGradient : IEnumerable
     return low;
   }
 
-  protected ColorGradient CompressKeysLeft (int added = 1)
+  protected ColorGradient CompressKeysLeft (in int added = 1)
   {
     int len = this.keys.Count;
     float scalar = 1.0f / (len + added - 1.0f);
@@ -319,7 +361,7 @@ public class ColorGradient : IEnumerable
     return this;
   }
 
-  protected ColorGradient CompressKeysRight (int added = 1)
+  protected ColorGradient CompressKeysRight (in int added = 1)
   {
     int len = this.keys.Count;
     float scalar = added / (len + added - 1.0f);
@@ -350,7 +392,7 @@ public class ColorGradient : IEnumerable
     return Clr.MixRgba (prevKey.Color, nextKey.Color, fac);
   }
 
-  public Clr[ ] EvalRange (int count = 8)
+  public Clr[ ] EvalRange (in int count = 8)
   {
     int vCount = count < 3 ? 3 : count;
     Clr[ ] result = new Clr[vCount];
@@ -362,30 +404,55 @@ public class ColorGradient : IEnumerable
     return result;
   }
 
-  protected Key FindGe (float query = 0.5f)
+  /// <summary>
+  /// Finds a key greater than or equal to the query.
+  /// </summary>
+  /// <param name="query">query</param>
+  /// <returns>the key</returns>
+  protected Key FindGe (in float query = 0.5f)
   {
     int i = this.BisectLeft (query);
     if (i < this.keys.Count) return this.keys[i];
     return this.keys[this.keys.Count - 1];
   }
 
-  protected Key FindLe (float query = 0.5f)
+  /// <summary>
+  /// Finds a key less than or equal to the query.
+  /// </summary>
+  /// <param name="query">query</param>
+  /// <returns>the key</returns>
+  protected Key FindLe (in float query = 0.5f)
   {
     int i = this.BisectRight (query);
     if (i > 0) return this.keys[i - 1];
     return this.keys[0];
   }
 
+  /// <summary>
+  /// Gets the first color key from the gradient.
+  /// </summary>
+  /// <returns>the first key</returns>
   public Key GetFirst ( )
   {
     return this.keys[0];
   }
 
+  /// <summary>
+  /// Gets the last color key from the gradient.
+  /// </summary>
+  /// <returns>the first key</returns>
   public Key GetLast ( )
   {
     return this.keys[this.keys.Count - 1];
   }
 
+  /// <summary>
+  /// Inserts a color key into this gradient.
+  ///
+  /// Replaces any key which already exists at the insertion step.
+  /// </summary>
+  /// <param name="key">color key</param>
+  /// <returns>this gradient</returns>
   public ColorGradient Insert (Key key)
   {
     int query = this.ContainsKey (key);
@@ -501,7 +568,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="places">number of decimal places</param>
   /// <returns>the string</returns>
-  public string ToString (int places = 4)
+  public string ToString (in int places = 4)
   {
     StringBuilder sb = new StringBuilder (16 + 128 * this.Length);
     sb.Append ("{ keys: [ ");
@@ -587,19 +654,19 @@ public class ColorGradient : IEnumerable
     keys.Clear ( );
     keys.Capacity = 13;
 
-    keys.Add(new Key(0.000f, new Clr(1.0f, 0.0f, 0.0f)));
-    keys.Add(new Key(0.083f, new Clr(1.0f, 0.25f, 0.0f)));
-    keys.Add(new Key(0.167f, new Clr(1.0f, 0.5f, 0.0f)));
-    keys.Add(new Key(0.250f, new Clr(1.0f, 0.75f, 0.0f)));
-    keys.Add(new Key(0.333f, new Clr(1.0f, 1.0f, 0.0f)));
-    keys.Add(new Key(0.417f, new Clr(0.5058824f, 0.8313726f, 0.1019608f)));
-    keys.Add(new Key(0.500f, new Clr(0.0f, 0.6627451f, 0.2f)));
-    keys.Add(new Key(0.583f, new Clr(0.0823529f, 0.517647f, 0.4f)));
-    keys.Add(new Key(0.667f, new Clr(0.1647059f, 0.376471f, 0.6f)));
-    keys.Add(new Key(0.750f, new Clr(0.3333333f, 0.1882353f, 0.5529412f)));
-    keys.Add(new Key(0.833f, new Clr(0.5f, 0.0f, 0.5f)));
-    keys.Add(new Key(0.917f, new Clr(0.75f, 0.0f, 0.25f)));
-    keys.Add(new Key(1.000f, new Clr(1.0f, 0.0f, 0.0f)));
+    keys.Add(new Key(0.0f, new Clr(1.0f, 0.0f, 0.0f)));
+    keys.Add(new Key(0.0833333f, new Clr(1.0f, 0.25f, 0.0f)));
+    keys.Add(new Key(0.1666667f, new Clr(1.0f, 0.5f, 0.0f)));
+    keys.Add(new Key(0.25f, new Clr(1.0f, 0.75f, 0.0f)));
+    keys.Add(new Key(0.3333333f, new Clr(1.0f, 1.0f, 0.0f)));
+    keys.Add(new Key(0.4166667f, new Clr(0.5058824f, 0.8313726f, 0.1019608f)));
+    keys.Add(new Key(0.5f, new Clr(0.0f, 0.6627451f, 0.2f)));
+    keys.Add(new Key(0.5833333f, new Clr(0.0823529f, 0.517647f, 0.4f)));
+    keys.Add(new Key(0.6666667f, new Clr(0.1647059f, 0.376471f, 0.6f)));
+    keys.Add(new Key(0.75f, new Clr(0.3333333f, 0.1882353f, 0.5529412f)));
+    keys.Add(new Key(0.8333333f, new Clr(0.5f, 0.0f, 0.5f)));
+    keys.Add(new Key(0.9166667f, new Clr(0.75f, 0.0f, 0.25f)));
+    keys.Add(new Key(1.0f, new Clr(1.0f, 0.0f, 0.0f)));
 
     return target;
   }
