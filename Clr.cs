@@ -248,7 +248,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
 
     /// <summary>
     /// Converts a boolean to a color by supplying the boolean to all the
-    /// color's components: 1.0 for true; 0.0 for false.
+    /// color's channels: 1.0 for true; 0.0 for false.
     /// </summary>
     /// <param name="b">the boolean</param>
     /// <returns>the color</returns>
@@ -258,31 +258,30 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         return new Clr (v, v, v, v);
     }
 
+    /// <summary>
+    /// Converts an unsign ed byte to a color by supplying it to all the color's
+    /// channels.
+    /// </summary>
+    /// <param name="ub">value</param>
     public static explicit operator Clr (byte ub)
     {
         return new Clr (ub, ub, ub, ub);
     }
 
+    /// <summary>
+    /// Converts a signed byte to a color by supplying it to all the color's
+    /// channels.
+    /// </summary>
+    /// <param name="sb">value</param>
     public static explicit operator Clr (sbyte sb)
     {
         return new Clr (sb, sb, sb, sb);
     }
 
-    public static explicit operator Clr (int c)
-    {
-        return Clr.FromHex (c);
-    }
-
-    public static explicit operator Clr (uint c)
-    {
-        return Clr.FromHex (c);
-    }
-
-    public static explicit operator Clr (long c)
-    {
-        return Clr.FromHex (c);
-    }
-
+    /// <summary>
+    /// Converts a float to a color by supplying it to all the color's channels.
+    /// </summary>
+    /// <param name="v">value</param>
     public static explicit operator Clr (float v)
     {
         return new Clr (v, v, v, v);
@@ -316,7 +315,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the integer</returns>
     public static explicit operator uint (in Clr c)
     {
-        int cint = (int) c;
+        int cint = Clr.ToHexInt (c);
         return (uint) cint;
     }
 
@@ -327,7 +326,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the long</returns>
     public static explicit operator long (in Clr c)
     {
-        int cint = (int) c;
+        int cint = Clr.ToHexInt (c);
         return ((long) cint) & 0xffffffffL;
     }
 
@@ -710,23 +709,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="edge1">right edge</param>
     /// <param name="x">factor</param>
     /// <returns>the linear step</returns>
-    public static Clr LinearStep (in Clr edge0, in Clr edge1, in float x)
-    {
-        return new Clr (
-            Utils.LinearStep (edge0._r, edge1._r, x),
-            Utils.LinearStep (edge0._g, edge1._g, x),
-            Utils.LinearStep (edge0._b, edge1._b, x),
-            Utils.LinearStep (edge0._a, edge1._a, x));
-    }
-
-    /// <summary>
-    /// Generates a clamped linear step for an input factor; to be used in
-    /// conjunction with a mixing function.
-    /// </summary>
-    /// <param name="edge0">left edge</param>
-    /// <param name="edge1">right edge</param>
-    /// <param name="x">factor</param>
-    /// <returns>the linear step</returns>
     public static Clr LinearStep (in Clr edge0, in Clr edge1, in Clr x)
     {
         return new Clr (
@@ -1001,23 +983,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="edge1">right edge</param>
     /// <param name="x">factor</param>
     /// <returns>the smooth step</returns>
-    public static Clr SmoothStep (in Clr edge0, in Clr edge1, in float x)
-    {
-        return new Clr (
-            Utils.SmoothStep (edge0._r, edge1._r, x),
-            Utils.SmoothStep (edge0._g, edge1._g, x),
-            Utils.SmoothStep (edge0._b, edge1._b, x),
-            Utils.SmoothStep (edge0._a, edge1._a, x));
-    }
-
-    /// <summary>
-    /// Generates a clamped Hermite step for an input factor; to be used in
-    /// conjunction with a mixing function.
-    /// </summary>
-    /// <param name="edge0">left edge</param>
-    /// <param name="edge1">right edge</param>
-    /// <param name="x">factor</param>
-    /// <returns>the smooth step</returns>
     public static Clr SmoothStep (in Clr edge0, in Clr edge1, in Clr x)
     {
         return new Clr (
@@ -1025,22 +990,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             Utils.SmoothStep (edge0._g, edge1._g, x._g),
             Utils.SmoothStep (edge0._b, edge1._b, x._b),
             Utils.SmoothStep (edge0._a, edge1._a, x._a));
-    }
-
-    /// <summary>
-    /// Generates a clamped boolean step for an input factor; to be used in
-    /// conjunction with a mixing function.
-    /// </summary>
-    /// <param name="edge">edge</param>
-    /// <param name="x">factor</param>
-    /// <returns>the step</returns>
-    public static Clr Step (in Clr edge, in float x)
-    {
-        return new Clr (
-            Utils.Step (edge._r, x),
-            Utils.Step (edge._g, x),
-            Utils.Step (edge._b, x),
-            Utils.Step (edge._a, x));
     }
 
     /// <summary>

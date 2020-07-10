@@ -1563,7 +1563,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         (a._m10 * b.x + a._m11 * b.y + a._m13) * wInv,
         (a._m20 * b.x + a._m21 * b.y + a._m23) * wInv);
     }
-    return new Vec3 (0.0f, 0.0f, 0.0f);
+    return new Vec3 ( );
   }
 
   /// <summary>
@@ -1584,7 +1584,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         (a._m10 * b.x + a._m11 * b.y + a._m12 * b.z + a._m13) * wInv,
         (a._m20 * b.x + a._m21 * b.y + a._m22 * b.z + a._m23) * wInv);
     }
-    return new Vec3 (0.0f, 0.0f, 0.0f);
+    return new Vec3 ( );
   }
 
   /// <summary>
@@ -1606,7 +1606,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         (a._m10 * b.x + a._m11 * b.y) * wInv,
         (a._m20 * b.x + a._m21 * b.y) * wInv);
     }
-    return new Vec3 (0.0f, 0.0f, 0.0f);
+    return new Vec3 ( );
   }
 
   /// <summary>
@@ -1627,7 +1627,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         (a._m10 * b.x + a._m11 * b.y + a._m12 * b.z) * wInv,
         (a._m20 * b.x + a._m21 * b.y + a._m22 * b.z) * wInv);
     }
-    return new Vec3 (0.0f, 0.0f, 0.0f);
+    return new Vec3 ( );
   }
 
   /// <summary>

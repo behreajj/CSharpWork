@@ -10,7 +10,7 @@ public class Transform3
   /// <summary>
   /// The transform's location.
   /// </summary>
-  protected Vec3 location = new Vec3 (0.0f, 0.0f, 0.0f);
+  protected Vec3 location = Vec3.Zero;
 
   /// <summary>
   /// The transform's rotation in radians.
@@ -20,7 +20,7 @@ public class Transform3
   /// <summary>
   /// The transform's scale.
   /// </summary>
-  protected Vec3 scale = new Vec3 (1.0f, 1.0f, 1.0f);
+  protected Vec3 scale = Vec3.One;
 
   /// <summary>
   /// The transform's forward axis.
@@ -119,20 +119,19 @@ public class Transform3
   /// <param name="y">y location</param>
   /// <param name="z">z location</param>
   /// <param name="real">quaternion real</param>
-  /// <param name="xImag">x imaginary</param>
-  /// <param name="yImag">y imaginary</param>
-  /// <param name="zImag">z imaginary</param>
+  /// <param name="i">x imaginary</param>
+  /// <param name="j">y imaginary</param>
+  /// <param name="k">z imaginary</param>
   /// <param name="width">x scale</param>
   /// <param name="height">y scale</param>
   /// <param name="depth">z scale</param>
   public Transform3 (
     float x, float y, float z,
-    float real,
-    float xImag, float yImag, float zImag,
+    float real, float i, float j, float k,
     float width, float height, float depth)
   {
     this.Location = new Vec3 (x, y, z);
-    this.Rotation = new Quat (real, new Vec3 (xImag, yImag, zImag));
+    this.Rotation = new Quat (real, new Vec3 (i, j, k));
     this.Scale = new Vec3 (width, height, depth);
   }
 
@@ -483,10 +482,7 @@ public class Transform3
   {
     get
     {
-      return new Transform3 (
-        new Vec3 (0.0f, 0.0f, 0.0f),
-        new Quat (1.0f, new Vec3 (0.0f, 0.0f, 0.0f)),
-        new Vec3 (1.0f, 1.0f, 1.0f));
+      return new Transform3 (Vec3.Zero, Quat.Identity, Vec3.One);
     }
   }
 }

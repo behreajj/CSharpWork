@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
+/// <summary>
+/// Contains a list of keys which hold colors at steps in the range [0.0, 1.0] .
+/// Allows for smooth color transitions to be evaluated by a factor.
+/// </summary>
 [Serializable]
 public class ColorGradient : IEnumerable
 {
@@ -123,7 +127,8 @@ public class ColorGradient : IEnumerable
     }
 
     /// <summary>
-    /// Evaluates whether the left comparisand is less than the right comparisand.
+    /// Evaluates whether the left comparisand is less than the right
+    /// comparisand.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -134,7 +139,8 @@ public class ColorGradient : IEnumerable
     }
 
     /// <summary>
-    /// Evaluates whether the left comparisand is greater than the right comparisand.
+    /// Evaluates whether the left comparisand is greater than the right
+    /// comparisand.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -317,6 +323,11 @@ public class ColorGradient : IEnumerable
     return this;
   }
 
+  /// <summary>
+  /// Locates the insertion point for a step in the gradient that will maintain sorted order.
+  /// </summary>
+  /// <param name="step">step</param>
+  /// <returns>the index</returns>
   protected int BisectLeft (in float step = 0.5f)
   {
     int low = 0;
@@ -332,6 +343,11 @@ public class ColorGradient : IEnumerable
     return low;
   }
 
+  /// <summary>
+  /// Locates the insertion point for a step in the gradient that will maintain sorted order.
+  /// </summary>
+  /// <param name="step">step</param>
+  /// <returns>the index</returns>
   protected int BisectRight (in float step = 0.5f)
   {
     int low = 0;
@@ -347,6 +363,12 @@ public class ColorGradient : IEnumerable
     return low;
   }
 
+  /// <summary>
+  /// Helper function that shifts existing keys to the left when a new color is
+  /// appended to the gradient without a key.
+  /// </summary>
+  /// <param name="added">number to add</param>
+  /// <returns>this gradient</returns>
   protected ColorGradient CompressKeysLeft (in int added = 1)
   {
     int len = this.keys.Count;
@@ -361,6 +383,12 @@ public class ColorGradient : IEnumerable
     return this;
   }
 
+  /// <summary>
+  /// Helper function that shifts existing keys to the right when a new color is
+  /// prepended to the gradient without a key.
+  /// </summary>
+  /// <param name="added">number to add</param>
+  /// <returns>this gradient</returns>
   protected ColorGradient CompressKeysRight (in int added = 1)
   {
     int len = this.keys.Count;
@@ -376,11 +404,22 @@ public class ColorGradient : IEnumerable
     return this;
   }
 
+  /// <summary>
+  /// Evaluates whether the gradient contains a key at a given tolerance.
+  /// </summary>
+  /// <param name="key">the key</param>
+  /// <returns>the evaluation</returns>
   public int ContainsKey (Key key)
   {
     return this.keys.FindIndex ((Key x) => Utils.Approx (x.Step, key.Step, 0.0005f));
   }
 
+  /// <summary>
+  /// Finds a color given a step in the range [0.0, 1.0]. When the step falls
+  /// between color keys, the resultant color is created by an easing function.
+  /// </summary>
+  /// <param name="step">step</param>
+  /// <returns>color</returns>
   public Clr Eval (float step)
   {
     Key prevKey = this.FindLe (step);
@@ -389,9 +428,17 @@ public class ColorGradient : IEnumerable
     float nextStep = nextKey.Step;
     if (prevStep == nextStep) return prevKey.Color;
     float fac = (step - nextStep) / (prevStep - nextStep);
+
+    // TODO: How can a static method be passed in to this function?
     return Clr.MixRgba (prevKey.Color, nextKey.Color, fac);
   }
 
+  /// <summary>
+  /// Evaluates an array of colors for a step distributed evenly across the
+  /// range [0.0, 1.0] for the supplied count.
+  /// </summary>
+  /// <param name="count">count</param>
+  /// <returns>the colors</returns>
   public Clr[ ] EvalRange (in int count = 8)
   {
     int vCount = count < 3 ? 3 : count;
@@ -461,12 +508,22 @@ public class ColorGradient : IEnumerable
     return this;
   }
 
+  /// <summary>
+  /// Inserts all color keys into this gradient.
+  /// </summary>
+  /// <param name="keys"></param>
+  /// <returns></returns>
   public ColorGradient InsertAll (params Key[ ] keys)
   {
     foreach (Key key in keys) this.Insert (key);
     return this;
   }
 
+  /// <summary>
+  /// Inserts a color key into the keys array based on the index returned from bisectLeft .
+  /// </summary>
+  /// <param name="key">color key</param>
+  /// <returns>this gradient</returns>
   protected ColorGradient InsortLeft (Key key)
   {
     int i = this.BisectLeft (key.Step);
@@ -474,6 +531,11 @@ public class ColorGradient : IEnumerable
     return this;
   }
 
+  /// <summary>
+  /// Inserts a color key into the keys array based on the index returned from bisectRight .
+  /// </summary>
+  /// <param name="key">color key</param>
+  /// <returns>this gradient</returns>
   protected ColorGradient InsortRight (Key key)
   {
     int i = this.BisectRight (key.Step);
@@ -481,6 +543,11 @@ public class ColorGradient : IEnumerable
     return this;
   }
 
+  /// <summary>
+  /// Appends a color to this gradient. Shifts existing keys to the right by 1.
+  /// </summary>
+  /// <param name="color">color</param>
+  /// <returns>this gradient</returns>
   public ColorGradient Prepend (Clr color)
   {
     this.CompressKeysRight (1);
@@ -488,6 +555,12 @@ public class ColorGradient : IEnumerable
     return this;
   }
 
+  /// <summary>
+  /// Prepends a list of colors to this gradient. Shifts existing keys to the
+  /// right.
+  /// </summary>
+  /// <param name="colors">colors</param>
+  /// <returns>this gradient</returns>
   public ColorGradient PrependAll (params Clr[ ] colors)
   {
     int len = colors.Length;
@@ -654,19 +727,19 @@ public class ColorGradient : IEnumerable
     keys.Clear ( );
     keys.Capacity = 13;
 
-    keys.Add(new Key(0.0f, new Clr(1.0f, 0.0f, 0.0f)));
-    keys.Add(new Key(0.0833333f, new Clr(1.0f, 0.25f, 0.0f)));
-    keys.Add(new Key(0.1666667f, new Clr(1.0f, 0.5f, 0.0f)));
-    keys.Add(new Key(0.25f, new Clr(1.0f, 0.75f, 0.0f)));
-    keys.Add(new Key(0.3333333f, new Clr(1.0f, 1.0f, 0.0f)));
-    keys.Add(new Key(0.4166667f, new Clr(0.5058824f, 0.8313726f, 0.1019608f)));
-    keys.Add(new Key(0.5f, new Clr(0.0f, 0.6627451f, 0.2f)));
-    keys.Add(new Key(0.5833333f, new Clr(0.0823529f, 0.517647f, 0.4f)));
-    keys.Add(new Key(0.6666667f, new Clr(0.1647059f, 0.376471f, 0.6f)));
-    keys.Add(new Key(0.75f, new Clr(0.3333333f, 0.1882353f, 0.5529412f)));
-    keys.Add(new Key(0.8333333f, new Clr(0.5f, 0.0f, 0.5f)));
-    keys.Add(new Key(0.9166667f, new Clr(0.75f, 0.0f, 0.25f)));
-    keys.Add(new Key(1.0f, new Clr(1.0f, 0.0f, 0.0f)));
+    keys.Add (new Key (0.000f, new Clr (1.000000f, 0.000000f, 0.000000f)));
+    keys.Add (new Key (0.083f, new Clr (1.000000f, 0.250000f, 0.000000f)));
+    keys.Add (new Key (0.167f, new Clr (1.000000f, 0.500000f, 0.000000f)));
+    keys.Add (new Key (0.250f, new Clr (1.000000f, 0.750000f, 0.000000f)));
+    keys.Add (new Key (0.333f, new Clr (1.000000f, 1.000000f, 0.000000f)));
+    keys.Add (new Key (0.417f, new Clr (0.505882f, 0.831373f, 0.101961f)));
+    keys.Add (new Key (0.500f, new Clr (0.000000f, 0.662745f, 0.200000f)));
+    keys.Add (new Key (0.583f, new Clr (0.082353f, 0.517647f, 0.400000f)));
+    keys.Add (new Key (0.667f, new Clr (0.164706f, 0.376471f, 0.600000f)));
+    keys.Add (new Key (0.750f, new Clr (0.333333f, 0.188235f, 0.552941f)));
+    keys.Add (new Key (0.833f, new Clr (0.500000f, 0.000000f, 0.500000f)));
+    keys.Add (new Key (0.917f, new Clr (0.750000f, 0.000000f, 0.250000f)));
+    keys.Add (new Key (1.000f, new Clr (1.000000f, 0.000000f, 0.000000f)));
 
     return target;
   }

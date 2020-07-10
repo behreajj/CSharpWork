@@ -727,7 +727,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
     if (!Utils.Approx (amSq, 1.0f))
     {
-      float amInv = (float) (1.0f / Utils.Sqrt (amSq));
+      float amInv = 1.0f / Utils.Sqrt (amSq);
       nx *= amInv;
       ny *= amInv;
       nz *= amInv;

@@ -83,7 +83,12 @@ public class Knot3
   /// <summary>
   /// The default constructor.
   /// </summary>
-  public Knot3 ( ) { }
+  public Knot3 ( )
+  {
+    this.coord = Vec3.Zero;
+    this.foreHandle = Vec3.Zero;
+    this.rearHandle = Vec3.Zero;
+  }
 
   /// <summary>
   /// Creates a knot from a coordinate.
@@ -261,6 +266,11 @@ public class Knot3
     return this;
   }
 
+  /// <summary>
+  /// Rotates this knot around the x axis by an angle in radians.
+  /// </summary>
+  /// <param name="radians">radians</param>
+  /// <returns>this knot</returns>
   public Knot3 RotateX (in float radians)
   {
     float sina = 0.0f;
@@ -269,6 +279,14 @@ public class Knot3
     return this.RotateX (cosa, sina);
   }
 
+  /// <summary>
+  /// Rotates a knot around the x axis. Accepts calculated sine and cosine of an
+  /// angle, so that collections of knots can be efficiently rotated without
+  /// repeatedly calling cos and sin.
+  /// </summary>
+  /// <param name="cosa">cosine of the angle</param>
+  /// <param name="sina">sine of the angle</param>
+  /// <returns>this knot</returns>
   public Knot3 RotateX (in float cosa, in float sina)
   {
     this.coord = Vec3.RotateX (this.coord, cosa, sina);
@@ -278,6 +296,11 @@ public class Knot3
     return this;
   }
 
+  /// <summary>
+  /// Rotates this knot around the y axis by an angle in radians.
+  /// </summary>
+  /// <param name="radians">radians</param>
+  /// <returns>this knot</returns>
   public Knot3 RotateY (in float radians)
   {
     float sina = 0.0f;
@@ -286,6 +309,14 @@ public class Knot3
     return this.RotateY (cosa, sina);
   }
 
+  /// <summary>
+  /// Rotates a knot around the y axis. Accepts calculated sine and cosine of an
+  /// angle, so that collections of knots can be efficiently rotated without
+  /// repeatedly calling cos and sin.
+  /// </summary>
+  /// <param name="cosa">cosine of the angle</param>
+  /// <param name="sina">sine of the angle</param>
+  /// <returns>this knot</returns>
   public Knot3 RotateY (in float cosa, in float sina)
   {
     this.coord = Vec3.RotateY (this.coord, cosa, sina);
@@ -452,6 +483,34 @@ public class Knot3
       .Append (' ')
       .Append ('}')
       .ToString ( );
+  }
+
+  /// <summary>
+  /// Transforms this knot by a matrix.
+  /// </summary>
+  /// <param name="tr">transform</param>
+  /// <returns>this knot</returns>
+  public Knot3 Transform (in Mat4 m)
+  {
+    this.coord = Mat4.MulPoint (m, this.coord);
+    this.foreHandle = Mat4.MulPoint (m, this.foreHandle);
+    this.rearHandle = Mat4.MulPoint (m, this.rearHandle);
+
+    return this;
+  }
+
+  /// <summary>
+  /// Transforms this knot by a transform.
+  /// </summary>
+  /// <param name="tr">transform</param>
+  /// <returns>this knot</returns>
+  public Knot3 Transform (in Transform3 tr)
+  {
+    this.coord = Transform3.MulPoint (tr, this.coord);
+    this.foreHandle = Transform3.MulPoint (tr, this.foreHandle);
+    this.rearHandle = Transform3.MulPoint (tr, this.rearHandle);
+
+    return this;
   }
 
   /// <summary>

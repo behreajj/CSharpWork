@@ -1643,6 +1643,18 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
+    /// Returns a vector with all components set to 1.0 .
+    /// </summary>
+    /// <value>the vector</value>
+    public static Vec4 One
+    {
+        get
+        {
+            return new Vec4 (1.0f, 1.0f, 1.0f, 1.0f);
+        }
+    }
+
+    /// <summary>
     /// Returns a direction facing right, (1.0, 0.0, 0.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
@@ -1663,6 +1675,18 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         get
         {
             return new Vec4 (0.0f, 0.0f, 1.0f, 0.0f);
+        }
+    }
+
+    /// <summary>
+    /// Returns a vector with all components set to zero.
+    /// </summary>
+    /// <value>the vector</value>
+    public static Vec4 Zero
+    {
+        get
+        {
+            return new Vec4(0.0f, 0.0f, 0.0f, 0.0f);
         }
     }
 }

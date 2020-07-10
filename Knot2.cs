@@ -83,7 +83,12 @@ public class Knot2
   /// <summary>
   /// The default constructor.
   /// </summary>
-  public Knot2 ( ) { }
+  public Knot2 ( )
+  {
+    this.coord = Vec2.Zero;
+    this.foreHandle = Vec2.Zero;
+    this.rearHandle = Vec2.Zero;
+  }
 
   /// <summary>
   /// Creates a knot from a coordinate.
@@ -398,6 +403,34 @@ public class Knot2
       .Append (' ')
       .Append ('}')
       .ToString ( );
+  }
+
+  /// <summary>
+  /// Transforms this knot by a matrix.
+  /// </summary>
+  /// <param name="tr">transform</param>
+  /// <returns>this knot</returns>
+  public Knot2 Transform (in Mat3 m)
+  {
+    this.coord = Mat3.MulPoint (m, this.coord);
+    this.foreHandle = Mat3.MulPoint (m, this.foreHandle);
+    this.rearHandle = Mat3.MulPoint (m, this.rearHandle);
+
+    return this;
+  }
+
+  /// <summary>
+  /// Transforms this knot by a transform.
+  /// </summary>
+  /// <param name="tr">transform</param>
+  /// <returns>this knot</returns>
+  public Knot2 Transform (in Transform2 tr)
+  {
+    this.coord = Transform2.MulPoint (tr, this.coord);
+    this.foreHandle = Transform2.MulPoint (tr, this.foreHandle);
+    this.rearHandle = Transform2.MulPoint (tr, this.rearHandle);
+
+    return this;
   }
 
   /// <summary>

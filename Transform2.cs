@@ -10,7 +10,7 @@ public class Transform2
     /// <summary>
     /// The transform's location.
     /// </summary>
-    protected Vec2 location = new Vec2 ( );
+    protected Vec2 location = Vec2.Zero;
 
     /// <summary>
     /// The transform's rotation in radians.
@@ -20,7 +20,7 @@ public class Transform2
     /// <summary>
     /// The transform's scale.
     /// </summary>
-    protected Vec2 scale = new Vec2 (1.0f, 1.0f);
+    protected Vec2 scale = Vec2.One;
 
     /// <summary>
     /// The transform's forward axis.
@@ -441,10 +441,7 @@ public class Transform2
     {
         get
         {
-            return new Transform2 (
-                new Vec2 (0.0f, 0.0f),
-                0.0f,
-                new Vec2 (1.0f, 1.0f));
+            return new Transform2 (Vec2.Zero, 0.0f, Vec2.One);
         }
     }
 }

@@ -248,16 +248,16 @@ public static class Simplex
         int sc2 = Simplex.Permute[index, 2];
         int sc3 = Simplex.Permute[index, 3];
 
-         int i1 = sc0 >= 3 ? 1 : 0;
-         int j1 = sc1 >= 3 ? 1 : 0;
-         int k1 = sc2 >= 3 ? 1 : 0;
-         int l1 = sc3 >= 3 ? 1 : 0;
-        
+        int i1 = sc0 >= 3 ? 1 : 0;
+        int j1 = sc1 >= 3 ? 1 : 0;
+        int k1 = sc2 >= 3 ? 1 : 0;
+        int l1 = sc3 >= 3 ? 1 : 0;
+
         int i2 = sc0 >= 2 ? 1 : 0;
         int j2 = sc1 >= 2 ? 1 : 0;
         int k2 = sc2 >= 2 ? 1 : 0;
         int l2 = sc3 >= 2 ? 1 : 0;
-        
+
         int i3 = sc0 >= 1 ? 1 : 0;
         int j3 = sc1 >= 1 ? 1 : 0;
         int k3 = sc2 >= 1 ? 1 : 0;
@@ -698,45 +698,45 @@ public static class Simplex
             deriv: new Vec2 (derivx, derivy));
     }
 
-    public static (Vec4 fac, Vec4 xDeriv, Vec4 yDeriv, Vec4 zDeriv, Vec4 wDeriv) Noise4 (in Vec4 v, int seed = Utils.HashBase)
+    public static (Vec2 fac, Vec2 xDeriv, Vec2 yDeriv) Noise2 (in Vec2 v, int seed = Utils.HashBase)
     {
-        float st = Vec4.Mag (v) * Simplex.Step4;
+        float st = Vec2.Mag (v) * Simplex.Step2;
 
-        (float, Vec4) x = Simplex.Eval4 (v.x + st, v.y, v.z, v.w, seed);
-        (float, Vec4) y = Simplex.Eval4 (v.x, v.y + st, v.z, v.w, seed);
-        (float, Vec4) z = Simplex.Eval4 (v.x, v.y, v.z + st, v.w, seed);
-        (float, Vec4) w = Simplex.Eval4 (v.x, v.y, v.z, v.w + st, seed);
+        (float fac, Vec2 deriv) x = Simplex.Eval2 (v.x + st, v.y, seed);
+        (float fac, Vec2 deriv) y = Simplex.Eval2 (v.x, v.y + st, seed);
 
-        return (fac: new Vec4 (x.Item1, y.Item1, z.Item1, w.Item1),
-            xDeriv : x.Item2,
-            yDeriv : y.Item2,
-            zDeriv : z.Item2,
-            wDeriv : w.Item2);
+        return (fac: new Vec2 (x.fac, y.fac),
+            xDeriv : x.deriv,
+            yDeriv : y.deriv);
     }
 
     public static (Vec3 fac, Vec3 xDeriv, Vec3 yDeriv, Vec3 zDeriv) Noise3 (in Vec3 v, int seed = Utils.HashBase)
     {
         float st = Vec3.Mag (v) * Simplex.Step3;
 
-        (float, Vec3) x = Simplex.Eval3 (v.x + st, v.y, v.z, seed);
-        (float, Vec3) y = Simplex.Eval3 (v.x, v.y + st, v.z, seed);
-        (float, Vec3) z = Simplex.Eval3 (v.x, v.y, v.z + st, seed);
+        (float fac, Vec3 deriv) x = Simplex.Eval3 (v.x + st, v.y, v.z, seed);
+        (float fac, Vec3 deriv) y = Simplex.Eval3 (v.x, v.y + st, v.z, seed);
+        (float fac, Vec3 deriv) z = Simplex.Eval3 (v.x, v.y, v.z + st, seed);
 
-        return (fac: new Vec3 (x.Item1, y.Item1, z.Item1),
-            xDeriv : x.Item2,
-            yDeriv : y.Item2,
-            zDeriv : z.Item2);
+        return (fac: new Vec3 (x.fac, y.fac, z.fac),
+            xDeriv : x.deriv,
+            yDeriv : y.deriv,
+            zDeriv : z.deriv);
     }
 
-    public static (Vec2 fac, Vec2 xDeriv, Vec2 yDeriv) Noise2 (in Vec2 v, int seed = Utils.HashBase)
+    public static (Vec4 fac, Vec4 xDeriv, Vec4 yDeriv, Vec4 zDeriv, Vec4 wDeriv) Noise4 (in Vec4 v, int seed = Utils.HashBase)
     {
-        float st = Vec2.Mag (v) * Simplex.Step2;
+        float st = Vec4.Mag (v) * Simplex.Step4;
 
-        (float, Vec2) x = Simplex.Eval2 (v.x + st, v.y, seed);
-        (float, Vec2) y = Simplex.Eval2 (v.x, v.y + st, seed);
+        (float fac, Vec4 deriv) x = Simplex.Eval4 (v.x + st, v.y, v.z, v.w, seed);
+        (float fac, Vec4 deriv) y = Simplex.Eval4 (v.x, v.y + st, v.z, v.w, seed);
+        (float fac, Vec4 deriv) z = Simplex.Eval4 (v.x, v.y, v.z + st, v.w, seed);
+        (float fac, Vec4 deriv) w = Simplex.Eval4 (v.x, v.y, v.z, v.w + st, seed);
 
-        return (fac: new Vec2 (x.Item1, y.Item1),
-            xDeriv : x.Item2,
-            yDeriv : y.Item2);
+        return (fac: new Vec4 (x.fac, y.fac, z.fac, w.fac),
+            xDeriv : x.deriv,
+            yDeriv : y.deriv,
+            zDeriv : z.deriv,
+            wDeriv : w.deriv);
     }
 }
