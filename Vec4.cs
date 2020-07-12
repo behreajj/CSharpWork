@@ -1115,7 +1115,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         float mSq = Vec4.MagSq (v);
         if (mSq > (limit * limit))
         {
-            return Utils.Div (limit, Utils.SqrtUnchecked(mSq)) * v;
+            return Utils.Div (limit, Utils.SqrtUnchecked (mSq)) * v;
         }
         return v;
     }
@@ -1686,7 +1686,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     {
         get
         {
-            return new Vec4(0.0f, 0.0f, 0.0f, 0.0f);
+            return new Vec4 (0.0f, 0.0f, 0.0f, 0.0f);
         }
     }
 }

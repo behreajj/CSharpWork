@@ -203,6 +203,26 @@ public class ColorGradient : IEnumerable
   protected readonly List<Key> keys = new List<Key> (16);
 
   /// <summary>
+  /// Returns an array containing the color gradient's keys.
+  /// </summary>
+  /// <returns>the array</returns>
+  public Key[ ] Keys
+  {
+    get
+    {
+      Key[ ] result = new Key[this.keys.Count];
+      this.keys.CopyTo (result);
+      return result;
+    }
+  }
+  // public Key[] GetKeys ( )
+  // {
+  //   Key[ ] result = new Key[this.keys.Count];
+  //   this.keys.CopyTo (result);
+  //   return result;
+  // }
+
+  /// <summary>
   /// Returns the number of color keys in this gradient.
   /// </summary>
   /// <value>the length</value>
@@ -260,15 +280,6 @@ public class ColorGradient : IEnumerable
     {
       return this.Eval (step);
     }
-  }
-
-  /// <summary>
-  /// Gets the enumerator for the keys of this gradient.
-  /// </summary>
-  /// <returns>the enumerator</returns>
-  public IEnumerator GetEnumerator ( )
-  {
-    return this.keys.GetEnumerator ( );
   }
 
   /// <summary>
@@ -412,6 +423,15 @@ public class ColorGradient : IEnumerable
   public int ContainsKey (Key key)
   {
     return this.keys.FindIndex ((Key x) => Utils.Approx (x.Step, key.Step, 0.0005f));
+  }
+
+  /// <summary>
+  /// Gets the enumerator for the keys of this gradient.
+  /// </summary>
+  /// <returns>the enumerator</returns>
+  public IEnumerator GetEnumerator ( )
+  {
+    return this.keys.GetEnumerator ( );
   }
 
   /// <summary>
@@ -643,16 +663,16 @@ public class ColorGradient : IEnumerable
   /// <returns>the string</returns>
   public string ToString (in int places = 4)
   {
-    StringBuilder sb = new StringBuilder (16 + 128 * this.Length);
-    sb.Append ("{ keys: [ ");
     int len = this.keys.Count;
     int last = len - 1;
+
+    StringBuilder sb = new StringBuilder (16 + 128 * len);
+    sb.Append ("{ keys: [ ");
     for (int i = 0; i < len; ++i)
     {
       Key key = this.keys[i];
       sb.Append (key.ToString (places));
-      if (i < last)
-        sb.Append (", ");
+      if (i < last) sb.Append (", ");
     }
     sb.Append (" ] }");
     return sb.ToString ( );
