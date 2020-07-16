@@ -275,7 +275,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Ceil (in float v)
     {
-        return v > 0.0f ? (int) (v + 1) : (int) v;
+        return (v > 0.0f) ? (int) (v + 1) : (int) v;
     }
 
     /// <summary>
@@ -413,7 +413,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Filter (in float v, in float lb = 0.0f, in float ub = 1.0f)
     {
-        return v >= lb && v < ub ? v : 0.0f;
+        return (v >= lb) && (v < ub) ? v : 0.0f;
     }
 
     /// <summary>
@@ -424,7 +424,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Floor (in float v)
     {
-        return v > 0.0f ? (int) v : (int) v - 1;
+        return (v > 0.0f) ? (int) v : (int) v - 1;
     }
 
     /// <summary>
@@ -586,7 +586,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Max (in float a, in float b)
     {
-        return a >= b ? a : a < b ? b : 0.0f;
+        return (a >= b) ? a : (a < b) ? b : 0.0f;
     }
 
     /// <summary>
@@ -628,7 +628,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Min (in float a, in float b)
     {
-        return a <= b ? a : a > b ? b : 0.0f;
+        return (a <= b) ? a : (a > b) ? b : 0.0f;
     }
 
     /// <summary>
@@ -702,7 +702,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Mod (in float a, in float b)
     {
-        return b != 0.0f ? a - b * Utils.Floor (a / b) : a;
+        return (b != 0.0f) ? a - b * Utils.Floor (a / b) : a;
     }
 
     /// <summary>
@@ -749,7 +749,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Not (in float v)
     {
-        return v != 0.0f ? 0 : 1;
+        return (v != 0.0f) ? 0 : 1;
     }
 
     /// <summary>

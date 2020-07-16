@@ -83,7 +83,7 @@ public class Knot2
     /// <summary>
     /// The default constructor.
     /// </summary>
-    internal Knot2 ( )
+    public Knot2 ( )
     {
         this.coord = Vec2.Zero;
         this.foreHandle = Vec2.Zero;
@@ -126,7 +126,7 @@ public class Knot2
     /// <param name="yFh">fore handle y</param>
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
-    internal Knot2 (
+    public Knot2 (
         float xCo, float yCo,
         float xFh, float yFh,
         float xRh, float yRh)
@@ -244,6 +244,25 @@ public class Knot2
     public Knot2 MirrorHandlesForward ( )
     {
         this.rearHandle = this.coord - (this.foreHandle - this.coord);
+        return this;
+    }
+
+    /// <summary>
+    /// Relocates the knot to a new location while maintaining the relationship
+    /// between the central coordinate and its two handles.
+    /// </summary>
+    /// <param name="v">coordinate</param>
+    /// <returns>this knot</returns>
+    public Knot2 Relocate (Vec2 v)
+    {
+        this.foreHandle -= this.coord;
+        this.rearHandle -= this.coord;
+
+        this.coord = v;
+
+        this.foreHandle += this.coord;
+        this.rearHandle += this.coord;
+
         return this;
     }
 
@@ -409,7 +428,7 @@ public class Knot2
     /// <param name="yFh">fore handle y</param>
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
-    internal Knot2 Set (in float xCo, in float yCo, in float xFh, in float yFh, in float xRh, in float yRh)
+    public Knot2 Set (in float xCo, in float yCo, in float xFh, in float yFh, in float xRh, in float yRh)
     {
         this.coord = new Vec2 (xCo, yCo);
         this.foreHandle = new Vec2 (xFh, yFh);
@@ -477,6 +496,15 @@ public class Knot2
         this.rearHandle += v;
 
         return this;
+    }
+
+    /// <summary>
+    /// Converts a vector to a knot.
+    /// </summary>
+    /// <param name="v">vector</param>
+    public static implicit operator Knot2 (Vec2 v)
+    {
+        return new Knot2 (v);
     }
 
     /// <summary>
@@ -566,7 +594,7 @@ public class Knot2
     /// <param name="xCenter">x center</param>
     /// <param name="yCenter">y center</param>
     /// <returns>the knot</returns>
-    internal static Knot2 FromPolar (in float cosa = 1.0f, in float sina = 0.0f, in float radius = 1.0f, in float handleMag = Utils.FourThirds, in float xCenter = 0.0f, in float yCenter = 0.0f)
+    public static Knot2 FromPolar (in float cosa = 1.0f, in float sina = 0.0f, in float radius = 1.0f, in float handleMag = Utils.FourThirds, in float xCenter = 0.0f, in float yCenter = 0.0f)
     {
         float cox = xCenter + radius * cosa;
         float coy = yCenter + radius * sina;
@@ -609,7 +637,7 @@ public class Knot2
     /// <param name="prev">previous knot</param>
     /// <param name="next">next knot</param>
     /// <returns>the next knot</returns>
-    internal static Knot2 FromSegLinear (in float xNextAnchor, in float yNextAnchor, in Knot2 prev, in Knot2 next)
+    public static Knot2 FromSegLinear (in float xNextAnchor, in float yNextAnchor, in Knot2 prev, in Knot2 next)
     {
         next.Coord = new Vec2 (xNextAnchor, yNextAnchor);
         prev.ForeHandle = Vec2.Mix (prev.Coord, next.Coord, Utils.OneThird);

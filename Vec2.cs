@@ -1097,8 +1097,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
 
     /// <summary>
     /// Finds the length, or magnitude, of a vector. Also referred to as the
-    /// radius when using polar coordinates. Uses the formula sqrt ( dot ( a, a
-    /// ) ) Where possible, use magSq or dot to avoid the computational cost of
+    /// radius when using polar coordinates. Uses the formula sqrt ( dot ( a, a)
+    /// ) Where possible, use magSq or dot to avoid the computational cost of
     /// the square-root.
     /// </summary>
     /// <param name="v"></param>
@@ -1108,7 +1108,6 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         return Utils.Sqrt (Vec2.MagSq (v));
 
         // double xd = v._x; double yd = v._y;
-
         // return (float) Math.Sqrt (xd * xd + yd * yd);
     }
 
@@ -1479,9 +1478,11 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a vector around the z axis. Accepts pre-calculated sine and
-    /// cosine of an angle, so that collections of vectors can be efficiently
-    /// rotated without repeatedly calling cos and sin.
+    /// Rotates a vector around the z axis.
+    ///
+    /// Accepts pre-calculated sine and cosine of an angle, so that collections
+    /// of vectors can be efficiently rotated without repeatedly calling cos and
+    /// sin.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <param name="cosa">the cosine of the angle</param>

@@ -3,26 +3,61 @@ using static System.Tuple;
 
 public static class Simplex
 {
+    /// <summary>
+    /// A default seed set to the system current time in milliseconds.
+    /// </summary>
     public static int DefaultSeed = (int) System.DateTime.Now.Ticks;
 
+    /// <summary>
+    /// Squish constant 2D (Math.Sqrt(3.0) - 1.0) / 2.0; approximately 0.36602542 .
+    /// </summary>
     private const float F2 = 0.36602542f;
     private const float F3 = 0.33333333f;
     private const float F4 = 0.309017f;
     private const float G2 = 0.21132487f;
     private const float G2_2 = 0.42264974f;
     private const float G3 = 0.16666667f;
-    private const float G3_2 = 0.33333334f;
+    private const float G3_2 = 0.33333333f;
     private const float G3_3 = 0.5f;
     private const float G4 = 0.1381966f;
     private const float G4_2 = 0.2763932f;
     private const float G4_3 = 0.4145898f;
     private const float G4_4 = 0.5527864f;
+
+    /// <summary>
+    /// Math.Sqrt(2.0) / Math.Sqrt(3.0). Used by rotation look up tables.
+    /// Approximately 0.8164966 .
+    /// </summary>
     private const float Rt2Rt3 = 0.8164966f;
+
+    /// <summary>
+    /// Factor by which 3D noise is scaled prior to return: 64.0 .
+    /// </summary>
     private const float Scale2 = 64.0f;
+
+    /// <summary>
+    /// Factor by which 3D noise is scaled prior to return: 68.0 .
+    /// </summary>
     private const float Scale3 = 68.0f;
+
+    /// <summary>
+    /// Factor by which 4D noise is scaled prior to return: 54.0 .
+    /// </summary>
     private const float Scale4 = 54.0f;
+
+    /// <summary>
+    /// Factor added to 2D noise when returning a Vec2. 1.0 / Math.Sqrt(2.0); approximately 0.70710677 .
+    /// </summary>
     private const float Step2 = 0.70710677f;
+
+    /// <summary>
+    /// Factor added to 3D noise when returning a Vec3. 1.0 / Math.Sqrt(3.0); approximately 0.57735026 .
+    /// </summary>
     private const float Step3 = 0.57735026f;
+
+    /// <summary>
+    /// Factor added to 4D noise when returning a Vec4. 1.0 / Math.sqrt(4.0); 0.5 .
+    /// </summary>
     private const float Step4 = 0.5f;
 
     private static readonly Vec2[ ] Grad2Lut = new Vec2[ ]

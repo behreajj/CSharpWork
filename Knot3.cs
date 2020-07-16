@@ -83,7 +83,7 @@ public class Knot3
     /// <summary>
     /// The default constructor.
     /// </summary>
-    internal Knot3 ( )
+    public Knot3 ( )
     {
         this.coord = Vec3.Zero;
         this.foreHandle = Vec3.Zero;
@@ -129,7 +129,7 @@ public class Knot3
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
     /// <param name="zRh">rear handle z</param>
-    internal Knot3 (in float xCo, in float yCo, in float zCo, in float xFh, in float yFh, in float zFh, in float xRh, in float yRh, in float zRh)
+    public Knot3 (in float xCo, in float yCo, in float zCo, in float xFh, in float yFh, in float zFh, in float xRh, in float yRh, in float zRh)
     {
         this.Set (
             xCo, yCo, zCo,
@@ -244,6 +244,25 @@ public class Knot3
     public Knot3 MirrorHandlesForward ( )
     {
         this.rearHandle = this.coord - (this.foreHandle - this.coord);
+        return this;
+    }
+
+    /// <summary>
+    /// Relocates the knot to a new location while maintaining the relationship
+    /// between the central coordinate and its two handles.
+    /// </summary>
+    /// <param name="v">coordinate</param>
+    /// <returns>this knot</returns>
+    public Knot3 Relocate (Vec3 v)
+    {
+        this.foreHandle -= this.coord;
+        this.rearHandle -= this.coord;
+
+        this.coord = v;
+
+        this.foreHandle += this.coord;
+        this.rearHandle += this.coord;
+
         return this;
     }
 
@@ -508,7 +527,7 @@ public class Knot3
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
     /// <param name="zRh">rear handle z</param>
-    internal Knot3 Set (in float xCo, in float yCo, in float zCo, in float xFh, in float yFh, in float zFh, in float xRh, in float yRh, in float zRh)
+    public Knot3 Set (in float xCo, in float yCo, in float zCo, in float xFh, in float yFh, in float zFh, in float xRh, in float yRh, in float zRh)
     {
         this.coord = new Vec3 (xCo, yCo, zCo);
         this.foreHandle = new Vec3 (xFh, yFh, zFh);
@@ -576,6 +595,15 @@ public class Knot3
         this.rearHandle += v;
 
         return this;
+    }
+
+    /// <summary>
+    /// Converts a vector to a knot.
+    /// </summary>
+    /// <param name="v">vector</param>
+    public static implicit operator Knot3 (Vec3 v)
+    {
+        return new Knot3 (v);
     }
 
     /// <summary>
