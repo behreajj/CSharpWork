@@ -705,7 +705,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     {
         float sina = 0.0f;
         float cosa = 0.0f;
-        Utils.SinCos (radians * 0.5f, out sina, out cosa);
+        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out sina, out cosa);
         return new Quat (cosa, 0.0f, 0.0f, sina);
     }
 
@@ -735,7 +735,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
         float sinHalf = 0.0f;
         float cosHalf = 0.0f;
-        Utils.SinCos (radians * 0.5f, out sinHalf, out cosHalf);
+        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out sinHalf, out cosHalf);
         return new Quat (cosHalf,
             new Vec3 (nx * sinHalf,
                 ny * sinHalf,
@@ -786,7 +786,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     public static Vec3 InvMulVector (in Quat q, in Vec3 v)
     {
         float mSq = Quat.MagSq (q);
-        if (mSq != 0.0f)
+        if (mSq > 0.0f)
         {
             float mSqInv = 1.0f / mSq;
 
@@ -1065,7 +1065,14 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>the rotated quaternion</returns>
     public static Quat Rotate (in Quat q, in float radians, in Vec3 axis)
     {
-        return Quat.Normalize (q + Quat.FromAxisAngle (radians, axis));
+        float mSq = Quat.MagSq (q);
+        if (mSq > 0.0f)
+        {
+            float wNorm = q.real * Utils.InvSqrtUnchecked (mSq);
+            float halfAngle = Utils.Acos (wNorm);
+            return Quat.FromAxisAngle (halfAngle + halfAngle + radians, axis);
+        }
+        return Quat.FromAxisAngle (radians, axis);
     }
 
     /// <summary>
@@ -1081,7 +1088,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     {
         float sina = 0.0f;
         float cosa = 0.0f;
-        Utils.SinCos (radians * 0.5f, out sina, out cosa);
+        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out sina, out cosa);
         return Quat.RotateX (q, cosa, sina);
     }
 
@@ -1117,7 +1124,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     {
         float sina = 0.0f;
         float cosa = 0.0f;
-        Utils.SinCos (radians * 0.5f, out sina, out cosa);
+        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out sina, out cosa);
         return Quat.RotateY (q, cosa, sina);
     }
 
@@ -1153,7 +1160,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     {
         float sina = 0.0f;
         float cosa = 0.0f;
-        Utils.SinCos (radians * 0.5f, out sina, out cosa);
+        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out sina, out cosa);
         return Quat.RotateZ (q, cosa, sina);
     }
 
@@ -1234,18 +1241,18 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     public static (float angle, Vec3 axis) ToAxisAngle (in Quat q)
     {
         float mSq = Quat.MagSq (q);
-        if (mSq == 0.0f)
+        if (mSq <= 0.0f)
         {
             return (
                 angle: 0.0f,
                 axis: Vec3.Forward);
         }
 
-        float wNorm = Utils.Approx (mSq, 1.0f) ? q.real :
-            q.real * Utils.InvSqrtUnchecked (mSq);
+        float wNorm = q.real * Utils.InvSqrtUnchecked (mSq);
         float angle = 2.0f * Utils.Acos (wNorm);
-        // float wAsin = Utils.Tau - angle;
-        float wAsin = Utils.Pi - angle;
+        float wAsin = Utils.Tau - angle;
+        // float wAsin = Utils.Pi - angle;
+        // float wAsin = Utils.Asin(wNorm);
 
         if (wAsin == 0.0f)
         {
@@ -1261,7 +1268,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         float az = i.z * sInv;
 
         float amSq = ax * ax + ay * ay + az * az;
-        if (amSq == 0.0f)
+        if (amSq <= 0.0f)
         {
             return (
                 angle: angle,
@@ -1277,7 +1284,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
         float mInv = Utils.InvSqrtUnchecked (amSq);
         return (
-            angle: 0.0f,
+            angle: angle,
             axis: new Vec3 (ax * mInv, ay * mInv, az * mInv));
     }
 

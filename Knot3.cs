@@ -91,7 +91,7 @@ public class Knot3
     }
 
     /// <summary>
-    /// Creates a knot from a coordinate.
+    /// Creates a knot from a coordinate. The forehandle and rearhandle are offset by a small amount.
     /// </summary>
     /// <param name="coord">coordinate</param>
     public Knot3 (Vec3 coord)
@@ -115,6 +115,26 @@ public class Knot3
         this.coord = coord;
         this.foreHandle = foreHandle;
         this.rearHandle = rearHandle;
+    }
+
+    /// <summary>
+    /// Creates a knot from real numbers. The forehandle and rearhandle are offset by a small amount.
+    /// </summary>
+    /// <param name="xCo">x coordinate</param>
+    /// <param name="yCo">y coordinate</param>
+    /// <param name="zCo">y coordinate</param>
+    public Knot3 (in float xCo, in float yCo, in float zCo = 0.0f)
+    {
+        this.Set (
+            xCo, yCo, zCo,
+
+            xCo + Utils.Epsilon,
+            yCo + Utils.Epsilon,
+            zCo + Utils.Epsilon,
+
+            xCo - Utils.Epsilon,
+            yCo - Utils.Epsilon,
+            zCo - Utils.Epsilon);
     }
 
     /// <summary>
@@ -204,10 +224,14 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 AlignHandlesBackward ( )
     {
-        Vec3 rdir = this.rearHandle - this.coord;
-        Vec3 fdir = this.foreHandle - this.coord;
-        float flipRescale = Utils.Div (-Vec3.Mag (fdir), Vec3.Mag (rdir));
-        this.foreHandle = this.coord + (flipRescale * rdir);
+        Vec3 rDir = this.rearHandle - this.coord;
+        float rMagSq = Vec3.MagSq (rDir);
+        if (rMagSq > 0.0f)
+        {
+            float flipRescale = -Vec3.DistEuclidean (this.foreHandle, this.coord) / Utils.SqrtUnchecked (rMagSq);
+            this.foreHandle = this.coord + (flipRescale * rDir);
+        }
+
         return this;
     }
 
@@ -218,10 +242,14 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 AlignHandlesForward ( )
     {
-        Vec3 rdir = this.rearHandle - this.coord;
-        Vec3 fdir = this.foreHandle - this.coord;
-        float flipRescale = Utils.Div (-Vec3.Mag (rdir), Vec3.Mag (fdir));
-        this.rearHandle = this.coord + (flipRescale * fdir);
+        Vec3 fDir = this.foreHandle - this.coord;
+        float fMagSq = Vec3.MagSq (fDir);
+        if (fMagSq > 0.0f)
+        {
+            float flipRescale = -Vec3.DistEuclidean (this.rearHandle, this.coord) / Utils.SqrtUnchecked (fMagSq);
+            this.rearHandle = this.coord + (flipRescale * fDir);
+        }
+
         return this;
     }
 
@@ -275,6 +303,7 @@ public class Knot3
         Vec3 temp = this.foreHandle;
         this.foreHandle = this.rearHandle;
         this.rearHandle = temp;
+
         return this;
     }
 

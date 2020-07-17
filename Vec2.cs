@@ -651,7 +651,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="ap1">second anchor point</param>
     /// <param name="step">step</param>
     /// <returns>the point along the curve</returns>
-    public static Vec2 BezierPoint (in Vec2 ap0 = new Vec2 ( ), in Vec2 cp0 = new Vec2 ( ), in Vec2 cp1 = new Vec2 ( ), in Vec2 ap1 = new Vec2 ( ), in float step = 0.5f)
+    public static Vec2 BezierPoint (in Vec2 ap0, in Vec2 cp0, in Vec2 cp1, in Vec2 ap1, in float step)
     {
         if (step <= 0.0f) return new Vec2 (ap0._x, ap0._y);
         else if (step >= 1.0f) return new Vec2 (ap1._x, ap1._y);
@@ -691,7 +691,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="ap1">second anchor point</param>
     /// <param name="step">step</param>
     /// <returns>the tangent along the curve</returns>
-    public static Vec2 BezierTangent (in Vec2 ap0 = new Vec2 ( ), in Vec2 cp0 = new Vec2 ( ), in Vec2 cp1 = new Vec2 ( ), in Vec2 ap1 = new Vec2 ( ), in float step = 0.5f)
+    public static Vec2 BezierTangent (in Vec2 ap0, in Vec2 cp0, in Vec2 cp1, in Vec2 ap1, in float step)
     {
 
         if (step <= 0.0f) return cp0 - ap0;
@@ -722,7 +722,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="ap1">the second anchor point</param>
     /// <param name="step">the step</param>
     /// <returns>the tangent along the curve</returns>
-    public static Vec2 BezierTanUnit (in Vec2 ap0 = new Vec2 ( ), in Vec2 cp0 = new Vec2 ( ), in Vec2 cp1 = new Vec2 ( ), in Vec2 ap1 = new Vec2 ( ), in float step = 0.5f)
+    public static Vec2 BezierTanUnit (in Vec2 ap0, in Vec2 cp0, in Vec2 cp1, in Vec2 ap1, in float step)
     {
         return Vec2.Normalize (Vec2.BezierTangent (
             ap0, cp0, cp1, ap1, step));

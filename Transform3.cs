@@ -212,17 +212,6 @@ public class Transform3
     }
 
     /// <summary>
-    /// Rotates the transform by adding a rotation, then normalizing.
-    /// </summary>
-    /// <param name="q">orientation</param>
-    /// <returns>this transform</returns>
-    public Transform3 RotateBy (in Quat q)
-    {
-        this.Rotation = Quat.Normalize (this.rotation + q);
-        return this;
-    }
-
-    /// <summary>
     /// Rotates the transform to a new orientation, then updates the transform's
     /// axes.
     /// </summary>
