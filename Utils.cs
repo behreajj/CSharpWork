@@ -193,10 +193,10 @@ public static class Utils
     /// <param name="b">right comparisand</param>
     /// <param name="tolerance">the tolerance</param>
     /// <returns>the evaluation</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool Approx (in float a, in float b, in float tolerance = Utils.Epsilon)
     {
-        float diff = b - a;
-        return diff <= tolerance && diff >= -tolerance;
+        return Utils.Diff (a, b) <= tolerance;
     }
 
     /// <summary>
@@ -686,7 +686,8 @@ public static class Utils
     {
         if (b != 0)
         {
-            int result = a - b * (a / b);
+            // a - b * (a / b);
+            int result = a % b;
             return result < 0 ? result + b : result;
         }
         return a;

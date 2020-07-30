@@ -16,8 +16,8 @@ public class Knot2
     protected Vec2 coord;
 
     /// <summary>
-    /// The handle which warps the curve segment heading away from the knot along
-    /// the direction of the curve.
+    /// The handle which warps the curve segment heading away from the knot
+    /// along the direction of the curve.
     /// </summary>
     protected Vec2 foreHandle;
 
@@ -45,8 +45,8 @@ public class Knot2
     }
 
     /// <summary>
-    /// The handle which warps the curve segment heading away from the knot along
-    /// the direction of the curve.
+    /// The handle which warps the curve segment heading away from the knot
+    /// along the direction of the curve.
     /// </summary>
     /// <value>fore handle</value>
     public Vec2 ForeHandle
@@ -91,14 +91,16 @@ public class Knot2
     }
 
     /// <summary>
-    /// Creates a knot from a coordinate. The forehandle and rearhandle are offset by a small amount.
+    /// Creates a knot from a coordinate. The forehandle and rearhandle are
+    /// offset by a small amount.
     /// </summary>
     /// <param name="coord">coordinate</param>
     public Knot2 (Vec2 coord)
     {
         this.coord = coord;
-        this.foreHandle = this.coord + Utils.Epsilon;
-        this.rearHandle = this.coord - Utils.Epsilon;
+        Vec2 eps = Vec2.CopySign (Utils.Epsilon, this.coord);
+        this.foreHandle = this.coord + eps;
+        this.rearHandle = this.coord - eps;
     }
 
     /// <summary>
@@ -118,20 +120,24 @@ public class Knot2
     }
 
     /// <summary>
-    /// Creates a knot from real numbers. The forehandle and rearhandle are offset by a small amount.
+    /// Creates a knot from real numbers. The forehandle and rearhandle are
+    /// offset by a small amount.
     /// </summary>
     /// <param name="xCo">x coordinate</param>
     /// <param name="yCo">y coordinate</param>
     public Knot2 (in float xCo, in float yCo)
     {
+        float xEps = Utils.CopySign (Utils.Epsilon, xCo);
+        float yEps = Utils.CopySign (Utils.Epsilon, yCo);
+
         this.Set (
             xCo, yCo,
 
-            xCo + Utils.Epsilon,
-            yCo + Utils.Epsilon,
+            xCo + xEps,
+            yCo + yEps,
 
-            xCo - Utils.Epsilon,
-            yCo - Utils.Epsilon);
+            xCo - xEps,
+            yCo - yEps);
     }
 
     /// <summary>
@@ -251,8 +257,8 @@ public class Knot2
     }
 
     /// <summary>
-    /// Sets the forward-facing handle to mirror the rear-facing handle: the fore
-    /// will have the same magnitude and negated direction of the rear.
+    /// Sets the forward-facing handle to mirror the rear-facing handle: the
+    /// fore will have the same magnitude and negated direction of the rear.
     /// </summary>
     /// <returns>this knot</returns>
     public Knot2 MirrorHandlesBackward ( )
@@ -262,8 +268,8 @@ public class Knot2
     }
 
     /// <summary>
-    /// Sets the rear-facing handle to mirror the forward-facing handle: the rear
-    /// will have the same magnitude and negated direction of the fore.
+    /// Sets the rear-facing handle to mirror the forward-facing handle: the
+    /// rear will have the same magnitude and negated direction of the fore.
     /// </summary>
     /// <returns>this knot</returns>
     public Knot2 MirrorHandlesForward ( )
@@ -300,6 +306,90 @@ public class Knot2
         Vec2 temp = this.foreHandle;
         this.foreHandle = this.rearHandle;
         this.rearHandle = temp;
+
+        return this;
+    }
+
+    /// <summary>
+    /// Rotates this knot's fore handle by an angle in radians.
+    /// </summary>
+    /// <param name="radians">angle</param>
+    /// <returns>this knot</returns>
+    public Knot2 RotateForeHandle (in float radians)
+    {
+        float sina = 0.0f;
+        float cosa = 0.0f;
+        Utils.SinCos (radians, out sina, out cosa);
+        return this.RotateForeHandle (cosa, sina);
+    }
+
+    /// <summary>
+    /// Rotates this knot's fore handle by the cosine and sine of an angle.
+    /// </summary>
+    /// <param name="cosa">cosine</param>
+    /// <param name="sina">sine</param>
+    /// <returns>this knot</returns>
+    public Knot2 RotateForeHandle (in float cosa, in float sina)
+    {
+        this.foreHandle -= this.coord;
+        this.foreHandle = Vec2.RotateZ (this.foreHandle, cosa, sina);
+        this.foreHandle += this.coord;
+
+        return this;
+    }
+
+    /// <summary>
+    /// Rotates this knot's fore and rear handles by an angle in radians.
+    /// </summary>
+    /// <param name="radians">angle</param>
+    /// <returns>this knot</returns>
+    public Knot2 RotateHandles (in float radians)
+    {
+        float sina = 0.0f;
+        float cosa = 0.0f;
+        Utils.SinCos (radians, out sina, out cosa);
+        return this.RotateHandles (cosa, sina);
+    }
+
+    /// <summary>
+    /// Rotates this knot's fore and rear handles by the cosine and sine of an
+    /// angle.
+    /// </summary>
+    /// <param name="cosa">cosine</param>
+    /// <param name="sina">sine</param>
+    /// <returns>this knot</returns>
+    public Knot2 RotateHandles (in float cosa, in float sina)
+    {
+        this.RotateForeHandle (cosa, sina);
+        this.RotateRearHandle (cosa, sina);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Rotates this knot's rear handle by an angle in radians.
+    /// </summary>
+    /// <param name="radians">angle</param>
+    /// <returns>this knot</returns>
+    public Knot2 RotateRearHandle (in float radians)
+    {
+        float sina = 0.0f;
+        float cosa = 0.0f;
+        Utils.SinCos (radians, out sina, out cosa);
+        return this.RotateRearHandle (cosa, sina);
+    }
+
+    /// <summary>
+    /// Rotates this knot's rear handle by the cosine and sine of an angle.
+    /// </summary>
+    /// <param name="cosa">cosine</param>
+    /// <param name="sina">sine</param>
+    /// <returns>this knot</returns>
+    public Knot2 RotateRearHandle (in float cosa, in float sina)
+    {
+        this.rearHandle -= this.coord;
+        this.rearHandle = Vec2.RotateZ (this.rearHandle, cosa, sina);
+        this.rearHandle += this.coord;
 
         return this;
     }
@@ -534,7 +624,8 @@ public class Knot2
     }
 
     /// <summary>
-    /// Evaluates a point between two knots given an origin, destination and a step.
+    /// Evaluates a point between two knots given an origin, destination and a
+    /// step.
     /// </summary>
     /// <param name="a">origin</param>
     /// <param name="b">destination</param>
@@ -564,7 +655,8 @@ public class Knot2
     }
 
     /// <summary>
-    /// Evaluates a normalized tangent given an origin, a destination knot and a step.
+    /// Evaluates a normalized tangent given an origin, a destination knot and a
+    /// step.
     /// </summary>
     /// <param name="a">origin</param>
     /// <param name="b">destination</param>
@@ -640,8 +732,8 @@ public class Knot2
     /// <summary>
     /// Sets a knot from line segment. Assumes that that the previous knot's
     /// coordinate is set to the first anchor point. The previous knot's fore
-    /// handle, the next knot's rear handle and the next knot's coordinate are set
-    /// by this function.
+    /// handle, the next knot's rear handle and the next knot's coordinate are
+    /// set by this function.
     /// </summary>
     /// <param name="nextAnchor">next anchor</param>
     /// <param name="prev">previous knot</param>
@@ -655,8 +747,8 @@ public class Knot2
     /// <summary>
     /// Sets a knot from line segment. Assumes that that the previous knot's
     /// coordinate is set to the first anchor point. The previous knot's fore
-    /// handle, the next knot's rear handle and the next knot's coordinate are set
-    /// by this function.
+    /// handle, the next knot's rear handle and the next knot's coordinate are
+    /// set by this function.
     /// </summary>
     /// <param name="xNextAnchor">next anchor x</param>
     /// <param name="yNextAnchor">next anchor y</param>

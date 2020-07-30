@@ -58,10 +58,7 @@ public class Curve3 : IEnumerable
         }
     }
 
-    public Curve3 ( )
-    {
-        this.Reset ( );
-    }
+    public Curve3 ( ) { }
 
     public Curve3 (bool cl, params Knot3[ ] kn)
     {
@@ -87,7 +84,8 @@ public class Curve3 : IEnumerable
 
     public Curve3 Append (Knot3 knot)
     {
-        if (knot != null) this.knots.Add (knot);
+        // if (knot != null) this.knots.Add (knot);
+        this.knots.Add (knot);
         return this;
     }
 
@@ -96,8 +94,9 @@ public class Curve3 : IEnumerable
         int len = kn.Length;
         for (int i = 0; i < len; ++i)
         {
-            Knot3 knot = kn[i];
-            if (knot != null) this.knots.Add (knot);
+            // Knot3 knot = kn[i];
+            // if (knot != null) this.knots.Add (knot);
+            this.knots.Add (kn[i]);
         }
         return this;
     }
@@ -124,17 +123,18 @@ public class Curve3 : IEnumerable
 
     public Curve3 Insert (in int i, Knot3 knot)
     {
-        if (knot != null)
-        {
-            int k = this.closedLoop ? Utils.Mod (i, this.knots.Count + 1) : i;
-            this.knots.Insert (k, knot);
-        }
+        // if (knot != null)
+        // {
+        int k = this.closedLoop ? Utils.Mod (i, this.knots.Count + 1) : i;
+        this.knots.Insert (k, knot);
+        // }
         return this;
     }
 
     public Curve3 Prepend (Knot3 knot)
     {
-        if (knot != null) this.knots.Insert (0, knot);
+        // if (knot != null) this.knots.Insert (0, knot);
+        this.knots.Insert (0, knot);
         return this;
     }
 
@@ -144,11 +144,14 @@ public class Curve3 : IEnumerable
         for (int i = 0, j = 0; i < len; ++i)
         {
             Knot3 knot = kn[i];
-            if (knot != null)
-            {
-                this.knots.Insert (j, knot);
-                ++j;
-            }
+            // if (knot != null)
+            // {
+            //     this.knots.Insert (j, knot);
+            //     ++j;
+            // }
+
+            this.knots.Insert (j, knot);
+            ++j;
         }
         return this;
     }
@@ -169,20 +172,6 @@ public class Curve3 : IEnumerable
     public Knot3 RemoveLast ( )
     {
         return this.RemoveAt (this.knots.Count - 1);
-    }
-
-    public Curve3 Reset ( )
-    {
-        this.Resize (2);
-        Knot3 kn0 = this.knots[0];
-        Knot3 kn1 = this.knots[1];
-
-        this.knots[0].Set (-0.5f, 0.0f, 0.0f, -0.25f, 0.25f, 0.0f, -0.75f, -0.25f, 0.0f);
-        this.knots[1].Set (0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-
-        this.closedLoop = false;
-
-        return this;
     }
 
     protected Curve3 Resize (in int len)

@@ -16,8 +16,8 @@ public class Knot3
     protected Vec3 coord;
 
     /// <summary>
-    /// The handle which warps the curve segment heading away from the knot along
-    /// the direction of the curve.
+    /// The handle which warps the curve segment heading away from the knot
+    /// along the direction of the curve.
     /// </summary>
     protected Vec3 foreHandle;
 
@@ -45,8 +45,8 @@ public class Knot3
     }
 
     /// <summary>
-    /// The handle which warps the curve segment heading away from the knot along
-    /// the direction of the curve.
+    /// The handle which warps the curve segment heading away from the knot
+    /// along the direction of the curve.
     /// </summary>
     /// <value>fore handle</value>
     public Vec3 ForeHandle
@@ -91,14 +91,16 @@ public class Knot3
     }
 
     /// <summary>
-    /// Creates a knot from a coordinate. The forehandle and rearhandle are offset by a small amount.
+    /// Creates a knot from a coordinate. The forehandle and rearhandle are
+    /// offset by a small amount.
     /// </summary>
     /// <param name="coord">coordinate</param>
     public Knot3 (Vec3 coord)
     {
         this.coord = coord;
-        this.foreHandle = this.coord + Utils.Epsilon;
-        this.rearHandle = this.coord - Utils.Epsilon;
+        Vec3 eps = Vec3.CopySign (Utils.Epsilon, this.coord);
+        this.foreHandle = this.coord + eps;
+        this.rearHandle = this.coord - eps;
     }
 
     /// <summary>
@@ -118,23 +120,28 @@ public class Knot3
     }
 
     /// <summary>
-    /// Creates a knot from real numbers. The forehandle and rearhandle are offset by a small amount.
+    /// Creates a knot from real numbers. The forehandle and rearhandle are
+    /// offset by a small amount.
     /// </summary>
     /// <param name="xCo">x coordinate</param>
     /// <param name="yCo">y coordinate</param>
     /// <param name="zCo">y coordinate</param>
     public Knot3 (in float xCo, in float yCo, in float zCo = 0.0f)
     {
+        float xEps = Utils.CopySign (Utils.Epsilon, xCo);
+        float yEps = Utils.CopySign (Utils.Epsilon, yCo);
+        float zEps = Utils.CopySign (Utils.Epsilon, zCo);
+
         this.Set (
             xCo, yCo, zCo,
 
-            xCo + Utils.Epsilon,
-            yCo + Utils.Epsilon,
-            zCo + Utils.Epsilon,
+            xCo + xEps,
+            yCo + yEps,
+            zCo + zEps,
 
-            xCo - Utils.Epsilon,
-            yCo - Utils.Epsilon,
-            zCo - Utils.Epsilon);
+            xCo - xEps,
+            yCo - yEps,
+            zCo - zEps);
     }
 
     /// <summary>
@@ -254,8 +261,8 @@ public class Knot3
     }
 
     /// <summary>
-    /// Sets the forward-facing handle to mirror the rear-facing handle: the fore
-    /// will have the same magnitude and negated direction of the rear.
+    /// Sets the forward-facing handle to mirror the rear-facing handle: the
+    /// fore will have the same magnitude and negated direction of the rear.
     /// </summary>
     /// <returns>this knot</returns>
     public Knot3 MirrorHandlesBackward ( )
@@ -265,8 +272,8 @@ public class Knot3
     }
 
     /// <summary>
-    /// Sets the rear-facing handle to mirror the forward-facing handle: the rear
-    /// will have the same magnitude and negated direction of the fore.
+    /// Sets the rear-facing handle to mirror the forward-facing handle: the
+    /// rear will have the same magnitude and negated direction of the fore.
     /// </summary>
     /// <returns>this knot</returns>
     public Knot3 MirrorHandlesForward ( )
@@ -325,8 +332,9 @@ public class Knot3
     /// Rotates this knot around an axis by an angle in radians. The axis is
     /// assumed to be of unit length.
     ///
-    /// Accepts pre-calculated sine and cosine of an angle, so that collections of
-    /// knots can be efficiently rotated without repeatedly calling cos and sin.
+    /// Accepts pre-calculated sine and cosine of an angle, so that collections
+    /// of knots can be efficiently rotated without repeatedly calling cos and
+    /// sin.
     /// </summary>
     /// <param name="cosa">cosine of the angle</param>
     /// <param name="sina">sine of the angle</param>
@@ -337,6 +345,50 @@ public class Knot3
         this.coord = Vec3.Rotate (this.coord, cosa, sina, axis);
         this.foreHandle = Vec3.Rotate (this.foreHandle, cosa, sina, axis);
         this.rearHandle = Vec3.Rotate (this.rearHandle, cosa, sina, axis);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Rotates this knot's fore handle by a quaternion with its coordinate
+    /// serving as a pivot.
+    /// </summary>
+    /// <param name="q">quaternion</param>
+    /// <returns>this knot</returns>
+    public Knot3 RotateForeHandle (in Quat q)
+    {
+        this.foreHandle -= this.coord;
+        this.foreHandle = Quat.MulVector (q, this.foreHandle);
+        this.foreHandle += this.coord;
+
+        return this;
+    }
+
+    /// <summary>
+    /// Rotates this knot's handles by a quaternion with its coordinate serving
+    /// as a pivot.
+    /// </summary>
+    /// <param name="q">quaternion</param>
+    /// <returns>this knot</returns>
+    public Knot3 RotateHandles (in Quat q)
+    {
+        this.RotateForeHandle (q);
+        this.RotateRearHandle (q);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Rotates this knot's rear handle by a quaternion with its coordinate
+    /// serving as a pivot.
+    /// </summary>
+    /// <param name="q">quaternion</param>
+    /// <returns>this knot</returns>
+    public Knot3 RotateRearHandle (in Quat q)
+    {
+        this.rearHandle -= this.coord;
+        this.rearHandle = Quat.MulVector (q, this.rearHandle);
+        this.rearHandle += this.coord;
 
         return this;
     }
@@ -645,7 +697,8 @@ public class Knot3
     }
 
     /// <summary>
-    /// Evaluates a point between two knots given an origin, destination and a step.
+    /// Evaluates a point between two knots given an origin, destination and a
+    /// step.
     /// </summary>
     /// <param name="a">origin</param>
     /// <param name="b">destination</param>
@@ -675,7 +728,8 @@ public class Knot3
     }
 
     /// <summary>
-    /// Evaluates a normalized tangent given an origin, a destination knot and a step.
+    /// Evaluates a normalized tangent given an origin, a destination knot and a
+    /// step.
     /// </summary>
     /// <param name="a">origin</param>
     /// <param name="b">destination</param>
@@ -749,5 +803,147 @@ public class Knot3
     public static Vec3 RearVec (in Knot3 knot)
     {
         return knot.rearHandle - knot.coord;
+    }
+
+    public static Vec3 SmoothHandles (in Knot3 prev, in Knot3 curr, in Knot3 next, in Vec3 carry)
+    {
+        Vec3 coCurr = curr.coord;
+        Vec3 coPrev = prev.coord;
+        Vec3 coNext = next.coord;
+
+        float backx = coPrev.x - coCurr.x;
+        float backy = coPrev.y - coCurr.y;
+        float backz = coPrev.z - coCurr.z;
+
+        float forex = coNext.x - coCurr.x;
+        float forey = coNext.y - coCurr.y;
+        float forez = coNext.z - coCurr.z;
+
+        float bmSq = backx * backx + backy * backy + backz * backz;
+        float bmInv = bmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
+
+        float fmSq = forex * forex + forey * forey + forez * forez;
+        float fmInv = fmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (fmSq) : 0.0f;
+
+        float dirx = carry.x + backx * bmInv - forex * fmInv;
+        float diry = carry.y + backy * bmInv - forey * fmInv;
+        float dirz = carry.z + backz * bmInv - forez * fmInv;
+
+        float dmSq = dirx * dirx +
+            diry * diry +
+            dirz * dirz;
+        float rescl = dmSq != 0.0f ? Utils.OneThird / Utils.SqrtUnchecked (dmSq) : 0.0f;
+
+        float carryx = dirx * rescl;
+        float carryy = diry * rescl;
+        float carryz = dirz * rescl;
+
+        float bMag = bmSq * bmInv;
+        curr.rearHandle = new Vec3 (
+            coCurr.x + bMag * carryx,
+            coCurr.y + bMag * carryy,
+            coCurr.z + bMag * carryz);
+
+        float fMag = fmSq * fmInv;
+        curr.foreHandle = new Vec3 (
+            coCurr.x - fMag * carryx,
+            coCurr.y - fMag * carryy,
+            coCurr.z - fMag * carryz);
+
+        // TODO: Unlike the Java version this needs to return the carry...
+        return new Vec3 (
+            carryx,
+            carryy,
+            carryz);
+    }
+
+    public static Vec3 SmoothHandlesFirst (in Knot3 curr, in Knot3 next, in Vec3 carry)
+    {
+        Vec3 coCurr = curr.coord;
+        Vec3 coNext = next.coord;
+
+        float backx = -coCurr.x;
+        float backy = -coCurr.y;
+        float backz = -coCurr.z;
+
+        float forex = coNext.x - coCurr.x;
+        float forey = coNext.y - coCurr.y;
+        float forez = coNext.z - coCurr.z;
+
+        float bmSq = backx * backx + backy * backy + backz * backz;
+        float bmInv = bmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
+
+        float fmSq = forex * forex + forey * forey + forez * forez;
+        float fmInv = fmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (fmSq) : 0.0f;
+
+        float dirx = carry.x + backx * bmInv - forex * fmInv;
+        float diry = carry.y + backy * bmInv - forey * fmInv;
+        float dirz = carry.z + backz * bmInv - forez * fmInv;
+
+        float dmSq = dirx * dirx +
+            diry * diry +
+            dirz * dirz;
+        float rescl = dmSq != 0.0f ? Utils.OneThird / Utils.SqrtUnchecked (dmSq) : 0.0f;
+
+        float carryx = dirx * rescl;
+        float carryy = diry * rescl;
+        float carryz = dirz * rescl;
+
+        float fMag = fmSq * fmInv;
+        curr.foreHandle = new Vec3 (
+            coCurr.x - fMag * carryx,
+            coCurr.y - fMag * carryy,
+            coCurr.z - fMag * carryz);
+
+        // TODO: Unlike the Java version this needs to return the carry...
+        return new Vec3 (
+            carryx,
+            carryy,
+            carryz);
+    }
+
+    public static Vec3 SmoothHandlesLast (in Knot3 prev, in Knot3 curr, in Vec3 carry)
+    {
+        Vec3 coCurr = curr.coord;
+        Vec3 coPrev = prev.coord;
+
+        float backx = coPrev.x - coCurr.x;
+        float backy = coPrev.y - coCurr.y;
+        float backz = coPrev.z - coCurr.z;
+
+        float forex = -coCurr.x;
+        float forey = -coCurr.y;
+        float forez = -coCurr.z;
+
+        float bmSq = backx * backx + backy * backy + backz * backz;
+        float bmInv = bmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
+
+        float fmSq = forex * forex + forey * forey + forez * forez;
+        float fmInv = fmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (fmSq) : 0.0f;
+
+        float dirx = carry.x + backx * bmInv - forex * fmInv;
+        float diry = carry.y + backy * bmInv - forey * fmInv;
+        float dirz = carry.z + backz * bmInv - forez * fmInv;
+
+        float dmSq = dirx * dirx +
+            diry * diry +
+            dirz * dirz;
+        float rescl = dmSq != 0.0f ? Utils.OneThird / Utils.SqrtUnchecked (dmSq) : 0.0f;
+
+        float carryx = dirx * rescl;
+        float carryy = diry * rescl;
+        float carryz = dirz * rescl;
+
+        float bMag = bmSq * bmInv;
+        curr.rearHandle = new Vec3 (
+            coCurr.x + bMag * carryx,
+            coCurr.y + bMag * carryx,
+            coCurr.z + bMag * carryx);
+
+        // TODO: Unlike the Java version this needs to return the carry...
+        return new Vec3 (
+            carryx,
+            carryy,
+            carryz);
     }
 }

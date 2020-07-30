@@ -94,7 +94,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="y">the y component</param>
     /// <param name="z">the z component</param>
     /// <param name="w">the w component</param>
-    public Vec4 (float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f)
+    public Vec4 (float x, float y, float z, float w)
     {
         this._x = x;
         this._y = y;
@@ -110,7 +110,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="y">the y component</param>
     /// <param name="z">the z component</param>
     /// <param name="w">the w component</param>
-    public Vec4 (in bool x = false, in bool y = false, in bool z = false, in bool w = false)
+    public Vec4 (in bool x, in bool y, in bool z, in bool w)
     {
         this._x = x ? 1.0f : 0.0f;
         this._y = y ? 1.0f : 0.0f;

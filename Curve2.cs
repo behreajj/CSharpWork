@@ -81,10 +81,7 @@ public class Curve2 : IEnumerable
         }
     }
 
-    public Curve2 ( )
-    {
-        this.Reset ( );
-    }
+    public Curve2 ( ) { }
 
     public Curve2 (bool cl, params Knot2[ ] kn)
     {
@@ -115,7 +112,8 @@ public class Curve2 : IEnumerable
     /// <returns>this curve</returns>
     public Curve2 Append (Knot2 knot)
     {
-        if (knot != null) this.knots.Add (knot);
+        // if (knot != null) this.knots.Add (knot);
+        this.knots.Add (knot);
         return this;
     }
 
@@ -126,12 +124,14 @@ public class Curve2 : IEnumerable
     /// <returns>this curve</returns>
     public Curve2 AppendAll (params Knot2[ ] kn)
     {
-        int len = kn.Length;
-        for (int i = 0; i < len; ++i)
-        {
-            Knot2 knot = kn[i];
-            if (knot != null) this.knots.Add (knot);
-        }
+        // int len = kn.Length;
+        // for (int i = 0; i < len; ++i)
+        // {
+        //     Knot2 knot = kn[i];
+        //     if (knot != null) this.knots.Add (knot);
+        // }
+
+        this.knots.AddRange(kn);
         return this;
     }
 
@@ -181,11 +181,11 @@ public class Curve2 : IEnumerable
     /// <returns>the curve</returns>
     public Curve2 Insert (in int i, Knot2 knot)
     {
-        if (knot != null)
-        {
-            int k = this.closedLoop ? Utils.Mod (i, this.knots.Count + 1) : i;
-            this.knots.Insert (k, knot);
-        }
+        // if (knot != null)
+        // {
+        int k = this.closedLoop ? Utils.Mod (i, this.knots.Count + 1) : i;
+        this.knots.Insert (k, knot);
+        // }
         return this;
     }
 
@@ -196,7 +196,8 @@ public class Curve2 : IEnumerable
     /// <returns>this curve</returns>
     public Curve2 Prepend (Knot2 knot)
     {
-        if (knot != null) this.knots.Insert (0, knot);
+        // if (knot != null) this.knots.Insert (0, knot);
+        this.knots.Insert (0, knot);
         return this;
     }
 
@@ -210,12 +211,16 @@ public class Curve2 : IEnumerable
         int len = kn.Length;
         for (int i = 0, j = 0; i < len; ++i)
         {
+            // Knot2 knot = kn[i];
+            // if (knot != null)
+            // {
+            //     this.knots.Insert (j, knot);
+            //     ++j;
+            // }
+
             Knot2 knot = kn[i];
-            if (knot != null)
-            {
-                this.knots.Insert (j, knot);
-                ++j;
-            }
+            this.knots.Insert (j, knot);
+            ++j;
         }
         return this;
     }
@@ -522,7 +527,7 @@ public class Curve2 : IEnumerable
     {
         target.Resize (6);
         target.closedLoop = true;
-        
+
         target[0].Set (0.5f, 0.0f, 0.5f, 0.1309615f, 0.5f, -0.1309615f);
         target[1].Set (0.235709f, 0.166627f, 0.0505335f, 0.114256f, 0.361728f, 0.2022675f);
         target[2].Set (-0.235709f, -0.166627f, -0.361728f, -0.2022675f, -0.0505335f, -0.114256f);

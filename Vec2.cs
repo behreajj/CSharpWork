@@ -66,7 +66,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// </summary>
     /// <param name="x">the x component</param>
     /// <param name="y">the y component</param>
-    public Vec2 (float x = 0.0f, float y = 0.0f)
+    public Vec2 (float x, float y)
     {
         this._x = x;
         this._y = y;
@@ -78,7 +78,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// </summary>
     /// <param name="x">the x component</param>
     /// <param name="y">the y component</param>
-    public Vec2 (in bool x = false, in bool y = false)
+    public Vec2 (in bool x, in bool y)
     {
         this._x = x ? 1.0f : 0.0f;
         this._y = y ? 1.0f : 0.0f;
@@ -1660,6 +1660,19 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         get
         {
             return new Vec2 (1.0f, 0.0f);
+        }
+    }
+
+    /// <summary>
+    /// Returns a vector at the center of a texture coordinate system, (0.5,
+    /// 0.5) .
+    /// </summary>
+    /// <value>the center</value>
+    public static Vec2 UvCenter
+    {
+        get
+        {
+            return new Vec2 (0.5f, 0.5f);
         }
     }
 

@@ -180,8 +180,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Constructs a quaternion from a real number, w, and three imginary numbers:
-    /// x, y and z.
+    /// Constructs a quaternion from a real number, w, and three imaginary
+    /// numbers: x, y and z.
     /// </summary>
     /// <param name="w">real number</param>
     /// <param name="x">x imaginary</param>
@@ -231,8 +231,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Tests this quaternion for equivalence with another in compliance with the
-    /// IEquatable interface.
+    /// Tests this quaternion for equivalence with another in compliance with
+    /// the IEquatable interface.
     /// </summary>
     /// <param name="q">quaternion</param>
     /// <returns>the equivalence</returns>
@@ -258,8 +258,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Returns a float array of length 4 containing this quaternion's components.
-    /// The real component, w, is treated as the first element.
+    /// Returns a float array of length 4 containing this quaternion's
+    /// components. The real component, w, is treated as the first element.
     /// </summary>
     /// <returns>the array</returns>
     public float[ ] ToArray ( )
@@ -330,8 +330,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Converts a quaternion to a four dimensional vector. The quaternion's real
-    /// component is interpreted to be the w component.
+    /// Converts a quaternion to a four dimensional vector. The quaternion's
+    /// real component is interpreted to be the w component.
     /// </summary>
     /// <param name="q">quaternion</param>
     public static explicit operator Vec4 (in Quat q)
@@ -360,8 +360,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// A quaternion evaluates to true when any of its components are not equal to
-    /// zero.
+    /// A quaternion evaluates to true when any of its components are not equal
+    /// to zero.
     /// </summary>
     /// <param name="q">quaternion</param>
     /// <returns>the evaluation</returns>
@@ -393,8 +393,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <summary>
     /// Multiplies two quaternions. Uses the formula:
     ///
-    /// a b := { a.real b.real - dot ( a.imag, b.imag ), cross ( a.imag, b.imag )
-    /// + a.real b.imag + b.real a.imag }
+    /// a b := { a.real b.real - dot ( a.imag, b.imag ), cross ( a.imag, b.imag
+    /// ) + a.real b.imag + b.real a.imag }
     ///
     /// Quaternion multiplication is not commutative.
     /// </summary>
@@ -436,7 +436,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
     /// <summary>
     /// Multiplies a quaternion and a vector; the latter is treated as a pure
-    /// quaternion.
+    /// quaternion, _not_ as a point. Either see MulVector method or use RPR'.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -449,7 +449,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
     /// <summary>
     /// Multiplies a vector and a quaternion; the former is treated as a pure
-    /// quaternion.
+    /// quaternion, _not_ as a point. Either see MulVector method or use RPR'.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -666,8 +666,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Returns the conjugate of the quaternion, where the imaginary component is
-    /// negated.
+    /// Returns the conjugate of the quaternion, where the imaginary component
+    /// is negated.
     ///
     /// a* := { a.real, -a.imag }
     /// </summary>
@@ -679,8 +679,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the dot product of two quaternions by summing the products of their
-    /// corresponding components.
+    /// Finds the dot product of two quaternions by summing the products of
+    /// their corresponding components.
     ///
     /// dot ( a, b ) := a.real b.real + dot ( a.imag, b.imag )
     /// </summary>
@@ -693,10 +693,10 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Sets a quaternion from an angle. The axis is assumed to be (0.0, 0.0, 1.0)
-    /// . Sets the real component of the quaternion to cosine of the angle; the
-    /// imaginary z component is set to the sine. Useful when working in 2.5D,
-    /// where a two-dimensional angle may need to be transferred to a
+    /// Sets a quaternion from an angle. The axis is assumed to be (0.0, 0.0,
+    /// 1.0) . Sets the real component of the quaternion to cosine of the angle;
+    /// the imaginary z component is set to the sine. Useful when working in
+    /// 2.5D, where a two-dimensional angle may need to be transferred to a
     /// three-dimensional transform.
     /// </summary>
     /// <param name="radians">angle</param>
@@ -743,8 +743,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a quaternion with reference to two vectors. This function creates
-    /// normalized copies of the vectors. Uses the formula:
+    /// Creates a quaternion with reference to two vectors. This function
+    /// creates normalized copies of the vectors. Uses the formula:
     ///
     /// fromTo (a, b) := { a . b, a x b }
     /// </summary>
@@ -767,7 +767,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     ///
     /// 1 / a := a* / ( a a* )
     ///
-    /// If a quaternion is of unit length, its inverse is equal to its conjugate.
+    /// If a quaternion is of unit length, its inverse is equal to its
+    /// conjugate.
     /// </summary>
     /// <param name="q">the quaternion</param>
     /// <returns>the inverse</returns>
@@ -777,8 +778,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Multiplies a vector by a quaternion's inverse, allowing a prior rotation,
-    /// allowing a prior rotation to be undone.
+    /// Multiplies a vector by a quaternion's inverse, allowing a prior
+    /// rotation, allowing a prior rotation to be undone.
     /// </summary>
     /// <param name="q">the quaternion</param>
     /// <param name="v">the input vector</param>
@@ -821,7 +822,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Tests to see if a quaternion is pure, i.e. if its real component is zero.
+    /// Tests to see if a quaternion is pure, i.e. if its real component is
+    /// zero.
     /// </summary>
     /// <param name="q">the quaternion</param>
     /// <returns>the evaluation</returns>
@@ -855,9 +857,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the magnitude squared of a quaternion. Equivalent to the dot product
-    /// of a quaternion with itself and to the product of a quaternion with its
-    /// conjugate.
+    /// Finds the magnitude squared of a quaternion. Equivalent to the dot
+    /// product of a quaternion with itself and to the product of a quaternion
+    /// with its conjugate.
     ///
     /// |a|<sup>2</sup> := dot ( a, a )
     ///
@@ -872,8 +874,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
     /// <summary>
     /// Eases between two quaternions by spherical linear interpolation (slerp).
-    /// Chooses the shortest path between two orientations and maintains constant
-    /// speed for a step in [0.0, 1.0] .
+    /// Chooses the shortest path between two orientations and maintains
+    /// constant speed for a step in [0.0, 1.0] .
     /// </summary>
     /// <param name="origin">origin</param>
     /// <param name="dest">destination</param>
@@ -965,10 +967,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Multiplies a vector by a quaternion, in effect rotating the vector by the
-    /// quaternion. Equivalent to promoting the vector to a pure quaternion,
-    /// multiplying the rotation quaternion and promoted vector, then multiplying
-    /// the product by the rotation's inverse.
+    /// Rotates a vector by a quaternion. Equivalent to promoting the vector to
+    /// a pure quaternion, multiplying the rotation quaternion and promoted
+    /// vector, then multiplying the product by the rotation's inverse.
     ///
     /// a b := ( a { 0.0, b } ) / a
     ///
@@ -1010,8 +1011,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Divides a quaternion by its magnitude, such that its new magnitude is one
-    /// and it lies on a 4D hyper-sphere. Uses the formula:
+    /// Divides a quaternion by its magnitude, such that its new magnitude is
+    /// one and it lies on a 4D hyper-sphere. Uses the formula:
     ///
     /// a^ = a / |a|
     ///
@@ -1093,8 +1094,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a vector around the x axis. Accepts calculated sine and cosine of
-    /// half the angle so that collections of quaternions can be efficiently
+    /// Rotates a vector around the x axis. Accepts calculated sine and cosine
+    /// of half the angle so that collections of quaternions can be efficiently
     /// rotated without repeatedly calling cos and sin.
     /// </summary>
     /// <param name="q">the input quaternion</param>
@@ -1129,8 +1130,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a vector around the y axis. Accepts calculated sine and cosine of
-    /// half the angle so that collections of quaternions can be efficiently
+    /// Rotates a vector around the y axis. Accepts calculated sine and cosine
+    /// of half the angle so that collections of quaternions can be efficiently
     /// rotated without repeatedly calling cos and sin.
     /// </summary>
     /// <param name="q">the input quaternion</param>
@@ -1165,8 +1166,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a vector around the z axis. Accepts calculated sine and cosine of
-    /// half the angle so that collections of quaternions can be efficiently
+    /// Rotates a vector around the z axis. Accepts calculated sine and cosine
+    /// of half the angle so that collections of quaternions can be efficiently
     /// rotated without repeatedly calling cos and sin.
     /// </summary>
     /// <param name="q">the input quaternion</param>
@@ -1231,8 +1232,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Converts a quaternion to an axis and angle. The angle is returned from the
-    /// function. The axis is assigned to an output vector.
+    /// Converts a quaternion to an axis and angle. The angle is returned from
+    /// the function. The axis is assigned to an output vector.
     ///
     /// Returns a named value tuple containing the angle and axis.
     /// </summary>
@@ -1251,8 +1252,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         float wNorm = q.real * Utils.InvSqrtUnchecked (mSq);
         float angle = 2.0f * Utils.Acos (wNorm);
         float wAsin = Utils.Tau - angle;
-        // float wAsin = Utils.Pi - angle;
-        // float wAsin = Utils.Asin(wNorm);
+        // float wAsin = Utils.Pi - angle; float wAsin = Utils.Asin(wNorm);
 
         if (wAsin == 0.0f)
         {
