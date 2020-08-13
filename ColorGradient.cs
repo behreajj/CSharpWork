@@ -215,12 +215,6 @@ public class ColorGradient : IEnumerable
       return result;
     }
   }
-  // public Key[] GetKeys ( )
-  // {
-  //   Key[ ] result = new Key[this.keys.Count];
-  //   this.keys.CopyTo (result);
-  //   return result;
-  // }
 
   /// <summary>
   /// Returns the number of color keys in this gradient.

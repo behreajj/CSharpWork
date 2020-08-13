@@ -96,7 +96,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="g">green channel</param>
     /// <param name="b">blue channel</param>
     /// <param name="a">alpha channel</param>
-    public Clr (byte r = 255, byte g = 255, byte b = 255, byte a = 255)
+    public Clr (in byte r = 255, in byte g = 255, in byte b = 255, in byte a = 255)
     {
         this._r = r * Utils.One255;
         this._g = g * Utils.One255;
@@ -112,7 +112,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="g">green channel</param>
     /// <param name="b">blue channel</param>
     /// <param name="a">alpha channel</param>
-    public Clr (sbyte r = -1, sbyte g = -1, sbyte b = -1, sbyte a = -1)
+    public Clr (in sbyte r = -1, in sbyte g = -1, in sbyte b = -1, in sbyte a = -1)
     {
         this._r = (((int) r) & 0xff) * Utils.One255;
         this._g = (((int) g) & 0xff) * Utils.One255;
@@ -128,7 +128,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="g">green channel</param>
     /// <param name="b">blue channel</param>
     /// <param name="a">alpha channel</param>
-    public Clr (float r = 1.0f, float g = 1.0f, float b = 1.0f, float a = 1.0f)
+    public Clr (in float r = 1.0f, in float g = 1.0f, in float b = 1.0f, in float a = 1.0f)
     {
         this._r = Utils.Clamp (r, 0.0f, 1.0f);
         this._g = Utils.Clamp (g, 0.0f, 1.0f);
@@ -263,7 +263,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// channels.
     /// </summary>
     /// <param name="ub">value</param>
-    public static explicit operator Clr (byte ub)
+    public static explicit operator Clr (in byte ub)
     {
         return new Clr (ub, ub, ub, ub);
     }
@@ -273,7 +273,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// channels.
     /// </summary>
     /// <param name="sb">value</param>
-    public static explicit operator Clr (sbyte sb)
+    public static explicit operator Clr (in sbyte sb)
     {
         return new Clr (sb, sb, sb, sb);
     }
@@ -282,7 +282,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// Converts a float to a color by supplying it to all the color's channels.
     /// </summary>
     /// <param name="v">value</param>
-    public static explicit operator Clr (float v)
+    public static explicit operator Clr (in float v)
     {
         return new Clr (v, v, v, v);
     }

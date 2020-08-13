@@ -173,8 +173,10 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="real">real number</param>
     /// <param name="imag">imaginary vector</param>
-    public Quat (float real = 1.0f, Vec3 imag = new Vec3 ( ))
+    public Quat (in float real = 1.0f, in Vec3 imag = new Vec3 ( ))
     {
+        // TODO: Look up poincare duality, involute, outer product (meet) and regressive product (join).
+
         this.real = real;
         this.imag = imag;
     }
@@ -187,7 +189,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <param name="x">x imaginary</param>
     /// <param name="y">y imaginary</param>
     /// <param name="z">z imaginary</param>
-    public Quat (float w = 1.0f, float x = 0.0f, float y = 0.0f, float z = 0.0f)
+    public Quat (in float w = 1.0f, in float x = 0.0f, in float y = 0.0f, in float z = 0.0f)
     {
         this.real = w;
         this.imag = new Vec3 (x, y, z);
@@ -305,7 +307,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// Promotes a real number to a quaternion.
     /// </summary>
     /// <param name="v">real number</param>
-    public static implicit operator Quat (float v)
+    public static implicit operator Quat (in float v)
     {
         return new Quat (v, new Vec3 (0.0f, 0.0f, 0.0f));
     }

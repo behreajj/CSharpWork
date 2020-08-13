@@ -81,7 +81,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="x">the x component</param>
     /// <param name="y">the y component</param>
     /// <param name="z">the z component</param>
-    public Vec3 (float x, float y, float z)
+    public Vec3 (in float x, in float y, in float z)
     {
         this._x = x;
         this._y = y;
@@ -237,7 +237,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// components.
     /// </summary>
     /// <param name="s">the scalar</param>
-    public static implicit operator Vec3 (float s)
+    public static implicit operator Vec3 (in float s)
     {
         return new Vec3 (s, s, s);
     }
@@ -1650,6 +1650,27 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Rescale (in Vec3 v, in float scalar)
     {
         return Utils.Div (scalar, Vec3.Mag (v)) * v;
+    }
+
+    /// <summary>
+    /// Resizes an array of vectors to a requested length.
+    /// </summary>
+    /// <param name="arr">array</param>
+    /// <param name="sz">new size</param>
+    /// <returns>the resized array</returns>
+    public static Vec3[ ] Resize (in Vec3[ ] arr, in int sz)
+    {
+        if (sz < 1) return new Vec3[ ] { };
+        Vec3[ ] result = new Vec3[sz];
+
+        if (arr != null)
+        {
+            int len = arr.Length;
+            int end = sz > len ? len : sz;
+            System.Array.Copy (arr, result, end);
+        }
+
+        return result;
     }
 
     /// <summary>

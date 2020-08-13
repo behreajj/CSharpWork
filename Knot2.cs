@@ -95,7 +95,7 @@ public class Knot2
     /// offset by a small amount.
     /// </summary>
     /// <param name="coord">coordinate</param>
-    public Knot2 (Vec2 coord)
+    public Knot2 (in Vec2 coord)
     {
         this.coord = coord;
         Vec2 eps = Vec2.CopySign (Utils.Epsilon, this.coord);
@@ -109,10 +109,7 @@ public class Knot2
     /// <param name="coord">coordinate</param>
     /// <param name="foreHandle">fore handle</param>
     /// <param name="rearHandle">rear handle</param>
-    public Knot2 (
-        Vec2 coord,
-        Vec2 foreHandle,
-        Vec2 rearHandle)
+    public Knot2 (in Vec2 coord, in Vec2 foreHandle, in Vec2 rearHandle)
     {
         this.coord = coord;
         this.foreHandle = foreHandle;
@@ -618,7 +615,7 @@ public class Knot2
     /// Converts a vector to a knot.
     /// </summary>
     /// <param name="v">vector</param>
-    public static implicit operator Knot2 (Vec2 v)
+    public static implicit operator Knot2 (in Vec2 v)
     {
         return new Knot2 (v);
     }

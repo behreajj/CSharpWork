@@ -102,10 +102,7 @@ public class Transform3
     /// <param name="location">location</param>
     /// <param name="rotation">rotation</param>
     /// <param name="scale">scale</param>
-    public Transform3 (
-        Vec3 location,
-        Quat rotation,
-        Vec3 scale)
+    public Transform3 (in Vec3 location, in Quat rotation, in Vec3 scale)
     {
         this.Location = location;
         this.Rotation = rotation;
@@ -125,10 +122,7 @@ public class Transform3
     /// <param name="width">x scale</param>
     /// <param name="height">y scale</param>
     /// <param name="depth">z scale</param>
-    public Transform3 (
-        float x, float y, float z,
-        float real, float i, float j, float k,
-        float width, float height, float depth)
+    public Transform3 (in float x, in float y, in float z, in float real, in float i, in float j, in float k, in float width, in float height, in float depth)
     {
         this.Location = new Vec3 (x, y, z);
         this.Rotation = new Quat (real, new Vec3 (i, j, k));

@@ -108,10 +108,7 @@ public class Transform2
     /// <param name="location">location</param>
     /// <param name="rotation">rotation</param>
     /// <param name="scale">scale</param>
-    public Transform2 (
-        Vec2 location,
-        float rotation,
-        Vec2 scale)
+    public Transform2 (in Vec2 location, in float rotation, in Vec2 scale)
     {
         this.Location = location;
         this.Rotation = rotation;
@@ -126,10 +123,7 @@ public class Transform2
     /// <param name="rotation">rotation</param>
     /// <param name="width">x scale</param>
     /// <param name="height">y scale</param>
-    public Transform2 (
-        float x, float y,
-        float rotation,
-        float width, float height)
+    public Transform2 (in float x, in float y, in float rotation, in float width, in float height)
     {
         this.Location = new Vec2 (x, y);
         this.Rotation = rotation;

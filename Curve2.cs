@@ -63,6 +63,11 @@ public class Curve2 : IEnumerable
         }
     }
 
+    /// <summary>
+    /// Retrieves a knot from this curve. If the curve is a closed loop, wraps
+    /// the index by the number of elements in the list of knots.
+    /// </summary>
+    /// <value>knot</value>
     public Knot2 this [int i]
     {
         get
@@ -73,6 +78,13 @@ public class Curve2 : IEnumerable
         }
     }
 
+    /// <summary>
+    /// Evaluates the coordinate and normalized tangent given a step in the
+    /// range [0.0, 1.0] .
+    ///
+    /// Returns a named value tuple containing two vectors.
+    /// </summary>
+    /// <value>tuple</value>
     public (Vec2 coord, Vec2 tangent) this [float i]
     {
         get
@@ -81,14 +93,26 @@ public class Curve2 : IEnumerable
         }
     }
 
+    /// <summary>
+    /// The default curve constructor.
+    /// </summary>
     public Curve2 ( ) { }
 
+    /// <summary>
+    /// Creates a curve from a list of knots and a closed loop flag.
+    /// </summary>
+    /// <param name="cl">closed loop</param>
+    /// <param name="kn">knots</param>
     public Curve2 (bool cl, params Knot2[ ] kn)
     {
         this.closedLoop = cl;
         this.AppendAll (kn);
     }
 
+    /// <summary>
+    /// Returns a hash code representing this curve.
+    /// </summary>
+    /// <returns>the hash code</returns>
     public override int GetHashCode ( )
     {
         unchecked
@@ -100,6 +124,10 @@ public class Curve2 : IEnumerable
         }
     }
 
+    /// <summary>
+    /// Returns a string representation of this curve.
+    /// </summary>
+    /// <returns>string</returns>
     public override string ToString ( )
     {
         return this.ToString (4);
@@ -112,7 +140,6 @@ public class Curve2 : IEnumerable
     /// <returns>this curve</returns>
     public Curve2 Append (Knot2 knot)
     {
-        // if (knot != null) this.knots.Add (knot);
         this.knots.Add (knot);
         return this;
     }
@@ -124,13 +151,6 @@ public class Curve2 : IEnumerable
     /// <returns>this curve</returns>
     public Curve2 AppendAll (params Knot2[ ] kn)
     {
-        // int len = kn.Length;
-        // for (int i = 0; i < len; ++i)
-        // {
-        //     Knot2 knot = kn[i];
-        //     if (knot != null) this.knots.Add (knot);
-        // }
-
         this.knots.AddRange(kn);
         return this;
     }
@@ -181,11 +201,8 @@ public class Curve2 : IEnumerable
     /// <returns>the curve</returns>
     public Curve2 Insert (in int i, Knot2 knot)
     {
-        // if (knot != null)
-        // {
         int k = this.closedLoop ? Utils.Mod (i, this.knots.Count + 1) : i;
         this.knots.Insert (k, knot);
-        // }
         return this;
     }
 
@@ -196,7 +213,6 @@ public class Curve2 : IEnumerable
     /// <returns>this curve</returns>
     public Curve2 Prepend (Knot2 knot)
     {
-        // if (knot != null) this.knots.Insert (0, knot);
         this.knots.Insert (0, knot);
         return this;
     }
@@ -211,13 +227,6 @@ public class Curve2 : IEnumerable
         int len = kn.Length;
         for (int i = 0, j = 0; i < len; ++i)
         {
-            // Knot2 knot = kn[i];
-            // if (knot != null)
-            // {
-            //     this.knots.Insert (j, knot);
-            //     ++j;
-            // }
-
             Knot2 knot = kn[i];
             this.knots.Insert (j, knot);
             ++j;
@@ -400,7 +409,7 @@ public class Curve2 : IEnumerable
     /// Transforms all knots in the curve by a matrix.
     /// </summary>
     /// <param name="m">matrix</param>
-    /// <returns></returns>
+    /// <returns>this curve</returns>
     public Curve2 Transform (in Mat3 m)
     {
         foreach (Knot2 kn in this.knots) kn.Transform (m);
@@ -416,7 +425,7 @@ public class Curve2 : IEnumerable
     /// Useful when consolidating multiple curve entities into one curve entity.
     /// </summary>
     /// <param name="tr"></param>
-    /// <returns></returns>
+    /// <returns>this curve</returns>
     public Curve2 Transform (in Transform2 tr)
     {
         foreach (Knot2 kn in this.knots) kn.Transform (tr);
@@ -534,6 +543,7 @@ public class Curve2 : IEnumerable
         target[3].Set (-0.5f, 0.0f, -0.5f, 0.1309615f, -0.5f, -0.1309615f);
         target[4].Set (-0.235709f, 0.166627f, -0.0505335f, 0.114256f, -0.361728f, 0.2022675f);
         target[5].Set (0.235709f, -0.166627f, 0.361728f, -0.2022675f, 0.0505335f, -0.114256f);
+
         return target;
     }
 }

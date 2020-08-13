@@ -1233,12 +1233,15 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         float x2 = x + x;
         float y2 = y + y;
         float z2 = z + z;
+
         float xsq2 = x * x2;
         float ysq2 = y * y2;
         float zsq2 = z * z2;
+
         float xy2 = x * y2;
         float xz2 = x * z2;
         float yz2 = y * z2;
+
         float wx2 = w * x2;
         float wy2 = w * y2;
         float wz2 = w * z2;

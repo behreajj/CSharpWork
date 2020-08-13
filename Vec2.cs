@@ -66,7 +66,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// </summary>
     /// <param name="x">the x component</param>
     /// <param name="y">the y component</param>
-    public Vec2 (float x, float y)
+    public Vec2 (in float x, in float y)
     {
         this._x = x;
         this._y = y;
@@ -212,7 +212,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// components.
     /// </summary>
     /// <param name="s">the scalar</param>
-    public static implicit operator Vec2 (float s)
+    public static implicit operator Vec2 (in float s)
     {
         return new Vec2 (s, s);
     }
@@ -1461,6 +1461,27 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     public static Vec2 Rescale (in Vec2 v, in float scalar = 1.0f)
     {
         return Utils.Div (scalar, Vec2.Mag (v)) * v;
+    }
+
+    /// <summary>
+    /// Resizes an array of vectors to a requested length.
+    /// </summary>
+    /// <param name="arr">array</param>
+    /// <param name="sz">new size</param>
+    /// <returns>the resized array</returns>
+    public static Vec2[ ] Resize (in Vec2[ ] arr, in int sz)
+    {
+        if (sz < 1) return new Vec2[ ] { };
+        Vec2[ ] result = new Vec2[sz];
+
+        if (arr != null)
+        {
+            int len = arr.Length;
+            int end = sz > len ? len : sz;
+            System.Array.Copy (arr, result, end);
+        }
+
+        return result;
     }
 
     /// <summary>

@@ -61,7 +61,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="real">real number</param>
     /// <param name="imag">imaginary number</param>
-    public Complex (float real = 0.0f, float imag = 0.0f)
+    public Complex (in float real = 0.0f, in float imag = 0.0f)
     {
         this.real = real;
         this.imag = imag;
@@ -185,7 +185,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// Promotes a real number to a complex number.
     /// </summary>
     /// <param name="s">real number</param>
-    public static implicit operator Complex (float s)
+    public static implicit operator Complex (in float s)
     {
         return new Complex (s, 0.0f);
     }

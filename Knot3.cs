@@ -95,7 +95,7 @@ public class Knot3
     /// offset by a small amount.
     /// </summary>
     /// <param name="coord">coordinate</param>
-    public Knot3 (Vec3 coord)
+    public Knot3 (in Vec3 coord)
     {
         this.coord = coord;
         Vec3 eps = Vec3.CopySign (Utils.Epsilon, this.coord);
@@ -109,10 +109,7 @@ public class Knot3
     /// <param name="coord">coordinate</param>
     /// <param name="foreHandle">fore handle</param>
     /// <param name="rearHandle">rear handle</param>
-    public Knot3 (
-        Vec3 coord,
-        Vec3 foreHandle,
-        Vec3 rearHandle)
+    public Knot3 (in Vec3 coord, in Vec3 foreHandle, in Vec3 rearHandle)
     {
         this.coord = coord;
         this.foreHandle = foreHandle;
@@ -310,6 +307,20 @@ public class Knot3
         Vec3 temp = this.foreHandle;
         this.foreHandle = this.rearHandle;
         this.rearHandle = temp;
+
+        return this;
+    }
+
+    /// <summary>
+    /// Rotates this knot by a quaternion.
+    /// </summary>
+    /// <param name="q">quaternion</param>
+    /// <returns>this knot</returns>
+    public Knot3 Rotate (in Quat q)
+    {
+        this.coord = Quat.MulVector (q, this.coord);
+        this.foreHandle = Quat.MulVector (q, this.foreHandle);
+        this.rearHandle = Quat.MulVector (q, this.rearHandle);
 
         return this;
     }
@@ -682,7 +693,7 @@ public class Knot3
     /// Converts a vector to a knot.
     /// </summary>
     /// <param name="v">vector</param>
-    public static implicit operator Knot3 (Vec3 v)
+    public static implicit operator Knot3 (in Vec3 v)
     {
         return new Knot3 (v);
     }
@@ -691,7 +702,7 @@ public class Knot3
     /// Promotes a 2D knot to a 3D knot.
     /// </summary>
     /// <param name="k">knot</param>
-    public static implicit operator Knot3 (Knot2 k)
+    public static implicit operator Knot3 (in Knot2 k)
     {
         return new Knot3 (k.Coord, k.ForeHandle, k.RearHandle);
     }
@@ -850,7 +861,6 @@ public class Knot3
             coCurr.y - fMag * carryy,
             coCurr.z - fMag * carryz);
 
-        // TODO: Unlike the Java version this needs to return the carry...
         return new Vec3 (
             carryx,
             carryy,
@@ -871,19 +881,17 @@ public class Knot3
         float forez = coNext.z - coCurr.z;
 
         float bmSq = backx * backx + backy * backy + backz * backz;
-        float bmInv = bmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
+        float bmInv = bmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
 
         float fmSq = forex * forex + forey * forey + forez * forez;
-        float fmInv = fmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (fmSq) : 0.0f;
+        float fmInv = fmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked (fmSq) : 0.0f;
 
         float dirx = carry.x + backx * bmInv - forex * fmInv;
         float diry = carry.y + backy * bmInv - forey * fmInv;
         float dirz = carry.z + backz * bmInv - forez * fmInv;
 
-        float dmSq = dirx * dirx +
-            diry * diry +
-            dirz * dirz;
-        float rescl = dmSq != 0.0f ? Utils.OneThird / Utils.SqrtUnchecked (dmSq) : 0.0f;
+        float dmSq = dirx * dirx + diry * diry + dirz * dirz;
+        float rescl = dmSq > 0.0f ? Utils.OneThird / Utils.SqrtUnchecked (dmSq) : 0.0f;
 
         float carryx = dirx * rescl;
         float carryy = diry * rescl;
@@ -895,7 +903,6 @@ public class Knot3
             coCurr.y - fMag * carryy,
             coCurr.z - fMag * carryz);
 
-        // TODO: Unlike the Java version this needs to return the carry...
         return new Vec3 (
             carryx,
             carryy,
@@ -916,19 +923,17 @@ public class Knot3
         float forez = -coCurr.z;
 
         float bmSq = backx * backx + backy * backy + backz * backz;
-        float bmInv = bmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
+        float bmInv = bmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
 
         float fmSq = forex * forex + forey * forey + forez * forez;
-        float fmInv = fmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (fmSq) : 0.0f;
+        float fmInv = fmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked (fmSq) : 0.0f;
 
         float dirx = carry.x + backx * bmInv - forex * fmInv;
         float diry = carry.y + backy * bmInv - forey * fmInv;
         float dirz = carry.z + backz * bmInv - forez * fmInv;
 
-        float dmSq = dirx * dirx +
-            diry * diry +
-            dirz * dirz;
-        float rescl = dmSq != 0.0f ? Utils.OneThird / Utils.SqrtUnchecked (dmSq) : 0.0f;
+        float dmSq = dirx * dirx + diry * diry + dirz * dirz;
+        float rescl = dmSq > 0.0f ? Utils.OneThird / Utils.SqrtUnchecked (dmSq) : 0.0f;
 
         float carryx = dirx * rescl;
         float carryy = diry * rescl;
@@ -940,7 +945,6 @@ public class Knot3
             coCurr.y + bMag * carryx,
             coCurr.z + bMag * carryx);
 
-        // TODO: Unlike the Java version this needs to return the carry...
         return new Vec3 (
             carryx,
             carryy,
