@@ -1031,6 +1031,20 @@ public static class Utils
     }
 
     /// <summary>
+    /// Finds the tangent of an angle. Equivalent to dividing the sine of the
+    /// angle by the cosine.
+    /// </summary>
+    /// <param name="radians">the angle</param>
+    /// <returns>the tangent</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static float Tan (in float radians)
+    {
+        double rd = (double) radians;
+        double cost = Math.Cos (rd);
+        return cost != 0.0d ? (float) (Math.Sin (rd) / cost) : 0.0f;
+    }
+
+    /// <summary>
     /// Returns a String representation of a single precision real number
     /// truncated to the number of places.
     /// </summary>

@@ -666,8 +666,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the angle</returns>
     public static float AngleBetween (in Vec3 a, in Vec3 b)
     {
-        if (Vec3.None (a) || Vec3.None (b)) return 0.0f;
-        return Utils.Acos (Vec3.Dot (a, b) / (Vec3.Mag (a) * Vec3.Mag (b)));
+        return Vec3.Any (a) && Vec3.Any (b) ?
+            Utils.Acos (Vec3.Dot (a, b) /
+                (Vec3.Mag (a) * Vec3.Mag (b))) :
+            0.0f;
     }
 
     /// <summary>
@@ -1269,7 +1271,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">the input vector</param>
     /// <param name="limit">the limit</param>
     /// <returns>the limited vector</returns>
-    public static Vec3 Limit (in Vec3 v, in float limit = float.MaxValue)
+    public static Vec3 Limit (in Vec3 v, in float limit)
     {
         float mSq = Vec3.MagSq (v);
         if (mSq > (limit * limit))

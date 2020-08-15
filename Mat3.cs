@@ -976,6 +976,26 @@ public readonly struct Mat3 : IEnumerable
     }
 
     /// <summary>
+    /// Creates skew, or shear, matrix from an angle and axes. Vectors a and b
+    /// are expected to be orthonormal, i.e. perpendicular and of unit length.
+    /// </summary>
+    /// <param name="radians">angle in radians</param>
+    /// <param name="a">skew axis</param>
+    /// <param name="b">orthonormal axis</param>
+    /// <returns>skew matrix</returns>
+    public static Mat3 FromSkew (in float radians, in Vec2 a, in Vec2 b)
+    {
+        float t = Utils.Tan (radians);
+        float tax = a.x * t;
+        float tay = a.y * t;
+
+        return new Mat3 (
+            tax * b.x + 1.0f, tax * b.y, 0.0f,
+            tay * b.x, tay * b.y + 1.0f, 0.0f,
+            0.0f, 0.0f, 1.0f);
+    }
+
+    /// <summary>
     /// Creates a translation matrix from a vector.
     /// </summary>
     /// <param name="tr">translation</param>

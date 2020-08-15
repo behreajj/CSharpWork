@@ -1110,7 +1110,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="v">the input vector</param>
     /// <param name="limit">the limit</param>
     /// <returns>the limited vector</returns>
-    public static Vec4 Limit (in Vec4 v, in float limit = float.MaxValue)
+    public static Vec4 Limit (in Vec4 v, in float limit)
     {
         float mSq = Vec4.MagSq (v);
         if (mSq > (limit * limit))

@@ -1443,6 +1443,28 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
+    /// Creates skew, or shear, matrix from an angle and axes. Vectors a and b
+    /// are expected to be orthonormal, i.e. perpendicular and of unit length.
+    /// </summary>
+    /// <param name="radians">angle in radians</param>
+    /// <param name="a">skew axis</param>
+    /// <param name="b">orthonormal axis</param>
+    /// <returns>skew matrix</returns>
+    public static Mat4 FromSkew (in float radians, in Vec3 a, in Vec3 b)
+    {
+        float t = Utils.Tan (radians);
+        float tax = a.x * t;
+        float tay = a.y * t;
+        float taz = a.z * t;
+
+        return new Mat4 (
+            tax * b.x + 1.0f, tax * b.y, tax * b.z, 0.0f,
+            tay * b.x, tay * b.y + 1.0f, tay * b.z, 0.0f,
+            taz * b.x, taz * b.y, taz * b.z + 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
+    }
+
+    /// <summary>
     /// Creates a translation matrix from a vector.
     /// </summary>
     /// <param name="translation">translation</param>
