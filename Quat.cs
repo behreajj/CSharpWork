@@ -266,13 +266,22 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>the array</returns>
     public float[ ] ToArray ( )
     {
-        return new float[ ]
-        {
-            this.real,
-                this.imag.x,
-                this.imag.y,
-                this.imag.z
-        };
+        return this.ToArray (new float[4], 0);
+    }
+
+    /// <summary>
+    /// Puts this quaternion's components into an array at a given index. The real component, w, is treated as the first element.
+    /// </summary>
+    /// <param name="arr">array</param>
+    /// <param name="i">index</param>
+    /// <returns>array</returns>
+    public float[ ] ToArray (in float[ ] arr, in int i = 0)
+    {
+        arr[i] = this.real;
+        arr[i + 1] = this.imag.x;
+        arr[i + 2] = this.imag.y;
+        arr[i + 3] = this.imag.z;
+        return arr;
     }
 
     /// <summary>

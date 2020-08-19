@@ -153,7 +153,20 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>the array</returns>
     public float[ ] ToArray ( )
     {
-        return new float[ ] { this.real, this.imag };
+        return this.ToArray (new float[2], 0);
+    }
+
+    /// <summary>
+    /// Puts this complex number's components into an array at a given index.
+    /// </summary>
+    /// <param name="arr">array</param>
+    /// <param name="i">index</param>
+    /// <returns>array</returns>
+    public float[ ] ToArray (in float[ ] arr, in int i = 0)
+    {
+        arr[i] = this.real;
+        arr[i + 1] = this.imag;
+        return arr;
     }
 
     /// <summary>

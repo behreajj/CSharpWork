@@ -168,7 +168,20 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the array</returns>
     public float[ ] ToArray ( )
     {
-        return new float[ ] { this._x, this._y };
+        return this.ToArray (new float[2], 0);
+    }
+
+    /// <summary>
+    /// Puts this vector's components into an array at a given index.
+    /// </summary>
+    /// <param name="arr">array</param>
+    /// <param name="i">index</param>
+    /// <returns>array</returns>
+    public float[ ] ToArray (in float[ ] arr, in int i = 0)
+    {
+        arr[i] = this._x;
+        arr[i + 1] = this._y;
+        return arr;
     }
 
     /// <summary>
