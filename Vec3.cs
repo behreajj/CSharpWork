@@ -26,7 +26,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     private readonly float _z;
 
     /// <summary>
-    /// Returns the number of values (dimensions) in this vector.
+    /// The number of values (dimensions) in this vector.
     /// </summary>
     /// /// <value>the length</value>
     public int Length { get { return 3; } }

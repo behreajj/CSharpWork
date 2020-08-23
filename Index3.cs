@@ -4,18 +4,43 @@ using System.Text;
 
 public readonly struct Index3 : IEquatable<Index3>, IEnumerable
 {
+    /// <summary>
+    /// The coordinate index.
+    /// </summary>
     private readonly int _v;
 
+    /// <summary>
+    /// The texture coordinate index.
+    /// </summary>
     private readonly int _vt;
 
+    /// <summary>
+    /// The normal index.
+    /// </summary>
     private readonly int _vn;
 
+    /// <summary>
+    /// The number of array element indices held by this index.
+    /// </summary>
+    /// <value>length</value>
     public int Length { get { return 3; } }
 
+    /// <summary>
+    /// The coordinate index.
+    /// </summary>
+    /// <value>coordinate index</value>
     public int v { get { return this._v; } }
 
+    /// <summary>
+    /// The texture coordinate index.
+    /// </summary>
+    /// <value>texture coordinate index</value>
     public int vt { get { return this._vt; } }
 
+    /// <summary>
+    /// The normal index.
+    /// </summary>
+    /// <value>normal index</value>
     public int vn { get { return this._vn; } }
 
     public int this [int i]
@@ -39,7 +64,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
         }
     }
 
-    public Index3 (int v = 0, int vt = 0, int vn = 0)
+    public Index3 (in int v = 0, in int vt = 0, in int vn = 0)
     {
         this._v = v;
         this._vt = vt;

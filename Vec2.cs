@@ -21,7 +21,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     private readonly float _y;
 
     /// <summary>
-    /// Returns the number of values (dimensions) in this vector.
+    /// The number of values (dimensions) in this vector.
     /// </summary>
     /// <value>the length</value>
     public int Length { get { return 2; } }

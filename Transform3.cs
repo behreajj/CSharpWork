@@ -441,6 +441,7 @@ public class Transform3
     /// <returns>vector</returns>
     public static Vec3 MulVector (in Transform3 transform, in Vec3 vec)
     {
+        // TODO: mulNormal and invMulNormal.
         return transform.scale * Quat.MulVector (transform.rotation, vec);
     }
 
