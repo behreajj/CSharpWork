@@ -41,7 +41,10 @@ public class Loop3
         }
     }
 
-    public Loop3() { }
+    public Loop3()
+    {
+        this.indices = new Index3[3];
+    }
 
     public Loop3(in Index3[] indices)
     {

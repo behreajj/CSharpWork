@@ -1,5 +1,7 @@
 using System;
 using System.Text;
+using System.Collections;
+using System.Collections.Generic;
 
 public class Mesh3
 {
@@ -106,6 +108,7 @@ public class Mesh3
         sb.Append(this.name);
         sb.Append("\"");
 
+        // Append loops.
         int loopLen = this.loops.Length;
         int loopLast = loopLen - 1;
         sb.Append(", loops: [ ");
@@ -119,6 +122,7 @@ public class Mesh3
         }
         sb.Append(" ]");
 
+        // Append coordinates.
         int coordLen = this.coords.Length;
         int coordLast = coordLen - 1;
         sb.Append(", coords: [ ");
@@ -132,6 +136,7 @@ public class Mesh3
         }
         sb.Append(" ]");
 
+        // Append texture coordinates.
         int texCoordLen = this.texCoords.Length;
         int texCoordLast = texCoordLen - 1;
         sb.Append(", texCoords: [ ");
@@ -145,6 +150,7 @@ public class Mesh3
         }
         sb.Append(" ]");
 
+        // Append normals.
         int normalLen = this.normals.Length;
         int normalLast = normalLen - 1;
         sb.Append(", normals: [ ");
@@ -163,35 +169,61 @@ public class Mesh3
 
     public static Mesh3 Triangulate(in Mesh3 source, in Mesh3 target)
     {
-        // TODO: WIP
-        Loop3[] fsSrc = source.loops;
+        Loop3[] loopsSrc = source.loops;
         Vec3[] vsSrc = source.coords;
         Vec2[] vtsSrc = source.texCoords;
         Vec3[] vnsSrc = source.normals;
 
-        int fsSrcLen = fsSrc.Length;
-        for (int i = 0, k = 0; i < fsSrcLen; ++i)
+        // Cannot anticipate how many loops in the source mesh
+        // will not be triangles, so this is an expanding list.
+        List<Loop3> loopsTrg = new List<Loop3>();
+
+        int loopSrcLen = loopsSrc.Length;
+        for (int i = 0; i < loopSrcLen; ++i)
         {
-            Loop3 fSrc = fsSrc[i];
+            Loop3 fSrc = loopsSrc[i];
             int fSrcLen = fSrc.Length;
+
+            // If face loop is not a triangle, then split.
             if (fSrcLen > 3)
             {
+
+                // Find last non-adjacent index. For index m,
+                // neither m + 1 nor m - 1, so where m = 0, the last
+                // non-adjacent would be arr.Length - 2.
+                Index3 vert0 = fSrc[0];
                 int lastNonAdj = fSrcLen - 2;
-                Loop3 loopTrg = new Loop3(new Index3[lastNonAdj]);
-                Index3[] fTrg = loopTrg.Indices;
                 for (int m = 0; m < lastNonAdj; ++m)
                 {
-                    Index3 vertn0 = fSrc[m + 1];
-                    Index3 vertn1 = fSrc[m + 2];
+                    // Find next two vertices.
+                    Index3 vert1 = fSrc[1 + m];
+                    Index3 vert2 = fSrc[2 + m];
+
+                    // Create a new triangle which connects them.
+                    Loop3 loopTrg = new Loop3(vert0, vert1, vert2);
+                    loopsTrg.Add(loopTrg);
                 }
             }
-
-            k += fSrcLen - 2;
         }
 
-        target.coords = vsSrc;
-        target.texCoords = vtsSrc;
-        target.normals = vnsSrc;
+        // If source and target are not the same mesh, then
+        // copy mesh data from source to target.
+        if (!Object.ReferenceEquals(source, target))
+        {
+            int vsLen = vsSrc.Length;
+            target.coords = new Vec3[vsLen];
+            System.Array.Copy(vsSrc, target.coords, vsLen);
+
+            int vtsLen = vtsSrc.Length;
+            target.texCoords = new Vec2[vtsLen];
+            System.Array.Copy(vtsSrc, target.texCoords, vsLen);
+
+            int vnsLen = vnsSrc.Length;
+            target.normals = new Vec3[vnsSrc.Length];
+            System.Array.Copy(vnsSrc, target.normals, vnsLen);
+        }
+
+        target.loops = loopsTrg.ToArray();
 
         return target;
     }
@@ -295,36 +327,31 @@ public class Mesh3
                         new Index3(1, 5, 4),
                         new Index3(3, 3, 4),
                         new Index3(2, 2, 4)),
-
                     new Loop3(
                         new Index3(2, 2, 5),
                         new Index3(3, 3, 5),
                         new Index3(7, 6, 5),
                         new Index3(6, 7, 5)),
-
                     new Loop3(
                         new Index3(6, 7, 0),
                         new Index3(7, 6, 0),
                         new Index3(5, 8, 0),
                         new Index3(4, 9, 0)),
-
                     new Loop3(
                         new Index3(4, 9, 3),
                         new Index3(5, 8, 3),
                         new Index3(1, 0, 3),
                         new Index3(0, 1, 3)),
-
                     new Loop3(
                         new Index3(2, 10, 2),
-                        new Index3(6, 7, 2),
-                        new Index3(4, 9, 2),
+                        new Index3(6,  7, 2),
+                        new Index3(4,  9, 2),
                         new Index3(0, 11, 2)),
-
                     new Loop3(
-                        new Index3(7, 6, 1),
+                        new Index3(7,  6, 1),
                         new Index3(3, 13, 1),
                         new Index3(1, 12, 1),
-                        new Index3(5, 8, 1))
+                        new Index3(5,  8, 1))
                 };
 
                 break;
@@ -333,18 +360,54 @@ public class Mesh3
             default:
 
                 target.loops = new Loop3[] {
-                    new Loop3(new Index3(0, 4, 4), new Index3(1, 5, 4), new Index3(3, 3, 4)),
-                    new Loop3(new Index3(0, 4, 4), new Index3(3, 3, 4), new Index3(2, 2, 4)),
-                    new Loop3(new Index3(2, 2, 5), new Index3(3, 3, 5), new Index3(7, 6, 5)),
-                    new Loop3(new Index3(2, 2, 5), new Index3(7, 6, 5), new Index3(6, 7, 5)),
-                    new Loop3(new Index3(6, 7, 0), new Index3(7, 6, 0), new Index3(5, 8, 0)),
-                    new Loop3(new Index3(6, 7, 0), new Index3(5, 8, 0), new Index3(4, 9, 0)),
-                    new Loop3(new Index3(4, 9, 3), new Index3(5, 8, 3), new Index3(1, 0, 3)),
-                    new Loop3(new Index3(4, 9, 3), new Index3(1, 0, 3), new Index3(0, 1, 3)),
-                    new Loop3(new Index3(2, 10, 2), new Index3(6, 7, 2), new Index3(4, 9, 2 )),
-                    new Loop3(new Index3(2, 10, 2), new Index3(4, 9, 2), new Index3(0, 11, 2 )),
-                    new Loop3(new Index3(7, 6, 1), new Index3(3, 13, 1), new Index3(1, 12, 1 )),
-                    new Loop3(new Index3(7, 6, 1), new Index3(1, 12, 1), new Index3(5, 8, 1 ))
+                    new Loop3(
+                        new Index3(0,  4, 4),
+                        new Index3(1,  5, 4),
+                        new Index3(3,  3, 4)),
+                    new Loop3(
+                        new Index3(0,  4, 4),
+                        new Index3(3,  3, 4),
+                        new Index3(2,  2, 4)),
+                    new Loop3(
+                        new Index3(2,  2, 5),
+                        new Index3(3,  3, 5),
+                        new Index3(7,  6, 5)),
+                    new Loop3(
+                        new Index3(2,  2, 5),
+                        new Index3(7,  6, 5),
+                        new Index3(6,  7, 5)),
+                    new Loop3(
+                        new Index3(6,  7, 0),
+                        new Index3(7,  6, 0),
+                        new Index3(5,  8, 0)),
+                    new Loop3(
+                        new Index3(6,  7, 0),
+                        new Index3(5,  8, 0),
+                        new Index3(4,  9, 0)),
+                    new Loop3(
+                        new Index3(4,  9, 3),
+                        new Index3(5,  8, 3),
+                        new Index3(1,  0, 3)),
+                    new Loop3(
+                        new Index3(4,  9, 3),
+                        new Index3(1,  0, 3),
+                        new Index3(0,  1, 3)),
+                    new Loop3(
+                        new Index3(2, 10, 2),
+                        new Index3(6,  7, 2),
+                        new Index3(4,  9, 2 )),
+                    new Loop3(
+                        new Index3(2, 10, 2),
+                        new Index3(4,  9, 2),
+                        new Index3(0, 11, 2 )),
+                    new Loop3(
+                        new Index3(7,  6, 1),
+                        new Index3(3, 13, 1),
+                        new Index3(1, 12, 1 )),
+                    new Loop3(
+                        new Index3(7,  6, 1),
+                        new Index3(1, 12, 1),
+                        new Index3(5,  8, 1 ))
                 };
 
                 break;
