@@ -3,9 +3,9 @@ using System.Text;
 
 public class Loop3
 {
-    protected Index3[] indices;
+    protected Index3[ ] indices;
 
-    public Index3[] Indices
+    public Index3[ ] Indices
     {
         get
         {
@@ -20,77 +20,116 @@ public class Loop3
 
     public int Length { get { return this.indices.Length; } }
 
-    public Index3 this[int i]
+    public Index3 this [int i]
     {
         get
         {
-            return this.indices[i];
+            return this.indices[Utils.Mod (i, this.indices.Length)];
         }
 
         set
         {
-            this.indices[i] = value;
+            this.indices[Utils.Mod (i, this.indices.Length)] = value;
         }
     }
 
-    public int this[int i, int j]
+    public int this [int i, int j]
     {
         get
         {
-            return this.indices[i][j];
+            return this [i][j];
         }
     }
 
-    public Loop3()
+    public Loop3 ( )
     {
         this.indices = new Index3[3];
     }
 
-    public Loop3(in Index3[] indices)
+    public Loop3 (in Index3[ ] indices)
     {
         this.indices = indices;
     }
 
-    public Loop3(params Index3[] indices)
+    public Loop3 (params Index3[ ] indices)
     {
         this.indices = indices;
     }
 
-    public override string ToString()
+    public override string ToString ( )
     {
-        return this.ToString(1);
+        return this.ToString (1);
     }
 
-    public string ToString(in int padding = 1)
+    public string ToString (in int padding = 1)
     {
         int len = this.indices.Length;
         int last = len - 1;
-        StringBuilder sb = new StringBuilder(96 * len);
-        sb.Append("{ indices: [ ");
+        StringBuilder sb = new StringBuilder (96 * len);
+        sb.Append ("{ indices: [ ");
         for (int i = 0; i < len; ++i)
         {
-            sb.Append(this.indices[i].ToString(padding));
+            sb.Append (this.indices[i].ToString (padding));
             if (i < last)
             {
-                sb.Append(", ");
+                sb.Append (", ");
             }
         }
-        sb.Append(" ] }");
-        return sb.ToString();
+        sb.Append (" ] }");
+        return sb.ToString ( );
     }
 
-    public static Loop3[] Resize(in Loop3[] arr, in int sz)
+    public static Loop3[ ] Resize (in Loop3[ ] arr, in int sz)
     {
-        if (sz < 1) return new Loop3[] { };
-        Loop3[] result = new Loop3[sz];
+        if (sz < 1) return new Loop3[ ] { };
+        Loop3[ ] result = new Loop3[sz];
 
         if (arr != null)
         {
             int len = arr.Length;
             int end = sz > len ? len : sz;
-            System.Array.Copy(arr, result, end);
+            System.Array.Copy (arr, result, end);
         }
 
+        return result;
+    }
+
+    /// <summary>
+    /// Splices an array of loops into the midst of another. For use by
+    /// subdivision functions. If the number of deletions exceeds the length of
+    /// the target array, then a copy of the insert array is returned.
+    /// </summary>
+    /// <param name="arr">array</param>
+    /// <param name="index">insertion point</param>
+    /// <param name="deletions">deletion count</param>
+    /// <param name="insert">insert</param>
+    /// <returns>the spliced array</returns>
+    public static Loop3[ ] Splice (in Loop3[ ] arr, in int index, in int deletions, in Loop3[ ] insert)
+    {
+        int aLen = arr.Length;
+        if (deletions >= aLen)
+        {
+            Loop3[ ] result0 = new Loop3[insert.Length];
+            System.Array.Copy (insert, 0, result0, 0, insert.Length);
+            return result0;
+        }
+
+        int bLen = insert.Length;
+        int valIdx = Utils.Mod (index, aLen + 1);
+        if (deletions < 1)
+        {
+            Loop3[ ] result1 = new Loop3[aLen + bLen];
+            System.Array.Copy (arr, 0, result1, 0, valIdx);
+            System.Array.Copy (insert, 0, result1, valIdx, bLen);
+            System.Array.Copy (arr, valIdx, result1, valIdx + bLen, aLen - valIdx);
+            return result1;
+        }
+
+        int idxOff = valIdx + deletions;
+        Loop3[ ] result = new Loop3[aLen + bLen - deletions];
+        System.Array.Copy (arr, 0, result, 0, valIdx);
+        System.Array.Copy (insert, 0, result, valIdx, bLen);
+        System.Array.Copy (arr, idxOff, result, valIdx + bLen, aLen - idxOff);
         return result;
     }
 }

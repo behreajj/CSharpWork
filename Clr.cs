@@ -801,13 +801,29 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
+    /// Mixes two colors by a 50-50 ratio.
+    /// </summary>
+    /// <param name="a">origin color</param>
+    /// <param name="b">destination color</param>
+    /// <param name="t">step</param>
+    /// <returns>the mixed color</returns>
+    public static Clr MixRgba (in Clr a, in Clr b)
+    {
+        return new Clr (
+            0.5f * (a._r + b._r),
+            0.5f * (a._g + b._g),
+            0.5f * (a._b + b._b),
+            0.5f * (a._a + b._a));
+    }
+
+    /// <summary>
     /// Mixes two colors by a step in the range [0.0, 1.0] .
     /// </summary>
     /// <param name="a">origin color</param>
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
     /// <returns>the mixed color</returns>
-    public static Clr MixRgba (in Clr a, in Clr b, in float t = 0.5f)
+    public static Clr MixRgba (in Clr a, in Clr b, in float t)
     {
         float u = 1.0f - t;
         return new Clr (

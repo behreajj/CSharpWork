@@ -900,6 +900,41 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
+    /// Concatenates two one-dimensional Vec2 arrays.
+    /// </summary>
+    /// <param name="a">left array</param>
+    /// <param name="b">right array</param>
+    /// <returns>the concatenation</returns>
+    public static Vec3[ ] Concat (in Vec3[ ] a, in Vec3[ ] b)
+    {
+        bool aNull = a == null;
+        bool bNull = b == null;
+
+        if (aNull && bNull) { return new Vec3[ ] { }; }
+
+        if (aNull)
+        {
+            Vec3[ ] result0 = new Vec3[b.Length];
+            System.Array.Copy (b, 0, result0, 0, b.Length);
+            return result0;
+        }
+
+        if (bNull)
+        {
+            Vec3[ ] result1 = new Vec3[a.Length];
+            System.Array.Copy (a, 0, result1, 0, a.Length);
+            return result1;
+        }
+
+        int aLen = a.Length;
+        int bLen = b.Length;
+        Vec3[ ] result = new Vec3[aLen + bLen];
+        System.Array.Copy (a, 0, result, 0, aLen);
+        System.Array.Copy (b, 0, result, aLen, bLen);
+        return result;
+    }
+
+    /// <summary>
     /// Tests to see if the vector contains a value
     /// </summary>
     /// <param name="a">the vector</param>
@@ -907,10 +942,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the evaluation</returns>
     public static bool Contains (in Vec3 a, in float b)
     {
-        if (Utils.Approx (a._x, b)) { return true; }
-        if (Utils.Approx (a._y, b)) { return true; }
-        if (Utils.Approx (a._z, b)) { return true; }
-        return false;
+        return Utils.Approx (a._x, b) ||
+            Utils.Approx (a._y, b) ||
+            Utils.Approx (a._z, b);
     }
 
     /// <summary>
@@ -1387,6 +1421,20 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             Utils.Min (a._x, b._x),
             Utils.Min (a._y, b._y),
             Utils.Min (a._z, b._z));
+    }
+
+    /// <summary>
+    /// Mixes two vectors together. Adds the vectors then divides by half.
+    /// </summary>
+    /// <param name="a">the original vector</param>
+    /// <param name="b">the destination vector</param>
+    /// <returns>the mix</returns>
+    public static Vec3 Mix (in Vec3 a, in Vec3 b)
+    {
+        return new Vec3 (
+            0.5f * (a._x + b._x),
+            0.5f * (a._y + b._y),
+            0.5f * (a._z + b._z));
     }
 
     /// <summary>

@@ -826,11 +826,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the evaluation</returns>
     public static bool Contains (in Vec4 a, in float b)
     {
-        if (Utils.Approx (a._x, b)) { return true; }
-        if (Utils.Approx (a._y, b)) { return true; }
-        if (Utils.Approx (a._z, b)) { return true; }
-        if (Utils.Approx (a._w, b)) { return true; }
-        return false;
+        return Utils.Approx (a._x, b) ||
+            Utils.Approx (a._y, b) ||
+            Utils.Approx (a._z, b) ||
+            Utils.Approx (a._w, b);
     }
 
     /// <summary>
@@ -1233,6 +1232,21 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
             Utils.Min (a._y, b._y),
             Utils.Min (a._z, b._z),
             Utils.Min (a._w, b._w));
+    }
+
+    /// <summary>
+    /// Mixes two vectors together. Adds the vectors then divides by half.
+    /// </summary>
+    /// <param name="a">the original vector</param>
+    /// <param name="b">the destination vector</param>
+    /// <returns>the mix</returns>
+    public static Vec4 Mix (in Vec4 a, in Vec4 b)
+    {
+        return new Vec4 (
+            0.5f * (a._x + b._x),
+            0.5f * (a._y + b._y),
+            0.5f * (a._z + b._z),
+            0.5f * (a._w + b._w));
     }
 
     /// <summary>
