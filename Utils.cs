@@ -584,6 +584,18 @@ public static class Utils
     /// <param name="b">right operand</param>
     /// <returns>the maximum value</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static int Max (in int a, in int b)
+    {
+        return (a >= b) ? a : b;
+    }
+
+    /// <summary>
+    /// Finds the greater, or maximum, of two values.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the maximum value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Max (in float a, in float b)
     {
         return (a >= b) ? a : (a < b) ? b : 0.0f;

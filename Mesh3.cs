@@ -153,6 +153,92 @@ public class Mesh3
         return this.ToString (4);
     }
 
+    public Mesh3 Clean ( )
+    {
+        Dictionary<int, Vec3> usedCoords = new Dictionary<int, Vec3> ( );
+        Dictionary<int, Vec2> usedTexCoords = new Dictionary<int, Vec2> ( );
+        Dictionary<int, Vec3> usedNormals = new Dictionary<int, Vec3> ( );
+
+        int facesLen = this.loops.Length;
+        for (int i = 0; i < facesLen; ++i)
+        {
+            Loop3 loop = this.loops[i];
+            Index3[ ] verts = loop.Indices;
+            int vertsLen = verts.Length;
+            for (int j = 0; j < vertsLen; ++j)
+            {
+                Index3 vert = verts[j];
+                int vIdx = vert.v;
+                int vtIdx = vert.vt;
+                int vnIdx = vert.vn;
+
+                usedCoords[vIdx] = this.coords[vIdx];
+                usedTexCoords[vtIdx] = this.texCoords[vtIdx];
+                usedNormals[vnIdx] = this.normals[vnIdx];
+            }
+        }
+
+        SortQuantized3 v3Cmp = new SortQuantized3 ( );
+        SortQuantized2 v2Cmp = new SortQuantized2 ( );
+
+        SortedSet<Vec3> coordsSet = new SortedSet<Vec3> (v3Cmp);
+        SortedSet<Vec2> texCoordsSet = new SortedSet<Vec2> (v2Cmp);
+        SortedSet<Vec3> normalsSet = new SortedSet<Vec3> (v3Cmp);
+
+        coordsSet.UnionWith (usedCoords.Values);
+        texCoordsSet.UnionWith (usedTexCoords.Values);
+        normalsSet.UnionWith (usedNormals.Values);
+
+        Vec3[ ] newCoords = new Vec3[coordsSet.Count];
+        Vec2[ ] newTexCoords = new Vec2[texCoordsSet.Count];
+        Vec3[ ] newNormals = new Vec3[normalsSet.Count];
+
+        coordsSet.CopyTo (newCoords);
+        texCoordsSet.CopyTo (newTexCoords);
+        normalsSet.CopyTo (newNormals);
+
+        for (int i = 0; i < facesLen; ++i)
+        {
+            Loop3 loop = this.loops[i];
+            Index3[ ] verts = loop.Indices;
+            int vertsLen = verts.Length;
+            for (int j = 0; j < vertsLen; ++j)
+            {
+                Index3 oldVert = verts[j];
+                Index3 newVert = new Index3 (
+                    Array.BinarySearch<Vec3> (newCoords, this.coords[oldVert.v], v3Cmp),
+                    Array.BinarySearch<Vec2> (newTexCoords, this.texCoords[oldVert.vt], v2Cmp),
+                    Array.BinarySearch<Vec3> (newNormals, this.normals[oldVert.vn], v3Cmp));
+                verts[j] = newVert;
+            }
+        }
+
+        this.coords = newCoords;
+        this.texCoords = newTexCoords;
+        this.normals = newNormals;
+
+        Array.Sort (this.loops, new SortLoops3 (this.coords));
+
+        return this;
+    }
+
+    public void SubdivFaceFan (in int faceIdx)
+    {
+
+        //TODO: WIP
+        // TODO: Make Clean function.
+
+        // int facesLen = this.loops.Length;
+        // int i = Utils.Mod (faceIdx, facesLen);
+        // Index3[ ] face = this.loops[i].Indices;
+        // int faceLen = face.Length;
+
+        // Loop3[ ] fsNew = new Loop3[faceLen];
+        // Vec3 vCenter = new Vec3 ( );
+        // Vec2 vtCenter = new Vec2 ( );
+        // Vec3 vnCenter = new Vec3 ( );
+    }
+
     /// <summary>
     /// Subdivides a convex face by calculating its center, subdividing each of
     /// its edges with one cut to create a midpoint, then connecting the
@@ -507,6 +593,10 @@ public class Mesh3
                     loopsTrg.Add (loopTrg);
                 }
             }
+            else
+            {
+                loopsTrg.Add (fSrc);
+            }
         }
 
         // If source and target are not the same mesh, then copy mesh data from
@@ -525,7 +615,6 @@ public class Mesh3
             target.normals = new Vec3[vnsSrc.Length];
             System.Array.Copy (vnsSrc, target.normals, vnsLen);
         }
-
         target.loops = loopsTrg.ToArray ( );
 
         return target;
@@ -738,8 +827,7 @@ public class Mesh3
         Mesh3.Cube (0.5f, PolyType.Quad, target);
         target.SubdivFacesCenter (itrs);
         if (poly == PolyType.Tri) { Mesh3.Triangulate (target, target); }
-
-        // TODO: CALL CLEAN FUNCTION HERE?
+        target.Clean ( );
         Mesh3.CastToSphere (target, target);
         return target;
     }
