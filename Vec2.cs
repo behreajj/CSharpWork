@@ -622,6 +622,23 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
+    /// Appends a vector to a one-dimensional vector array. Returns a new array.
+    /// </summary>
+    /// <param name="a">array</param>
+    /// <param name="b">vector</param>
+    /// <returns>the array</returns>
+    public static Vec2[ ] Append (in Vec2[ ] a, in Vec2 b)
+    {
+        bool aNull = a == null;
+        if (aNull) { return new Vec2[ ] { b }; }
+        int aLen = a.Length;
+        Vec2[ ] result = new Vec2[aLen + 1];
+        System.Array.Copy (a, 0, result, 0, aLen);
+        result[aLen] = b;
+        return result;
+    }
+
+    /// <summary>
     /// Tests to see if two vectors approximate each other.
     /// </summary>
     /// <param name="a">left comparisand</param>

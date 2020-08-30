@@ -222,21 +222,70 @@ public class Mesh3
         return this;
     }
 
-    public void SubdivFaceFan (in int faceIdx)
+    /// <summary>
+    /// Subdivides a convex face by calculating its center, then connecting its
+    /// vertices to the center. This generates a triangle for the number of
+    /// edges in the face.
+    /// </summary>
+    /// <param name="faceIdx">the face index</param>
+    public (Loop3[ ] loopsNew, Vec3 vNew, Vec2 vtNew, Vec3 vnNew) SubdivFaceFan (in int faceIdx)
     {
+        int facesLen = this.loops.Length;
+        int i = Utils.Mod (faceIdx, facesLen);
+        Index3[ ] face = this.loops[i].Indices;
+        int faceLen = face.Length;
 
-        //TODO: WIP
-        // TODO: Make Clean function.
+        Loop3[ ] fsNew = new Loop3[faceLen];
+        Vec3 vCenter = new Vec3 ( );
+        Vec2 vtCenter = new Vec2 ( );
+        Vec3 vnCenter = new Vec3 ( );
 
-        // int facesLen = this.loops.Length;
-        // int i = Utils.Mod (faceIdx, facesLen);
-        // Index3[ ] face = this.loops[i].Indices;
-        // int faceLen = face.Length;
+        int vCenterIdx = this.coords.Length;
+        int vtCenterIdx = this.texCoords.Length;
+        int vnCenterIdx = this.normals.Length;
 
-        // Loop3[ ] fsNew = new Loop3[faceLen];
-        // Vec3 vCenter = new Vec3 ( );
-        // Vec2 vtCenter = new Vec2 ( );
-        // Vec3 vnCenter = new Vec3 ( );
+        for (int j = 0; j < faceLen; ++j)
+        {
+            int k = (j + 1) % faceLen;
+
+            Index3 vertCurr = face[j];
+            Index3 vertNext = face[k];
+
+            int vCurrIdx = vertCurr.v;
+            int vtCurrIdx = vertCurr.vt;
+            int vnCurrIdx = vertCurr.vn;
+
+            Vec3 vCurr = this.coords[vCurrIdx];
+            Vec2 vtCurr = this.texCoords[vtCurrIdx];
+            Vec3 vnCurr = this.normals[vnCurrIdx];
+
+            vCenter += vCurr;
+            vtCenter += vtCurr;
+            vnCenter += vnCurr;
+
+            fsNew[j] = new Loop3 (
+                new Index3 (vCenterIdx, vtCenterIdx, vnCenterIdx),
+                new Index3 (vCurrIdx, vtCurrIdx, vnCurrIdx),
+                new Index3 (vertNext.v, vertNext.vt, vertNext.vn));
+        }
+
+        if (faceLen > 0)
+        {
+            float flInv = 1.0f / faceLen;
+            vCenter *= flInv;
+            vtCenter *= flInv;
+            vnCenter = Vec3.Normalize (vnCenter);
+        }
+
+        this.coords = Vec3.Append (this.coords, vCenter);
+        this.texCoords = Vec2.Append (this.texCoords, vtCenter);
+        this.normals = Vec3.Append (this.normals, vnCenter);
+        this.loops = Loop3.Splice (this.loops, i, 1, fsNew);
+
+        return (loopsNew: fsNew,
+            vNew: vCenter,
+            vtNew: vtCenter,
+            vnNew: vnCenter);
     }
 
     /// <summary>
@@ -503,14 +552,46 @@ public class Mesh3
         return sb.ToString ( );
     }
 
-    /// <summary>
-    /// Casts 
-    /// </summary>
-    /// <param name="source"></param>
-    /// <param name="target"></param>
-    /// <returns></returns>
-    public static Mesh3 CastToSphere (in Mesh3 source, in Mesh3 target)
+    public static implicit operator Mesh3 (in Mesh2 source)
     {
+        Loop2[ ] loopsSrc = source.Loops;
+        Vec2[ ] vsSrc = source.Coords;
+        Vec2[ ] vtsSrc = source.TexCoords;
+
+        int loopsLen = loopsSrc.Length;
+        int vsLen = vsSrc.Length;
+        int vtsLen = vtsSrc.Length;
+
+        Loop3[ ] loopsTrg = new Loop3[loopsLen];
+        Vec3[ ] vsTrg = new Vec3[vsLen];
+        Vec2[ ] vtsTrg = new Vec2[vtsLen];
+        Vec3[ ] vnsTrg = new Vec3[ ] { Vec3.Up };
+
+        // Promote coordinates.
+        for (int i = 0; i < vsLen; ++i)
+        {
+            vsTrg[i] = vsSrc[i];
+        }
+
+        // Copy texture coordinates.
+        for (int i = 0; i < vtsLen; ++i)
+        {
+            vtsTrg[i] = vtsSrc[i];
+        }
+
+        // Promote loops.
+        for (int i = 0; i < loopsLen; ++i)
+        {
+            loopsTrg[i] = loopsSrc[i];
+        }
+
+        return new Mesh3 (source.Name, loopsTrg, vsTrg, vtsTrg, vnsTrg);
+    }
+
+    public static Mesh3 CastToSphere (in Mesh3 source, in float radius, in Mesh3 target)
+    {
+        float vrad = Utils.Max (Utils.Epsilon, radius);
+
         Loop3[ ] fsSrc = source.loops;
         Vec3[ ] vsSrc = source.coords;
         int fsSrcLen = fsSrc.Length;
@@ -523,7 +604,7 @@ public class Mesh3
         for (int i = 0; i < vsSrcLen; ++i)
         {
             vnsTrg[i] = Vec3.Normalize (vsSrc[i]);
-            vsTrg[i] = vnsTrg[i] * 0.5f;
+            vsTrg[i] = vnsTrg[i] * vrad;
         }
 
         for (int i = 0; i < fsSrcLen; ++i)
@@ -556,111 +637,363 @@ public class Mesh3
         return target;
     }
 
-    public static Mesh3 Triangulate (in Mesh3 source, in Mesh3 target)
+    public static Mesh3 Cube (in float size, in PolyType poly, in Mesh3 target)
     {
-        Loop3[ ] loopsSrc = source.loops;
-        Vec3[ ] vsSrc = source.coords;
-        Vec2[ ] vtsSrc = source.texCoords;
-        Vec3[ ] vnsSrc = source.normals;
+        target.name = "Cube";
 
-        // Cannot anticipate how many loops in the source mesh will not be
-        // triangles, so this is an expanding list.
-        List<Loop3> loopsTrg = new List<Loop3> ( );
-
-        int loopSrcLen = loopsSrc.Length;
-        for (int i = 0; i < loopSrcLen; ++i)
+        float vsz = Utils.Max (Utils.Epsilon, size);
+        target.coords = new Vec3[ ]
         {
-            Loop3 fSrc = loopsSrc[i];
-            int fSrcLen = fSrc.Length;
+            new Vec3 (-vsz, -vsz, -vsz),
+            new Vec3 (-vsz, -vsz, vsz),
+            new Vec3 (-vsz, vsz, -vsz),
+            new Vec3 (-vsz, vsz, vsz),
+            new Vec3 (vsz, -vsz, -vsz),
+            new Vec3 (vsz, -vsz, vsz),
+            new Vec3 (vsz, vsz, -vsz),
+            new Vec3 (vsz, vsz, vsz)
+        };
 
-            // If face loop is not a triangle, then split.
-            if (fSrcLen > 3)
-            {
+        target.normals = new Vec3[ ]
+        {
+            new Vec3 (1.0f, 0.0f, 0.0f),
+            new Vec3 (0.0f, 0.0f, 1.0f),
+            new Vec3 (0.0f, 0.0f, -1.0f),
+            new Vec3 (0.0f, -1.0f, 0.0f),
+            new Vec3 (-1.0f, 0.0f, 0.0f),
+            new Vec3 (0.0f, 1.0f, 0.0f)
+        };
 
-                // Find last non-adjacent index. For index m, neither m + 1 nor
-                // m - 1, so where m = 0, the last non-adjacent would be
-                // arr.Length - 2.
-                Index3 vert0 = fSrc[0];
-                int lastNonAdj = fSrcLen - 2;
-                for (int m = 0; m < lastNonAdj; ++m)
+        target.texCoords = new Vec2[ ]
+        {
+            new Vec2 (0.625f, 0.0f),
+            new Vec2 (0.375f, 0.0f),
+            new Vec2 (0.375f, 0.75f),
+            new Vec2 (0.625f, 0.75f),
+            new Vec2 (0.375f, 1.0f),
+            new Vec2 (0.625f, 1.0f),
+            new Vec2 (0.625f, 0.5f),
+            new Vec2 (0.375f, 0.5f),
+            new Vec2 (0.625f, 0.25f),
+            new Vec2 (0.375f, 0.25f),
+            new Vec2 (0.125f, 0.5f),
+            new Vec2 (0.125f, 0.25f),
+            new Vec2 (0.875f, 0.25f),
+            new Vec2 (0.875f, 0.5f)
+        };
+
+        switch (poly)
+        {
+            case PolyType.Ngon:
+            case PolyType.Quad:
+
+                target.loops = new Loop3[ ]
                 {
-                    // Find next two vertices.
-                    Index3 vert1 = fSrc[1 + m];
-                    Index3 vert2 = fSrc[2 + m];
+                    new Loop3 (
+                    new Index3 (0, 4, 4),
+                    new Index3 (1, 5, 4),
+                    new Index3 (3, 3, 4),
+                    new Index3 (2, 2, 4)),
+                    new Loop3 (
+                    new Index3 (2, 2, 5),
+                    new Index3 (3, 3, 5),
+                    new Index3 (7, 6, 5),
+                    new Index3 (6, 7, 5)),
+                    new Loop3 (
+                    new Index3 (6, 7, 0),
+                    new Index3 (7, 6, 0),
+                    new Index3 (5, 8, 0),
+                    new Index3 (4, 9, 0)),
+                    new Loop3 (
+                    new Index3 (4, 9, 3),
+                    new Index3 (5, 8, 3),
+                    new Index3 (1, 0, 3),
+                    new Index3 (0, 1, 3)),
+                    new Loop3 (
+                    new Index3 (2, 10, 2),
+                    new Index3 (6, 7, 2),
+                    new Index3 (4, 9, 2),
+                    new Index3 (0, 11, 2)),
+                    new Loop3 (
+                    new Index3 (7, 6, 1),
+                    new Index3 (3, 13, 1),
+                    new Index3 (1, 12, 1),
+                    new Index3 (5, 8, 1))
+                };
 
-                    // Create a new triangle which connects them.
-                    Loop3 loopTrg = new Loop3 (vert0, vert1, vert2);
-                    loopsTrg.Add (loopTrg);
-                }
-            }
-            else
-            {
-                loopsTrg.Add (fSrc);
-            }
+                break;
+
+            case PolyType.Tri:
+            default:
+
+                target.loops = new Loop3[ ]
+                {
+                    new Loop3 (
+                    new Index3 (0, 4, 4),
+                    new Index3 (1, 5, 4),
+                    new Index3 (3, 3, 4)),
+                    new Loop3 (
+                    new Index3 (0, 4, 4),
+                    new Index3 (3, 3, 4),
+                    new Index3 (2, 2, 4)),
+                    new Loop3 (
+                    new Index3 (2, 2, 5),
+                    new Index3 (3, 3, 5),
+                    new Index3 (7, 6, 5)),
+                    new Loop3 (
+                    new Index3 (2, 2, 5),
+                    new Index3 (7, 6, 5),
+                    new Index3 (6, 7, 5)),
+                    new Loop3 (
+                    new Index3 (6, 7, 0),
+                    new Index3 (7, 6, 0),
+                    new Index3 (5, 8, 0)),
+                    new Loop3 (
+                    new Index3 (6, 7, 0),
+                    new Index3 (5, 8, 0),
+                    new Index3 (4, 9, 0)),
+                    new Loop3 (
+                    new Index3 (4, 9, 3),
+                    new Index3 (5, 8, 3),
+                    new Index3 (1, 0, 3)),
+                    new Loop3 (
+                    new Index3 (4, 9, 3),
+                    new Index3 (1, 0, 3),
+                    new Index3 (0, 1, 3)),
+                    new Loop3 (
+                    new Index3 (2, 10, 2),
+                    new Index3 (6, 7, 2),
+                    new Index3 (4, 9, 2)),
+                    new Loop3 (
+                    new Index3 (2, 10, 2),
+                    new Index3 (4, 9, 2),
+                    new Index3 (0, 11, 2)),
+                    new Loop3 (
+                    new Index3 (7, 6, 1),
+                    new Index3 (3, 13, 1),
+                    new Index3 (1, 12, 1)),
+                    new Loop3 (
+                    new Index3 (7, 6, 1),
+                    new Index3 (1, 12, 1),
+                    new Index3 (5, 8, 1))
+                };
+
+                break;
         }
-
-        // If source and target are not the same mesh, then copy mesh data from
-        // source to target.
-        if (!Object.ReferenceEquals (source, target))
-        {
-            int vsLen = vsSrc.Length;
-            target.coords = new Vec3[vsLen];
-            System.Array.Copy (vsSrc, target.coords, vsLen);
-
-            int vtsLen = vtsSrc.Length;
-            target.texCoords = new Vec2[vtsLen];
-            System.Array.Copy (vtsSrc, target.texCoords, vtsLen);
-
-            int vnsLen = vnsSrc.Length;
-            target.normals = new Vec3[vnsSrc.Length];
-            System.Array.Copy (vnsSrc, target.normals, vnsLen);
-        }
-        target.loops = loopsTrg.ToArray ( );
 
         return target;
     }
 
-    public static Mesh3 UniformData (in Mesh3 source, in Mesh3 target)
+    public static Mesh3 CubeSphere (in int itrs, in float size, in PolyType poly, in Mesh3 target)
     {
-        Loop3[ ] fsSrc = source.loops;
-        Vec3[ ] vsSrc = source.coords;
-        Vec2[ ] vtsSrc = source.texCoords;
-        Vec3[ ] vnsSrc = source.normals;
+        Mesh3.Cube (0.5f, PolyType.Quad, target);
+        target.SubdivFacesCenter (itrs);
+        if (poly == PolyType.Tri) { Mesh3.Triangulate (target, target); }
+        target.Clean ( );
+        Mesh3.CastToSphere (target, size, target);
+        return target;
+    }
 
-        int uniformLen = 0;
-        int fsSrcLen = fsSrc.Length;
-        for (int i = 0; i < fsSrcLen; ++i)
+    public static Mesh3 Dodecahedron (in Mesh3 target)
+    {
+        target.name = "Dodecahedron";
+
+        target.coords = new Vec3[ ]
         {
-            uniformLen += fsSrc[i].Length;
-        }
+            new Vec3 (0.0f, 0.33614415f, -0.4165113f),
+            new Vec3 (-0.19098301f, 0.47552827f, 0.15450847f),
+            new Vec3 (0.19098301f, 0.47552827f, 0.15450847f),
+            new Vec3 (0.309017f, 0.19840115f, 0.38938415f),
+            new Vec3 (-0.309017f, 0.19840115f, 0.38938415f),
+            new Vec3 (-0.19098301f, -0.47552827f, -0.15450847f),
+            new Vec3 (-0.309017f, -0.38938415f, 0.19840115f),
+            new Vec3 (0.19098301f, -0.47552827f, -0.15450847f),
+            new Vec3 (0.309017f, -0.19840115f, -0.38938415f),
+            new Vec3 (0.0f, -0.02712715f, -0.53454524f),
+            new Vec3 (0.309017f, 0.38938415f, -0.19840115f),
+            new Vec3 (0.5f, 0.05901699f, -0.18163565f),
+            new Vec3 (-0.309017f, -0.19840115f, -0.38938415f),
+            new Vec3 (-0.5f, 0.05901699f, -0.18163565f),
+            new Vec3 (-0.309017f, 0.38938415f, -0.19840115f),
+            new Vec3 (0.0f, 0.02712715f, 0.53454524f),
+            new Vec3 (0.0f, -0.33614415f, 0.4165113f),
+            new Vec3 (0.309017f, -0.38938415f, 0.19840115f),
+            new Vec3 (0.5f, -0.05901699f, 0.18163565f),
+            new Vec3 (-0.5f, -0.05901699f, 0.18163565f)
+        };
 
-        Loop3[ ] fsTrg = new Loop3[fsSrcLen];
-        Vec3[ ] vsTrg = new Vec3[uniformLen];
-        Vec2[ ] vtsTrg = new Vec2[uniformLen];
-        Vec3[ ] vnsTrg = new Vec3[uniformLen];
-
-        for (int k = 0, i = 0; i < fsSrcLen; ++i)
+        target.texCoords = new Vec2[ ]
         {
-            Index3[ ] fSrc = fsSrc[i].Indices;
-            int fLen = fSrc.Length;
-            fsTrg[i] = new Loop3 (new Index3[fLen]);
-            Index3[ ] fTrg = fsTrg[i].Indices;
+            new Vec2 (0.5f, 0.0f),
+            new Vec2 (0.79389268f, 0.90450847f),
+            new Vec2 (0.02447176f, 0.34549153f),
+            new Vec2 (0.20610738f, 0.90450853f),
+            new Vec2 (0.97552824f, 0.34549141f)
+        };
 
-            for (int j = 0; j < fLen; ++j, ++k)
-            {
-                Index3 vertSrc = fSrc[j];
-                vsTrg[k] = vsSrc[vertSrc.v];
-                vtsTrg[k] = vtsSrc[vertSrc.vt];
-                vnsTrg[k] = vnsSrc[vertSrc.vn];
+        target.normals = new Vec3[ ]
+        {
+            new Vec3 (-0.8506508f, 0.5f, 0.16245979f),
+            new Vec3 (0.0f, -0.9714768f, 0.23713443f),
+            new Vec3 (0.0f, 0.9714768f, -0.23713443f),
+            new Vec3 (0.0f, -0.64655715f, -0.7628655f),
+            new Vec3 (0.5257311f, 0.2628655f, -0.80901694f),
+            new Vec3 (0.0f, 0.64655715f, 0.7628655f),
+            new Vec3 (-0.5257311f, 0.2628655f, -0.80901694f),
+            new Vec3 (-0.5257311f, -0.2628655f, 0.80901694f),
+            new Vec3 (0.5257311f, -0.2628655f, 0.80901694f),
+            new Vec3 (0.8506508f, 0.5f, 0.16245979f),
+            new Vec3 (0.8506508f, -0.5f, -0.16245979f),
+            new Vec3 (-0.8506508f, -0.5f, -0.16245979f)
+        };
 
-                fTrg[j] = new Index3 (k, k, k);
-            }
-        }
+        target.loops = new Loop3[ ]
+        {
+            new Loop3 (
+            new Index3 (2, 0, 2),
+            new Index3 (10, 2, 2),
+            new Index3 (0, 3, 2),
+            new Index3 (14, 1, 2),
+            new Index3 (1, 4, 2)),
+            new Loop3 (
+            new Index3 (1, 0, 5),
+            new Index3 (4, 2, 5),
+            new Index3 (15, 3, 5),
+            new Index3 (3, 1, 5),
+            new Index3 (2, 4, 5)),
+            new Loop3 (
+            new Index3 (7, 0, 1),
+            new Index3 (17, 2, 1),
+            new Index3 (16, 3, 1),
+            new Index3 (6, 1, 1),
+            new Index3 (5, 4, 1)),
+            new Loop3 (
+            new Index3 (5, 0, 3),
+            new Index3 (12, 2, 3),
+            new Index3 (9, 3, 3),
+            new Index3 (8, 1, 3),
+            new Index3 (7, 4, 3)),
+            new Loop3 (
+            new Index3 (9, 0, 4),
+            new Index3 (0, 2, 4),
+            new Index3 (10, 3, 4),
+            new Index3 (11, 1, 4),
+            new Index3 (8, 4, 4)),
+            new Loop3 (
+            new Index3 (0, 0, 6),
+            new Index3 (9, 2, 6),
+            new Index3 (12, 3, 6),
+            new Index3 (13, 1, 6),
+            new Index3 (14, 4, 6)),
+            new Loop3 (
+            new Index3 (16, 0, 7),
+            new Index3 (15, 2, 7),
+            new Index3 (4, 3, 7),
+            new Index3 (19, 1, 7),
+            new Index3 (6, 4, 7)),
+            new Loop3 (
+            new Index3 (15, 0, 8),
+            new Index3 (16, 2, 8),
+            new Index3 (17, 3, 8),
+            new Index3 (18, 1, 8),
+            new Index3 (3, 4, 8)),
+            new Loop3 (
+            new Index3 (11, 0, 9),
+            new Index3 (10, 2, 9),
+            new Index3 (2, 3, 9),
+            new Index3 (3, 1, 9),
+            new Index3 (18, 4, 9)),
+            new Loop3 (
+            new Index3 (18, 0, 10),
+            new Index3 (17, 2, 10),
+            new Index3 (7, 3, 10),
+            new Index3 (8, 1, 10),
+            new Index3 (11, 4, 10)),
+            new Loop3 (
+            new Index3 (13, 0, 11),
+            new Index3 (12, 2, 11),
+            new Index3 (5, 3, 11),
+            new Index3 (6, 1, 11),
+            new Index3 (19, 4, 11)),
+            new Loop3 (
+            new Index3 (19, 0, 0),
+            new Index3 (4, 2, 0),
+            new Index3 (1, 3, 0),
+            new Index3 (14, 1, 0),
+            new Index3 (13, 4, 0))
+        };
 
-        target.coords = vsTrg;
-        target.texCoords = vtsTrg;
-        target.normals = vnsTrg;
-        target.loops = fsTrg;
+        return target;
+    }
+
+    public static Mesh3 Octahedron (in Mesh3 target)
+    {
+        target.name = "Octahedron";
+
+        target.coords = new Vec3[ ]
+        {
+            new Vec3 (0.0f, -0.5f, 0.0f),
+            new Vec3 (0.5f, 0.0f, 0.0f),
+            new Vec3 (-0.5f, 0.0f, 0.0f),
+            new Vec3 (0.0f, 0.5f, 0.0f),
+            new Vec3 (0.0f, 0.0f, 0.5f),
+            new Vec3 (0.0f, 0.0f, -0.5f)
+        };
+
+        target.texCoords = new Vec2[ ]
+        {
+            new Vec2 (0.5f, 0.0f),
+            new Vec2 (1.0f, 1.0f),
+            new Vec2 (0.0f, 1.0f)
+        };
+
+        target.normals = new Vec3[ ]
+        {
+            new Vec3 (0.57735026f, -0.57735026f, 0.57735026f),
+            new Vec3 (-0.57735026f, 0.57735026f, 0.57735026f),
+            new Vec3 (-0.57735026f, -0.57735026f, 0.57735026f),
+            new Vec3 (0.57735026f, 0.57735026f, 0.57735026f),
+            new Vec3 (-0.57735026f, 0.57735026f, -0.57735026f),
+            new Vec3 (0.57735026f, 0.57735026f, -0.57735026f),
+            new Vec3 (0.57735026f, -0.57735026f, -0.57735026f),
+            new Vec3 (-0.57735026f, -0.57735026f, -0.57735026f)
+        };
+
+        target.loops = new Loop3[ ]
+        {
+            new Loop3 (
+            new Index3 (0, 2, 0),
+            new Index3 (1, 1, 0),
+            new Index3 (4, 0, 0)),
+            new Loop3 (
+            new Index3 (1, 2, 3),
+            new Index3 (3, 1, 3),
+            new Index3 (4, 0, 3)),
+            new Loop3 (
+            new Index3 (3, 2, 1),
+            new Index3 (2, 1, 1),
+            new Index3 (4, 0, 1)),
+            new Loop3 (
+            new Index3 (2, 2, 2),
+            new Index3 (0, 1, 2),
+            new Index3 (4, 0, 2)),
+            new Loop3 (
+            new Index3 (2, 2, 4),
+            new Index3 (3, 1, 4),
+            new Index3 (5, 0, 4)),
+            new Loop3 (
+            new Index3 (3, 2, 5),
+            new Index3 (1, 1, 5),
+            new Index3 (5, 0, 5)),
+            new Loop3 (
+            new Index3 (1, 2, 6),
+            new Index3 (0, 1, 6),
+            new Index3 (5, 0, 6)),
+            new Loop3 (
+            new Index3 (0, 2, 7),
+            new Index3 (2, 1, 7),
+            new Index3 (5, 0, 7))
+        };
 
         return target;
     }
@@ -822,158 +1155,283 @@ public class Mesh3
         return target;
     }
 
-    public static Mesh3 CubeSphere (in int itrs, in PolyType poly, in Mesh3 target)
+    public static Mesh3 Icosphere (in int itrs, in float size, in Mesh3 target)
     {
-        Mesh3.Cube (0.5f, PolyType.Quad, target);
-        target.SubdivFacesCenter (itrs);
-        if (poly == PolyType.Tri) { Mesh3.Triangulate (target, target); }
+        Mesh3.Icosahedron (target);
+        target.SubdivFacesInscribe (itrs);
         target.Clean ( );
-        Mesh3.CastToSphere (target, target);
+        Mesh3.CastToSphere (target, size, target);
+        target.name = "Icosphere";
         return target;
     }
 
-    public static Mesh3 Cube (in float size, in PolyType poly, in Mesh3 target)
+    public static Mesh3 Triangulate (in Mesh3 source, in Mesh3 target)
     {
-        target.name = "Cube";
+        Loop3[ ] loopsSrc = source.loops;
+        Vec3[ ] vsSrc = source.coords;
+        Vec2[ ] vtsSrc = source.texCoords;
+        Vec3[ ] vnsSrc = source.normals;
 
-        float vsz = Utils.Max (Utils.Epsilon, size);
-        target.coords = new Vec3[ ]
+        // Cannot anticipate how many loops in the source mesh will not be
+        // triangles, so this is an expanding list.
+        List<Loop3> loopsTrg = new List<Loop3> ( );
+
+        int loopSrcLen = loopsSrc.Length;
+        for (int i = 0; i < loopSrcLen; ++i)
         {
-            new Vec3 (-vsz, -vsz, -vsz),
-            new Vec3 (-vsz, -vsz, vsz),
-            new Vec3 (-vsz, vsz, -vsz),
-            new Vec3 (-vsz, vsz, vsz),
-            new Vec3 (vsz, -vsz, -vsz),
-            new Vec3 (vsz, -vsz, vsz),
-            new Vec3 (vsz, vsz, -vsz),
-            new Vec3 (vsz, vsz, vsz)
-        };
+            Loop3 fSrc = loopsSrc[i];
+            int fSrcLen = fSrc.Length;
 
-        target.normals = new Vec3[ ]
-        {
-            new Vec3 (1.0f, 0.0f, 0.0f),
-            new Vec3 (0.0f, 0.0f, 1.0f),
-            new Vec3 (0.0f, 0.0f, -1.0f),
-            new Vec3 (0.0f, -1.0f, 0.0f),
-            new Vec3 (-1.0f, 0.0f, 0.0f),
-            new Vec3 (0.0f, 1.0f, 0.0f)
-        };
+            // If face loop is not a triangle, then split.
+            if (fSrcLen > 3)
+            {
 
-        target.texCoords = new Vec2[ ]
-        {
-            new Vec2 (0.625f, 0.0f),
-            new Vec2 (0.375f, 0.0f),
-            new Vec2 (0.375f, 0.75f),
-            new Vec2 (0.625f, 0.75f),
-            new Vec2 (0.375f, 1.0f),
-            new Vec2 (0.625f, 1.0f),
-            new Vec2 (0.625f, 0.5f),
-            new Vec2 (0.375f, 0.5f),
-            new Vec2 (0.625f, 0.25f),
-            new Vec2 (0.375f, 0.25f),
-            new Vec2 (0.125f, 0.5f),
-            new Vec2 (0.125f, 0.25f),
-            new Vec2 (0.875f, 0.25f),
-            new Vec2 (0.875f, 0.5f)
-        };
-
-        switch (poly)
-        {
-            case PolyType.Ngon:
-            case PolyType.Quad:
-
-                target.loops = new Loop3[ ]
+                // Find last non-adjacent index. For index m, neither m + 1 nor
+                // m - 1, so where m = 0, the last non-adjacent would be
+                // arr.Length - 2.
+                Index3 vert0 = fSrc[0];
+                int lastNonAdj = fSrcLen - 2;
+                for (int m = 0; m < lastNonAdj; ++m)
                 {
-                    new Loop3 (
-                    new Index3 (0, 4, 4),
-                    new Index3 (1, 5, 4),
-                    new Index3 (3, 3, 4),
-                    new Index3 (2, 2, 4)),
-                    new Loop3 (
-                    new Index3 (2, 2, 5),
-                    new Index3 (3, 3, 5),
-                    new Index3 (7, 6, 5),
-                    new Index3 (6, 7, 5)),
-                    new Loop3 (
-                    new Index3 (6, 7, 0),
-                    new Index3 (7, 6, 0),
-                    new Index3 (5, 8, 0),
-                    new Index3 (4, 9, 0)),
-                    new Loop3 (
-                    new Index3 (4, 9, 3),
-                    new Index3 (5, 8, 3),
-                    new Index3 (1, 0, 3),
-                    new Index3 (0, 1, 3)),
-                    new Loop3 (
-                    new Index3 (2, 10, 2),
-                    new Index3 (6, 7, 2),
-                    new Index3 (4, 9, 2),
-                    new Index3 (0, 11, 2)),
-                    new Loop3 (
-                    new Index3 (7, 6, 1),
-                    new Index3 (3, 13, 1),
-                    new Index3 (1, 12, 1),
-                    new Index3 (5, 8, 1))
-                };
+                    // Find next two vertices.
+                    Index3 vert1 = fSrc[1 + m];
+                    Index3 vert2 = fSrc[2 + m];
 
-                break;
+                    // Create a new triangle which connects them.
+                    Loop3 loopTrg = new Loop3 (vert0, vert1, vert2);
+                    loopsTrg.Add (loopTrg);
+                }
+            }
+            else
+            {
+                loopsTrg.Add (fSrc);
+            }
+        }
 
-            case PolyType.Tri:
-            default:
+        // If source and target are not the same mesh, then copy mesh data from
+        // source to target.
+        if (!Object.ReferenceEquals (source, target))
+        {
+            int vsLen = vsSrc.Length;
+            target.coords = new Vec3[vsLen];
+            System.Array.Copy (vsSrc, target.coords, vsLen);
 
-                target.loops = new Loop3[ ]
+            int vtsLen = vtsSrc.Length;
+            target.texCoords = new Vec2[vtsLen];
+            System.Array.Copy (vtsSrc, target.texCoords, vtsLen);
+
+            int vnsLen = vnsSrc.Length;
+            target.normals = new Vec3[vnsSrc.Length];
+            System.Array.Copy (vnsSrc, target.normals, vnsLen);
+        }
+        target.loops = loopsTrg.ToArray ( );
+
+        return target;
+    }
+
+    public static Mesh3 UniformData (in Mesh3 source, in Mesh3 target)
+    {
+        Loop3[ ] fsSrc = source.loops;
+        Vec3[ ] vsSrc = source.coords;
+        Vec2[ ] vtsSrc = source.texCoords;
+        Vec3[ ] vnsSrc = source.normals;
+
+        int uniformLen = 0;
+        int fsSrcLen = fsSrc.Length;
+        for (int i = 0; i < fsSrcLen; ++i)
+        {
+            uniformLen += fsSrc[i].Length;
+        }
+
+        Loop3[ ] fsTrg = new Loop3[fsSrcLen];
+        Vec3[ ] vsTrg = new Vec3[uniformLen];
+        Vec2[ ] vtsTrg = new Vec2[uniformLen];
+        Vec3[ ] vnsTrg = new Vec3[uniformLen];
+
+        for (int k = 0, i = 0; i < fsSrcLen; ++i)
+        {
+            Index3[ ] fSrc = fsSrc[i].Indices;
+            int fLen = fSrc.Length;
+            fsTrg[i] = new Loop3 (new Index3[fLen]);
+            Index3[ ] fTrg = fsTrg[i].Indices;
+
+            for (int j = 0; j < fLen; ++j, ++k)
+            {
+                Index3 vertSrc = fSrc[j];
+                vsTrg[k] = vsSrc[vertSrc.v];
+                vtsTrg[k] = vtsSrc[vertSrc.vt];
+                vnsTrg[k] = vnsSrc[vertSrc.vn];
+
+                fTrg[j] = new Index3 (k, k, k);
+            }
+        }
+
+        target.coords = vsTrg;
+        target.texCoords = vtsTrg;
+        target.normals = vnsTrg;
+        target.loops = fsTrg;
+
+        return target;
+    }
+
+    public static Mesh3 UvSphere (in int longitudes, in int latitudes, in float size, in PolyType poly, in Mesh3 target)
+    {
+        target.name = "UV Sphere";
+
+        int lons = longitudes < 3 ? 3 : longitudes;
+        int lats = latitudes < 1 ? 1 : latitudes;
+        float radius = Utils.Max (Utils.Epsilon, size);
+        int lons1 = lons + 1;
+        int lats1 = lats + 1;
+        int vLen = lons * lats + 2;
+        int vtLen = lons1 * lats + lons + lons;
+        int last0 = vLen - 1;
+
+        Vec3[ ] vs = target.coords = Vec3.Resize (target.coords, vLen);
+        Vec2[ ] vts = target.texCoords = Vec2.Resize (target.texCoords, vtLen);
+        Vec3[ ] vns = target.normals = Vec3.Resize (target.normals, vLen);
+
+        float toTexS = 1.0f / lons;
+        float toTexT = 1.0f / lats1;
+        float toTheta = Utils.Tau / lons;
+        float toPhi = Utils.Pi / lats1;
+
+        vs[0] = new Vec3 (0.0f, 0.5f, 0.0f);
+        vns[0] = new Vec3 (0.0f, 1.0f, 0.0f);
+
+        vs[last0] = new Vec3 (0.0f, -0.5f, 0.0f);
+        vns[last0] = new Vec3 (0.0f, -1.0f, 0.0f);
+
+        Vec2[ ] sincost = new Vec2[lons];
+        for (int j = 0, k = vtLen - lons; j < lons; ++j, ++k)
+        {
+            float jf = (float) j;
+
+            float theta = jf * toTheta;
+            sincost[j] = new Vec2 (Utils.Cos (theta), Utils.Sin (theta));
+
+            float sTex = (jf + 0.5f) * toTexS;
+            vts[j] = new Vec2 (sTex, 1.0f);
+            vts[k] = new Vec2 (sTex, 0.0f);
+        }
+
+        float[ ] tcxs = new float[lons1];
+        for (int j = 0; j < lons1; ++j) { tcxs[j] = j * toTexS; }
+
+        for (int i = 0, vIdx = 1, vtIdx = lons; i < lats; ++i)
+        {
+            float spOff = i + 1.0f;
+            float tTex = 1.0f - spOff * toTexT;
+
+            float phi = spOff * toPhi;
+            float cosPhi = Utils.Cos (phi);
+            float sinPhi = Utils.Sin (phi);
+
+            float rhoCosPhi = radius * cosPhi;
+            float rhoSinPhi = radius * sinPhi;
+
+            for (int j = 0; j < lons; ++j, ++vIdx)
+            {
+                Vec2 sct = sincost[j];
+                float cosTheta = sct.x;
+                float sinTheta = sct.y;
+
+                vs[vIdx] = new Vec3 (
+                    rhoSinPhi * cosTheta,
+                    rhoCosPhi,
+                    rhoSinPhi * sinTheta);
+                vns[vIdx] = Vec3.Normalize (vs[vIdx]);
+            }
+
+            for (int j = 0; j < lons1; ++j, ++vtIdx)
+            {
+                vts[vtIdx] = new Vec2 (tcxs[j], tTex);
+            }
+        }
+
+        bool isQuad = poly != PolyType.Tri;
+        int latsn1 = lats - 1;
+        int midCount = isQuad ? latsn1 * lons : latsn1 * lons * 2;
+        int fsLen = lons + lons + midCount;
+
+        Loop3[ ] fs = target.loops = Loop3.Resize (target.loops, fsLen);
+
+        int vIdxOff = last0 - lons;
+        int vtPoleOff = vtLen - lons;
+        int vtIdxOff = vtPoleOff - lons1;
+        int fsIdxOff = fsLen - lons;
+
+        for (int i = 0; i < lons; ++i)
+        {
+            int k = i + 1;
+            int n = k % lons;
+            int j = 1 + n;
+            int m = lons + i;
+
+            Loop3 northTri = fs[i] = new Loop3 (
+                new Index3 (j, m + 1, j),
+                new Index3 (k, m, k),
+                new Index3 (0, i, 0));
+
+            Loop3 southTri = fs[fsIdxOff + i] = new Loop3 (
+                new Index3 (
+                    vIdxOff + i,
+                    vtIdxOff + i,
+                    vIdxOff + i),
+                new Index3 (
+                    vIdxOff + n,
+                    vtIdxOff + k,
+                    vIdxOff + n),
+                new Index3 (
+                    last0,
+                    vtPoleOff + i,
+                    last0));
+        }
+
+        int stride = isQuad ? 1 : 2;
+        for (int i = 0, k = lons; i < latsn1; ++i)
+        {
+            int currentLat0 = 1 + i * lons;
+            int nextLat0 = currentLat0 + lons;
+            int currentLat1 = lons + i * lons1;
+            int nextLat1 = currentLat1 + lons1;
+
+            for (int j = 0; j < lons; ++j, k += stride)
+            {
+                int nextLon1 = j + 1;
+                int nextLon0 = nextLon1 % lons;
+
+                int v00 = currentLat0 + j;
+                int v10 = currentLat0 + nextLon0;
+                int v11 = nextLat0 + nextLon0;
+                int v01 = nextLat0 + j;
+
+                int vt00 = currentLat1 + j;
+                int vt10 = currentLat1 + nextLon1;
+                int vt11 = nextLat1 + nextLon1;
+                int vt01 = nextLat1 + j;
+
+                if (isQuad)
                 {
-                    new Loop3 (
-                    new Index3 (0, 4, 4),
-                    new Index3 (1, 5, 4),
-                    new Index3 (3, 3, 4)),
-                    new Loop3 (
-                    new Index3 (0, 4, 4),
-                    new Index3 (3, 3, 4),
-                    new Index3 (2, 2, 4)),
-                    new Loop3 (
-                    new Index3 (2, 2, 5),
-                    new Index3 (3, 3, 5),
-                    new Index3 (7, 6, 5)),
-                    new Loop3 (
-                    new Index3 (2, 2, 5),
-                    new Index3 (7, 6, 5),
-                    new Index3 (6, 7, 5)),
-                    new Loop3 (
-                    new Index3 (6, 7, 0),
-                    new Index3 (7, 6, 0),
-                    new Index3 (5, 8, 0)),
-                    new Loop3 (
-                    new Index3 (6, 7, 0),
-                    new Index3 (5, 8, 0),
-                    new Index3 (4, 9, 0)),
-                    new Loop3 (
-                    new Index3 (4, 9, 3),
-                    new Index3 (5, 8, 3),
-                    new Index3 (1, 0, 3)),
-                    new Loop3 (
-                    new Index3 (4, 9, 3),
-                    new Index3 (1, 0, 3),
-                    new Index3 (0, 1, 3)),
-                    new Loop3 (
-                    new Index3 (2, 10, 2),
-                    new Index3 (6, 7, 2),
-                    new Index3 (4, 9, 2)),
-                    new Loop3 (
-                    new Index3 (2, 10, 2),
-                    new Index3 (4, 9, 2),
-                    new Index3 (0, 11, 2)),
-                    new Loop3 (
-                    new Index3 (7, 6, 1),
-                    new Index3 (3, 13, 1),
-                    new Index3 (1, 12, 1)),
-                    new Loop3 (
-                    new Index3 (7, 6, 1),
-                    new Index3 (1, 12, 1),
-                    new Index3 (5, 8, 1))
-                };
+                    Loop3 quad = fs[k] = new Loop3 (
+                        new Index3 (v00, vt00, v00),
+                        new Index3 (v10, vt10, v10),
+                        new Index3 (v11, vt11, v11),
+                        new Index3 (v01, vt01, v01));
+                }
+                else
+                {
+                    Loop3 tri0 = fs[k] = new Loop3 (
+                        new Index3 (v00, vt00, v00),
+                        new Index3 (v10, vt10, v10),
+                        new Index3 (v11, vt11, v11));
 
-                break;
+                    Loop3 tri1 = fs[k + 1] = new Loop3 (
+                        new Index3 (v00, vt00, v00),
+                        new Index3 (v11, vt11, v11),
+                        new Index3 (v01, vt01, v01));
+                }
+            }
         }
 
         return target;

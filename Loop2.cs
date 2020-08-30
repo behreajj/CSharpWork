@@ -1,11 +1,11 @@
 using System;
 using System.Text;
 
-public class Loop3
+public class Loop2
 {
-    protected Index3[ ] indices;
+    protected Index2[ ] indices;
 
-    public Index3[ ] Indices
+    public Index2[ ] Indices
     {
         get
         {
@@ -20,7 +20,7 @@ public class Loop3
 
     public int Length { get { return this.indices.Length; } }
 
-    public Index3 this [int i]
+    public Index2 this [int i]
     {
         get
         {
@@ -41,22 +41,22 @@ public class Loop3
         }
     }
 
-    public Loop3 ( )
+    public Loop2 ( )
     {
-        this.indices = new Index3[3];
+        this.indices = new Index2[3];
     }
 
-    public Loop3 (in int length)
+    public Loop2 (in int length)
     {
-        this.indices = new Index3[length < 3 ? 3 : length];
+        this.indices = new Index2[length < 3 ? 3 : length];
     }
 
-    public Loop3 (in Index3[ ] indices)
+    public Loop2 (in Index2[ ] indices)
     {
         this.indices = indices;
     }
 
-    public Loop3 (params Index3[ ] indices)
+    public Loop2 (params Index2[ ] indices)
     {
         this.indices = indices;
     }
@@ -84,23 +84,10 @@ public class Loop3
         return sb.ToString ( );
     }
 
-    public static implicit operator Loop3 (in Loop2 source)
+    public static Loop2[ ] Resize (in Loop2[ ] arr, in int sz)
     {
-        int len = source.Length;
-        Loop3 result = new Loop3 (new Index3[len]);
-        Index2[ ] srcIdcs = source.Indices;
-        Index3[ ] trgIdcs = result.Indices;
-        for (int i = 0; i < len; ++i)
-        {
-            trgIdcs[i] = srcIdcs[i];
-        }
-        return result;
-    }
-
-    public static Loop3[ ] Resize (in Loop3[ ] arr, in int sz)
-    {
-        if (sz < 1) return new Loop3[ ] { };
-        Loop3[ ] result = new Loop3[sz];
+        if (sz < 1) return new Loop2[ ] { };
+        Loop2[ ] result = new Loop2[sz];
 
         if (arr != null)
         {
@@ -112,22 +99,12 @@ public class Loop3
         return result;
     }
 
-    /// <summary>
-    /// Splices an array of loops into the midst of another. For use by
-    /// subdivision functions. If the number of deletions exceeds the length of
-    /// the target array, then a copy of the insert array is returned.
-    /// </summary>
-    /// <param name="arr">array</param>
-    /// <param name="index">insertion point</param>
-    /// <param name="deletions">deletion count</param>
-    /// <param name="insert">insert</param>
-    /// <returns>the spliced array</returns>
-    public static Loop3[ ] Splice (in Loop3[ ] arr, in int index, in int deletions, in Loop3[ ] insert)
+    public static Loop2[ ] Splice (in Loop2[ ] arr, in int index, in int deletions, in Loop2[ ] insert)
     {
         int aLen = arr.Length;
         if (deletions >= aLen)
         {
-            Loop3[ ] result0 = new Loop3[insert.Length];
+            Loop2[ ] result0 = new Loop2[insert.Length];
             System.Array.Copy (insert, 0, result0, 0, insert.Length);
             return result0;
         }
@@ -136,7 +113,7 @@ public class Loop3
         int valIdx = Utils.Mod (index, aLen + 1);
         if (deletions < 1)
         {
-            Loop3[ ] result1 = new Loop3[aLen + bLen];
+            Loop2[ ] result1 = new Loop2[aLen + bLen];
             System.Array.Copy (arr, 0, result1, 0, valIdx);
             System.Array.Copy (insert, 0, result1, valIdx, bLen);
             System.Array.Copy (arr, valIdx, result1, valIdx + bLen, aLen - valIdx);
@@ -144,7 +121,7 @@ public class Loop3
         }
 
         int idxOff = valIdx + deletions;
-        Loop3[ ] result = new Loop3[aLen + bLen - deletions];
+        Loop2[ ] result = new Loop2[aLen + bLen - deletions];
         System.Array.Copy (arr, 0, result, 0, valIdx);
         System.Array.Copy (insert, 0, result, valIdx, bLen);
         System.Array.Copy (arr, idxOff, result, valIdx + bLen, aLen - idxOff);
