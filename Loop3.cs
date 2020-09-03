@@ -84,6 +84,16 @@ public class Loop3
         return sb.ToString ( );
     }
 
+    public static implicit operator Index3[ ] (in Loop3 source)
+    {
+        return source.indices;
+    }
+
+    public static implicit operator Loop3 (in Index3[ ] source)
+    {
+        return new Loop3 (source);
+    }
+
     public static implicit operator Loop3 (in Loop2 source)
     {
         int len = source.Length;

@@ -10,6 +10,16 @@ using System.Text;
 public class Mesh3
 {
     /// <summary>
+    /// The UV profile for a capsule.
+    /// </summary>
+    public enum CapsuleUvProfile : int
+    {
+        Fixed = 0,
+        Aspect = 1,
+        Uniform = 2
+    }
+
+    /// <summary>
     /// An array of coordinates.
     /// </summary>
     protected Vec3[ ] coords;
@@ -148,6 +158,11 @@ public class Mesh3
         this.normals = normals;
     }
 
+    public Mesh3 (in Mesh3 source)
+    {
+        this.Set (source);
+    }
+
     public override string ToString ( )
     {
         return this.ToString (4);
@@ -218,6 +233,34 @@ public class Mesh3
         this.normals = newNormals;
 
         Array.Sort (this.loops, new SortLoops3 (this.coords));
+
+        return this;
+    }
+
+    public Mesh3 Set (in Mesh3 source)
+    {
+        int vsLen = source.coords.Length;
+        this.coords = new Vec3[vsLen];
+        System.Array.Copy (source.coords, this.coords, vsLen);
+
+        int vtsLen = source.texCoords.Length;
+        this.texCoords = new Vec2[vtsLen];
+        System.Array.Copy (source.texCoords, this.texCoords, vtsLen);
+
+        int vnsLen = source.normals.Length;
+        this.normals = new Vec3[vnsLen];
+        System.Array.Copy (source.normals, this.normals, vnsLen);
+
+        int loopsLen = source.loops.Length;
+        this.loops = new Loop3[loopsLen];
+        for (int i = 0; i < loopsLen; ++i)
+        {
+            Index3[ ] sourceIndices = source.loops[i].Indices;
+            int loopLen = sourceIndices.Length;
+            Index3[ ] targetIndices = new Index3[loopLen];
+            System.Array.Copy (sourceIndices, targetIndices, loopLen);
+            this.loops[i] = new Loop3 (targetIndices);
+        }
 
         return this;
     }
@@ -633,6 +676,449 @@ public class Mesh3
         target.loops = fsTrg;
         target.coords = vsTrg;
         target.normals = vnsTrg;
+
+        return target;
+    }
+
+    public static Mesh3 Capsule (in int longitudes, in int latitudes, in int rings, in float depth, in float radius, in PolyType poly, CapsuleUvProfile profile, in Mesh3 target)
+    {
+        target.name = "Capsule";
+
+        int verifLats = latitudes < 2 ? 2 : latitudes % 2 != 0 ? latitudes + 1 : latitudes;
+        int verifLons = longitudes < 3 ? 3 : longitudes;
+        int verifRings = rings < 0 ? 0 : rings;
+        float verifDepth = Utils.Max (Utils.Epsilon, depth);
+        float verifRad = Utils.Max (Utils.Epsilon, radius);
+
+        bool useQuads = poly == PolyType.Quad;
+        bool calcMid = verifRings > 0;
+
+        int halfLats = verifLats / 2;
+        int halfLatsN1 = halfLats - 1;
+        int halfLatsN2 = halfLats - 2;
+        int verifRingsP1 = verifRings + 1;
+        int verifLonsP1 = verifLons + 1;
+
+        int lonsHalfLatN1 = halfLatsN1 * verifLons;
+        int lonsRingsP1 = verifRingsP1 * verifLons;
+
+        float halfDepth = verifDepth * 0.5f;
+        float summit = halfDepth + verifRad;
+
+        // Index offsets for coordinates.
+        int idxVNEquator = verifLonsP1 + verifLons * halfLatsN2;
+        int idxVCyl = idxVNEquator + verifLons;
+        int idxVSEquator = calcMid ? idxVCyl + verifLons *
+            verifRings : idxVCyl;
+        int idxVSouth = idxVSEquator + verifLons;
+        int idxVSouthCap = idxVSouth + verifLons * halfLatsN2;
+        int idxVSouthPole = idxVSouthCap + verifLons;
+
+        // Index offsets for texture coordinates.
+        int idxVtNEquator = verifLons + verifLonsP1 * halfLatsN1;
+        int idxVtCyl = idxVtNEquator + verifLonsP1;
+        int idxVtSEquator = calcMid ? idxVtCyl + verifLonsP1 *
+            verifRings : idxVtCyl;
+        int idxVtSHemi = idxVtSEquator + verifLonsP1;
+        int idxVtSPolar = idxVtSHemi + verifLonsP1 * halfLatsN2;
+        int idxVtSCap = idxVtSPolar + verifLonsP1;
+
+        // Index offsets for normals.
+        int idxVnSouth = idxVNEquator + verifLons;
+        int idxVnSouthCap = idxVnSouth + verifLons * halfLatsN2;
+        int idxVnSouthPole = idxVnSouthCap + verifLons;
+
+        // Array lengths.
+        int vsLen = idxVSouthPole + 1;
+        int vtsLen = idxVtSCap + verifLons;
+        int vnsLen = idxVnSouthPole + 1;
+
+        // Allocate mesh data.
+        Vec3[ ] vs = target.coords = new Vec3[vsLen];
+        Vec2[ ] vts = target.texCoords = new Vec2[vtsLen];
+        Vec3[ ] vns = target.normals = new Vec3[vnsLen];
+
+        // North pole.
+        vs[0] = new Vec3 (0.0f, 0.0f, summit);
+        vns[0] = new Vec3 (0.0f, 0.0f, 1.0f);
+
+        // South pole.
+        vs[idxVSouthPole] = new Vec3 (0.0f, 0.0f, -summit);
+        vns[idxVnSouthPole] = new Vec3 (0.0f, 0.0f, -1.0f);
+
+        Vec2[ ] sinThetaCache = new Vec2[verifLons];
+        float toTheta = Utils.Tau / verifLons;
+        float toPhi = Utils.Pi / verifLats;
+        float toTexHorizontal = 1.0f / verifLons;
+        float toTexVertical = 1.0f / halfLats;
+        float vtPoleNorth = 0.0f;
+        float vtPoleSouth = 1.0f;
+
+        for (int j = 0; j < verifLons; ++j)
+        {
+            float jf = j;
+
+            // Coordinates.
+            float theta = jf * toTheta;
+            float sinTheta = Utils.Sin (theta);
+            float cosTheta = Utils.Cos (theta);
+            sinThetaCache[j] = new Vec2 (cosTheta, sinTheta);
+
+            // Texture coordinates at North and South pole.
+            float sTex = (jf + 0.5f) * toTexHorizontal;
+            vts[j] = new Vec2 (sTex, vtPoleNorth);
+            vts[idxVtSCap + j] = new Vec2 (sTex, vtPoleSouth);
+
+            // Multiply by radius to get equatorial x and y.
+            float x = verifRad * cosTheta;
+            float y = verifRad * sinTheta;
+
+            // Equatorial coordinates. Offset by cylinder depth.
+            vs[idxVNEquator + j] = new Vec3 (x, y, halfDepth);
+            vs[idxVSEquator + j] = new Vec3 (x, y, -halfDepth);
+
+            // Equatorial normals.
+            vns[idxVNEquator + j] = new Vec3 (cosTheta, sinTheta, 0.0f);
+        }
+
+        // Determine aspect ratio.
+        float vtAspectRatio = 1.0f;
+        switch (profile)
+        {
+            case CapsuleUvProfile.Aspect:
+                vtAspectRatio = verifRad / (verifDepth + 2 * verifRad);
+                break;
+
+            case CapsuleUvProfile.Uniform:
+                vtAspectRatio = (float) halfLats / (verifRingsP1 + verifLats);
+                break;
+
+            case CapsuleUvProfile.Fixed:
+            default:
+                vtAspectRatio = Utils.OneThird;
+                break;
+        }
+        float vtAspectNorth = vtAspectRatio;
+        float vtAspectSouth = 1.0f - vtAspectRatio;
+
+        // Calculate equatorial texture coordinates. Cache horizontal measure.
+        float[ ] sTexCache = new float[verifLonsP1];
+        for (int j = 0; j < verifLonsP1; ++j)
+        {
+            float sTex = j * toTexHorizontal;
+            sTexCache[j] = sTex;
+            vts[idxVtNEquator + j] = new Vec2 (sTex, vtAspectNorth);
+            vts[idxVtSEquator + j] = new Vec2 (sTex, vtAspectSouth);
+        }
+
+        // Divide latitudes into hemispheres. Start at i = 1 due to the poles.
+        int vHemiOffsetNorth = 1;
+        int vHemiOffsetSouth = idxVSouth;
+        int vtHemiOffsetNorth = verifLons;
+        int vtHemiOffsetSouth = idxVtSHemi;
+        int vnHemiOffsetSouth = idxVnSouth;
+
+        for (int i = 1; i < halfLats; ++i)
+        {
+            float phi = i * toPhi;
+
+            float sinPhiSouth = Utils.Sin (phi);
+            float cosPhiSouth = Utils.Cos (phi);
+
+            // Use trigonometric symmetries to avoid calculating another sine and
+            float sinPhiNorth = -cosPhiSouth;
+            float cosPhiNorth = sinPhiSouth;
+
+            // For North coordinates, multiply by radius and offset.
+            float rhoCosPhiNorth = verifRad * cosPhiNorth;
+            float rhoSinPhiNorth = verifRad * sinPhiNorth;
+            float zOffsetNorth = halfDepth - rhoSinPhiNorth;
+
+            // For South coordinates, multiply by radius and offset.
+            float rhoCosPhiSouth = verifRad * cosPhiSouth;
+            float rhoSinPhiSouth = verifRad * sinPhiSouth;
+            float zOffsetSouth = -halfDepth - rhoSinPhiSouth;
+
+            // Coordinates.
+            for (int j = 0; j < verifLons; ++j)
+            {
+                Vec2 scTheta = sinThetaCache[j];
+
+                // North coordinate.
+                vs[vHemiOffsetNorth] = new Vec3 (
+                    rhoCosPhiNorth * scTheta.x,
+                    rhoCosPhiNorth * scTheta.y,
+                    zOffsetNorth);
+
+                // North normal.
+                vns[vHemiOffsetNorth] = new Vec3 (
+                    cosPhiNorth * scTheta.x,
+                    cosPhiNorth * scTheta.y, //
+                    -sinPhiNorth);
+
+                // South coordinate.
+                vs[vHemiOffsetSouth] = new Vec3 (
+                    rhoCosPhiSouth * scTheta.x,
+                    rhoCosPhiSouth * scTheta.y,
+                    zOffsetSouth);
+
+                // South normal. 
+                vns[vnHemiOffsetSouth] = new Vec3 (
+                    cosPhiSouth * scTheta.x,
+                    cosPhiSouth * scTheta.y, //
+                    -sinPhiSouth);
+
+                ++vHemiOffsetNorth;
+                ++vHemiOffsetSouth;
+                ++vnHemiOffsetSouth;
+            }
+
+            float tTexFac = i * toTexVertical;
+            float tTexNorth = tTexFac * vtAspectNorth;
+            float tTexSouth = (1.0f - tTexFac) * vtAspectSouth + tTexFac;
+
+            // Texture coordinates.
+            for (int j = 0; j < verifLonsP1; ++j)
+            {
+                float sTex = sTexCache[j];
+                vts[vtHemiOffsetNorth] = new Vec2 (sTex, tTexNorth);
+                vts[vtHemiOffsetSouth] = new Vec2 (sTex, tTexSouth);
+
+                ++vtHemiOffsetNorth;
+                ++vtHemiOffsetSouth;
+            }
+        }
+
+        // Calculate sections of cylinder in middle.
+        if (calcMid)
+        {
+            float toFac = 1.0f / verifRingsP1;
+            int vCylOffset = idxVCyl;
+            int vtCylOffset = idxVtCyl;
+            for (int m = 1; m < verifRingsP1; ++m)
+            {
+                float fac = m * toFac;
+                float cmplFac = 1.0f - fac;
+
+                // Coordinates.
+                for (int j = 0; j < verifLons; ++j)
+                {
+                    Vec3 vEquatorNorth = vs[idxVNEquator + j];
+                    Vec3 vEquatorSouth = vs[idxVSEquator + j];
+
+                    // xy should be the same for both North and South.
+                    // North z should equal half_depth while
+                    // South z should equal -half_depth. For clarity,
+                    // this is left as a linear interpolation.
+                    vs[vCylOffset] = new Vec3 (
+                        cmplFac * vEquatorNorth.x + fac * vEquatorSouth.x,
+                        cmplFac * vEquatorNorth.y + fac * vEquatorSouth.y,
+                        cmplFac * vEquatorNorth.z + fac * vEquatorSouth.z);
+
+                    ++vCylOffset;
+                }
+
+                // Texture coordinates.
+                float tTex = cmplFac * vtAspectNorth + fac * vtAspectSouth;
+                for (int j = 0; j < verifLonsP1; ++j)
+                {
+                    float sTex = sTexCache[j];
+                    vts[vtCylOffset] = new Vec2 (sTex, tTex);
+                    ++vtCylOffset;
+                }
+            }
+        }
+
+        // Find index offsets for face indices.
+        int idxFsCyl = useQuads ?
+            verifLons + lonsHalfLatN1 :
+            verifLons + lonsHalfLatN1 * 2;
+        int idxFsSouthEquat = useQuads ?
+            idxFsCyl + lonsRingsP1 :
+            idxFsCyl + lonsRingsP1 * 2;
+        int idxFsSouthHemi = useQuads ?
+            idxFsSouthEquat + lonsHalfLatN1 :
+            idxFsSouthEquat + lonsHalfLatN1 * 2;
+
+        int lenIndices = idxFsSouthHemi + verifLons;
+        Loop3[ ] fs = target.loops = new Loop3[lenIndices];
+
+        // North & South cap indices (triangles).
+        for (int j = 0; j < verifLons; ++j)
+        {
+            int jNextVt = j + 1;
+            int jNextV = jNextVt % verifLons;
+
+            fs[j] = new Loop3 (
+                new Index3 (0, j, 0),
+                new Index3 (jNextVt, verifLons + j, jNextVt),
+                new Index3 (
+                    1 + jNextV,
+                    verifLons + jNextVt,
+                    1 + jNextV));
+
+            fs[idxFsSouthHemi + j] = new Loop3 (
+                new Index3 (
+                    idxVSouthPole,
+                    idxVtSCap + j,
+                    idxVnSouthPole),
+                new Index3 (
+                    idxVSouthCap + jNextV,
+                    idxVtSPolar + jNextVt,
+                    idxVnSouthCap + jNextV),
+                new Index3 (
+                    idxVSouthCap + j,
+                    idxVtSPolar + j,
+                    idxVnSouthCap + j));
+        }
+
+        // Hemisphere indices.
+        int fHemiOffsetNorth = verifLons;
+        int fHemiOffsetSouth = idxFsSouthEquat;
+        for (int i = 0; i < halfLatsN1; ++i)
+        {
+            int iLonsCurr = i * verifLons;
+
+            // North coordinate index offset.
+            int vCurrLatN = 1 + iLonsCurr;
+            int vNextLatN = vCurrLatN + verifLons;
+
+            // South coordinate index offset.
+            int vCurrLatS = idxVSEquator + iLonsCurr;
+            int vNextLatS = vCurrLatS + verifLons;
+
+            // North texture coordinate index offset.
+            int vtCurrLatN = verifLons + i * verifLonsP1;
+            int vtNextLatN = vtCurrLatN + verifLonsP1;
+
+            // South texture coordinate index offset.
+            int vtCurrLatS = idxVtSEquator + i * verifLonsP1;
+            int vtNextLatS = vtCurrLatS + verifLonsP1;
+
+            // North normal index offset.
+            int vnCurrLatN = 1 + iLonsCurr;
+            int vnNextLatN = vnCurrLatN + verifLons;
+
+            // South normal index offset.
+            int vnCurrLatS = idxVNEquator + iLonsCurr;
+            int vnNextLatS = vnCurrLatS + verifLons;
+
+            for (int j = 0; j < verifLons; ++j)
+            {
+                int jNextVt = j + 1;
+                int jNextV = jNextVt % verifLons;
+
+                // North coordinate indices.
+                int vn00 = vCurrLatN + j;
+                int vn01 = vNextLatN + j;
+                int vn11 = vNextLatN + jNextV;
+                int vn10 = vCurrLatN + jNextV;
+
+                // South coordinate indices.
+                int vs00 = vCurrLatS + j;
+                int vs01 = vNextLatS + j;
+                int vs11 = vNextLatS + jNextV;
+                int vs10 = vCurrLatS + jNextV;
+
+                // North texture coordinate indices.
+                int vtn00 = vtCurrLatN + j;
+                int vtn01 = vtNextLatN + j;
+                int vtn11 = vtNextLatN + jNextVt;
+                int vtn10 = vtCurrLatN + jNextVt;
+
+                // South texture coordinate indices.
+                int vts00 = vtCurrLatS + j;
+                int vts01 = vtNextLatS + j;
+                int vts11 = vtNextLatS + jNextVt;
+                int vts10 = vtCurrLatS + jNextVt;
+
+                // North normal indices.
+                int vnn00 = vnCurrLatN + j;
+                int vnn01 = vnNextLatN + j;
+                int vnn11 = vnNextLatN + jNextV;
+                int vnn10 = vnCurrLatN + jNextV;
+
+                // South normal indices.
+                int vns00 = vnCurrLatS + j;
+                int vns01 = vnNextLatS + j;
+                int vns11 = vnNextLatS + jNextV;
+                int vns10 = vnCurrLatS + jNextV;
+
+                // TODO: Quads version.
+
+                // North triangles.
+                fs[fHemiOffsetNorth] = new Loop3 (
+                    new Index3 (vn00, vtn00, vnn00),
+                    new Index3 (vn11, vtn11, vnn11),
+                    new Index3 (vn10, vtn10, vnn10));
+
+                fs[fHemiOffsetNorth + 1] = new Loop3 (
+                    new Index3 (vn00, vtn00, vnn00),
+                    new Index3 (vn01, vtn01, vnn01),
+                    new Index3 (vn11, vtn11, vnn11));
+
+                // South triangles.
+                fs[fHemiOffsetSouth] = new Loop3 (
+                    new Index3 (vs00, vts00, vns00),
+                    new Index3 (vs11, vts11, vns11),
+                    new Index3 (vs10, vts10, vns10));
+
+                fs[fHemiOffsetSouth + 1] = new Loop3 (
+                    new Index3 (vs00, vts00, vns00),
+                    new Index3 (vs01, vts01, vns01),
+                    new Index3 (vs11, vts11, vns11));
+
+                fHemiOffsetNorth += 2;
+                fHemiOffsetSouth += 2;
+            }
+        }
+
+        // Cylinder face indices.
+        int fCylOffset = idxFsCyl;
+        for (int m = 0; m < verifRingsP1; ++m)
+        {
+            int vCurrRing = idxVNEquator + m * verifLons;
+            int vNextRing = vCurrRing + verifLons;
+
+            int vtCurrRing = idxVtNEquator + m * verifLonsP1;
+            int vtNextRing = vtCurrRing + verifLonsP1;
+
+            for (int j = 0; j < verifLons; ++j)
+            {
+                int jNextVt = j + 1;
+                int jNextV = jNextVt % verifLons;
+
+                // Coordinate corners.
+                int v00 = vCurrRing + j;
+                int v01 = vNextRing + j;
+                int v11 = vNextRing + jNextV;
+                int v10 = vCurrRing + jNextV;
+
+                // Texture coordinate corners.
+                int vt00 = vtCurrRing + j;
+                int vt01 = vtNextRing + j;
+                int vt11 = vtNextRing + jNextVt;
+                int vt10 = vtCurrRing + jNextVt;
+
+                // Normal corners.
+                int vn0 = idxVNEquator + j;
+                int vn1 = idxVNEquator + jNextV;
+
+                // TODO: Quads version.
+
+                fs[fCylOffset] = new Loop3 (
+                    new Index3 (v00, vt00, vn0),
+                    new Index3 (v11, vt11, vn1),
+                    new Index3 (v10, vt10, vn1));
+
+                fs[fCylOffset + 1] = new Loop3 (
+                    new Index3 (v00, vt00, vn0),
+                    new Index3 (v01, vt01, vn0),
+                    new Index3 (v11, vt11, vn1));
+
+                fCylOffset += 2;
+            }
+        }
 
         return target;
     }
@@ -1270,169 +1756,6 @@ public class Mesh3
         target.texCoords = vtsTrg;
         target.normals = vnsTrg;
         target.loops = fsTrg;
-
-        return target;
-    }
-
-    public static Mesh3 UvSphere (in int longitudes, in int latitudes, in float size, in PolyType poly, in Mesh3 target)
-    {
-        target.name = "UV Sphere";
-
-        int lons = longitudes < 3 ? 3 : longitudes;
-        int lats = latitudes < 1 ? 1 : latitudes;
-        float radius = Utils.Max (Utils.Epsilon, size);
-        int lons1 = lons + 1;
-        int lats1 = lats + 1;
-        int vLen = lons * lats + 2;
-        int vtLen = lons1 * lats + lons + lons;
-        int last0 = vLen - 1;
-
-        Vec3[ ] vs = target.coords = Vec3.Resize (target.coords, vLen);
-        Vec2[ ] vts = target.texCoords = Vec2.Resize (target.texCoords, vtLen);
-        Vec3[ ] vns = target.normals = Vec3.Resize (target.normals, vLen);
-
-        float toTexS = 1.0f / lons;
-        float toTexT = 1.0f / lats1;
-        float toTheta = Utils.Tau / lons;
-        float toPhi = Utils.Pi / lats1;
-
-        vs[0] = new Vec3 (0.0f, 0.5f, 0.0f);
-        vns[0] = new Vec3 (0.0f, 1.0f, 0.0f);
-
-        vs[last0] = new Vec3 (0.0f, -0.5f, 0.0f);
-        vns[last0] = new Vec3 (0.0f, -1.0f, 0.0f);
-
-        Vec2[ ] sincost = new Vec2[lons];
-        for (int j = 0, k = vtLen - lons; j < lons; ++j, ++k)
-        {
-            float jf = (float) j;
-
-            float theta = jf * toTheta;
-            sincost[j] = new Vec2 (Utils.Cos (theta), Utils.Sin (theta));
-
-            float sTex = (jf + 0.5f) * toTexS;
-            vts[j] = new Vec2 (sTex, 1.0f);
-            vts[k] = new Vec2 (sTex, 0.0f);
-        }
-
-        float[ ] tcxs = new float[lons1];
-        for (int j = 0; j < lons1; ++j) { tcxs[j] = j * toTexS; }
-
-        for (int i = 0, vIdx = 1, vtIdx = lons; i < lats; ++i)
-        {
-            float spOff = i + 1.0f;
-            float tTex = 1.0f - spOff * toTexT;
-
-            float phi = spOff * toPhi;
-            float cosPhi = Utils.Cos (phi);
-            float sinPhi = Utils.Sin (phi);
-
-            float rhoCosPhi = radius * cosPhi;
-            float rhoSinPhi = radius * sinPhi;
-
-            for (int j = 0; j < lons; ++j, ++vIdx)
-            {
-                Vec2 sct = sincost[j];
-                float cosTheta = sct.x;
-                float sinTheta = sct.y;
-
-                vs[vIdx] = new Vec3 (
-                    rhoSinPhi * cosTheta,
-                    rhoCosPhi,
-                    rhoSinPhi * sinTheta);
-                vns[vIdx] = Vec3.Normalize (vs[vIdx]);
-            }
-
-            for (int j = 0; j < lons1; ++j, ++vtIdx)
-            {
-                vts[vtIdx] = new Vec2 (tcxs[j], tTex);
-            }
-        }
-
-        bool isQuad = poly != PolyType.Tri;
-        int latsn1 = lats - 1;
-        int midCount = isQuad ? latsn1 * lons : latsn1 * lons * 2;
-        int fsLen = lons + lons + midCount;
-
-        Loop3[ ] fs = target.loops = Loop3.Resize (target.loops, fsLen);
-
-        int vIdxOff = last0 - lons;
-        int vtPoleOff = vtLen - lons;
-        int vtIdxOff = vtPoleOff - lons1;
-        int fsIdxOff = fsLen - lons;
-
-        for (int i = 0; i < lons; ++i)
-        {
-            int k = i + 1;
-            int n = k % lons;
-            int j = 1 + n;
-            int m = lons + i;
-
-            Loop3 northTri = fs[i] = new Loop3 (
-                new Index3 (j, m + 1, j),
-                new Index3 (k, m, k),
-                new Index3 (0, i, 0));
-
-            Loop3 southTri = fs[fsIdxOff + i] = new Loop3 (
-                new Index3 (
-                    vIdxOff + i,
-                    vtIdxOff + i,
-                    vIdxOff + i),
-                new Index3 (
-                    vIdxOff + n,
-                    vtIdxOff + k,
-                    vIdxOff + n),
-                new Index3 (
-                    last0,
-                    vtPoleOff + i,
-                    last0));
-        }
-
-        int stride = isQuad ? 1 : 2;
-        for (int i = 0, k = lons; i < latsn1; ++i)
-        {
-            int currentLat0 = 1 + i * lons;
-            int nextLat0 = currentLat0 + lons;
-            int currentLat1 = lons + i * lons1;
-            int nextLat1 = currentLat1 + lons1;
-
-            for (int j = 0; j < lons; ++j, k += stride)
-            {
-                int nextLon1 = j + 1;
-                int nextLon0 = nextLon1 % lons;
-
-                int v00 = currentLat0 + j;
-                int v10 = currentLat0 + nextLon0;
-                int v11 = nextLat0 + nextLon0;
-                int v01 = nextLat0 + j;
-
-                int vt00 = currentLat1 + j;
-                int vt10 = currentLat1 + nextLon1;
-                int vt11 = nextLat1 + nextLon1;
-                int vt01 = nextLat1 + j;
-
-                if (isQuad)
-                {
-                    Loop3 quad = fs[k] = new Loop3 (
-                        new Index3 (v00, vt00, v00),
-                        new Index3 (v10, vt10, v10),
-                        new Index3 (v11, vt11, v11),
-                        new Index3 (v01, vt01, v01));
-                }
-                else
-                {
-                    Loop3 tri0 = fs[k] = new Loop3 (
-                        new Index3 (v00, vt00, v00),
-                        new Index3 (v10, vt10, v10),
-                        new Index3 (v11, vt11, v11));
-
-                    Loop3 tri1 = fs[k + 1] = new Loop3 (
-                        new Index3 (v00, vt00, v00),
-                        new Index3 (v11, vt11, v11),
-                        new Index3 (v01, vt01, v01));
-                }
-            }
-        }
 
         return target;
     }

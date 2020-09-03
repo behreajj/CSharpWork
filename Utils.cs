@@ -590,6 +590,19 @@ public static class Utils
     }
 
     /// <summary>
+    /// Finds the greatest, or maximum, among three values.
+    /// </summary>
+    /// <param name="a">first operand</param>
+    /// <param name="b">second operand</param>
+    /// <param name="c">third operand</param>
+    /// <returns>the maximum value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static int Max (in int a, in int b, in int c)
+    {
+        return Utils.Max (Utils.Max (a, b), c);
+    }
+
+    /// <summary>
     /// Finds the greater, or maximum, of two values.
     /// </summary>
     /// <param name="a">left operand</param>
