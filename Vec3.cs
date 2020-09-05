@@ -264,7 +264,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">the 2D vector</param>
     public static implicit operator Vec3 (in Vec2 v)
     {
-        return Vec3.Promote (v);
+        return Vec3.Promote (v, 0.0f);
     }
 
     /// <summary>

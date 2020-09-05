@@ -144,42 +144,47 @@ public class Mesh2
         return sb.ToString ( );
     }
 
-    public static Mesh2 Polygon (in int sectors, in PolyType poly, in Mesh2 target)
+    public static Mesh2 Polygon (in int sectors, in float radius, float rotation, in PolyType poly, in Mesh2 target)
     {
         target.name = "Polygon";
 
         int seg = sectors < 3 ? 3 : sectors;
         int newLen = poly == PolyType.Ngon ? seg : poly == PolyType.Quad ?
             seg + seg + 1 : seg + 1;
-        int fLen = poly == PolyType.Ngon ? 1 : seg;
+        float rad = Utils.Max (Utils.Epsilon, radius);
+        float offset = Utils.ModRadians (rotation);
         float toTheta = Utils.Tau / seg;
 
         Vec2[ ] vs = target.coords = Vec2.Resize (target.coords, newLen);
         Vec2[ ] vts = target.texCoords = Vec2.Resize (target.texCoords,
             newLen);
-        Loop2[ ] fs = target.loops = Loop2.Resize (target.loops, fLen);
 
         switch (poly)
         {
             case PolyType.Ngon:
 
-                Loop2 f = fs[0] = new Loop2 (new Index2[seg]);
-                Index2[ ] verts = f.Indices;
+                target.loops = Loop2.Resize (target.loops, 1);
+                target.loops[0] = new Loop2 (new Index2[seg]);
+
                 for (int i = 0; i < seg; ++i)
                 {
-                    float theta = i * toTheta;
+                    float theta = offset + i * toTheta;
+                    float cosTheta = Utils.Cos (theta);
+                    float sinTheta = Utils.Sin (theta);
                     Vec2 v = vs[i] = new Vec2 (
-                        0.5f * Utils.Cos (theta),
-                        0.5f * Utils.Sin (theta));
+                        rad * cosTheta,
+                        rad * sinTheta);
                     vts[i] = new Vec2 (
-                        v.x + 0.5f,
-                        0.5f - v.y);
-                    verts[i] = new Index2 (i, i);
+                        cosTheta * 0.5f + 0.5f,
+                        0.5f - sinTheta * 0.5f);
+                    target.loops[0][i] = new Index2 (i, i);
                 }
 
                 break;
 
             case PolyType.Quad:
+
+                target.loops = Loop2.Resize (target.loops, seg);
 
                 vs[0] = Vec2.Zero;
                 vts[0] = Vec2.UvCenter;
@@ -187,13 +192,15 @@ public class Mesh2
                 // Find corners.
                 for (int i = 0, j = 1; i < seg; ++i, j += 2)
                 {
-                    float theta = i * toTheta;
-                    Vec2 v = vs[j] = new Vec2 (
-                        0.5f * Utils.Cos (theta),
-                        0.5f * Utils.Sin (theta));
+                    float theta = offset + i * toTheta;
+                    float cosTheta = Utils.Cos (theta);
+                    float sinTheta = Utils.Sin (theta);
+                    vs[j] = new Vec2 (
+                        rad * cosTheta,
+                        rad * sinTheta);
                     vts[j] = new Vec2 (
-                        v.x + 0.5f,
-                        0.5f - v.y);
+                        cosTheta * 0.5f + 0.5f,
+                        0.5f - sinTheta * 0.5f);
                 }
 
                 // Find midpoints.
@@ -212,7 +219,7 @@ public class Mesh2
                     int t = 1 + j % last;
                     int u = 1 + (j + 1) % last;
 
-                    fs[i] = new Loop2 (
+                    target.loops[i] = new Loop2 (
                         new Index2 (0, 0),
                         new Index2 (s, s),
                         new Index2 (t, t),
@@ -224,22 +231,25 @@ public class Mesh2
             case PolyType.Tri:
             default:
 
+                target.loops = Loop2.Resize (target.loops, seg);
+
                 vs[0] = Vec2.Zero;
                 vts[0] = Vec2.UvCenter;
 
                 for (int i = 0, j = 1; i < seg; ++i, ++j)
                 {
-                    float theta = i * toTheta;
                     int k = 1 + j % seg;
-
-                    Vec2 v = vs[j] = new Vec2 (
-                        0.5f * Utils.Cos (theta),
-                        0.5f * Utils.Sin (theta));
+                    float theta = i * toTheta;
+                    float cosTheta = Utils.Cos (theta);
+                    float sinTheta = Utils.Sin (theta);
+                    vs[j] = new Vec2 (
+                        rad * cosTheta,
+                        rad * sinTheta);
                     vts[j] = new Vec2 (
-                        v.x + 0.5f,
-                        0.5f - v.y);
+                        cosTheta * 0.5f + 0.5f,
+                        0.5f - sinTheta * 0.5f);
 
-                    fs[i] = new Loop2 (
+                    target.loops[i] = new Loop2 (
                         new Index2 (0, 0),
                         new Index2 (j, j),
                         new Index2 (k, k));

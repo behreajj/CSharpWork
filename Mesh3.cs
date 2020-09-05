@@ -595,8 +595,9 @@ public class Mesh3
         return sb.ToString ( );
     }
 
-    public static implicit operator Mesh3 (in Mesh2 source)
+    public static explicit operator Mesh3 (in Mesh2 source)
     {
+        // TODO: Is there any problem with promoting m2 to m3?
         Loop2[ ] loopsSrc = source.Loops;
         Vec2[ ] vsSrc = source.Coords;
         Vec2[ ] vtsSrc = source.TexCoords;
@@ -625,7 +626,7 @@ public class Mesh3
         // Promote loops.
         for (int i = 0; i < loopsLen; ++i)
         {
-            loopsTrg[i] = loopsSrc[i];
+            loopsTrg[i] = (Loop3) loopsSrc[i];
         }
 
         return new Mesh3 (source.Name, loopsTrg, vsTrg, vtsTrg, vnsTrg);
@@ -1666,7 +1667,8 @@ public class Mesh3
         for (int i = 0; i < loopSrcLen; ++i)
         {
             Loop3 fSrc = loopsSrc[i];
-            int fSrcLen = fSrc.Length;
+            Index3[ ] vertsSrc = fSrc.Indices;
+            int fSrcLen = vertsSrc.Length;
 
             // If face loop is not a triangle, then split.
             if (fSrcLen > 3)
@@ -1675,7 +1677,7 @@ public class Mesh3
                 // Find last non-adjacent index. For index m, neither m + 1 nor
                 // m - 1, so where m = 0, the last non-adjacent would be
                 // arr.Length - 2.
-                Index3 vert0 = fSrc[0];
+                Index3 vert0 = vertsSrc[0];
                 int lastNonAdj = fSrcLen - 2;
                 for (int m = 0; m < lastNonAdj; ++m)
                 {

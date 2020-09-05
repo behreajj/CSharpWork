@@ -43,7 +43,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <value>normal index</value>
     public int vn { get { return this._vn; } }
 
-    public int this[int i]
+    public int this [int i]
     {
         get
         {
@@ -64,37 +64,37 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
         }
     }
 
-    public Index3(in int v = 0, in int vt = 0, in int vn = 0)
+    public Index3 (in int v = 0, in int vt = 0, in int vn = 0)
     {
         this._v = v < 0 ? 0 : v;
         this._vt = vt < 0 ? 0 : vt;
         this._vn = vn < 0 ? 0 : vn;
     }
 
-    public override bool Equals(object value)
+    public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals(this, value)) return true;
-        if (Object.ReferenceEquals(null, value)) return false;
-        if (value is Index3) return this.Equals((Index3)value);
+        if (Object.ReferenceEquals (this, value)) return true;
+        if (Object.ReferenceEquals (null, value)) return false;
+        if (value is Index3) return this.Equals ((Index3) value);
         return false;
     }
 
-    public override int GetHashCode()
+    public override int GetHashCode ( )
     {
         unchecked
         {
-            return ((Utils.MulBase ^ this._v.GetHashCode()) *
-                    Utils.HashMul ^ this._vt.GetHashCode()) *
-                Utils.HashMul ^ this._vn.GetHashCode();
+            return ((Utils.MulBase ^ this._v.GetHashCode ( )) *
+                    Utils.HashMul ^ this._vt.GetHashCode ( )) *
+                Utils.HashMul ^ this._vn.GetHashCode ( );
         }
     }
 
-    public override string ToString()
+    public override string ToString ( )
     {
-        return this.ToString(3);
+        return this.ToString (3);
     }
 
-    public bool Equals(Index3 i)
+    public bool Equals (Index3 i)
     {
         if (this._v != i._v) return false;
         if (this._vt != i._vt) return false;
@@ -102,51 +102,51 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
         return true;
     }
 
-    public IEnumerator GetEnumerator()
+    public IEnumerator GetEnumerator ( )
     {
         yield return this._v;
         yield return this._vt;
         yield return this._vn;
     }
 
-    public int[] ToArray()
+    public int[ ] ToArray ( )
     {
-        return new int[] { this._v, this._vt, this._vn };
+        return new int[ ] { this._v, this._vt, this._vn };
     }
 
-    public string ToString(in int padding = 3)
+    public string ToString (in int padding = 3)
     {
-        return new StringBuilder(96)
-            .Append("{ v: ")
-            .Append(Utils.ToPadded(this._v, padding))
-            .Append(", vt: ")
-            .Append(Utils.ToPadded(this._vt, padding))
-            .Append(", vn: ")
-            .Append(Utils.ToPadded(this._vn, padding))
-            .Append(" }")
-            .ToString();
+        return new StringBuilder (96)
+            .Append ("{ v: ")
+            .Append (Utils.ToPadded (this._v, padding))
+            .Append (", vt: ")
+            .Append (Utils.ToPadded (this._vt, padding))
+            .Append (", vn: ")
+            .Append (Utils.ToPadded (this._vn, padding))
+            .Append (" }")
+            .ToString ( );
     }
 
-    public (int v, int vt, int vn) ToTuple()
+    public (int v, int vt, int vn) ToTuple ( )
     {
         return (v: this._v, vt: this._vt, vn: this._vn);
     }
 
-    public static implicit operator Index3(in Index2 i)
+    public static explicit operator Index3 (in Index2 i)
     {
-        return new Index3(i.v, i.vt, 0);
+        return new Index3 (i.v, i.vt, 0);
     }
 
-    public static Index3[] Resize(in Index3[] arr, in int sz)
+    public static Index3[ ] Resize (in Index3[ ] arr, in int sz)
     {
-        if (sz < 1) return new Index3[] { };
-        Index3[] result = new Index3[sz];
+        if (sz < 1) return new Index3[ ] { };
+        Index3[ ] result = new Index3[sz];
 
         if (arr != null)
         {
             int len = arr.Length;
             int end = sz > len ? len : sz;
-            System.Array.Copy(arr, result, end);
+            System.Array.Copy (arr, result, end);
         }
 
         return result;

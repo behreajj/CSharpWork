@@ -94,7 +94,7 @@ public class Loop3
         return new Loop3 (source);
     }
 
-    public static implicit operator Loop3 (in Loop2 source)
+    public static explicit operator Loop3 (in Loop2 source)
     {
         int len = source.Length;
         Loop3 result = new Loop3 (new Index3[len]);
@@ -102,7 +102,7 @@ public class Loop3
         Index3[ ] trgIdcs = result.Indices;
         for (int i = 0; i < len; ++i)
         {
-            trgIdcs[i] = srcIdcs[i];
+            trgIdcs[i] = (Index3) srcIdcs[i];
         }
         return result;
     }

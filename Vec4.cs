@@ -290,7 +290,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the vector</returns>
     public static implicit operator Vec4 (in Vec2 v)
     {
-        return Vec4.Promote (v);
+        return Vec4.Promote (v, 0.0f, 0.0f);
     }
 
     /// <summary>
@@ -301,7 +301,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the vector</returns>
     public static implicit operator Vec4 (in Vec3 v)
     {
-        return Vec4.Promote (v);
+        return Vec4.Promote (v, 0.0f);
     }
 
     /// <summary>

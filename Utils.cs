@@ -1019,6 +1019,47 @@ public static class Utils
     }
 
     /// <summary>
+    /// Splices a 2D array of integers into the midst of another and returns a
+    /// new array containing the splice. Does not mutate arrays in place. If the
+    /// number of deletions exceeds the length of the target array, then a copy
+    /// of the insert array is returned.
+    /// </summary>
+    /// <param name="arr">array</param>
+    /// <param name="index">index</param>
+    /// <param name="deletions">number of deletions</param>
+    /// <param name="insert">elements to insert</param>
+    /// <returns>a new, spliced array</returns>
+    public static int[ ] Splice (in int[ ] arr, in int index, in int deletions, in int[ ] insert)
+    {
+        int alen = arr.Length;
+
+        if (deletions >= alen)
+        {
+            int[ ] result0 = new int[insert.Length];
+            System.Array.Copy (insert, 0, result0, 0, insert.Length);
+            return result0;
+        }
+
+        int blen = insert.Length;
+        int valIdx = Utils.Mod (index, alen + 1);
+        if (deletions < 1)
+        {
+            int[ ] result1 = new int[alen + blen];
+            System.Array.Copy (arr, 0, result1, 0, valIdx);
+            System.Array.Copy (insert, 0, result1, valIdx, blen);
+            System.Array.Copy (arr, valIdx, result1, valIdx + blen, alen - valIdx);
+            return result1;
+        }
+
+        int idxOff = valIdx + deletions;
+        int[ ] result2 = new int[alen + blen - deletions];
+        System.Array.Copy (arr, 0, result2, 0, valIdx);
+        System.Array.Copy (insert, 0, result2, valIdx, blen);
+        System.Array.Copy (arr, idxOff, result2, valIdx + blen, alen - idxOff);
+        return result2;
+    }
+
+    /// <summary>
     /// Returns the square root of a value cast to a float. If the value is less
     /// than or equal to zero, returns zero.
     /// </summary>
