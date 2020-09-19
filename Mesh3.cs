@@ -597,7 +597,6 @@ public class Mesh3
 
     public static explicit operator Mesh3 (in Mesh2 source)
     {
-        // TODO: Is there any problem with promoting m2 to m3?
         Loop2[ ] loopsSrc = source.Loops;
         Vec2[ ] vsSrc = source.Coords;
         Vec2[ ] vtsSrc = source.TexCoords;

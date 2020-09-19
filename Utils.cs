@@ -1201,7 +1201,6 @@ public static class Utils
          * because working with positive absolute value would allow
          * the minimum value to overflow to zero.
          */
-
         bool isNeg = value < 0;
         int nAbsVal = isNeg ? value : -value;
         int[ ] digits = new int[10];
@@ -1215,7 +1214,8 @@ public static class Utils
 
         StringBuilder sb = new StringBuilder (16);
         if (isNeg) { sb.Append ('-'); }
-        int vplaces = filled > places ? filled : places;
+        int vplaces = places < 1 ? 1 : places;
+        vplaces = filled > vplaces ? filled : vplaces;
         for (int n = vplaces - 1; n > -1; --n)
         {
             sb.Append (digits[n]);
