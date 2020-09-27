@@ -343,7 +343,7 @@ public class Transform3
     /// Converts a 2D transform to a 3D transform.
     /// </summary>
     /// <param name="t">transform</param>
-    public static implicit operator Transform3 (Transform2 t)
+    public static implicit operator Transform3 (in Transform2 t)
     {
         return new Transform3 (
             t.Location,
@@ -361,6 +361,18 @@ public class Transform3
     public static Vec3 InvMulDir (in Transform3 transform, in Vec3 dir)
     {
         return Quat.InvMulVector (transform.rotation, dir);
+    }
+
+    /// <summary>
+    /// Multiplies a normal by a transform's inverse. This rotates the normal by
+    /// the inverse quaternion, then multiplies the normal by the scale.
+    /// </summary>
+    /// <param name="transform">transform</param>
+    /// <param name="normal">normal</param>
+    /// <returns>normal</returns>
+    public static Vec3 InvMulNormal (in Transform3 transform, in Vec3 normal)
+    {
+        return transform.scale * Quat.InvMulVector (transform.rotation, normal);
     }
 
     /// <summary>
@@ -421,6 +433,18 @@ public class Transform3
     }
 
     /// <summary>
+    /// Multiplies a normal by a transform. This divides the normal by the
+    /// transform's scale and then rotates it by the transform's rotation.
+    /// </summary>
+    /// <param name="transform">transform</param>
+    /// <param name="normal">normal</param>
+    /// <returns>normal</returns>
+    public static Vec3 MulNormal (in Transform3 transform, in Vec3 normal)
+    {
+        return Quat.MulVector (transform.rotation, normal / transform.scale);
+    }
+
+    /// <summary>
     /// Multiplies a point by a transform. This rotates the point, multiplies the
     /// point by the scale, then adds the translation.
     /// </summary>
@@ -441,7 +465,6 @@ public class Transform3
     /// <returns>vector</returns>
     public static Vec3 MulVector (in Transform3 transform, in Vec3 vec)
     {
-        // TODO: mulNormal and invMulNormal.
         return transform.scale * Quat.MulVector (transform.rotation, vec);
     }
 

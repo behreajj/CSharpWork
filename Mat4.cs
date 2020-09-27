@@ -801,7 +801,11 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <returns>negation</returns>
     public static Mat4 operator - (in Mat4 m)
     {
-        return new Mat4 (-m._m00, -m._m01, -m._m02, -m._m03, -m._m10, -m._m11, -m._m12, -m._m13, -m._m20, -m._m21, -m._m22, -m._m23, -m._m30, -m._m31, -m._m32, -m._m33);
+        return new Mat4 ( //
+            -m._m00, -m._m01, -m._m02, -m._m03, //
+            -m._m10, -m._m11, -m._m12, -m._m13, //
+            -m._m20, -m._m21, -m._m22, -m._m23, //
+            -m._m30, -m._m31, -m._m32, -m._m33);
     }
 
     /// <summary>
@@ -1355,7 +1359,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     {
         return new Mat4 (
             cosa, 0.0f, sina, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f, -sina, 0.0f, cosa, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f, //
+            -sina, 0.0f, cosa, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f);
     }
 
@@ -1767,8 +1772,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     {
         get
         {
-            return new Mat4 (-1.0f, 3.0f, -3.0f, 1.0f,
-                3.0f, -6.0f, 3.0f, 0.0f, -3.0f, 3.0f, 0.0f, 0.0f,
+            return new Mat4 ( //
+                -1.0f, 3.0f, -3.0f, 1.0f,
+                3.0f, -6.0f, 3.0f, 0.0f, //
+                -3.0f, 3.0f, 0.0f, 0.0f,
                 1.0f, 0.0f, 0.0f, 0.0f);
         }
     }

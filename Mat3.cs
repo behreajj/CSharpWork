@@ -582,7 +582,10 @@ public readonly struct Mat3 : IEnumerable
     /// <returns>negation</returns>
     public static Mat3 operator - (in Mat3 m)
     {
-        return new Mat3 (-m._m00, -m._m01, -m._m02, -m._m10, -m._m11, -m._m12, -m._m20, -m._m21, -m._m22);
+        return new Mat3 ( //
+            -m._m00, -m._m01, -m._m02, //
+            -m._m10, -m._m11, -m._m12, //
+            -m._m20, -m._m21, -m._m22);
     }
 
     /// <summary>

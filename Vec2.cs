@@ -1459,7 +1459,6 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the scalar projection</returns>
     public static float ProjectScalar (in Vec2 a, in Vec2 b)
     {
-        //TODO: REFACTOR
         float bSq = Vec2.MagSq (b);
         if (bSq != 0.0f) return Vec2.Dot (a, b) / bSq;
         return 0.0f;
@@ -1720,6 +1719,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>a tuple</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static (float theta, float rho) ToPolar (in Vec2 v)
     {
         return (
@@ -1750,6 +1750,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the wrapped vector</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec2 Wrap (in Vec2 v, in Vec2 lb, in Vec2 ub)
     {
         return new Vec2 (

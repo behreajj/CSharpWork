@@ -146,10 +146,7 @@ public class Knot2
     /// <param name="yFh">fore handle y</param>
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
-    public Knot2 (
-        float xCo, float yCo,
-        float xFh, float yFh,
-        float xRh, float yRh)
+    public Knot2 (in float xCo, in float yCo, in float xFh, in float yFh, in float xRh, in float yRh)
     {
         this.Set (
             xCo, yCo,

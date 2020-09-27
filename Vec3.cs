@@ -1495,7 +1495,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="b">the destination vector</param>
     /// <param name="t">the step</param>
     /// <returns>the mix</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Mix (in Vec3 a, in Vec3 b, in float t = 0.5f)
     {
         float u = 1.0f - t;
@@ -1674,6 +1673,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the random vector</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 RandomCartesian (in System.Random rng, in Vec3 lb, in Vec3 ub)
     {
         return new Vec3 (
@@ -1690,6 +1690,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the random vector</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 RandomCartesian (in System.Random rng, in float lb = 0.0f, in float ub = 1.0f)
     {
         return new Vec3 (
@@ -1705,6 +1706,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="rhoMin">the minimum radius</param>
     /// <param name="rhoMax">the maximum radius</param>
     /// <returns>the output vector</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 RandomPolar (in System.Random rng, in float rhoMin = 1.0f, in float rhoMax = 1.0f)
     {
         return Vec3.FromPolar (
@@ -1722,6 +1724,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="rhoMin">the minimum radius</param>
     /// <param name="rhoMax">the maximum radius</param>
     /// <returns>the output vector</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 RandomSpherical (in System.Random rng, in float rhoMin = 1.0f, in float rhoMax = 1.0f)
     {
         return Vec3.FromSpherical (

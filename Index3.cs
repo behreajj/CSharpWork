@@ -2,6 +2,9 @@ using System;
 using System.Collections;
 using System.Text;
 
+/// <summary>
+/// Organizes indices in a mesh that refer to data at a vertex.
+/// </summary>
 public readonly struct Index3 : IEquatable<Index3>, IEnumerable
 {
     /// <summary>
