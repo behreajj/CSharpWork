@@ -273,10 +273,10 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="m20">row 2, column 0</param>
     /// <param name="m21">row 2, column 1</param>
     /// <param name="m22">row 2, column 2</param>
-    public Mat3 (
-        float m00 = 1.0f, float m01 = 0.0f, float m02 = 0.0f,
-        float m10 = 0.0f, float m11 = 1.0f, float m12 = 0.0f,
-        float m20 = 0.0f, float m21 = 0.0f, float m22 = 1.0f)
+    public Mat3 ( //
+        in float m00 = 1.0f, in float m01 = 0.0f, in float m02 = 0.0f, //
+        in float m10 = 0.0f, in float m11 = 1.0f, in float m12 = 0.0f, //
+        in float m20 = 0.0f, in float m21 = 0.0f, in float m22 = 1.0f)
     {
         this._m00 = m00;
         this._m01 = m01;
@@ -303,10 +303,10 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="m20">row 2, column 0</param>
     /// <param name="m21">row 2, column 1</param>
     /// <param name="m22">row 2, column 2</param>
-    public Mat3 (
-        bool m00 = true, bool m01 = false, bool m02 = false,
-        bool m10 = false, bool m11 = true, bool m12 = false,
-        bool m20 = false, bool m21 = false, bool m22 = true)
+    public Mat3 ( //
+        in bool m00 = true, in bool m01 = false, in bool m02 = false, //
+        in bool m10 = false, in bool m11 = true, in bool m12 = false, //
+        in bool m20 = false, in bool m21 = false, in bool m22 = true)
     {
         this._m00 = m00 ? 1.0f : 0.0f;
         this._m01 = m01 ? 1.0f : 0.0f;
@@ -653,8 +653,8 @@ public readonly struct Mat3 : IEnumerable
     }
 
     /// <summary>
-    /// Divides one matrix by another. Equivalent to multiplying the numerator and
-    /// the inverse of the denominator.
+    /// Divides one matrix by another. Equivalent to multiplying the numerator
+    /// and the inverse of the denominator.
     /// </summary>
     /// <param name="a">numerator</param>
     /// <param name="b">denominator</param>
@@ -676,8 +676,8 @@ public readonly struct Mat3 : IEnumerable
     }
 
     /// <summary>
-    /// Divides a scalar by a matrix. Equivalent to multiplying the numerator and
-    /// the inverse of the denominator.
+    /// Divides a scalar by a matrix. Equivalent to multiplying the numerator
+    /// and the inverse of the denominator.
     /// </summary>
     /// <param name="a">numerator</param>
     /// <param name="b">denominator</param>
@@ -718,8 +718,8 @@ public readonly struct Mat3 : IEnumerable
     /// <summary>
     /// Evaluates whether the left operand is less than the right operand.
     ///
-    /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
-    /// is false.
+    /// The return type is not a boolean, but a matrix, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -735,8 +735,8 @@ public readonly struct Mat3 : IEnumerable
     /// <summary>
     /// Evaluates whether the left operand is greater than the right operand.
     ///
-    /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
-    /// is false.
+    /// The return type is not a boolean, but a matrix, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -753,8 +753,8 @@ public readonly struct Mat3 : IEnumerable
     /// Evaluates whether the left operand is less than or equal to the right
     /// operand.
     ///
-    /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
-    /// is false.
+    /// The return type is not a boolean, but a matrix, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -771,8 +771,8 @@ public readonly struct Mat3 : IEnumerable
     /// Evaluates whether the left operand is greater than or equal to the right
     /// operand.
     ///
-    /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
-    /// is false.
+    /// The return type is not a boolean, but a matrix, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -787,9 +787,9 @@ public readonly struct Mat3 : IEnumerable
 
     /// <summary>
     /// Evaluates whether two matrices do not equal to each other.
-    /// 
-    /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
-    /// is false.
+    ///
+    /// The return type is not a boolean, but a matrix, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -805,8 +805,8 @@ public readonly struct Mat3 : IEnumerable
     /// <summary>
     /// Evaluates whether two matrices are equal to each other.
     ///
-    /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
-    /// is false.
+    /// The return type is not a boolean, but a matrix, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -856,8 +856,8 @@ public readonly struct Mat3 : IEnumerable
     }
 
     /// <summary>
-    /// Creates a matrix from two axes. The third row and column are assumed to be
-    /// (0.0, 0.0, 1.0) .
+    /// Creates a matrix from two axes. The third row and column are assumed to
+    /// be (0.0, 0.0, 1.0) .
     /// </summary>
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
@@ -887,8 +887,8 @@ public readonly struct Mat3 : IEnumerable
     }
 
     /// <summary>
-    /// Creates a matrix from two axes. The third column, translation, is assumed
-    /// to be (0.0, 0.0, 1.0).
+    /// Creates a matrix from two axes. The third column, translation, is
+    /// assumed to be (0.0, 0.0, 1.0).
     /// </summary>
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
@@ -944,8 +944,8 @@ public readonly struct Mat3 : IEnumerable
     }
 
     /// <summary>
-    /// Creates a scale matrix from a scalar. The bottom right corner, m22, is set
-    /// to 1.0 .
+    /// Creates a scale matrix from a scalar. The bottom right corner, m22, is
+    /// set to 1.0 .
     /// </summary>
     /// <param name="scalar">scalar</param>
     /// <returns>matrix</returns>
@@ -1064,8 +1064,9 @@ public readonly struct Mat3 : IEnumerable
     }
 
     /// <summary>
-    /// Multiplies a matrix and a vector. The z component of the vector is assumed
-    /// to be 0.0 , so the vector is not impacted by the matrix's translation.
+    /// Multiplies a matrix and a vector. The z component of the vector is
+    /// assumed to be 0.0 , so the vector is not impacted by the matrix's
+    /// translation.
     /// </summary>
     /// <param name="a">matrix</param>
     /// <param name="b">vector</param>

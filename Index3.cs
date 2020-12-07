@@ -46,6 +46,10 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <value>normal index</value>
     public int vn { get { return this._vn; } }
 
+    /// <summary>
+    /// Retrieves a component by index.
+    /// </summary>
+    /// <value>the component</value>
     public int this [int i]
     {
         get
@@ -67,6 +71,13 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Constructs an index from integers for the coordinate, texture coordinate
+    /// and normal element.
+    /// </summary>
+    /// <param name="v">coordinate index</param>
+    /// <param name="vt">texture coordinate index</param>
+    /// <param name="vn">normal index</param>
     public Index3 (in int v = 0, in int vt = 0, in int vn = 0)
     {
         this._v = v < 0 ? 0 : v;
@@ -135,6 +146,10 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
         return (v: this._v, vt: this._vt, vn: this._vn);
     }
 
+    /// <summary>
+    /// Promotes a 2D index to a 3D index.
+    /// </summary>
+    /// <param name="i">2D index</param>
     public static explicit operator Index3 (in Index2 i)
     {
         return new Index3 (i.v, i.vt, 0);

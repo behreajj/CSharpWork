@@ -414,7 +414,7 @@ public class Curve3 : IEnumerable
     /// </summary>
     /// <param name="places">number of places</param>
     /// <returns>the string</returns>
-    public String ToString (in int places = 4)
+    public string ToString (in int places = 4)
     {
         int len = this.knots.Count;
         int last = len - 1;

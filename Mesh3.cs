@@ -26,14 +26,9 @@ public class Mesh3
 
     /// <summary>
     /// Loops that describe the indices which reference the coordinates, texture
-    /// coordinates and normals that compose a face.
+    /// coordinates and normals to compose a face.
     /// </summary>
     protected Loop3[ ] loops;
-
-    /// <summary>
-    /// The mesh's name.
-    /// </summary>
-    protected String name = "Mesh3";
 
     /// <summary>
     /// An array of normals to indicate how light will bounce off the mesh's
@@ -47,6 +42,10 @@ public class Mesh3
     /// </summary>
     protected Vec2[ ] texCoords;
 
+    /// <summary>
+    /// An array of coordinates.
+    /// </summary>
+    /// <value>coordinates</value>
     public Vec3[ ] Coords
     {
         get
@@ -60,6 +59,11 @@ public class Mesh3
         }
     }
 
+    /// <summary>
+    /// Loops that describe the indices which reference the coordinates, texture
+    /// coordinates and normals to compose a face.
+    /// </summary>
+    /// <value>loops</value>
     public Loop3[ ] Loops
     {
         get
@@ -73,19 +77,11 @@ public class Mesh3
         }
     }
 
-    public String Name
-    {
-        get
-        {
-            return this.name;
-        }
-
-        set
-        {
-            this.name = value;
-        }
-    }
-
+    /// <summary>
+    /// An array of normals to indicate how light will bounce off the mesh's
+    /// surface.
+    /// </summary>
+    /// <value>normals</value>
     public Vec3[ ] Normals
     {
         get
@@ -99,6 +95,11 @@ public class Mesh3
         }
     }
 
+    /// <summary>
+    /// The texture (UV) coordinates that describe how an image is mapped onto
+    /// the mesh. Typically in the range [0.0, 1.0] .
+    /// </summary>
+    /// <value>texture coordinates</value>
     public Vec2[ ] TexCoords
     {
         get
@@ -118,15 +119,6 @@ public class Mesh3
     public Mesh3 ( ) { }
 
     /// <summary>
-    /// Constructs a mesh with a name.
-    /// </summary>
-    /// <param name="name"></param>
-    public Mesh3 (in String name)
-    {
-        this.name = name;
-    }
-
-    /// <summary>
     /// Constructs a mesh from data.
     /// </summary>
     /// <param name="loops">loops</param>
@@ -141,23 +133,6 @@ public class Mesh3
         this.normals = normals;
     }
 
-    /// <summary>
-    /// Constructs a mesh from data.
-    /// </summary>
-    /// <param name="name">name</param>
-    /// <param name="loops">loops</param>
-    /// <param name="coords">coordinates</param>
-    /// <param name="texCoords">texture coordinates</param>
-    /// <param name="normals">normals</param>
-    public Mesh3 (in String name, in Loop3[ ] loops, in Vec3[ ] coords, in Vec2[ ] texCoords, in Vec3[ ] normals)
-    {
-        this.name = name;
-        this.loops = loops;
-        this.coords = coords;
-        this.texCoords = texCoords;
-        this.normals = normals;
-    }
-
     public Mesh3 (in Mesh3 source)
     {
         this.Set (source);
@@ -165,7 +140,7 @@ public class Mesh3
 
     public override string ToString ( )
     {
-        return this.ToString (4);
+        return this.ToString (1, 4);
     }
 
     public Mesh3 Clean ( )
@@ -183,6 +158,7 @@ public class Mesh3
             for (int j = 0; j < vertsLen; ++j)
             {
                 Index3 vert = verts[j];
+
                 int vIdx = vert.v;
                 int vtIdx = vert.vt;
                 int vnIdx = vert.vn;
@@ -220,11 +196,10 @@ public class Mesh3
             for (int j = 0; j < vertsLen; ++j)
             {
                 Index3 oldVert = verts[j];
-                Index3 newVert = new Index3 (
+                verts[j] = new Index3 (
                     Array.BinarySearch<Vec3> (newCoords, this.coords[oldVert.v], v3Cmp),
                     Array.BinarySearch<Vec2> (newTexCoords, this.texCoords[oldVert.vt], v2Cmp),
                     Array.BinarySearch<Vec3> (newNormals, this.normals[oldVert.vn], v3Cmp));
-                verts[j] = newVert;
             }
         }
 
@@ -488,7 +463,8 @@ public class Mesh3
     }
 
     /// <summary>
-    /// Subdivides all faces in the mesh by a number of iterations. Uses the center method.
+    /// Subdivides all faces in the mesh by a number of iterations. Uses the
+    /// center method.
     /// </summary>
     /// <param name="itr">iterations</param>
     /// <returns>this mesh</returns>
@@ -509,7 +485,8 @@ public class Mesh3
     }
 
     /// <summary>
-    /// Subdivides all faces in the mesh by a number of iterations. Uses the inscription method.
+    /// Subdivides all faces in the mesh by a number of iterations. Uses the
+    /// inscription method.
     /// </summary>
     /// <param name="itr">iterations</param>
     /// <returns>this mesh</returns>
@@ -529,70 +506,19 @@ public class Mesh3
         return this;
     }
 
-    public String ToString (in int places = 4)
+    public string ToString (in int padding = 1, in int places = 4)
     {
-        StringBuilder sb = new StringBuilder (2048);
-        sb.Append ("{ name: \"");
-        sb.Append (this.name);
-        sb.Append ("\"");
-
-        // Append loops.
-        int loopLen = this.loops.Length;
-        int loopLast = loopLen - 1;
-        sb.Append (", loops: [ ");
-        for (int i = 0; i < loopLen; ++i)
-        {
-            sb.Append (this.loops[i]);
-            if (i < loopLast)
-            {
-                sb.Append (", ");
-            }
-        }
-        sb.Append (" ]");
-
-        // Append coordinates.
-        int coordLen = this.coords.Length;
-        int coordLast = coordLen - 1;
-        sb.Append (", coords: [ ");
-        for (int i = 0; i < coordLen; ++i)
-        {
-            sb.Append (this.coords[i].ToString (places));
-            if (i < coordLast)
-            {
-                sb.Append (", ");
-            }
-        }
-        sb.Append (" ]");
-
-        // Append texture coordinates.
-        int texCoordLen = this.texCoords.Length;
-        int texCoordLast = texCoordLen - 1;
-        sb.Append (", texCoords: [ ");
-        for (int i = 0; i < texCoordLen; ++i)
-        {
-            sb.Append (this.texCoords[i].ToString (places));
-            if (i < texCoordLast)
-            {
-                sb.Append (", ");
-            }
-        }
-        sb.Append (" ]");
-
-        // Append normals.
-        int normalLen = this.normals.Length;
-        int normalLast = normalLen - 1;
-        sb.Append (", normals: [ ");
-        for (int i = 0; i < normalLen; ++i)
-        {
-            sb.Append (this.normals[i].ToString (places));
-            if (i < normalLast)
-            {
-                sb.Append (", ");
-            }
-        }
-        sb.Append (" ] }");
-
-        return sb.ToString ( );
+        return new StringBuilder (2048)
+            .Append ("{ loops: ")
+            .Append (Loop3.ToString (this.loops, padding))
+            .Append (", coords: ")
+            .Append (Vec3.ToString (this.coords, places))
+            .Append (", texCoords: ")
+            .Append (Vec2.ToString (this.texCoords, places))
+            .Append (", normals: ")
+            .Append (Vec3.ToString (this.normals, places))
+            .Append (" }")
+            .ToString ( );
     }
 
     public static explicit operator Mesh3 (in Mesh2 source)
@@ -628,7 +554,7 @@ public class Mesh3
             loopsTrg[i] = (Loop3) loopsSrc[i];
         }
 
-        return new Mesh3 (source.Name, loopsTrg, vsTrg, vtsTrg, vnsTrg);
+        return new Mesh3 (loopsTrg, vsTrg, vtsTrg, vnsTrg);
     }
 
     public static Mesh3 CastToSphere (in Mesh3 source, in float radius, in Mesh3 target)
@@ -682,8 +608,6 @@ public class Mesh3
 
     public static Mesh3 Capsule (in int longitudes, in int latitudes, in int rings, in float depth, in float radius, in PolyType poly, CapsuleUvProfile profile, in Mesh3 target)
     {
-        target.name = "Capsule";
-
         int verifLats = latitudes < 2 ? 2 : latitudes % 2 != 0 ? latitudes + 1 : latitudes;
         int verifLons = longitudes < 3 ? 3 : longitudes;
         int verifRings = rings < 0 ? 0 : rings;
@@ -825,7 +749,8 @@ public class Mesh3
             float sinPhiSouth = Utils.Sin (phi);
             float cosPhiSouth = Utils.Cos (phi);
 
-            // Use trigonometric symmetries to avoid calculating another sine and
+            // Use trigonometric symmetries to avoid calculating another sine
+            // and
             float sinPhiNorth = -cosPhiSouth;
             float cosPhiNorth = sinPhiSouth;
 
@@ -906,10 +831,10 @@ public class Mesh3
                     Vec3 vEquatorNorth = vs[idxVNEquator + j];
                     Vec3 vEquatorSouth = vs[idxVSEquator + j];
 
-                    // xy should be the same for both North and South.
-                    // North z should equal half_depth while
-                    // South z should equal -half_depth. For clarity,
-                    // this is left as a linear interpolation.
+                    // xy should be the same for both North and South. North z
+                    // should equal half_depth while South z should equal
+                    // -half_depth. For clarity, this is left as a linear
+                    // interpolation.
                     vs[vCylOffset] = new Vec3 (
                         cmplFac * vEquatorNorth.x + fac * vEquatorSouth.x,
                         cmplFac * vEquatorNorth.y + fac * vEquatorSouth.y,
@@ -1125,8 +1050,6 @@ public class Mesh3
 
     public static Mesh3 Cube (in float size, in PolyType poly, in Mesh3 target)
     {
-        target.name = "Cube";
-
         float vsz = Utils.Max (Utils.Epsilon, size);
         target.coords = new Vec3[ ]
         {
@@ -1282,8 +1205,6 @@ public class Mesh3
 
     public static Mesh3 Dodecahedron (in Mesh3 target)
     {
-        target.name = "Dodecahedron";
-
         target.coords = new Vec3[ ]
         {
             new Vec3 (0.0f, 0.33614415f, -0.4165113f),
@@ -1414,8 +1335,6 @@ public class Mesh3
 
     public static Mesh3 Octahedron (in Mesh3 target)
     {
-        target.name = "Octahedron";
-
         target.coords = new Vec3[ ]
         {
             new Vec3 (0.0f, -0.5f, 0.0f),
@@ -1486,8 +1405,6 @@ public class Mesh3
 
     public static Mesh3 Icosahedron (in Mesh3 target)
     {
-        target.name = "Icosahedron";
-
         target.coords = new Vec3[ ]
         {
             new Vec3 (0.0f, 0.0f, -0.5f),
@@ -1647,7 +1564,6 @@ public class Mesh3
         target.SubdivFacesInscribe (itrs);
         target.Clean ( );
         Mesh3.CastToSphere (target, size, target);
-        target.name = "Icosphere";
         return target;
     }
 

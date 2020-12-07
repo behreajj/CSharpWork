@@ -1267,7 +1267,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="lowerBound">lower bound</param>
     /// <param name="upperBound">upper bound</param>
     /// <returns>the array</returns>
-    public static Vec3[, , ] Grid (in int cols, in int rows, in int layers, in Vec3 lowerBound, in Vec3 upperBound)
+    public static Vec3[, , ] Grid ( //
+        in int cols, //
+        in int rows, //
+        in int layers, //
+        in Vec3 lowerBound, //
+        in Vec3 upperBound)
     {
         int lval = layers < 2 ? 2 : layers;
         int rval = rows < 2 ? 2 : rows;
@@ -1495,7 +1500,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="b">the destination vector</param>
     /// <param name="t">the step</param>
     /// <returns>the mix</returns>
-    public static Vec3 Mix (in Vec3 a, in Vec3 b, in float t = 0.5f)
+    public static Vec3 Mix (in Vec3 a, in Vec3 b, in float t)
     {
         float u = 1.0f - t;
         return new Vec3 (
@@ -2059,6 +2064,38 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
+    /// Returns a string representation of an array of vectors.
+    /// </summary>
+    /// <param name="arr">array</param>
+    /// <param name="places">print precision</param>
+    /// <returns>the string</returns>
+    public static string ToString (in Vec3[ ] arr, in int places = 4)
+    {
+        StringBuilder sb = new StringBuilder (1024);
+        sb.Append ('[');
+        sb.Append (' ');
+
+        if (arr != null)
+        {
+            int len = arr.Length;
+            int last = len - 1;
+
+            for (int i = 0; i < last; ++i)
+            {
+                sb.Append (arr[i].ToString (places));
+                sb.Append (',');
+                sb.Append (' ');
+            }
+
+            sb.Append (arr[last].ToString (places));
+            sb.Append (' ');
+        }
+
+        sb.Append (']');
+        return sb.ToString ( );
+    }
+
+    /// <summary>
     /// Truncates each component of the vector.
     /// </summary>
     /// <param name="v">the input vector</param>
@@ -2095,95 +2132,47 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Returns a direction facing back, (0.0, -1.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec3 Back
-    {
-        get
-        {
-            return new Vec3 (0.0f, -1.0f, 0.0f);
-        }
-    }
+    public static Vec3 Back { get { return new Vec3 (0.0f, -1.0f, 0.0f); } }
 
     /// <summary>
     /// Returns a direction facing down, (0.0, 0.0, -1.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec3 Down
-    {
-        get
-        {
-            return new Vec3 (0.0f, 0.0f, -1.0f);
-        }
-    }
+    public static Vec3 Down { get { return new Vec3 (0.0f, 0.0f, -1.0f); } }
 
     /// <summary>
     /// Returns a direction facing forward, (0.0, 1.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec3 Forward
-    {
-        get
-        {
-            return new Vec3 (0.0f, 1.0f, 0.0f);
-        }
-    }
+    public static Vec3 Forward { get { return new Vec3 (0.0f, 1.0f, 0.0f); } }
 
     /// <summary>
     /// Returns a direction facing left, (-1.0, 0.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec3 Left
-    {
-        get
-        {
-            return new Vec3 (-1.0f, 0.0f, 0.0f);
-        }
-    }
+    public static Vec3 Left { get { return new Vec3 (-1.0f, 0.0f, 0.0f); } }
 
     /// <summary>
     /// Returns a vector with all components set to 1.0 .
     /// </summary>
     /// <value>the vector</value>
-    public static Vec3 One
-    {
-        get
-        {
-            return new Vec3 (1.0f, 1.0f, 1.0f);
-        }
-    }
+    public static Vec3 One { get { return new Vec3 (1.0f, 1.0f, 1.0f); } }
 
     /// <summary>
     /// Returns a direction facing right, (1.0, 0.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec3 Right
-    {
-        get
-        {
-            return new Vec3 (1.0f, 0.0f, 0.0f);
-        }
-    }
+    public static Vec3 Right { get { return new Vec3 (1.0f, 0.0f, 0.0f); } }
 
     /// <summary>
     /// Returns a direction facing up, (0.0, 0.0, 1.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec3 Up
-    {
-        get
-        {
-            return new Vec3 (0.0f, 0.0f, 1.0f);
-        }
-    }
+    public static Vec3 Up { get { return new Vec3 (0.0f, 0.0f, 1.0f); } }
 
     /// <summary>
     /// Returns a vector with all components set to zero.
     /// </summary>
     /// <value>the vector</value>
-    public static Vec3 Zero
-    {
-        get
-        {
-            return new Vec3 (0.0f, 0.0f, 0.0f);
-        }
-    }
+    public static Vec3 Zero { get { return new Vec3 (0.0f, 0.0f, 0.0f); } }
 }

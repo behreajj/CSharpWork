@@ -1057,7 +1057,13 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="lowerBound">lower bound</param>
     /// <param name="upperBound">upper bound</param>
     /// <returns>the array</returns>
-    public static Vec4[, , , ] Grid (in int cols, in int rows, in int layers, in int steps, in Vec4 lowerBound, in Vec4 upperBound)
+    public static Vec4[, , , ] Grid ( //
+        in int cols, //
+        in int rows, //
+        in int layers, //
+        in int steps, //
+        in Vec4 lowerBound, //
+        in Vec4 upperBound)
     {
         int sval = steps < 2 ? 2 : steps;
         int lval = layers < 2 ? 2 : layers;
@@ -1283,7 +1289,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="b">the destination vector</param>
     /// <param name="t">the step</param>
     /// <returns>the mix</returns>
-    public static Vec4 Mix (in Vec4 a, in Vec4 b, in float t = 0.5f)
+    public static Vec4 Mix (in Vec4 a, in Vec4 b, in float t)
     {
         float u = 1.0f - t;
         return new Vec4 (
@@ -1674,95 +1680,47 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Returns a direction facing back, (0.0, -1.0, 0.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec4 Back
-    {
-        get
-        {
-            return new Vec4 (0.0f, -1.0f, 0.0f, 0.0f);
-        }
-    }
+    public static Vec4 Back { get { return new Vec4 (0.0f, -1.0f, 0.0f, 0.0f); } }
 
     /// <summary>
     /// Returns a direction facing down, (0.0, 0.0, -1.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec4 Down
-    {
-        get
-        {
-            return new Vec4 (0.0f, 0.0f, -1.0f, 0.0f);
-        }
-    }
+    public static Vec4 Down { get { return new Vec4 (0.0f, 0.0f, -1.0f, 0.0f); } }
 
     /// <summary>
     /// Returns a direction facing forward, (0.0, 1.0, 0.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec4 Forward
-    {
-        get
-        {
-            return new Vec4 (0.0f, 1.0f, 0.0f, 0.0f);
-        }
-    }
+    public static Vec4 Forward { get { return new Vec4 (0.0f, 1.0f, 0.0f, 0.0f); } }
 
     /// <summary>
     /// Returns a direction facing left, (-1.0, 0.0, 0.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec4 Left
-    {
-        get
-        {
-            return new Vec4 (-1.0f, 0.0f, 0.0f, 0.0f);
-        }
-    }
+    public static Vec4 Left { get { return new Vec4 (-1.0f, 0.0f, 0.0f, 0.0f); } }
 
     /// <summary>
     /// Returns a vector with all components set to 1.0 .
     /// </summary>
     /// <value>the vector</value>
-    public static Vec4 One
-    {
-        get
-        {
-            return new Vec4 (1.0f, 1.0f, 1.0f, 1.0f);
-        }
-    }
+    public static Vec4 One { get { return new Vec4 (1.0f, 1.0f, 1.0f, 1.0f); } }
 
     /// <summary>
     /// Returns a direction facing right, (1.0, 0.0, 0.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec4 Right
-    {
-        get
-        {
-            return new Vec4 (1.0f, 0.0f, 0.0f, 0.0f);
-        }
-    }
+    public static Vec4 Right { get { return new Vec4 (1.0f, 0.0f, 0.0f, 0.0f); } }
 
     /// <summary>
     /// Returns a direction facing up, (0.0, 0.0, 1.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec4 Up
-    {
-        get
-        {
-            return new Vec4 (0.0f, 0.0f, 1.0f, 0.0f);
-        }
-    }
+    public static Vec4 Up { get { return new Vec4 (0.0f, 0.0f, 1.0f, 0.0f); } }
 
     /// <summary>
     /// Returns a vector with all components set to zero.
     /// </summary>
     /// <value>the vector</value>
-    public static Vec4 Zero
-    {
-        get
-        {
-            return new Vec4 (0.0f, 0.0f, 0.0f, 0.0f);
-        }
-    }
+    public static Vec4 Zero { get { return new Vec4 (0.0f, 0.0f, 0.0f, 0.0f); } }
 }

@@ -35,6 +35,10 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <value>texture coordinate index</value>
     public int vt { get { return this._vt; } }
 
+    /// <summary>
+    /// Retrieves a component by index.
+    /// </summary>
+    /// <value>the component</value>
     public int this [int i]
     {
         get
@@ -53,6 +57,12 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
         }
     }
 
+    /// <summary>
+    /// Constructs an index from integers for the coordinate and texture
+    /// coordinate.
+    /// </summary>
+    /// <param name="v">coordinate index</param>
+    /// <param name="vt">texture coordinate index</param>
     public Index2 (in int v = 0, in int vt = 0)
     {
         this._v = v < 0 ? 0 : v;

@@ -160,4 +160,36 @@ public class Loop3
         System.Array.Copy (arr, idxOff, result, valIdx + bLen, aLen - idxOff);
         return result;
     }
+
+    /// <summary>
+    /// Returns a string representation of an array of loops.
+    /// </summary>
+    /// <param name="arr">array</param>
+    /// <param name="padding">padding</param>
+    /// <returns>the string</returns>
+    public static string ToString (in Loop3[ ] arr, in int padding = 1)
+    {
+        StringBuilder sb = new StringBuilder (1024);
+        sb.Append ('[');
+        sb.Append (' ');
+
+        if (arr != null)
+        {
+            int len = arr.Length;
+            int last = len - 1;
+
+            for (int i = 0; i < last; ++i)
+            {
+                sb.Append (arr[i].ToString (padding));
+                sb.Append (',');
+                sb.Append (' ');
+            }
+
+            sb.Append (arr[last].ToString (padding));
+            sb.Append (' ');
+        }
+
+        sb.Append (']');
+        return sb.ToString ( );
+    }
 }

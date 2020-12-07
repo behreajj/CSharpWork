@@ -397,6 +397,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr operator & (in Clr a, in Clr b)
     {
+        // TODO: Optimize bitwise operations per Java version.
         return Clr.FromHex (Clr.ToHexInt (a) & Clr.ToHexInt (b));
     }
 

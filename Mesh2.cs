@@ -9,8 +9,6 @@ public class Mesh2
 
     protected Loop2[ ] loops;
 
-    protected String name = "Mesh2";
-
     protected Vec2[ ] texCoords;
 
     public Vec2[ ] Coords
@@ -39,19 +37,6 @@ public class Mesh2
         }
     }
 
-    public String Name
-    {
-        get
-        {
-            return this.name;
-        }
-
-        set
-        {
-            this.name = value;
-        }
-    }
-
     public Vec2[ ] TexCoords
     {
         get
@@ -67,11 +52,6 @@ public class Mesh2
 
     public Mesh2 ( ) { }
 
-    public Mesh2 (in String name)
-    {
-        this.name = name;
-    }
-
     public Mesh2 (in Loop2[ ] loops, in Vec2[ ] coords, in Vec2[ ] texCoords)
     {
         this.loops = loops;
@@ -79,76 +59,99 @@ public class Mesh2
         this.texCoords = texCoords;
     }
 
-    public Mesh2 (in String name, in Loop2[ ] loops, in Vec2[ ] coords, in Vec2[ ] texCoords)
-    {
-        this.name = name;
-        this.loops = loops;
-        this.coords = coords;
-        this.texCoords = texCoords;
-    }
-
     public override string ToString ( )
     {
-        return this.ToString (4);
+        return this.ToString (1, 4);
     }
 
-    public String ToString (in int places = 4)
+    public string ToString (in int padding = 1, in int places = 4)
     {
-        StringBuilder sb = new StringBuilder (2048);
-        sb.Append ("{ name: \"");
-        sb.Append (this.name);
-        sb.Append ("\"");
+        return new StringBuilder (2048)
+            .Append ("{ loops: ")
+            .Append (Loop2.ToString (this.loops, padding))
+            .Append (", coords: ")
+            .Append (Vec2.ToString (this.coords, places))
+            .Append (", texCoords: ")
+            .Append (Vec2.ToString (this.texCoords, places))
+            .Append (" }")
+            .ToString ( );
+    }
 
-        // Append loops.
-        int loopLen = this.loops.Length;
-        int loopLast = loopLen - 1;
-        sb.Append (", loops: [ ");
-        for (int i = 0; i < loopLen; ++i)
+    public static Mesh2 GridHex (in int rings, in float cellRadius, in float cellMargin, in Mesh2 target)
+    {
+        int vRings = Utils.Max (1, rings);
+        float vRad = Utils.Max (Utils.Epsilon, cellRadius);
+
+        float extent = Utils.Sqrt3 * vRad;
+        float halfExt = extent * 0.5f;
+
+        float rad15 = vRad * 1.5f;
+        float padRad = Utils.Max (Utils.Epsilon, vRad - cellMargin);
+        float halfRad = padRad * 0.5f;
+        float radrt32 = padRad * Utils.Sqrt32;
+
+        int iMax = vRings - 1;
+        int iMin = -iMax;
+
+        Vec2[ ] vts = target.texCoords = new Vec2[ ]
         {
-            sb.Append (this.loops[i]);
-            if (i < loopLast)
+            new Vec2 (0.5f, 1.0f),
+            new Vec2 (0.0669873f, 0.75f),
+            new Vec2 (0.0669873f, 0.25f),
+            new Vec2 (0.5f, 0.0f),
+            new Vec2 (0.9330127f, 0.25f),
+            new Vec2 (0.9330127f, 0.75f)
+        };
+
+        int fsLen = 1 + iMax * vRings * 3;
+        Vec2[ ] vs = target.coords = Vec2.Resize (target.coords, fsLen * 6);
+        Loop2[ ] fs = target.loops = Loop2.Resize (target.loops, fsLen);
+
+        int vIdx = 0;
+        int fIdx = 0;
+        for (int i = iMin; i <= iMax; ++i)
+        {
+            int jMin = Utils.Max (iMin, iMin - i);
+            int jMax = Utils.Min (iMax, iMax - i);
+            float iExt = i * extent;
+
+            for (int j = jMin; j <= jMax; ++j)
             {
-                sb.Append (", ");
+                float jf = j;
+                float x = iExt + jf * halfExt;
+                float y = jf * rad15;
+
+                float left = x - radrt32;
+                float right = x + radrt32;
+                float top = y + halfRad;
+                float bottom = y - halfRad;
+
+                vs[vIdx] = new Vec2 (x, y + padRad);
+                vs[vIdx + 1] = new Vec2 (left, top);
+                vs[vIdx + 2] = new Vec2 (left, bottom);
+                vs[vIdx + 3] = new Vec2 (x, y - padRad);
+                vs[vIdx + 4] = new Vec2 (right, bottom);
+                vs[vIdx + 5] = new Vec2 (right, top);
+
+                fs[fIdx] = new Loop2 (
+                    new Index2 (vIdx, 0),
+                    new Index2 (vIdx + 1, 1),
+                    new Index2 (vIdx + 2, 2),
+                    new Index2 (vIdx + 3, 3),
+                    new Index2 (vIdx + 4, 4),
+                    new Index2 (vIdx + 5, 5));
+
+                ++fIdx;
+                vIdx += 6;
             }
         }
-        sb.Append (" ]");
 
-        // Append coordinates.
-        int coordLen = this.coords.Length;
-        int coordLast = coordLen - 1;
-        sb.Append (", coords: [ ");
-        for (int i = 0; i < coordLen; ++i)
-        {
-            sb.Append (this.coords[i].ToString (places));
-            if (i < coordLast)
-            {
-                sb.Append (", ");
-            }
-        }
-        sb.Append (" ]");
-
-        // Append texture coordinates.
-        int texCoordLen = this.texCoords.Length;
-        int texCoordLast = texCoordLen - 1;
-        sb.Append (", texCoords: [ ");
-        for (int i = 0; i < texCoordLen; ++i)
-        {
-            sb.Append (this.texCoords[i].ToString (places));
-            if (i < texCoordLast)
-            {
-                sb.Append (", ");
-            }
-        }
-        sb.Append (" ] }");
-
-        return sb.ToString ( );
+        return target;
     }
 
     public static Mesh2 Polygon (in int sectors, in float radius, float rotation, in PolyType poly, in Mesh2 target)
     {
-        target.name = "Polygon";
-
-        int seg = sectors < 3 ? 3 : sectors;
+        int seg = Utils.Max (3, sectors);
         int newLen = poly == PolyType.Ngon ? seg : poly == PolyType.Quad ?
             seg + seg + 1 : seg + 1;
         float rad = Utils.Max (Utils.Epsilon, radius);

@@ -113,6 +113,16 @@ public static class Utils
     public const float RadToDeg = 57.29578f;
 
     /// <summary>
+    /// An approximation of sqrt ( 3.0 ) , 1.7320508 .
+    /// </summary>
+    public const float Sqrt3 = 1.7320508f;
+
+    /// <summary>
+    /// An approximation of sqrt ( 3.0 ) / 2.0 , 0.8660254 .
+    /// </summary>
+    public const float Sqrt32 = 0.8660254f;
+
+    /// <summary>
     /// An approximation of TAU, 6.28318548 . Equal to 2.0 PI .
     /// </summary>
     public const float Tau = 6.28318548f;
@@ -586,7 +596,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Max (in int a, in int b)
     {
-        return (a >= b) ? a : b;
+        return (a > b) ? a : b;
     }
 
     /// <summary>
@@ -642,6 +652,18 @@ public static class Utils
             result = (v > result) ? v : result;
         }
         return result;
+    }
+
+    /// <summary>
+    /// Finds the lesser, or minimum, of two values.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the minimum value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static int Min (in int a, in int b)
+    {
+        return (a < b) ? a : b;
     }
 
     /// <summary>

@@ -151,7 +151,7 @@ public class Curve2 : IEnumerable
     /// <returns>this curve</returns>
     public Curve2 AppendAll (params Knot2[ ] kn)
     {
-        this.knots.AddRange(kn);
+        this.knots.AddRange (kn);
         return this;
     }
 
@@ -386,7 +386,7 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="places">number of places</param>
     /// <returns>the string</returns>
-    public String ToString (in int places = 4)
+    public string ToString (in int places = 4)
     {
         int len = this.knots.Count;
         int last = len - 1;

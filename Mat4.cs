@@ -419,11 +419,11 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="m31">row 3, column 1</param>
     /// <param name="m32">row 3, column 2</param>
     /// <param name="m33">row 3, column 3</param>
-    public Mat4 (
-        float m00 = 1.0f, float m01 = 0.0f, float m02 = 0.0f, float m03 = 0.0f,
-        float m10 = 0.0f, float m11 = 1.0f, float m12 = 0.0f, float m13 = 0.0f,
-        float m20 = 0.0f, float m21 = 0.0f, float m22 = 1.0f, float m23 = 0.0f,
-        float m30 = 0.0f, float m31 = 0.0f, float m32 = 0.0f, float m33 = 1.0f)
+    public Mat4 ( //
+        in float m00 = 1.0f, in float m01 = 0.0f, in float m02 = 0.0f, in float m03 = 0.0f, //
+        in float m10 = 0.0f, in float m11 = 1.0f, in float m12 = 0.0f, in float m13 = 0.0f, // 
+        in float m20 = 0.0f, in float m21 = 0.0f, in float m22 = 1.0f, in float m23 = 0.0f, // 
+        in float m30 = 0.0f, in float m31 = 0.0f, in float m32 = 0.0f, in float m33 = 1.0f)
     {
         this._m00 = m00;
         this._m01 = m01;
@@ -465,11 +465,11 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="m31">row 3, column 1</param>
     /// <param name="m32">row 3, column 2</param>
     /// <param name="m33">row 3, column 3</param>
-    public Mat4 (
-        bool m00 = true, bool m01 = false, bool m02 = false, bool m03 = false,
-        bool m10 = false, bool m11 = true, bool m12 = false, bool m13 = false,
-        bool m20 = false, bool m21 = false, bool m22 = true, bool m23 = false,
-        bool m30 = false, bool m31 = false, bool m32 = false, bool m33 = true)
+    public Mat4 ( // 
+        in bool m00 = true, in bool m01 = false, in bool m02 = false, in bool m03 = false, //
+        in bool m10 = false, in bool m11 = true, in bool m12 = false, in bool m13 = false, // 
+        in bool m20 = false, in bool m21 = false, in bool m22 = true, in bool m23 = false, // 
+        in bool m30 = false, in bool m31 = false, in bool m32 = false, in bool m33 = true)
     {
         this._m00 = m00 ? 1.0f : 0.0f;
         this._m01 = m01 ? 1.0f : 0.0f;
@@ -884,8 +884,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
-    /// Divides one matrix by another. Equivalent to multiplying the numerator and
-    /// the inverse of the denominator.
+    /// Divides one matrix by another. Equivalent to multiplying the numerator
+    /// and the inverse of the denominator.
     /// </summary>
     /// <param name="a">numerator</param>
     /// <param name="b">denominator</param>
@@ -907,8 +907,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
-    /// Divides a scalar by a matrix. Equivalent to multiplying the numerator and
-    /// the inverse of the denominator.
+    /// Divides a scalar by a matrix. Equivalent to multiplying the numerator
+    /// and the inverse of the denominator.
     /// </summary>
     /// <param name="a">numerator</param>
     /// <param name="b">denominator</param>
@@ -951,8 +951,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// Evaluates whether the left operand is less than the right operand.
     ///
-    /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
-    /// is false.
+    /// The return type is not a boolean, but a matrix, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -969,8 +969,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// Evaluates whether the left operand is greater than the right operand.
     ///
-    /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
-    /// is false.
+    /// The return type is not a boolean, but a matrix, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -988,8 +988,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Evaluates whether the left operand is less than or equal to the right
     /// operand.
     ///
-    /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
-    /// is false.
+    /// The return type is not a boolean, but a matrix, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -1007,8 +1007,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Evaluates whether the left operand is greater than or equal to the right
     /// operand.
     ///
-    /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
-    /// is false.
+    /// The return type is not a boolean, but a matrix, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -1025,8 +1025,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// Evaluates whether two matrices do not equal to each other.
     ///
-    /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
-    /// is false.
+    /// The return type is not a boolean, but a matrix, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -1043,8 +1043,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// Evaluates whether two matrices are equal to each other.
     ///
-    /// The return type is not a boolean, but a matrix, where 1.0 is true and 0.0
-    /// is false.
+    /// The return type is not a boolean, but a matrix, where 1.0 is true and
+    /// 0.0 is false.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -1118,9 +1118,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a matrix from two axes. The third axis, up, is assumed to be (0.0,
-    /// 0.0, 1.0, 0.0) . The fourth row and column are assumed to be (0.0, 0.0,
-    /// 0.0, 1.0) .
+    /// Creates a matrix from two axes. The third axis, up, is assumed to be
+    /// (0.0, 0.0, 1.0, 0.0) . The fourth row and column are assumed to be (0.0,
+    /// 0.0, 0.0, 1.0) .
     /// </summary>
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
@@ -1153,8 +1153,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a matrix from three axes. The fourth row and column are assumed to
-    /// be (0.0, 0.0, 0.0, 1.0) .
+    /// Creates a matrix from three axes. The fourth row and column are assumed
+    /// to be (0.0, 0.0, 0.0, 1.0) .
     /// </summary>
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
@@ -1170,8 +1170,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a matrix from three axes and a translation. The fourth row, w, is
-    /// assumed to be (0.0, 0.0, 0.0, 1.0) .
+    /// Creates a matrix from three axes and a translation. The fourth row, w,
+    /// is assumed to be (0.0, 0.0, 0.0, 1.0) .
     /// </summary>
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
@@ -1393,8 +1393,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a scale matrix from a scalar. The bottom right corner, m33, is set
-    /// to 1.0 .
+    /// Creates a scale matrix from a scalar. The bottom right corner, m33, is
+    /// set to 1.0 .
     /// </summary>
     /// <param name="scalar">scalar</param>
     /// <returns>matrix</returns>
@@ -1507,7 +1507,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="near">near clip plane</param>
     /// <param name="far">far clip plane</param>
     /// <returns>orthographic projection</returns>
-    public static Mat4 Frustum (in float left, in float right, in float bottom, in float top, in float near, in float far)
+    public static Mat4 Frustum ( //
+        in float left, in float right, // 
+        in float bottom, in float top, // 
+        in float near, in float far)
     {
         float n2 = near + near;
 
@@ -1618,8 +1621,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
-    /// Multiplies a matrix and a vector. The z and w components of the vector are
-    /// assumed to be 0.0 , so the vector is not impacted by the matrix's
+    /// Multiplies a matrix and a vector. The z and w components of the vector
+    /// are assumed to be 0.0 , so the vector is not impacted by the matrix's
     /// translation.
     /// </summary>
     /// <param name="a">matrix</param>
@@ -1640,8 +1643,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
-    /// Multiplies a matrix and a vector. The w component of the vector is assumed
-    /// to be 0.0 , so the vector is not impacted by the matrix's translation.
+    /// Multiplies a matrix and a vector. The w component of the vector is
+    /// assumed to be 0.0 , so the vector is not impacted by the matrix's
+    /// translation.
     /// </summary>
     /// <param name="a">matrix</param>
     /// <param name="b">vector</param>
@@ -1684,7 +1688,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="near">near clip plane</param>
     /// <param name="far">far clip plane</param>
     /// <returns>orthographic projection</returns>
-    public static Mat4 Orthographic (in float left, in float right, in float bottom, in float top, in float near, in float far)
+    public static Mat4 Orthographic ( //
+        in float left, in float right, // 
+        in float bottom, in float top, // 
+        in float near, in float far)
     {
         float w = right - left;
         float h = top - bottom;

@@ -1084,7 +1084,11 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="lowerBound">lower bound</param>
     /// <param name="upperBound">upper bound</param>
     /// <returns>the array</returns>
-    public static Vec2[, ] Grid (in int cols, in int rows, in Vec2 lowerBound, in Vec2 upperBound)
+    public static Vec2[, ] Grid ( //
+        in int cols, //
+        in int rows, //
+        in Vec2 lowerBound, //
+        in Vec2 upperBound)
     {
         int rval = rows < 2 ? 2 : rows;
         int cval = cols < 2 ? 2 : cols;
@@ -1728,6 +1732,38 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
+    /// Returns a string representation of an array of vectors.
+    /// </summary>
+    /// <param name="arr">array</param>
+    /// <param name="places">print precision</param>
+    /// <returns>the string</returns>
+    public static string ToString (in Vec2[ ] arr, in int places = 4)
+    {
+        StringBuilder sb = new StringBuilder (1024);
+        sb.Append ('[');
+        sb.Append (' ');
+
+        if (arr != null)
+        {
+            int len = arr.Length;
+            int last = len - 1;
+
+            for (int i = 0; i < last; ++i)
+            {
+                sb.Append (arr[i].ToString (places));
+                sb.Append (',');
+                sb.Append (' ');
+            }
+
+            sb.Append (arr[last].ToString (places));
+            sb.Append (' ');
+        }
+
+        sb.Append (']');
+        return sb.ToString ( );
+    }
+
+    /// <summary>
     /// Truncates each component of the vector.
     /// </summary>
     /// <param name="v">the input vector</param>
@@ -1762,84 +1798,42 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Returns a direction facing back, (0.0, -1.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec2 Back
-    {
-        get
-        {
-            return new Vec2 (0.0f, -1.0f);
-        }
-    }
+    public static Vec2 Back { get { return new Vec2 (0.0f, -1.0f); } }
 
     /// <summary>
     /// Returns a direction facing forward, (0.0, 1.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec2 Forward
-    {
-        get
-        {
-            return new Vec2 (0.0f, 1.0f);
-        }
-    }
+    public static Vec2 Forward { get { return new Vec2 (0.0f, 1.0f); } }
 
     /// <summary>
     /// Returns a direction facing left, (-1.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec2 Left
-    {
-        get
-        {
-            return new Vec2 (-1.0f, 0.0f);
-        }
-    }
+    public static Vec2 Left { get { return new Vec2 (-1.0f, 0.0f); } }
 
     /// <summary>
     /// Returns a vector with all components set to 1.0 .
     /// </summary>
     /// <value>the vector</value>
-    public static Vec2 One
-    {
-        get
-        {
-            return new Vec2 (1.0f, 1.0f);
-        }
-    }
+    public static Vec2 One { get { return new Vec2 (1.0f, 1.0f); } }
 
     /// <summary>
     /// Returns a direction facing right, (1.0, 0.0) .
     /// </summary>
     /// <value>the direction</value>
-    public static Vec2 Right
-    {
-        get
-        {
-            return new Vec2 (1.0f, 0.0f);
-        }
-    }
+    public static Vec2 Right { get { return new Vec2 (1.0f, 0.0f); } }
 
     /// <summary>
     /// Returns a vector at the center of a texture coordinate system, (0.5,
     /// 0.5) .
     /// </summary>
     /// <value>the center</value>
-    public static Vec2 UvCenter
-    {
-        get
-        {
-            return new Vec2 (0.5f, 0.5f);
-        }
-    }
+    public static Vec2 UvCenter { get { return new Vec2 (0.5f, 0.5f); } }
 
     /// <summary>
     /// Returns a vector with all components set to zero.
     /// </summary>
     /// <value>the vector</value>
-    public static Vec2 Zero
-    {
-        get
-        {
-            return new Vec2 (0.0f, 0.0f);
-        }
-    }
+    public static Vec2 Zero { get { return new Vec2 (0.0f, 0.0f); } }
 }

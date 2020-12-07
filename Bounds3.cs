@@ -1,3 +1,5 @@
+using System.Text;
+
 public struct Bounds3
 {
     private readonly Vec3 max;
