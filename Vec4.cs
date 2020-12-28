@@ -213,7 +213,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the array</returns>
     public float[ ] ToArray ( )
     {
-        return this.ToArray (new float[4], 0);
+        return this.ToArray (new float[this.Length], 0);
     }
 
     /// <summary>

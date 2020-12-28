@@ -192,7 +192,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the array</returns>
     public float[ ] ToArray ( )
     {
-        return this.ToArray (new float[3], 0);
+        return this.ToArray (new float[this.Length], 0);
     }
 
     /// <summary>
@@ -788,7 +788,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Returns a point on a Bezier curve described by two anchor points and two
     /// control points according to a step in [0.0, 1.0] .
     ///
-    /// When the step is less than one, returns the first anchor point. When the
+    /// When the step is less than zero, returns the first anchor point. When the
     /// step is greater than one, returns the second anchor point.
     /// </summary>
     /// <param name="ap0">first anchor point</param>
@@ -831,7 +831,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Returns a tangent on a Bezier curve described by two anchor points and
     /// two control points according to a step in [0.0, 1.0] .
     ///
-    /// When the step is less than one, returns the first anchor point
+    /// When the step is less than zero, returns the first anchor point
     /// subtracted from the first control point. When the step is greater than
     /// one, returns the second anchor point subtracted from the second control
     /// point.
@@ -844,7 +844,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the tangent along the curve</returns>
     public static Vec3 BezierTangent (in Vec3 ap0, in Vec3 cp0, in Vec3 cp1, in Vec3 ap1, in float step)
     {
-
         if (step <= 0.0f) return cp0 - ap0;
         else if (step >= 1.0f) return ap1 - cp1;
 

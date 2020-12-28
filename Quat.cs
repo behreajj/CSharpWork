@@ -265,7 +265,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>the array</returns>
     public float[ ] ToArray ( )
     {
-        return this.ToArray (new float[4], 0);
+        return this.ToArray (new float[this.Length], 0);
     }
 
     /// <summary>

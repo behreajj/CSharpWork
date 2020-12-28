@@ -215,7 +215,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the array</returns>
     public float[ ] ToArray ( )
     {
-        return this.ToArray (new float[4], 0);
+        return this.ToArray (new float[this.Length], 0);
     }
 
     /// <summary>

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 /// <summary>
-/// Organizes data needed to draw a three dimensional shape with verties and
+/// Organizes data needed to draw a three dimensional shape with vertices and
 /// faces.
 /// </summary>
 public class Mesh3
@@ -133,11 +133,19 @@ public class Mesh3
         this.normals = normals;
     }
 
+    /// <summary>
+    /// Copies a source mesh to a new mesh.
+    /// </summary>
+    /// <param name="source">source mesh</param>
     public Mesh3 (in Mesh3 source)
     {
         this.Set (source);
     }
 
+    /// <summary>
+    /// Returns a string representation of this mesh.
+    /// </summary>
+    /// <returns>the string</returns>
     public override string ToString ( )
     {
         return this.ToString (1, 4);
@@ -210,6 +218,39 @@ public class Mesh3
         Array.Sort (this.loops, new SortLoops3 (this.coords));
 
         return this;
+    }
+
+    public Vert3 GetVertex (in int faceIndex, in int vertIndex)
+    {
+        Index3 index = this.loops[Utils.Mod (faceIndex, this.loops.Length)][vertIndex];
+        return new Vert3 (
+            this.coords[index.v],
+            this.texCoords[index.vt],
+            this.normals[index.vn]);
+    }
+
+    public Vert3[ ] GetVertices ( )
+    {
+        int len0 = this.loops.Length;
+        SortedSet<Vert3> result = new SortedSet<Vert3> ( );
+        for (int i = 0; i < len0; ++i)
+        {
+            Loop3 loop = this.loops[i];
+            Index3[ ] indices = loop.Indices;
+            int len1 = indices.Length;
+            for (int j = 0; j < len1; ++j)
+            {
+                Index3 vert = indices[j];
+                result.Add (new Vert3 (
+                    this.coords[vert.v],
+                    this.texCoords[vert.vt],
+                    this.normals[vert.vn]));
+            }
+        }
+
+        Vert3[ ] arr = new Vert3[result.Count];
+        result.CopyTo (arr);
+        return arr;
     }
 
     public Mesh3 Set (in Mesh3 source)
@@ -557,7 +598,7 @@ public class Mesh3
         return new Mesh3 (loopsTrg, vsTrg, vtsTrg, vnsTrg);
     }
 
-    public static Mesh3 CastToSphere (in Mesh3 source, in float radius, in Mesh3 target)
+    public static Mesh3 CastToSphere (in Mesh3 source, in Mesh3 target, in float radius = 0.5f)
     {
         float vrad = Utils.Max (Utils.Epsilon, radius);
 
@@ -606,11 +647,11 @@ public class Mesh3
         return target;
     }
 
-    public static Mesh3 Capsule (in int longitudes, in int latitudes, in int rings, in float depth, in float radius, in PolyType poly, CapsuleUvProfile profile, in Mesh3 target)
+    public static Mesh3 Capsule (in Mesh3 target, in int longitudes = 32, in int latitudes = 16, in int rings = 0, in float depth = 1.0f, in float radius = 0.5f, in PolyType poly = PolyType.Tri, CapsuleUvProfile profile = CapsuleUvProfile.Aspect)
     {
         int verifLats = latitudes < 2 ? 2 : latitudes % 2 != 0 ? latitudes + 1 : latitudes;
-        int verifLons = longitudes < 3 ? 3 : longitudes;
-        int verifRings = rings < 0 ? 0 : rings;
+        int verifLons = Utils.Max (3, longitudes);
+        int verifRings = Utils.Max (0, rings);
         float verifDepth = Utils.Max (Utils.Epsilon, depth);
         float verifRad = Utils.Max (Utils.Epsilon, radius);
 
@@ -1048,7 +1089,7 @@ public class Mesh3
         return target;
     }
 
-    public static Mesh3 Cube (in float size, in PolyType poly, in Mesh3 target)
+    public static Mesh3 Cube (in Mesh3 target, in float size = 0.5f, in PolyType poly = PolyType.Tri)
     {
         float vsz = Utils.Max (Utils.Epsilon, size);
         target.coords = new Vec3[ ]
@@ -1193,13 +1234,16 @@ public class Mesh3
         return target;
     }
 
-    public static Mesh3 CubeSphere (in int itrs, in float size, in PolyType poly, in Mesh3 target)
+    public static Mesh3 CubeSphere (in Mesh3 target, in int itrs = 3, in float size = 0.5f, in PolyType poly = PolyType.Tri)
     {
-        Mesh3.Cube (0.5f, PolyType.Quad, target);
+        Mesh3.Cube (
+            target: target,
+            size: 0.5f,
+            poly: PolyType.Quad);
         target.SubdivFacesCenter (itrs);
         if (poly == PolyType.Tri) { Mesh3.Triangulate (target, target); }
         target.Clean ( );
-        Mesh3.CastToSphere (target, size, target);
+        Mesh3.CastToSphere (target, target, size);
         return target;
     }
 
@@ -1558,12 +1602,12 @@ public class Mesh3
         return target;
     }
 
-    public static Mesh3 Icosphere (in int itrs, in float size, in Mesh3 target)
+    public static Mesh3 Icosphere (in Mesh3 target, in int itrs = 3, in float size = 0.5f)
     {
         Mesh3.Icosahedron (target);
         target.SubdivFacesInscribe (itrs);
         target.Clean ( );
-        Mesh3.CastToSphere (target, size, target);
+        Mesh3.CastToSphere (target, target, size);
         return target;
     }
 

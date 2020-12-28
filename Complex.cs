@@ -158,7 +158,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>the array</returns>
     public float[ ] ToArray ( )
     {
-        return this.ToArray (new float[2], 0);
+        return this.ToArray (new float[this.Length], 0);
     }
 
     /// <summary>

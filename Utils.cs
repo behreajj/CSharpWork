@@ -285,7 +285,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int Ceil (in float v)
     {
-        return (v > 0.0f) ? (int) (v + 1) : (int) v;
+        return (v > 0.0f) ? (int) v + 1 : (int) v;
     }
 
     /// <summary>
