@@ -118,7 +118,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return this.ToString (4);
+        return Vec2.ToString (this);
     }
 
     /// <summary>
@@ -183,22 +183,6 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         arr[i] = this._x;
         arr[i + 1] = this._y;
         return arr;
-    }
-
-    /// <summary>
-    /// Returns a string representation of this vector.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (in int places = 4)
-    {
-        return new StringBuilder (48)
-            .Append ("{ x: ")
-            .Append (Utils.ToFixed (this._x, places))
-            .Append (", y: ")
-            .Append (Utils.ToFixed (this._y, places))
-            .Append (" }")
-            .ToString ( );
     }
 
     /// <summary>
@@ -1731,14 +1715,56 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
+    /// Returns a string representation of a vector.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static string ToString (in Vec2 v, in int places = 4)
+    {
+        return Vec2.ToString (new StringBuilder (48), v, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a representation of a vector to a string builder.
+    /// </summary>
+    /// <param name="sb">string bulider</param>
+    /// <param name="v">vector</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Vec2 v, in int places = 4)
+    {
+        sb.Append ("{ x: ");
+        Utils.ToFixed (sb, v._x, places);
+        sb.Append (", y: ");
+        Utils.ToFixed (sb, v._y, places);
+        sb.Append (' ');
+        sb.Append ('}');
+        return sb;
+    }
+
+    /// <summary>
     /// Returns a string representation of an array of vectors.
     /// </summary>
     /// <param name="arr">array</param>
     /// <param name="places">print precision</param>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static string ToString (in Vec2[ ] arr, in int places = 4)
     {
-        StringBuilder sb = new StringBuilder (1024);
+        return Vec2.ToString (new StringBuilder (arr.Length * 64), arr, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a representation of an array of vectors to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="arr">array</param>
+    /// <param name="places">print precision</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Vec2[ ] arr, in int places = 4)
+    {
         sb.Append ('[');
         sb.Append (' ');
 
@@ -1749,17 +1775,17 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
 
             for (int i = 0; i < last; ++i)
             {
-                sb.Append (arr[i].ToString (places));
+                Vec2.ToString (sb, arr[i], places);
                 sb.Append (',');
                 sb.Append (' ');
             }
 
-            sb.Append (arr[last].ToString (places));
+            Vec2.ToString (sb, arr[last], places);
             sb.Append (' ');
         }
 
         sb.Append (']');
-        return sb.ToString ( );
+        return sb;
     }
 
     /// <summary>

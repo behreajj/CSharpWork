@@ -134,8 +134,7 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>, IEnumerabl
     }
 
     /// <summary>
-    /// Tests this vector for equivalence with an object. For approximate
-    /// equality  with another vector, use the static approx function instead.
+    /// Tests this vertex for equivalence with an object.
     /// </summary>
     /// <param name="value">the object</param>
     /// <returns>the equivalence</returns>
@@ -182,7 +181,8 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>, IEnumerabl
         int tcComp = this.texCoord.CompareTo (v.texCoord);
         int coComp = this.coord.CompareTo (v.coord);
 
-        return nrComp != 0 ? nrComp : tcComp != 0 ? tcComp : coComp;
+        // return nrComp != 0 ? nrComp : tcComp != 0 ? tcComp : coComp;
+        return coComp != 0 ? coComp : nrComp != 0 ? nrComp : tcComp;
     }
 
     /// <summary>
@@ -258,11 +258,11 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>, IEnumerabl
     {
         return new StringBuilder (512)
             .Append ("{ coord: ")
-            .Append (this.coord.ToString (places))
+            .Append (Vec3.ToString (this.coord, places))
             .Append (", texCoord: ")
-            .Append (this.texCoord.ToString (places))
+            .Append (Vec2.ToString (this.texCoord, places))
             .Append (", normal: ")
-            .Append (this.normal.ToString (places))
+            .Append (Vec3.ToString (this.normal, places))
             .Append (" }")
             .ToString ( );
     }

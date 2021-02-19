@@ -294,7 +294,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
             .Append ("{ real: ")
             .Append (Utils.ToFixed (this.real, places))
             .Append (", imag: ")
-            .Append (this.imag.ToString (places))
+            .Append (Vec3.ToString (this.imag, places))
             .Append (" }")
             .ToString ( );
     }

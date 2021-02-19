@@ -137,7 +137,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return this.ToString (4);
+        return Vec3.ToString (this);
     }
 
     /// <summary>
@@ -207,24 +207,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         arr[i + 1] = this._y;
         arr[i + 2] = this._z;
         return arr;
-    }
-
-    /// <summary>
-    /// Returns a string representation of this vector.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (in int places = 4)
-    {
-        return new StringBuilder (80)
-            .Append ("{ x: ")
-            .Append (Utils.ToFixed (this._x, places))
-            .Append (", y: ")
-            .Append (Utils.ToFixed (this._y, places))
-            .Append (", z: ")
-            .Append (Utils.ToFixed (this._z, places))
-            .Append (" }")
-            .ToString ( );
     }
 
     /// <summary>
@@ -1206,35 +1188,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a vector from polar coordinates: (1) theta, an angle in radians,
-    /// the vector's heading; (2) rho, a radius, the vector's magnitude. Uses
-    /// the formula
-    ///
-    /// ( rho cos ( theta ), rho sin ( theta ) )
-    /// </summary>
-    /// <param name="azimuth">the angle in radians</param>
-    /// <param name="radius">the radius</param>
-    /// <returns>the vector</returns>
-    public static Vec3 FromPolar (in float azimuth = 0.0f, in float radius = 1.0f)
-    {
-        float sina = 0.0f;
-        float cosa = 0.0f;
-        Utils.SinCos (azimuth, out sina, out cosa);
-        return new Vec3 (
-            radius * cosa,
-            radius * sina, 0.0f);
-    }
-
-    /// <summary>
     /// Creates a vector from spherical coordinates: (1) theta, the azimuth or
     /// longitude; (2) phi, the inclination or latitude; (3) rho, the radius or
-    /// magnitude. Uses the formula
-    ///
-    /// ( rho cos ( theta ) cos ( phi ), rho sin ( theta ) cos ( phi ), - rho
-    /// sin ( phi ) )
-    ///
-    /// The poles will be upright in a z-up coordinate system; sideways in a
-    /// y-up coordinate system.
+    /// magnitude. The poles will be upright in a z-up coordinate system;
+    /// sideways in a y-up coordinate system.
     /// </summary>
     /// <param name="azimuth">the angle theta in radians</param>
     /// <param name="inclination">the angle phi in radians</param>
@@ -1242,6 +1199,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the vector</returns>
     public static Vec3 FromSpherical (in float azimuth = 0.0f, in float inclination = 0.0f, in float radius = 1.0f)
     {
+
+        // TODO: REFACTOR
         float sint = 0.0f;
         float cost = 0.0f;
         Utils.SinCos (azimuth, out sint, out cost);
@@ -1407,7 +1366,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         return Utils.Sqrt (Vec3.MagSq (v));
 
         // double xd = v._x; double yd = v._y; double zd = v._z;
-
         // return (float) Math.Sqrt (xd * xd + yd * yd + zd * zd);
     }
 
@@ -1701,24 +1659,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             Utils.Mix (lb, ub, (float) rng.NextDouble ( )),
             Utils.Mix (lb, ub, (float) rng.NextDouble ( )),
             Utils.Mix (lb, ub, (float) rng.NextDouble ( )));
-    }
-
-    /// <summary>
-    /// Creates a vector at a random heading and radius.
-    /// </summary>
-    /// <param name="rng">the random number generator</param>
-    /// <param name="rhoMin">the minimum radius</param>
-    /// <param name="rhoMax">the maximum radius</param>
-    /// <returns>the output vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Vec3 RandomPolar (in System.Random rng, in float rhoMin = 1.0f, in float rhoMax = 1.0f)
-    {
-        return Vec3.FromPolar (
-            Utils.Mix (-Utils.Pi, Utils.Pi,
-                (float) rng.NextDouble ( )),
-
-            Utils.Mix (rhoMin, rhoMax,
-                (float) rng.NextDouble ( )));
     }
 
     /// <summary>
@@ -2063,14 +2003,58 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
+    /// Returns a string representation of a vector.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static string ToString (in Vec3 v, in int places = 4)
+    {
+        return Vec3.ToString (new StringBuilder (64), v, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a representation of a vector to a string builder.
+    /// </summary>
+    /// <param name="sb">string bulider</param>
+    /// <param name="v">vector</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Vec3 v, in int places = 4)
+    {
+        sb.Append ("{ x: ");
+        Utils.ToFixed (sb, v._x, places);
+        sb.Append (", y: ");
+        Utils.ToFixed (sb, v._y, places);
+        sb.Append (", z: ");
+        Utils.ToFixed (sb, v._z, places);
+        sb.Append (' ');
+        sb.Append ('}');
+        return sb;
+    }
+
+    /// <summary>
     /// Returns a string representation of an array of vectors.
     /// </summary>
     /// <param name="arr">array</param>
     /// <param name="places">print precision</param>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static string ToString (in Vec3[ ] arr, in int places = 4)
     {
-        StringBuilder sb = new StringBuilder (1024);
+        return Vec3.ToString (new StringBuilder (arr.Length * 64), arr, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a representation of an array of vectors to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="arr">array</param>
+    /// <param name="places">print precision</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Vec3[ ] arr, in int places = 4)
+    {
         sb.Append ('[');
         sb.Append (' ');
 
@@ -2081,17 +2065,17 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 
             for (int i = 0; i < last; ++i)
             {
-                sb.Append (arr[i].ToString (places));
+                Vec3.ToString (sb, arr[i], places);
                 sb.Append (',');
                 sb.Append (' ');
             }
 
-            sb.Append (arr[last].ToString (places));
+            Vec3.ToString (sb, arr[last], places);
             sb.Append (' ');
         }
 
         sb.Append (']');
-        return sb.ToString ( );
+        return sb;
     }
 
     /// <summary>

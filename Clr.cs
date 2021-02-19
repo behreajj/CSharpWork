@@ -397,8 +397,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr operator & (in Clr a, in Clr b)
     {
-        // TODO: Optimize bitwise operations per Java version.
-        return Clr.FromHex (Clr.ToHexInt (a) & Clr.ToHexInt (b));
+        // return Clr.FromHex (Clr.ToHexInt (a) & Clr.ToHexInt (b));
+        return new Clr (
+            ((int) (a.r * 0xff + 0.5f) & (int) (b.r * 0xff + 0.5f)) * Utils.One255,
+            ((int) (a.g * 0xff + 0.5f) & (int) (b.g * 0xff + 0.5f)) * Utils.One255,
+            ((int) (a.b * 0xff + 0.5f) & (int) (b.b * 0xff + 0.5f)) * Utils.One255,
+            ((int) (a.a * 0xff + 0.5f) & (int) (b.a * 0xff + 0.5f)) * Utils.One255);
     }
 
     /// <summary>
@@ -410,7 +414,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr operator | (in Clr a, in Clr b)
     {
-        return Clr.FromHex (Clr.ToHexInt (a) | Clr.ToHexInt (b));
+        // return Clr.FromHex (Clr.ToHexInt (a) | Clr.ToHexInt (b));
+        return new Clr (
+            ((int) (a.r * 0xff + 0.5f) | (int) (b.r * 0xff + 0.5f)) * Utils.One255,
+            ((int) (a.g * 0xff + 0.5f) | (int) (b.g * 0xff + 0.5f)) * Utils.One255,
+            ((int) (a.b * 0xff + 0.5f) | (int) (b.b * 0xff + 0.5f)) * Utils.One255,
+            ((int) (a.a * 0xff + 0.5f) | (int) (b.a * 0xff + 0.5f)) * Utils.One255);
     }
 
     /// <summary>
@@ -422,7 +431,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr operator ^ (in Clr a, in Clr b)
     {
-        return Clr.FromHex (Clr.ToHexInt (a) ^ Clr.ToHexInt (b));
+        // return Clr.FromHex (Clr.ToHexInt (a) ^ Clr.ToHexInt (b));
+        return new Clr (
+            ((int) (a.r * 0xff + 0.5f) ^ (int) (b.r * 0xff + 0.5f)) * Utils.One255,
+            ((int) (a.g * 0xff + 0.5f) ^ (int) (b.g * 0xff + 0.5f)) * Utils.One255,
+            ((int) (a.b * 0xff + 0.5f) ^ (int) (b.b * 0xff + 0.5f)) * Utils.One255,
+            ((int) (a.a * 0xff + 0.5f) ^ (int) (b.a * 0xff + 0.5f)) * Utils.One255);
     }
 
     /// <summary>
@@ -460,11 +474,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the inversion</returns>
     public static Clr operator - (in Clr c)
     {
-        return new Clr (
-            1.0f - c._r,
-            1.0f - c._g,
-            1.0f - c._b,
-            c._a);
+        Clr d = ~c;
+        return new Clr (d.r, d.g, d.b, c.a);
     }
 
     /// <summary>

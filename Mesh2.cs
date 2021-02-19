@@ -140,14 +140,10 @@ public class Mesh2
             int vertsLen = verts.Length;
             for (int j = 0; j < vertsLen; ++j)
             {
-                Index2 vert = verts[j];
-
-                int vIdx = vert.v;
-                int vtIdx = vert.vt;
-
                 /* The dictionary should ignore repeated visitations. */
-                usedCoords[vIdx] = this.coords[vIdx];
-                usedTexCoords[vtIdx] = this.texCoords[vtIdx];
+                Index2 vert = verts[j];
+                usedCoords[vert.v] = this.coords[vert.v];
+                usedTexCoords[vert.vt] = this.texCoords[vert.vt];
             }
         }
 
@@ -174,12 +170,11 @@ public class Mesh2
             int vertsLen = verts.Length;
             for (int j = 0; j < vertsLen; ++j)
             {
-                Index2 oldVert = verts[j];
-
                 /*
                  * Find index of vector in new array by using indexed value from old
                  * array as a reference.
                  */
+                Index2 oldVert = verts[j];
                 verts[j] = new Index2 (
                     Array.BinarySearch<Vec2> (newCoords, this.coords[oldVert.v], v2Cmp),
                     Array.BinarySearch<Vec2> (newTexCoords, this.texCoords[oldVert.vt], v2Cmp));
@@ -196,6 +191,13 @@ public class Mesh2
         return this;
     }
 
+    /// <summary>
+    /// Removes a given number of face indices from this mesh beginning at an
+    /// index. Does not remove any data associated with the indices.
+    /// </summary>
+    /// <param name="faceIndex">index</param>
+    /// <param name="deletions">removal count</param>
+    /// <returns>mesh</returns>
     public Mesh2 DeleteFaces (in int faceIndex, in int deletions = 1)
     {
         int aLen = this.loops.Length;
@@ -210,6 +212,12 @@ public class Mesh2
         return this;
     }
 
+    /// <summary>
+    /// Gets a vertex from the mesh.
+    /// </summary>
+    /// <param name="faceIndex">face index</param>
+    /// <param name="vertIndex">vertex index</param>
+    /// <returns>vertex</returns>
     public Vert2 GetVertex (in int faceIndex, in int vertIndex)
     {
         Index2 index = this.loops[Utils.Mod (faceIndex, this.loops.Length)][vertIndex];
@@ -218,6 +226,10 @@ public class Mesh2
             this.texCoords[index.vt]);
     }
 
+    /// <summary>
+    /// Gets an array of vertices from the mesh.
+    /// </summary>
+    /// <returns>vertices</returns>
     public Vert2[ ] GetVertices ( )
     {
         int len0 = this.loops.Length;
@@ -356,7 +368,14 @@ public class Mesh2
         return this;
     }
 
-    public static Mesh2 Arc (in Mesh2 target, in int sectors = 32, in float radius = 0.5f, float oculus = 0.5f, in float startAngle = 0.0f, in float stopAngle = Utils.Pi, in PolyType poly = PolyType.Tri)
+    public static Mesh2 Arc ( //
+        in Mesh2 target, //
+        in int sectors = 32, //
+        in float radius = 0.5f, //
+        float oculus = 0.5f, //
+        in float startAngle = 0.0f, //
+        in float stopAngle = Utils.Pi, //
+        in PolyType poly = PolyType.Tri)
     {
         float a1 = Utils.Mod1 (startAngle * Utils.OneTau);
         float b1 = Utils.Mod1 (stopAngle * Utils.OneTau);
@@ -486,7 +505,24 @@ public class Mesh2
 
     }
 
-    public static Mesh2 GridHex (in Mesh2 target, in int rings = 4, in float cellRadius = 0.5f, in float cellMargin = 0.0325f)
+    /// <summary>
+    /// Generates a grid of hexagons arranged in rings around a central cell.
+    /// The number of cells follows the formula n = 1 + (rings - 1) * 3 * rings,
+    /// meaning 1 ring: 1 cell; 2 rings: 7 cells; 3 rings: 19 cells; 4 rings: 37
+    /// cells; and so on. See
+    /// https://www.redblobgames.com/grids/hexagons/implementation.html , Red
+    /// Blob Games' Implementation of Hex Grids</a> .
+    /// </summary>
+    /// <param name="target">output mesh</param>
+    /// <param name="rings">number of rings</param>
+    /// <param name="cellRadius">cell radius</param>
+    /// <param name="cellMargin">margin between cells</param>
+    /// <returns>hexagon grid</returns>
+    public static Mesh2 GridHex ( //
+        in Mesh2 target, //
+        in int rings = 4, //
+        in float cellRadius = 0.5f, //
+        in float cellMargin = 0.0325f)
     {
         int vRings = Utils.Max (1, rings);
         float vRad = Utils.Max (Utils.Epsilon, cellRadius);
@@ -569,7 +605,11 @@ public class Mesh2
     /// <param name="poly">polygon type</param>
     /// <param name="target">output mesh</param>
     /// <returns>plane</returns>
-    public static Mesh2 Plane (in Mesh2 target, in int cols = 3, in int rows = 3, in PolyType poly = PolyType.Tri)
+    public static Mesh2 Plane ( //
+        in Mesh2 target, //
+        in int cols = 3, //
+        in int rows = 3, //
+        in PolyType poly = PolyType.Tri)
     {
         int rval = Utils.Max (1, rows);
         int cval = Utils.Max (1, cols);
@@ -674,7 +714,12 @@ public class Mesh2
         return target;
     }
 
-    public static Mesh2 Polygon (in Mesh2 target, in int sectors = 32, in float radius = 0.5f, float rotation = Utils.HalfPi, in PolyType poly = PolyType.Tri)
+    public static Mesh2 Polygon ( //
+        in Mesh2 target, //
+        in int sectors = 32, //
+        in float radius = 0.5f, //
+        float rotation = Utils.HalfPi, //
+        in PolyType poly = PolyType.Tri)
     {
         int seg = Utils.Max (3, sectors);
         int newLen = poly == PolyType.Ngon ? seg : poly == PolyType.Quad ?

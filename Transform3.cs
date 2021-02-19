@@ -122,7 +122,10 @@ public class Transform3
     /// <param name="width">x scale</param>
     /// <param name="height">y scale</param>
     /// <param name="depth">z scale</param>
-    public Transform3 (in float x, in float y, in float z, in float real, in float i, in float j, in float k, in float width, in float height, in float depth)
+    public Transform3 ( //
+        in float x, in float y, in float z, //
+        in float real, in float i, in float j, in float k, //
+        in float width, in float height, in float depth)
     {
         this.Location = new Vec3 (x, y, z);
         this.Rotation = new Quat (real, new Vec3 (i, j, k));
@@ -330,11 +333,11 @@ public class Transform3
     {
         return new StringBuilder (354)
             .Append ("{ location: ")
-            .Append (this.location.ToString (places))
+            .Append (Vec3.ToString (this.location, places))
             .Append (", rotation: ")
             .Append (this.rotation.ToString (places))
             .Append (", scale: ")
-            .Append (this.scale.ToString (places))
+            .Append (Vec3.ToString (this.scale, places))
             .Append (" }")
             .ToString ( );
     }

@@ -667,6 +667,19 @@ public static class Utils
     }
 
     /// <summary>
+    /// Finds the lesser, or minimum, among three values.
+    /// </summary>
+    /// <param name="a">first operand</param>
+    /// <param name="b">second operand</param>
+    /// <param name="c">third operand</param>
+    /// <returns>the maximum value</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static int Min (in int a, in int b, in int c)
+    {
+        return Utils.Min (Utils.Min (a, b), c);
+    }
+
+    /// <summary>
     /// Finds the lesser, or minimum, of two values.
     /// </summary>
     /// <param name="a">left operand</param>
@@ -849,6 +862,7 @@ public static class Utils
     /// <returns>the oscillation</returns>
     public static float PingPong (in float a, in float b, in float t)
     {
+        // TODO: Update to match Java version.
         float x = 0.5f + 0.5f * Utils.SinCosEval (t);
         return (1.0f - x) * a + x * b;
     }
@@ -1133,23 +1147,37 @@ public static class Utils
     }
 
     /// <summary>
-    /// Returns a String representation of a single precision real number
+    /// Returns a string representation of a single precision real number
     /// truncated to the number of places.
     /// </summary>
-    /// <param name="v">the input value</param>
-    /// <param name="places">the number of places</param>
-    /// <returns>the string</returns>
+    /// <param name="v">input value</param>
+    /// <param name="places">number of places</param>
+    /// <returns>string</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static string ToFixed (in float v, in int places = 7)
+    {
+        return Utils.ToFixed (new StringBuilder (16), v, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a string representation of a single precision real number
+    /// truncated to the number of places to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="v">input value</param>
+    /// <param name="places">number of places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToFixed (in StringBuilder sb, in float v, in int places = 7)
     {
         /*
          * Dispense with v and places edge cases.
          */
-        if (float.IsNaN (v)) return "0.0";
-        if (places < 0) return ((int) v).ToString ( );
-        if (places < 1) return ((float) ((int) v)).ToString ( );
+        if (float.IsNaN (v)) return sb.Append ("0.0");
+        if (places < 0) return sb.Append ((int) v);
+        if (places < 1) return sb.Append ((float) ((int) v));
         if (v <= float.MinValue || v >= float.MaxValue)
         {
-            return v.ToString ( );
+            return sb.Append (v);
         }
 
         /*
@@ -1160,22 +1188,22 @@ public static class Utils
         int sign = ltZero ? -1 : (v > 0.0f) ? 1 : 0;
         float abs = ltZero ? -v : v;
         int trunc = (int) abs;
+        int oldLen = sb.Length;
         int len = 0;
 
         /*
          * Start the string builder with the integral
          * and the sign.
          */
-        StringBuilder sb = new StringBuilder (16);
         if (sign < 0)
         {
             sb.Append ('-').Append (trunc);
-            len = sb.Length - 1;
+            len = sb.Length - oldLen - 1;
         }
         else
         {
             sb.Append (trunc);
-            len = sb.Length;
+            len = sb.Length - oldLen;
         }
         sb.Append ('.');
 
@@ -1189,7 +1217,7 @@ public static class Utils
          * number of places will be used.
          */
         int maxPlaces = 9 - len;
-        if (maxPlaces < 1) return v.ToString ( );
+        if (maxPlaces < 1) return sb.Append (v);
         int vetPlaces = places < maxPlaces ?
             places : maxPlaces;
 
@@ -1206,7 +1234,7 @@ public static class Utils
             frac -= (float) tr;
             sb.Append (tr);
         }
-        return sb.ToString ( );
+        return sb;
     }
 
     /// <summary>

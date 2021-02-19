@@ -27,13 +27,13 @@ public struct Bounds3
 
     public string ToString (in int places = 4)
     {
-        return new StringBuilder (128)
-            .Append ("{ min: ")
-            .Append (this.min.ToString (places))
-            .Append (", max: ")
-            .Append (this.max.ToString (places))
-            .Append (" }")
-            .ToString ( );
+        StringBuilder sb = new StringBuilder (128);
+        sb.Append ("{ min: ");
+        Vec3.ToString (sb, this.min, places);
+        sb.Append (", max: ");
+        Vec3.ToString (sb, this.max, places);
+        sb.Append (" }");
+        return sb.ToString ( );
     }
 
     public static Vec3 Center (in Bounds3 b)

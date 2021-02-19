@@ -428,7 +428,9 @@ public readonly struct Mat3 : IEnumerable
     public float[, ] ToArray2 ( )
     {
         return new float[, ]
-        { { this._m00, this._m01, this._m02 }, { this._m10, this._m11, this._m12 }, { this._m20, this._m21, this._m22 }
+        { { this._m00, this._m01, this._m02 }, //
+            { this._m10, this._m11, this._m12 }, //
+            { this._m20, this._m21, this._m22 }
         };
     }
 
@@ -653,6 +655,21 @@ public readonly struct Mat3 : IEnumerable
     }
 
     /// <summary>
+    /// Multiplies a vector and a matrix's transpose, then transposes the
+    /// result.
+    /// </summary>
+    /// <param name="a">vector</param>
+    /// <param name="b">matrix</param>
+    /// <returns>product</returns>
+    public static Vec3 operator * (in Vec3 a, in Mat3 b)
+    {
+        return new Vec3 (
+            b._m00 * a.x + b._m10 * a.y + b._m20 * a.z,
+            b._m01 * a.x + b._m11 * a.y + b._m21 * a.z,
+            b._m02 * a.x + b._m12 * a.y + b._m22 * a.z);
+    }
+
+    /// <summary>
     /// Divides one matrix by another. Equivalent to multiplying the numerator
     /// and the inverse of the denominator.
     /// </summary>
@@ -862,7 +879,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromAxes (in Vec2 right, in Vec2 forward)
+    public static Mat3 FromAxes ( //
+        in Vec2 right, //
+        in Vec2 forward)
     {
         return new Mat3 (
             right.x, forward.x, 0.0f,
@@ -878,7 +897,10 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromAxes (in Vec2 right, in Vec2 forward, in Vec2 translation)
+    public static Mat3 FromAxes ( //
+        in Vec2 right, //
+        in Vec2 forward, //
+        in Vec2 translation)
     {
         return new Mat3 (
             right.x, forward.x, translation.x,
@@ -893,7 +915,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromAxes (in Vec3 right, in Vec3 forward)
+    public static Mat3 FromAxes ( //
+        in Vec3 right, //
+        in Vec3 forward)
     {
         return new Mat3 (
             right.x, forward.x, 0.0f,
@@ -908,7 +932,10 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromAxes (in Vec3 right, in Vec3 forward, in Vec3 translation)
+    public static Mat3 FromAxes ( //
+        in Vec3 right, //
+        in Vec3 forward, //
+        in Vec3 translation)
     {
         return new Mat3 (
             right.x, forward.x, translation.x,

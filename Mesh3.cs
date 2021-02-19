@@ -151,6 +151,11 @@ public class Mesh3
         return this.ToString (1, 4);
     }
 
+    /// <summary>
+    /// Removes elements from the coordinate, texture coordinate and normal
+    /// arrays of the mesh which are not visited by the face indices.
+    /// </summary>
+    /// <returns>mesh</returns>
     public Mesh3 Clean ( )
     {
         Dictionary<int, Vec3> usedCoords = new Dictionary<int, Vec3> ( );
@@ -166,14 +171,9 @@ public class Mesh3
             for (int j = 0; j < vertsLen; ++j)
             {
                 Index3 vert = verts[j];
-
-                int vIdx = vert.v;
-                int vtIdx = vert.vt;
-                int vnIdx = vert.vn;
-
-                usedCoords[vIdx] = this.coords[vIdx];
-                usedTexCoords[vtIdx] = this.texCoords[vtIdx];
-                usedNormals[vnIdx] = this.normals[vnIdx];
+                usedCoords[vert.v] = this.coords[vert.v];
+                usedTexCoords[vert.vt] = this.texCoords[vert.vt];
+                usedNormals[vert.vn] = this.normals[vert.vn];
             }
         }
 
@@ -220,6 +220,12 @@ public class Mesh3
         return this;
     }
 
+    /// <summary>
+    /// Gets a vertex from the mesh.
+    /// </summary>
+    /// <param name="faceIndex">face index</param>
+    /// <param name="vertIndex">vertex index</param>
+    /// <returns>vertex</returns>
     public Vert3 GetVertex (in int faceIndex, in int vertIndex)
     {
         Index3 index = this.loops[Utils.Mod (faceIndex, this.loops.Length)][vertIndex];
@@ -229,6 +235,10 @@ public class Mesh3
             this.normals[index.vn]);
     }
 
+    /// <summary>
+    /// Gets an array of vertices from the mesh.
+    /// </summary>
+    /// <returns>vertices</returns>
     public Vert3[ ] GetVertices ( )
     {
         int len0 = this.loops.Length;
@@ -253,6 +263,11 @@ public class Mesh3
         return arr;
     }
 
+    /// <summary>
+    /// Sets this mesh from a source.
+    /// </summary>
+    /// <param name="source">source</param>
+    /// <returns>this mesh</returns>
     public Mesh3 Set (in Mesh3 source)
     {
         int vsLen = source.coords.Length;
@@ -276,6 +291,47 @@ public class Mesh3
             Index3[ ] targetIndices = new Index3[loopLen];
             System.Array.Copy (sourceIndices, targetIndices, loopLen);
             this.loops[i] = new Loop3 (targetIndices);
+        }
+
+        return this;
+    }
+
+    public Mesh3 ShadeFlat ( )
+    {
+        int facesLen = this.loops.Length;
+        this.normals = new Vec3[facesLen];
+        for (int i = 0; i < facesLen; ++i)
+        {
+            Index3[ ] face = this.loops[i].Indices;
+            int faceLen = face.Length;
+
+            float vnx = 0.0f;
+            float vny = 0.0f;
+            float vnz = 0.0f;
+            Vec3 prev = this.coords[face[faceLen - 1].v];
+            for (int j = 0; j < faceLen; ++j)
+            {
+                Index3 vert = face[j];
+                Vec3 curr = this.coords[vert.v];
+                Vec3 next = this.coords[face[(j + 1) % faceLen].v];
+
+                float edge0x = prev.x - curr.x;
+                float edge0y = prev.y - curr.y;
+                float edge0z = prev.z - curr.z;
+
+                float edge1x = curr.x - next.x;
+                float edge1y = curr.y - next.y;
+                float edge1z = curr.z - next.z;
+
+                vnx += edge0y * edge1z - edge0z * edge1y;
+                vny += edge0z * edge1x - edge0x * edge1z;
+                vnz += edge0x * edge1y - edge0y * edge1x;
+
+                face[j] = new Index3 (vert.v, vert.vt, i);
+                prev = curr;
+            }
+
+            this.normals[i] = Vec3.Normalize (new Vec3 (vnx, vny, vnz));
         }
 
         return this;
@@ -647,8 +703,31 @@ public class Mesh3
         return target;
     }
 
-    public static Mesh3 Capsule (in Mesh3 target, in int longitudes = 32, in int latitudes = 16, in int rings = 0, in float depth = 1.0f, in float radius = 0.5f, in PolyType poly = PolyType.Tri, CapsuleUvProfile profile = CapsuleUvProfile.Aspect)
+    /// <summary>
+    /// Creates a capsule, with a UV hemisphere on the top and bottom of a
+    /// cylinder.
+    /// </summary>
+    /// <param name="target">output mesh</param>
+    /// <param name="longitudes">longitudes</param>
+    /// <param name="latitudes">latitudes</param>
+    /// <param name="rings">rings</param>
+    /// <param name="depth">depth</param>
+    /// <param name="radius">radius</param>
+    /// <param name="poly">polygon type</param>
+    /// <param name="profile">UV profile</param>
+    /// <returns>capsule</returns>
+    public static Mesh3 Capsule ( //
+        in Mesh3 target, //
+        in int longitudes = 32, //
+        in int latitudes = 16, //
+        in int rings = 0, //
+        in float depth = 1.0f, //
+        in float radius = 0.5f, //
+        in PolyType poly = PolyType.Tri, //
+        CapsuleUvProfile profile = CapsuleUvProfile.Aspect)
     {
+        // TODO: REFACTOR to build faces from bottom.
+
         int verifLats = latitudes < 2 ? 2 : latitudes % 2 != 0 ? latitudes + 1 : latitudes;
         int verifLons = Utils.Max (3, longitudes);
         int verifRings = Utils.Max (0, rings);
@@ -1089,7 +1168,18 @@ public class Mesh3
         return target;
     }
 
-    public static Mesh3 Cube (in Mesh3 target, in float size = 0.5f, in PolyType poly = PolyType.Tri)
+    /// <summary>
+    /// Generates a cube mesh. In the context of Platonic solids, also known as
+    /// a hexahedron, as it has 6 faces and 8 vertices.
+    /// </summary>
+    /// <param name="target">output mesh</param>
+    /// <param name="size">scalar</param>
+    /// <param name="poly">polygon type</param>
+    /// <returns>cube</returns>
+    public static Mesh3 Cube ( //
+        in Mesh3 target, //
+        in float size = 0.5f, //
+        in PolyType poly = PolyType.Tri)
     {
         float vsz = Utils.Max (Utils.Epsilon, size);
         target.coords = new Vec3[ ]
@@ -1114,6 +1204,7 @@ public class Mesh3
             new Vec3 (0.0f, 1.0f, 0.0f)
         };
 
+        // TODO: Cube UV Profile options.
         target.texCoords = new Vec2[ ]
         {
             new Vec2 (0.625f, 0.0f),
@@ -1234,7 +1325,11 @@ public class Mesh3
         return target;
     }
 
-    public static Mesh3 CubeSphere (in Mesh3 target, in int itrs = 3, in float size = 0.5f, in PolyType poly = PolyType.Tri)
+    public static Mesh3 CubeSphere ( //
+        in Mesh3 target, //
+        in int itrs = 3, //
+        in float size = 0.5f, //
+        in PolyType poly = PolyType.Tri)
     {
         Mesh3.Cube (
             target: target,
@@ -1247,6 +1342,12 @@ public class Mesh3
         return target;
     }
 
+    /// <summary>
+    /// Creates an dodecahedron, a Platonic solid with 12 faces and 20
+    /// coordinates.
+    /// </summary>
+    /// <param name="target">output mesh</param>
+    /// <returns>dodecahedron</returns>
     public static Mesh3 Dodecahedron (in Mesh3 target)
     {
         target.coords = new Vec3[ ]
@@ -1377,76 +1478,12 @@ public class Mesh3
         return target;
     }
 
-    public static Mesh3 Octahedron (in Mesh3 target)
-    {
-        target.coords = new Vec3[ ]
-        {
-            new Vec3 (0.0f, -0.5f, 0.0f),
-            new Vec3 (0.5f, 0.0f, 0.0f),
-            new Vec3 (-0.5f, 0.0f, 0.0f),
-            new Vec3 (0.0f, 0.5f, 0.0f),
-            new Vec3 (0.0f, 0.0f, 0.5f),
-            new Vec3 (0.0f, 0.0f, -0.5f)
-        };
-
-        target.texCoords = new Vec2[ ]
-        {
-            new Vec2 (0.5f, 0.0f),
-            new Vec2 (1.0f, 1.0f),
-            new Vec2 (0.0f, 1.0f)
-        };
-
-        target.normals = new Vec3[ ]
-        {
-            new Vec3 (0.57735026f, -0.57735026f, 0.57735026f),
-            new Vec3 (-0.57735026f, 0.57735026f, 0.57735026f),
-            new Vec3 (-0.57735026f, -0.57735026f, 0.57735026f),
-            new Vec3 (0.57735026f, 0.57735026f, 0.57735026f),
-            new Vec3 (-0.57735026f, 0.57735026f, -0.57735026f),
-            new Vec3 (0.57735026f, 0.57735026f, -0.57735026f),
-            new Vec3 (0.57735026f, -0.57735026f, -0.57735026f),
-            new Vec3 (-0.57735026f, -0.57735026f, -0.57735026f)
-        };
-
-        target.loops = new Loop3[ ]
-        {
-            new Loop3 (
-            new Index3 (0, 2, 0),
-            new Index3 (1, 1, 0),
-            new Index3 (4, 0, 0)),
-            new Loop3 (
-            new Index3 (1, 2, 3),
-            new Index3 (3, 1, 3),
-            new Index3 (4, 0, 3)),
-            new Loop3 (
-            new Index3 (3, 2, 1),
-            new Index3 (2, 1, 1),
-            new Index3 (4, 0, 1)),
-            new Loop3 (
-            new Index3 (2, 2, 2),
-            new Index3 (0, 1, 2),
-            new Index3 (4, 0, 2)),
-            new Loop3 (
-            new Index3 (2, 2, 4),
-            new Index3 (3, 1, 4),
-            new Index3 (5, 0, 4)),
-            new Loop3 (
-            new Index3 (3, 2, 5),
-            new Index3 (1, 1, 5),
-            new Index3 (5, 0, 5)),
-            new Loop3 (
-            new Index3 (1, 2, 6),
-            new Index3 (0, 1, 6),
-            new Index3 (5, 0, 6)),
-            new Loop3 (
-            new Index3 (0, 2, 7),
-            new Index3 (2, 1, 7),
-            new Index3 (5, 0, 7))
-        };
-
-        return target;
-    }
-
+    /// <summary>
+    /// Creates an icosahedron, a Platonic solid with 20 faces and 12
+    /// coordinates.
+    /// </summary>
+    /// <param name="target">output mesh</param>
+    /// <returns>icosahedron</returns>
     public static Mesh3 Icosahedron (in Mesh3 target)
     {
         target.coords = new Vec3[ ]
@@ -1602,12 +1639,98 @@ public class Mesh3
         return target;
     }
 
-    public static Mesh3 Icosphere (in Mesh3 target, in int itrs = 3, in float size = 0.5f)
+    /// <summary>
+    /// Creates an icosahedron, subdivides through inscription, then casts the
+    /// vertices to a sphere.
+    /// </summary>
+    /// <param name="target">output mesh</param>
+    /// <param name="itrs">iterations</param>
+    /// <param name="size">size</param>
+    /// <returns>icosphere</returns>
+    public static Mesh3 Icosphere ( //
+        in Mesh3 target, //
+        in int itrs = 3, //
+        in float size = 0.5f)
     {
         Mesh3.Icosahedron (target);
         target.SubdivFacesInscribe (itrs);
         target.Clean ( );
         Mesh3.CastToSphere (target, target, size);
+        return target;
+    }
+
+    /// <summary>
+    /// Creates an octahedron, a Platonic solid with 8 faces and 6 coordinates.
+    /// </summary>
+    /// <param name="target">output mesh</param>
+    /// <returns>octahedron</returns>
+    public static Mesh3 Octahedron (in Mesh3 target)
+    {
+        target.coords = new Vec3[ ]
+        {
+            new Vec3 (0.0f, -0.5f, 0.0f),
+            new Vec3 (0.5f, 0.0f, 0.0f),
+            new Vec3 (-0.5f, 0.0f, 0.0f),
+            new Vec3 (0.0f, 0.5f, 0.0f),
+            new Vec3 (0.0f, 0.0f, 0.5f),
+            new Vec3 (0.0f, 0.0f, -0.5f)
+        };
+
+        target.texCoords = new Vec2[ ]
+        {
+            new Vec2 (0.5f, 0.0f),
+            new Vec2 (1.0f, 1.0f),
+            new Vec2 (0.0f, 1.0f)
+        };
+
+        target.normals = new Vec3[ ]
+        {
+            new Vec3 (0.57735026f, -0.57735026f, 0.57735026f),
+            new Vec3 (-0.57735026f, 0.57735026f, 0.57735026f),
+            new Vec3 (-0.57735026f, -0.57735026f, 0.57735026f),
+            new Vec3 (0.57735026f, 0.57735026f, 0.57735026f),
+            new Vec3 (-0.57735026f, 0.57735026f, -0.57735026f),
+            new Vec3 (0.57735026f, 0.57735026f, -0.57735026f),
+            new Vec3 (0.57735026f, -0.57735026f, -0.57735026f),
+            new Vec3 (-0.57735026f, -0.57735026f, -0.57735026f)
+        };
+
+        target.loops = new Loop3[ ]
+        {
+            new Loop3 (
+            new Index3 (0, 2, 0),
+            new Index3 (1, 1, 0),
+            new Index3 (4, 0, 0)),
+            new Loop3 (
+            new Index3 (1, 2, 3),
+            new Index3 (3, 1, 3),
+            new Index3 (4, 0, 3)),
+            new Loop3 (
+            new Index3 (3, 2, 1),
+            new Index3 (2, 1, 1),
+            new Index3 (4, 0, 1)),
+            new Loop3 (
+            new Index3 (2, 2, 2),
+            new Index3 (0, 1, 2),
+            new Index3 (4, 0, 2)),
+            new Loop3 (
+            new Index3 (2, 2, 4),
+            new Index3 (3, 1, 4),
+            new Index3 (5, 0, 4)),
+            new Loop3 (
+            new Index3 (3, 2, 5),
+            new Index3 (1, 1, 5),
+            new Index3 (5, 0, 5)),
+            new Loop3 (
+            new Index3 (1, 2, 6),
+            new Index3 (0, 1, 6),
+            new Index3 (5, 0, 6)),
+            new Loop3 (
+            new Index3 (0, 2, 7),
+            new Index3 (2, 1, 7),
+            new Index3 (5, 0, 7))
+        };
+
         return target;
     }
 

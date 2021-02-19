@@ -637,11 +637,11 @@ public class Knot3
     {
         return new StringBuilder (512)
             .Append ("{ coord: ")
-            .Append (this.coord.ToString (places))
+            .Append (Vec3.ToString (this.coord, places))
             .Append (", foreHandle: ")
-            .Append (this.foreHandle.ToString (places))
+            .Append (Vec3.ToString (this.foreHandle, places))
             .Append (", rearHandle: ")
-            .Append (this.rearHandle.ToString (places))
+            .Append (Vec3.ToString (this.rearHandle, places))
             .Append (' ')
             .Append ('}')
             .ToString ( );

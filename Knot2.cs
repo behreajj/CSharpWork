@@ -556,11 +556,11 @@ public class Knot2
     {
         return new StringBuilder (256)
             .Append ("{ coord: ")
-            .Append (this.coord.ToString (places))
+            .Append (Vec2.ToString (this.coord, places))
             .Append (", foreHandle: ")
-            .Append (this.foreHandle.ToString (places))
+            .Append (Vec2.ToString (this.foreHandle, places))
             .Append (", rearHandle: ")
-            .Append (this.rearHandle.ToString (places))
+            .Append (Vec2.ToString (this.rearHandle, places))
             .Append (' ')
             .Append ('}')
             .ToString ( );

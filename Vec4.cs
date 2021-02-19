@@ -154,7 +154,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return this.ToString (4);
+        return Vec4.ToString (this, 4);
     }
 
     /// <summary>
@@ -229,26 +229,6 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         arr[i + 2] = this._z;
         arr[i + 3] = this._w;
         return arr;
-    }
-
-    /// <summary>
-    /// Returns a string representation of this vector.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (in int places = 4)
-    {
-        return new StringBuilder (96)
-            .Append ("{ x: ")
-            .Append (Utils.ToFixed (this._x, places))
-            .Append (", y: ")
-            .Append (Utils.ToFixed (this._y, places))
-            .Append (", z: ")
-            .Append (Utils.ToFixed (this._z, places))
-            .Append (", w: ")
-            .Append (Utils.ToFixed (this._w, places))
-            .Append (" }")
-            .ToString ( );
     }
 
     /// <summary>
@@ -1639,6 +1619,40 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
             Utils.Step (edge._y, x._y),
             Utils.Step (edge._z, x._z),
             Utils.Step (edge._w, x._w));
+    }
+
+    /// <summary>
+    /// Returns a string representation of a vector.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static string ToString (in Vec4 v, in int places = 4)
+    {
+        return Vec4.ToString (new StringBuilder (96), v, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a representation of a vector to a string builder.
+    /// </summary>
+    /// <param name="sb">string bulider</param>
+    /// <param name="v">vector</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Vec4 v, in int places = 4)
+    {
+        sb.Append ("{ x: ");
+        Utils.ToFixed (sb, v._x, places);
+        sb.Append (", y: ");
+        Utils.ToFixed (sb, v._y, places);
+        sb.Append ("{ z: ");
+        Utils.ToFixed (sb, v._z, places);
+        sb.Append (", w: ");
+        Utils.ToFixed (sb, v._w, places);
+        sb.Append (' ');
+        sb.Append ('}');
+        return sb;
     }
 
     /// <summary>

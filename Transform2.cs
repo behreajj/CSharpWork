@@ -123,7 +123,10 @@ public class Transform2
     /// <param name="rotation">rotation</param>
     /// <param name="width">x scale</param>
     /// <param name="height">y scale</param>
-    public Transform2 (in float x, in float y, in float rotation, in float width, in float height)
+    public Transform2 ( //
+        in float x, in float y, //
+        in float rotation, //
+        in float width, in float height)
     {
         this.Location = new Vec2 (x, y);
         this.Rotation = rotation;
@@ -311,11 +314,11 @@ public class Transform2
     {
         return new StringBuilder (160)
             .Append ("{ location: ")
-            .Append (this.location.ToString (places))
+            .Append (Vec2.ToString (this.location, places))
             .Append (", rotation: ")
             .Append (Utils.ToFixed (this.rotation, places))
             .Append (", scale: ")
-            .Append (this.scale.ToString (places))
+            .Append (Vec2.ToString (this.scale, places))
             .Append (" }")
             .ToString ( );
     }

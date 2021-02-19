@@ -624,7 +624,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     public float[, ] ToArray2 ( )
     {
         return new float[, ]
-        { { this._m00, this._m01, this._m02, this._m03 }, { this._m10, this._m11, this._m12, this._m13 }, { this._m20, this._m21, this._m22, this._m23 }, { this._m30, this._m31, this._m32, this._m33 }
+        { { this._m00, this._m01, this._m02, this._m03 }, //
+            { this._m10, this._m11, this._m12, this._m13 }, //
+            { this._m20, this._m21, this._m22, this._m23 }, //
+            { this._m30, this._m31, this._m32, this._m33 }
         };
     }
 
@@ -884,6 +887,22 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
+    /// Multiplies a vector and a matrix's transpose, then transposes the
+    /// result.
+    /// </summary>
+    /// <param name="a">vector</param>
+    /// <param name="b">matrix</param>
+    /// <returns>product</returns>
+    public static Vec4 operator * (in Vec4 a, in Mat4 b)
+    {
+        return new Vec4 (
+            b._m00 * a.x + b._m10 * a.y + b._m20 * a.z + b._m30 * a.w,
+            b._m01 * a.x + b._m11 * a.y + b._m21 * a.z + b._m31 * a.w,
+            b._m02 * a.x + b._m12 * a.y + b._m22 * a.z + b._m32 * a.w,
+            b._m03 * a.x + b._m13 * a.y + b._m23 * a.z + b._m33 * a.w);
+    }
+
+    /// <summary>
     /// Divides one matrix by another. Equivalent to multiplying the numerator
     /// and the inverse of the denominator.
     /// </summary>
@@ -1125,7 +1144,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes (in Vec2 right, in Vec2 forward)
+    public static Mat4 FromAxes ( //
+        in Vec2 right, //
+        in Vec2 forward)
     {
         return new Mat4 (
             right.x, forward.x, 0.0f, 0.0f,
@@ -1143,7 +1164,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes (in Vec2 right, in Vec2 forward, in Vec2 translation)
+    public static Mat4 FromAxes ( //
+        in Vec2 right, // 
+        in Vec2 forward, // 
+        in Vec2 translation)
     {
         return new Mat4 (
             right.x, forward.x, 0.0f, translation.x,
@@ -1160,7 +1184,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="up">up axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes (in Vec3 right, in Vec3 forward, in Vec3 up)
+    public static Mat4 FromAxes ( // 
+        in Vec3 right, // 
+        in Vec3 forward, // 
+        in Vec3 up)
     {
         return new Mat4 (
             right.x, forward.x, up.x, 0.0f,
@@ -1178,7 +1205,11 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="up">up axis</param>
     /// <param name="translation">translation axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes (in Vec3 right, in Vec3 forward, in Vec3 up, in Vec3 translation)
+    public static Mat4 FromAxes ( // 
+        in Vec3 right, // 
+        in Vec3 forward, // 
+        in Vec3 up, // 
+        in Vec3 translation)
     {
         return new Mat4 (
             right.x, forward.x, up.x, translation.x,
@@ -1195,7 +1226,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="up">up axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes (in Vec4 right, in Vec4 forward, in Vec4 up)
+    public static Mat4 FromAxes ( // 
+        in Vec4 right, // 
+        in Vec4 forward, // 
+        in Vec4 up)
     {
         return new Mat4 (
             right.x, forward.x, up.x, 0.0f,
@@ -1212,7 +1246,11 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="up">up axis</param>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes (in Vec4 right, in Vec4 forward, in Vec4 up, in Vec4 translation)
+    public static Mat4 FromAxes ( // 
+        in Vec4 right, //
+        in Vec4 forward, //
+        in Vec4 up, //
+        in Vec4 translation)
     {
         return new Mat4 (
             right.x, forward.x, up.x, translation.x,
