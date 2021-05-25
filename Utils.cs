@@ -571,7 +571,7 @@ public static class Utils
     /// <summary>
     /// Maps an input value from an original range to a target range. If the
     /// upper and lower bound of the original range are equal, will return the
-    /// lower bound of the destination range.
+    /// value unchanged.
     /// </summary>
     /// <param name="v">the input value</param>
     /// <param name="lbOrigin">lower bound of original range</param>
@@ -579,12 +579,17 @@ public static class Utils
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
     /// <returns>the mapped value</returns>
-    public static float Map (in float v, in float lbOrigin = -1.0f, in float ubOrigin = 1.0f, in float lbDest = 0.0f, in float ubDest = 1.0f)
+    public static float Map ( //
+        in float v, //
+        in float lbOrigin = -1.0f, //
+        in float ubOrigin = 1.0f, //
+        in float lbDest = 0.0f, //
+        in float ubDest = 1.0f)
     {
         float denom = ubOrigin - lbOrigin;
-        return denom != 0.0f ?
+        return (denom != 0.0f) ?
             lbDest + (ubDest - lbDest) *
-            ((v - lbOrigin) / denom) : lbDest;
+            ((v - lbOrigin) / denom) : v;
     }
 
     /// <summary>
@@ -768,7 +773,7 @@ public static class Utils
 
     /// <summary>
     /// Subtracts the floor of the input value from the value. Returns a
-    /// positive value in the range [0.0, 1.0] .
+    /// positive value in the range [0.0, 1.0] . Equivalent to GLSL fract.
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>the wrapped value</returns>
@@ -828,16 +833,14 @@ public static class Utils
 
     /// <summary>
     /// Oscillates between [0.0, 1.0] based on an input step.
-    ///
-    /// Uses a different formula than the Unity math function of the same name:
-    /// 0.5 + 0.5 * cos ( step / TAU ) .
     /// </summary>
-    /// <param name="t">the input value</param>
+    /// <param name="t">factor</param>
+    /// <param name="pause">pause</param>
     /// <returns>the oscillation</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static float PingPong (in float t)
+    public static float PingPong (in float t, in float pause = 1.0f)
     {
-        return 0.5f + 0.5f * Utils.SinCosEval (t);
+        return Utils.PingPong (0.0f, 1.0f, t, pause);
     }
 
     /// <summary>
@@ -850,7 +853,7 @@ public static class Utils
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int PingPong (in int a, in int b, in float t)
     {
-        return (int) Utils.PingPong ((float) a, (float) b, t);
+        return (int) Utils.PingPong ((float) a, (float) b, t, 1.0f);
     }
 
     /// <summary>
@@ -859,11 +862,13 @@ public static class Utils
     /// <param name="a">lower bound</param>
     /// <param name="b">upper bound</param>
     /// <param name="t">factor</param>
+    /// <param name="pause">pause</param>
     /// <returns>the oscillation</returns>
-    public static float PingPong (in float a, in float b, in float t)
+    public static float PingPong (in float a, in float b, in float t, in float pause = 1.0f)
     {
-        // TODO: Update to match Java version.
-        float x = 0.5f + 0.5f * Utils.SinCosEval (t);
+        float x = 0.5f + 0.5f * pause * Utils.SinCosEval (t - 0.5f);
+        if (t <= 0.0f) return a;
+        if (t >= 1.0f) return b;
         return (1.0f - x) * a + x * b;
     }
 
@@ -1299,34 +1304,8 @@ public static class Utils
     /// <returns>wrapped value</returns>
     public static float Wrap (in float value, in float lb = -1.0f, in float ub = 1.0f)
     {
-        float lbc = 0.0f;
-        float ubc = 0.0f;
-        float span = ub - lb;
-
-        if (span < 0.0f)
-        {
-            lbc = ub;
-            ubc = lb;
-        }
-        else if (span > 0.0f)
-        {
-            lbc = lb;
-            ubc = ub;
-        }
-        else
-        {
-            return 0.0f;
-        }
-
-        if (value < lbc)
-        {
-            return ubc - (lbc - value) % span;
-        }
-        else if (value >= ubc)
-        {
-            return lbc + (value - lbc) % span;
-        }
-        return value;
+        float range = ub - lb;
+        return (range != 0.0f) ? value - range * Utils.Floor ((value - lb) / range) : value;
     }
 
     /// <summary>

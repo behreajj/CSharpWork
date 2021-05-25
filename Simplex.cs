@@ -1,5 +1,5 @@
 using System;
-using static System.Tuple;
+using System.Runtime.CompilerServices;
 
 public static class Simplex
 {
@@ -8,9 +8,6 @@ public static class Simplex
     /// </summary>
     public static int DefaultSeed = (int) System.DateTime.Now.Ticks;
 
-    /// <summary>
-    /// Squish constant 2D (Math.Sqrt(3.0) - 1.0) / 2.0; approximately 0.36602542 .
-    /// </summary>
     private const float F2 = 0.36602542f;
     private const float F3 = 0.33333333f;
     private const float F4 = 0.309017f;
@@ -169,9 +166,25 @@ public static class Simplex
     };
 
     private static readonly int[, ] Permute = new int[, ]
-    { { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, { 0, 2, 3, 1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 3, 0 }, { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 3, 2, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0, 2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 3, 0, 1 }, { 2, 3, 1, 0 }, { 1, 0, 2, 3 }, { 1, 0, 3, 2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0, 0 }, { 2, 1, 3, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 3, 0, 1, 2 }, { 3, 0, 2, 1 }, { 0, 0, 0, 0 }, { 3, 1, 2, 0 }, { 2, 1, 0, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 }
+    { { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, { 0, 2, 3, 1 }, //
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 3, 0 }, // 
+        { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 }, //
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 3, 2, 0 }, //
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
+        { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0, 2 }, { 0, 0, 0, 0 }, //
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 3, 0, 1 }, { 2, 3, 1, 0 }, //
+        { 1, 0, 2, 3 }, { 1, 0, 3, 2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
+        { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0, 0 }, { 2, 1, 3, 0 }, //
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
+        { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
+        { 3, 0, 1, 2 }, { 3, 0, 2, 1 }, { 0, 0, 0, 0 }, { 3, 1, 2, 0 }, //
+        { 2, 1, 0, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
+        { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 }
     };
 
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     private static Vec2 Gradient2 (
         int i = 0,
         int j = 0,
@@ -180,6 +193,7 @@ public static class Simplex
         return Simplex.Grad2Lut[Simplex.Hash (i, j, seed) & 0x7];
     }
 
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     private static Vec3 Gradient3 (
         int i = 0,
         int j = 0,
@@ -190,6 +204,7 @@ public static class Simplex
             0xf];
     }
 
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     private static Vec4 Gradient4 (
         int i = 0,
         int j = 0,
@@ -197,7 +212,6 @@ public static class Simplex
         int l = 0,
         int seed = Utils.HashBase)
     {
-
         return Simplex.Grad4Lut[Simplex.Hash (i, j, Simplex.Hash (k, l, seed)) &
             0x1f];
     }
@@ -221,7 +235,6 @@ public static class Simplex
         float cosa = 1.0f,
         float sina = 0.0f)
     {
-
         int h = Simplex.Hash (i, j, Simplex.Hash (k, seed, 0)) & 0xf;
         Vec3 gu = Simplex.Grad3U[h];
         Vec3 gv = Simplex.Grad3V[h];
@@ -250,6 +263,7 @@ public static class Simplex
         return c;
     }
 
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static (float fac, Vec4 deriv) Eval4 (in Vec4 v, int seed = Utils.HashBase)
     {
         return Simplex.Eval4 (v.x, v.y, v.z, v.w, seed);
@@ -262,7 +276,6 @@ public static class Simplex
         float w = 0.0f,
         int seed = Utils.HashBase)
     {
-
         float s = (x + y + z + w) * Simplex.F4;
         int i = Utils.Floor (x + s);
         int j = Utils.Floor (y + s);
@@ -445,6 +458,7 @@ public static class Simplex
             deriv: new Vec4 (derivx, derivy, derivz, derivw));
     }
 
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static (float fac, Vec3 deriv) Eval3 (in Vec3 v, int seed = Utils.HashBase)
     {
         return Simplex.Eval3 (v.x, v.y, v.z, seed);
@@ -456,7 +470,6 @@ public static class Simplex
         float z = 0.0f,
         int seed = Utils.HashBase)
     {
-
         float s = (x + y + z) * Simplex.F3;
         int i = Utils.Floor (x + s);
         int j = Utils.Floor (y + s);
@@ -626,6 +639,7 @@ public static class Simplex
             deriv: new Vec3 (derivx, derivy, derivz));
     }
 
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static (float fac, Vec2 deriv) Eval2 (in Vec2 v, int seed = Utils.HashBase)
     {
         return Simplex.Eval2 (v.x, v.y, seed);
@@ -636,7 +650,6 @@ public static class Simplex
         float y = 0.0f,
         int seed = Utils.HashBase)
     {
-
         float s = (x + y) * Simplex.F2;
         int i = Utils.Floor (x + s);
         int j = Utils.Floor (y + s);

@@ -1055,56 +1055,28 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         float iToStep = 1.0f / (rval - 1.0f);
         float jToStep = 1.0f / (cval - 1.0f);
 
-        /* Calculate x values in separate loop. */
-        float[ ] xs = new float[cval];
-        for (int j = 0; j < cval; ++j)
-        {
-            xs[j] = Utils.Mix (
-                lowerBound._x,
-                upperBound._x,
-                (float) j * jToStep);
-        }
-
-        /* Calculate y values in separate loop. */
-        float[ ] ys = new float[rval];
-        for (int i = 0; i < rval; ++i)
-        {
-            ys[i] = Utils.Mix (
-                lowerBound._y,
-                upperBound._y,
-                (float) i * iToStep);
-        }
-
-        /* Calculate y values in separate loop. */
-        float[ ] zs = new float[lval];
-        for (int h = 0; h < lval; ++h)
-        {
-            zs[h] = Utils.Mix (
-                lowerBound._z,
-                upperBound._z,
-                (float) h * hToStep);
-        }
-
         Vec4[, , , ] result = new Vec4[sval, lval, rval, cval];
-        for (int g = 0; g < sval; ++g)
-        {
-            float w = Utils.Mix (
-                lowerBound._w,
-                upperBound._w,
-                (float) g * gToStep);
 
-            for (int h = 0; h < lval; ++h)
-            {
-                float z = zs[h];
-                for (int i = 0; i < rval; ++i)
-                {
-                    float y = ys[i];
-                    for (int j = 0; j < cval; ++j)
-                    {
-                        result[g, h, i, j] = new Vec4 (xs[j], y, z, w);
-                    }
-                }
-            }
+        int rcval = rval * cval;
+        int lrcval = lval * rcval;
+        int len4 = sval * lrcval;
+        for (int k = 0; k < len4; ++k)
+        {
+            int g = k / lrcval;
+            int m = k - g * lrcval;
+            int h = m / rcval;
+            int n = m - h * rcval;
+            int i = n / cval;
+            int j = n % cval;
+
+            result[g, h, i, j] = Vec4.Mix (
+                lowerBound,
+                upperBound,
+                new Vec4 (
+                    (float) j * jToStep,
+                    (float) i * iToStep,
+                    (float) h * hToStep,
+                    (float) g * gToStep));
         }
 
         return result;
@@ -1646,7 +1618,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         Utils.ToFixed (sb, v._x, places);
         sb.Append (", y: ");
         Utils.ToFixed (sb, v._y, places);
-        sb.Append ("{ z: ");
+        sb.Append (", z: ");
         Utils.ToFixed (sb, v._z, places);
         sb.Append (", w: ");
         Utils.ToFixed (sb, v._w, places);

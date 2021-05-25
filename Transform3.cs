@@ -410,7 +410,8 @@ public class Transform3
     /// <returns>maximum</returns>
     public static float MaxDimension (in Transform3 t)
     {
-        return Utils.Max (t.scale.x, t.scale.y, t.scale.z);
+        Vec3 scl = Vec3.Abs (t.scale);
+        return Utils.Max (scl.x, scl.y, scl.z);
     }
 
     /// <summary>
@@ -420,7 +421,8 @@ public class Transform3
     /// <returns>minimum</returns>
     public static float MinDimension (in Transform3 t)
     {
-        return Utils.Min (t.scale.x, t.scale.y, t.scale.z);
+        Vec3 scl = Vec3.Abs (t.scale);
+        return Utils.Min (scl.x, scl.y, scl.z);
     }
 
     /// <summary>

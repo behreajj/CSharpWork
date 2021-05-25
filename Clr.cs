@@ -165,6 +165,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
+        // TODO: Update ToString to match Vec2,3,4
         return this.ToString (4);
     }
 
@@ -344,16 +345,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         int cint = Clr.ToHexInt (c);
         return ((long) cint) & 0xffffffffL;
-    }
-
-    /// <summary>
-    /// Converts a color to a float by returning its luminance.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>the float</returns>
-    public static explicit operator float (in Clr c)
-    {
-        return Clr.Luminance (c);
     }
 
     /// <summary>
@@ -706,7 +697,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="bri">brightness</param>
     /// <param name="alpha">alpha</param>
     /// <returns>the color</returns>
-    public static Clr HsbaToRgba (in float hue = 1.0f, in float sat = 1.0f, in float bri = 1.0f, in float alpha = 1.0f)
+    public static Clr HsbaToRgba ( //
+        in float hue = 1.0f, //
+        in float sat = 1.0f, //
+        in float bri = 1.0f, //
+        in float alpha = 1.0f)
     {
         if (sat <= 0.0f) return new Clr (bri, bri, bri, alpha);
 
@@ -764,6 +759,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Luminance (in Clr c)
     {
+        // TODO: Needs to distinguish between sRgb and linear Rgb.
         return 0.2126f * c._r + 0.7152f * c._g + 0.0722f * c._b;
     }
 
@@ -810,6 +806,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Clr MixHsba (in Clr a, in Clr b, in float t = 0.5f)
     {
+        //TODO: Refactor to use lerpnear for hue?
         return Clr.HsbaToRgba (Vec4.Mix (Clr.RgbaToHsba (a), Clr.RgbaToHsba (b), t));
     }
 
@@ -1018,7 +1015,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="blue">the blue channel</param>
     /// <param name="alpha">the alpha channel</param>
     /// <returns>the output vector</returns>
-    public static Vec4 RgbaToHsba (in float red = 1.0f, in float green = 1.0f, in float blue = 1.0f, in float alpha = 1.0f)
+    public static Vec4 RgbaToHsba ( //
+        in float red = 1.0f, //
+        in float green = 1.0f, //
+        in float blue = 1.0f, // 
+        in float alpha = 1.0f)
     {
         float bri = Utils.Max (red, green, blue);
         float mn = Utils.Min (red, green, blue);

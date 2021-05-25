@@ -779,7 +779,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="ap1">second anchor point</param>
     /// <param name="step">step</param>
     /// <returns>the point along the curve</returns>
-    public static Vec3 BezierPoint (in Vec3 ap0, in Vec3 cp0, in Vec3 cp1, in Vec3 ap1, in float step)
+    public static Vec3 BezierPoint ( //
+        in Vec3 ap0, //
+        in Vec3 cp0, //
+        in Vec3 cp1, //
+        in Vec3 ap1, //
+        in float step)
     {
         if (step <= 0.0f) return new Vec3 (ap0._x, ap0._y, ap0._z);
         else if (step >= 1.0f) return new Vec3 (ap1._x, ap1._y, ap1._z);
@@ -824,7 +829,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="ap1">second anchor point</param>
     /// <param name="step">step</param>
     /// <returns>the tangent along the curve</returns>
-    public static Vec3 BezierTangent (in Vec3 ap0, in Vec3 cp0, in Vec3 cp1, in Vec3 ap1, in float step)
+    public static Vec3 BezierTangent ( //
+        in Vec3 ap0, //
+        in Vec3 cp0, //
+        in Vec3 cp1, //
+        in Vec3 ap1, //
+        in float step)
     {
         if (step <= 0.0f) return cp0 - ap0;
         else if (step >= 1.0f) return ap1 - cp1;
@@ -859,7 +869,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="step">step</param>
     /// <returns>the tangent along the curve</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Vec3 BezierTanUnit (in Vec3 ap0, in Vec3 cp0, in Vec3 cp1, in Vec3 ap1, in float step)
+    public static Vec3 BezierTanUnit ( //
+        in Vec3 ap0, //
+        in Vec3 cp0, //
+        in Vec3 cp1, //
+        in Vec3 ap1, //
+        in float step)
     {
         return Vec3.Normalize (Vec3.BezierTangent (
             ap0, cp0, cp1, ap1, step));
@@ -1197,10 +1212,11 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="inclination">the angle phi in radians</param>
     /// <param name="radius">rho, the vector's magnitude</param>
     /// <returns>the vector</returns>
-    public static Vec3 FromSpherical (in float azimuth = 0.0f, in float inclination = 0.0f, in float radius = 1.0f)
+    public static Vec3 FromSpherical ( //
+        in float azimuth = 0.0f, // 
+        in float inclination = 0.0f, // 
+        in float radius = 1.0f)
     {
-
-        // TODO: REFACTOR
         float sint = 0.0f;
         float cost = 0.0f;
         Utils.SinCos (azimuth, out sint, out cost);
@@ -1209,11 +1225,11 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float cosp = 0.0f;
         Utils.SinCos (inclination, out sinp, out cosp);
 
-        float rcp = radius * cosp;
+        float rsp = radius * sinp;
         return new Vec3 (
-            rcp * cost,
-            rcp * sint,
-            radius * -sinp);
+            rsp * cost,
+            rsp * sint,
+            radius * cosp);
     }
 
     /// <summary>
@@ -1240,70 +1256,49 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float iToStep = 1.0f / (rval - 1.0f);
         float jToStep = 1.0f / (cval - 1.0f);
 
-        /* Calculate x values in separate loop. */
-        float[ ] xs = new float[cval];
-        for (int j = 0; j < cval; ++j)
-        {
-            xs[j] = Utils.Mix (
-                lowerBound._x,
-                upperBound._x,
-                (float) j * jToStep);
-        }
-
-        /* Calculate y values in separate loop. */
-        float[ ] ys = new float[rval];
-        for (int i = 0; i < rval; ++i)
-        {
-            ys[i] = Utils.Mix (
-                lowerBound._y,
-                upperBound._y,
-                (float) i * iToStep);
-        }
-
         Vec3[, , ] result = new Vec3[lval, rval, cval];
-        for (int h = 0; h < lval; ++h)
-        {
-            float z = Utils.Mix (
-                lowerBound._z,
-                upperBound._z,
-                (float) h * hToStep);
 
-            for (int i = 0; i < rval; ++i)
-            {
-                float y = ys[i];
-                for (int j = 0; j < cval; ++j)
-                {
-                    result[h, i, j] = new Vec3 (xs[j], y, z);
-                }
-            }
+        int rcval = rval * cval;
+        int len3 = lval * rcval;
+        for (int k = 0; k < len3; ++k)
+        {
+            int h = k / rcval;
+            int m = k - h * rcval;
+            int i = m / cval;
+            int j = m % cval;
+
+            result[h, i, j] = Vec3.Mix (
+                lowerBound,
+                upperBound,
+                new Vec3 (
+                    (float) j * jToStep,
+                    (float) i * iToStep,
+                    (float) h * hToStep));
         }
 
         return result;
     }
 
     /// <summary>
-    /// Finds the vector's inclination in the range [-PI / 2.0, PI / 2.0] . It
-    /// is necessary to calculate the vector's magnitude in order to find its
-    /// inclination.
+    /// Finds the vector's signed inclination.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the signed inclination</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float InclinationSigned (in Vec3 v)
     {
-        float mSq = Vec3.MagSq (v);
-        if (mSq > 0.0f) return Utils.Asin (v._z / Utils.SqrtUnchecked (mSq));
-        return 0.0f;
+        return Utils.HalfPi - Vec3.InclinationUnsigned (v);
     }
 
     /// <summary>
-    /// Finds the vector's inclination in the range [3.0 PI / 2.0, PI / 2.0] .
+    /// Finds the vector's unsigned inclination.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the unsigned inclination</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float InclinationUnsigned (in Vec3 v)
     {
-        return Utils.ModRadians (Vec3.InclinationSigned (v));
+        float mSq = Vec3.MagSq (v);
+        return (mSq > 0.0f) ? Utils.Acos (v._z / Utils.SqrtUnchecked (mSq)) : Utils.HalfPi;
     }
 
     /// <summary>
@@ -1675,7 +1670,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             Utils.Mix (-Utils.Pi, Utils.Pi,
                 (float) rng.NextDouble ( )),
 
-            Utils.Mix (-Utils.HalfPi, Utils.HalfPi,
+            Utils.Mix (Utils.Pi, 0.0f,
                 (float) rng.NextDouble ( )),
 
             Utils.Mix (rhoMin, rhoMax,
@@ -1983,23 +1978,17 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Returns a named value tuple containing the vector's signed azimuth,
-    /// theta; signed inclination, phi; and magnitude, rho.
+    /// Returns a named value tuple containing the vector's azimuth,
+    /// theta; inclination, phi; and magnitude, rho.
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the tuple</returns>
     public static (float theta, float phi, float rho) ToSpherical (in Vec3 v)
     {
-        float mSq = Vec3.MagSq (v);
-        if (mSq > 0.0f)
-        {
-            float m = Utils.SqrtUnchecked (mSq);
-            return (
-                theta: Vec3.AzimuthSigned (v),
-                phi: Utils.Asin (v._z / m),
-                rho: m);
-        }
-        return (theta: 0.0f, phi: 0.0f, rho: 0.0f);
+        return (
+            theta: Vec3.AzimuthUnsigned (v),
+            phi: Vec3.InclinationUnsigned (v),
+            rho: Vec3.Mag (v));
     }
 
     /// <summary>

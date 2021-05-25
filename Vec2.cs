@@ -674,7 +674,12 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="ap1">second anchor point</param>
     /// <param name="step">step</param>
     /// <returns>the point along the curve</returns>
-    public static Vec2 BezierPoint (in Vec2 ap0, in Vec2 cp0, in Vec2 cp1, in Vec2 ap1, in float step)
+    public static Vec2 BezierPoint ( //
+        in Vec2 ap0, //
+        in Vec2 cp0, //
+        in Vec2 cp1, //
+        in Vec2 ap1, //
+        in float step)
     {
         if (step <= 0.0f) return new Vec2 (ap0._x, ap0._y);
         else if (step >= 1.0f) return new Vec2 (ap1._x, ap1._y);
@@ -714,7 +719,12 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="ap1">second anchor point</param>
     /// <param name="step">step</param>
     /// <returns>the tangent along the curve</returns>
-    public static Vec2 BezierTangent (in Vec2 ap0, in Vec2 cp0, in Vec2 cp1, in Vec2 ap1, in float step)
+    public static Vec2 BezierTangent ( //
+        in Vec2 ap0, //
+        in Vec2 cp0, //
+        in Vec2 cp1, //
+        in Vec2 ap1, //
+        in float step)
     {
         if (step <= 0.0f) return cp0 - ap0;
         else if (step >= 1.0f) return ap1 - cp1;
@@ -745,7 +755,12 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="step">the step</param>
     /// <returns>the tangent along the curve</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Vec2 BezierTanUnit (in Vec2 ap0, in Vec2 cp0, in Vec2 cp1, in Vec2 ap1, in float step)
+    public static Vec2 BezierTanUnit ( //
+        in Vec2 ap0, //
+        in Vec2 cp0, //
+        in Vec2 cp1, //
+        in Vec2 ap1, //
+        in float step)
     {
         return Vec2.Normalize (Vec2.BezierTangent (
             ap0, cp0, cp1, ap1, step));
@@ -1079,28 +1094,19 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         float iToStep = 1.0f / (rval - 1.0f);
         float jToStep = 1.0f / (cval - 1.0f);
 
-        /* Calculate x values in separate loop. */
-        float[ ] xs = new float[cval];
-        for (int j = 0; j < cval; ++j)
-        {
-            xs[j] = Utils.Mix (
-                lowerBound._x,
-                upperBound._x,
-                (float) j * jToStep);
-        }
-
         Vec2[, ] result = new Vec2[rval, cval];
-        for (int i = 0; i < rval; ++i)
-        {
-            float y = Utils.Mix (
-                lowerBound._y,
-                upperBound._y,
-                (float) i * iToStep);
 
-            for (int j = 0; j < cval; ++j)
-            {
-                result[i, j] = new Vec2 (xs[j], y);
-            }
+        int len2 = cval * rval;
+        for (int k = 0; k < len2; ++k)
+        {
+            int i = k / cval;
+            int j = k % cval;
+            result[i, j] = Vec2.Mix (
+                lowerBound,
+                upperBound,
+                new Vec2 (
+                    (float) j * jToStep,
+                    (float) i * iToStep));
         }
 
         return result;
