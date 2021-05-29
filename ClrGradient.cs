@@ -8,7 +8,7 @@ using System.Text;
 /// Allows for smooth color transitions to be evaluated by a factor.
 /// </summary>
 [Serializable]
-public class ColorGradient : IEnumerable
+public class ClrGradient : IEnumerable
 {
   /// <summary>
   /// Stores a color at a given step (or percent) in the range [0.0, 1.0] .
@@ -226,7 +226,7 @@ public class ColorGradient : IEnumerable
   /// Constructs a color gradient with two keys, clear black at 0.0 and opaque
   /// white at 1.0 .
   /// </summary>
-  public ColorGradient ( )
+  public ClrGradient ( )
   {
     this.keys.Add (new Key (0.0f, Clr.ClearBlack));
     this.keys.Add (new Key (1.0f, Clr.White));
@@ -236,7 +236,7 @@ public class ColorGradient : IEnumerable
   /// Constructs a color gradient from a list of color keys.
   /// </summary>
   /// <param name="keys">color keys</param>
-  public ColorGradient (params Key[ ] keys)
+  public ClrGradient (params Key[ ] keys)
   {
     this.InsertAll (keys);
   }
@@ -246,7 +246,7 @@ public class ColorGradient : IEnumerable
   /// evenly distributed across the gradient.
   /// </summary>
   /// <param name="keys">color keys</param>
-  public ColorGradient (params Clr[ ] colors)
+  public ClrGradient (params Clr[ ] colors)
   {
     this.AppendAll (colors);
   }
@@ -299,7 +299,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="color">color</param>
   /// <returns>this gradient</returns>
-  public ColorGradient Append (Clr color)
+  public ClrGradient Append (Clr color)
   {
     this.CompressKeysLeft (1);
     this.keys.Add (new Key (1.0f, color));
@@ -313,7 +313,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="colors">colors</param>
   /// <returns>this gradient</returns>
-  public ColorGradient AppendAll (params Clr[ ] colors)
+  public ClrGradient AppendAll (params Clr[ ] colors)
   {
     int len = colors.Length;
     this.CompressKeysLeft (len);
@@ -374,7 +374,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="added">number to add</param>
   /// <returns>this gradient</returns>
-  protected ColorGradient CompressKeysLeft (in int added = 1)
+  protected ClrGradient CompressKeysLeft (in int added = 1)
   {
     int len = this.keys.Count;
     float scalar = 1.0f / (len + added - 1.0f);
@@ -394,7 +394,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="added">number to add</param>
   /// <returns>this gradient</returns>
-  protected ColorGradient CompressKeysRight (in int added = 1)
+  protected ClrGradient CompressKeysRight (in int added = 1)
   {
     int len = this.keys.Count;
     float scalar = added / (len + added - 1.0f);
@@ -434,7 +434,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="step">step</param>
   /// <returns>color</returns>
-  public Clr Eval (float step)
+  public Clr Eval (in float step)
   {
     Key prevKey = this.FindLe (step);
     Key nextKey = this.FindGe (step);
@@ -444,7 +444,7 @@ public class ColorGradient : IEnumerable
     float fac = (step - nextStep) / (prevStep - nextStep);
 
     // TODO: How can a static method be passed in to this function?
-    return Clr.MixRgba (prevKey.Color, nextKey.Color, fac);
+    return Clr.MixRgbaLinear (prevKey.Color, nextKey.Color, fac);
   }
 
   /// <summary>
@@ -514,7 +514,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="key">color key</param>
   /// <returns>this gradient</returns>
-  public ColorGradient Insert (Key key)
+  public ClrGradient Insert (in Key key)
   {
     int query = this.ContainsKey (key);
     if (query != -1) this.keys.RemoveAt (query);
@@ -527,7 +527,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="keys"></param>
   /// <returns></returns>
-  public ColorGradient InsertAll (params Key[ ] keys)
+  public ClrGradient InsertAll (params Key[ ] keys)
   {
     foreach (Key key in keys) this.Insert (key);
     return this;
@@ -538,7 +538,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="key">color key</param>
   /// <returns>this gradient</returns>
-  protected ColorGradient InsortLeft (Key key)
+  protected ClrGradient InsortLeft (in Key key)
   {
     int i = this.BisectLeft (key.Step);
     this.keys.Insert (i, key);
@@ -550,7 +550,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="key">color key</param>
   /// <returns>this gradient</returns>
-  protected ColorGradient InsortRight (Key key)
+  protected ClrGradient InsortRight (in Key key)
   {
     int i = this.BisectRight (key.Step);
     this.keys.Insert (i, key);
@@ -562,7 +562,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="color">color</param>
   /// <returns>this gradient</returns>
-  public ColorGradient Prepend (Clr color)
+  public ClrGradient Prepend (in Clr color)
   {
     this.CompressKeysRight (1);
     this.keys.Insert (0, new Key (0.0f, color));
@@ -575,7 +575,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="colors">colors</param>
   /// <returns>this gradient</returns>
-  public ColorGradient PrependAll (params Clr[ ] colors)
+  public ClrGradient PrependAll (params Clr[ ] colors)
   {
     int len = colors.Length;
     this.CompressKeysRight (len);
@@ -626,7 +626,7 @@ public class ColorGradient : IEnumerable
   /// at 0.0 and opaque white at 1.0 .
   /// </summary>
   /// <returns>this gradient</returns>
-  public ColorGradient Reset ( )
+  public ClrGradient Reset ( )
   {
     this.keys.Clear ( );
     this.keys.Add (new Key (0.0f, Clr.ClearBlack));
@@ -638,7 +638,7 @@ public class ColorGradient : IEnumerable
   /// Reverses the gradient. The step of each color key is subtracted from one.
   /// </summary>
   /// <returns>this gradient</returns>
-  public ColorGradient Reverse ( )
+  public ClrGradient Reverse ( )
   {
     this.keys.Reverse ( );
     int len = this.keys.Count;
@@ -677,7 +677,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="target">output gradient</param>
   /// <returns>the gradient</returns>
-  public static ColorGradient PaletteMagma (in ColorGradient target)
+  public static ClrGradient PaletteMagma (in ClrGradient target)
   {
     List<Key> keys = target.keys;
     keys.Clear ( );
@@ -712,7 +712,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="target">output gradient</param>
   /// <returns>the gradient</returns>
-  public static ColorGradient PaletteRgb (in ColorGradient target)
+  public static ClrGradient PaletteRgb (in ClrGradient target)
   {
     List<Key> keys = target.keys;
     keys.Clear ( );
@@ -735,7 +735,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="target">output gradient</param>
   /// <returns>the gradient</returns>
-  public static ColorGradient PaletteRyb (in ColorGradient target)
+  public static ClrGradient PaletteRyb (in ClrGradient target)
   {
     List<Key> keys = target.keys;
     keys.Clear ( );
@@ -763,7 +763,7 @@ public class ColorGradient : IEnumerable
   /// </summary>
   /// <param name="target">output gradient</param>
   /// <returns>the gradient</returns>
-  public static ColorGradient PaletteViridis (in ColorGradient target)
+  public static ClrGradient PaletteViridis (in ClrGradient target)
   {
     List<Key> keys = target.keys;
     keys.Clear ( );

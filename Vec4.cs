@@ -407,9 +407,8 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Multiplies two vectors, component-wise. Such multiplication is
-    /// mathematically incorrect, but serves as a shortcut for transforming a
-    /// vector by a scalar matrix.
+    /// Multiplies two vectors, component-wise, i.e.,
+    /// returns the Hadamard product.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -855,8 +854,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the Chebyshev distance between two vectors. Forms a square pattern
-    /// when plotted.
+    /// Finds the Chebyshev distance between two vectors.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -888,8 +886,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Finds the Manhattan distance between two vectors. Forms a diamond
-    /// pattern when plotted.
+    /// Finds the Manhattan distance between two vectors.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>

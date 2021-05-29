@@ -269,7 +269,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Puts this quaternion's components into an array at a given index. The real component, w, is treated as the first element.
+    /// Puts this quaternion's components into an array at a given index.
+    /// The real component, w, is treated as the first element.
     /// </summary>
     /// <param name="arr">array</param>
     /// <param name="i">index</param>
@@ -459,7 +460,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
     /// <summary>
     /// Multiplies a vector and a quaternion; the former is treated as a pure
-    /// quaternion, _not_ as a point. Either see MulVector method or use RPR'.
+    /// quaternion, not as a point. Either see MulVector method or use RPR'.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -856,7 +857,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <param name="q">the quaternion</param>
     /// <returns>the evaluation</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static bool IsUnit (in Quat q)
+    public static bool IsVersor (in Quat q)
     {
         return Utils.Approx (Quat.MagSq (q), 1.0f);
     }

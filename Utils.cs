@@ -470,7 +470,8 @@ public static class Utils
     }
 
     /// <summary>
-    /// Finds the signed fractional portion of the input value by subtracting the value's truncation from the value.
+    /// Finds the signed fractional portion of the input value by subtracting
+    /// the value's truncation from the value. Not the same as GLSL fract.
     /// </summary>
     /// <param name="v">the input value</param>
     /// <returns>the fractional portion</returns>

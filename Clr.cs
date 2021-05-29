@@ -131,10 +131,15 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="a">alpha channel</param>
     public Clr (in float r = 1.0f, in float g = 1.0f, in float b = 1.0f, in float a = 1.0f)
     {
-        this._r = Utils.Clamp (r, 0.0f, 1.0f);
-        this._g = Utils.Clamp (g, 0.0f, 1.0f);
-        this._b = Utils.Clamp (b, 0.0f, 1.0f);
-        this._a = Utils.Clamp (a, 0.0f, 1.0f);
+        // this._r = Utils.Clamp (r, 0.0f, 1.0f);
+        // this._g = Utils.Clamp (g, 0.0f, 1.0f);
+        // this._b = Utils.Clamp (b, 0.0f, 1.0f);
+        // this._a = Utils.Clamp (a, 0.0f, 1.0f);
+
+        this._r = r;
+        this._g = g;
+        this._b = b;
+        this._a = a;
     }
 
     /// <summary>
@@ -177,12 +182,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the evaluation</returns>
     public int CompareTo (Clr c)
     {
-        float alum = Clr.Luminance (this);
-        float blum = Clr.Luminance (c);
-
-        return (alum > blum) ? 1 :
-            (alum < blum) ? -1 :
-            0;
+        int aint = Clr.ToHexInt (this);
+        int bint = Clr.ToHexInt (c);
+        return (aint > bint) ? 1 : (aint < bint) ? -1 : 0;
     }
 
     /// <summary>
@@ -388,12 +390,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr operator & (in Clr a, in Clr b)
     {
-        // return Clr.FromHex (Clr.ToHexInt (a) & Clr.ToHexInt (b));
-        return new Clr (
-            ((int) (a.r * 0xff + 0.5f) & (int) (b.r * 0xff + 0.5f)) * Utils.One255,
-            ((int) (a.g * 0xff + 0.5f) & (int) (b.g * 0xff + 0.5f)) * Utils.One255,
-            ((int) (a.b * 0xff + 0.5f) & (int) (b.b * 0xff + 0.5f)) * Utils.One255,
-            ((int) (a.a * 0xff + 0.5f) & (int) (b.a * 0xff + 0.5f)) * Utils.One255);
+        return Clr.FromHex (Clr.ToHexInt (a) & Clr.ToHexInt (b));
     }
 
     /// <summary>
@@ -405,12 +402,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr operator | (in Clr a, in Clr b)
     {
-        // return Clr.FromHex (Clr.ToHexInt (a) | Clr.ToHexInt (b));
-        return new Clr (
-            ((int) (a.r * 0xff + 0.5f) | (int) (b.r * 0xff + 0.5f)) * Utils.One255,
-            ((int) (a.g * 0xff + 0.5f) | (int) (b.g * 0xff + 0.5f)) * Utils.One255,
-            ((int) (a.b * 0xff + 0.5f) | (int) (b.b * 0xff + 0.5f)) * Utils.One255,
-            ((int) (a.a * 0xff + 0.5f) | (int) (b.a * 0xff + 0.5f)) * Utils.One255);
+        return Clr.FromHex (Clr.ToHexInt (a) | Clr.ToHexInt (b));
     }
 
     /// <summary>
@@ -422,12 +414,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr operator ^ (in Clr a, in Clr b)
     {
-        // return Clr.FromHex (Clr.ToHexInt (a) ^ Clr.ToHexInt (b));
-        return new Clr (
-            ((int) (a.r * 0xff + 0.5f) ^ (int) (b.r * 0xff + 0.5f)) * Utils.One255,
-            ((int) (a.g * 0xff + 0.5f) ^ (int) (b.g * 0xff + 0.5f)) * Utils.One255,
-            ((int) (a.b * 0xff + 0.5f) ^ (int) (b.b * 0xff + 0.5f)) * Utils.One255,
-            ((int) (a.a * 0xff + 0.5f) ^ (int) (b.a * 0xff + 0.5f)) * Utils.One255);
+        return Clr.FromHex (Clr.ToHexInt (a) ^ Clr.ToHexInt (b));
     }
 
     /// <summary>
@@ -454,103 +441,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     public static Clr operator >> (in Clr a, int b)
     {
         return Clr.FromHex (Clr.ToHexInt (a) >> b);
-    }
-
-    /// <summary>
-    /// Inverts the color's red, green and blue channels by subtracting them
-    /// from 1.0 . Similar to to using the '~' operator except for the alpha
-    /// channel.
-    /// </summary>
-    /// <param name="c">the color</param>
-    /// <returns>the inversion</returns>
-    public static Clr operator - (in Clr c)
-    {
-        Clr d = ~c;
-        return new Clr (d.r, d.g, d.b, c.a);
-    }
-
-    /// <summary>
-    /// Multiplies the left and right operand, except for the alpha channel. The
-    /// left operand's alpha channel is retained.
-    ///
-    /// For that reason, color multiplication is _not_ commutative.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>the product</returns>
-    public static Clr operator * (in Clr a, in Clr b)
-    {
-        return new Clr (
-            a._r * b._r,
-            a._g * b._g,
-            a._b * b._b,
-            a._a);
-    }
-
-    /// <summary>
-    /// Divides the left operand by the right, except for the alpha channel. The
-    /// left operand's alpha channel is retained.
-    /// </summary>
-    /// <param name="a">left operand, numerator</param>
-    /// <param name="b">right operand, denominator</param>
-    /// <returns>the quotient</returns>
-    public static Clr operator / (in Clr a, in Clr b)
-    {
-        return new Clr (
-            Utils.Div (a._r, b._r),
-            Utils.Div (a._g, b._g),
-            Utils.Div (a._b, b._b),
-            a._a);
-    }
-
-    /// <summary>
-    /// Applies modulo to the left operand with the components of the right. The
-    /// left operand's alpha channel is retained.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>the color</returns>
-    public static Clr operator % (in Clr a, in Clr b)
-    {
-        return new Clr (
-            Utils.Fmod (a._r, b._r),
-            Utils.Fmod (a._g, b._g),
-            Utils.Fmod (a._b, b._b),
-            a._a);
-    }
-
-    /// <summary>
-    /// Adds the left and right operand, except for the alpha channel. The left
-    /// operand's alpha channel is retained.
-    ///
-    /// For that reason, color addition is _not_ commutative.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>the sum</returns>
-    public static Clr operator + (in Clr a, in Clr b)
-    {
-        return new Clr (
-            a._r + b._r,
-            a._g + b._g,
-            a._b + b._b,
-            a._a);
-    }
-
-    /// <summary>
-    /// Subtracts the right operand from the left operand, except for the alpha
-    /// channel. The left operand's alpha channel is retained.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>the difference</returns>
-    public static Clr operator - (in Clr a, in Clr b)
-    {
-        return new Clr (
-            a._r - b._r,
-            a._g - b._g,
-            a._b - b._b,
-            a._a);
     }
 
     /// <summary>
@@ -733,34 +623,95 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Generates a clamped linear step for an input factor; to be used in
-    /// conjunction with a mixing function.
+    /// Converts from CIE LAB to CIE XYZ.
     /// </summary>
-    /// <param name="edge0">left edge</param>
-    /// <param name="edge1">right edge</param>
-    /// <param name="x">factor</param>
-    /// <returns>the linear step</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr LinearStep (in Clr edge0, in Clr edge1, in Clr x)
+    /// <param name="lab">the lab color</param>
+    /// <returns>the xyz color</returns>
+    public static Vec4 LabToXYZ (Vec4 lab)
     {
-        return new Clr (
-            Utils.LinearStep (edge0._r, edge1._r, x._r),
-            Utils.LinearStep (edge0._g, edge1._g, x._g),
-            Utils.LinearStep (edge0._b, edge1._b, x._b),
-            Utils.LinearStep (edge0._a, edge1._a, x._a));
+        double offset = 16.0d / 116.0d;
+        double one116 = 1.0d / 116.0d;
+        double one7787 = 1.0d / 7.787d;
+
+        double a = (lab.x + 16.0d) * one116;
+        double b = lab.y * 0.002d + a;
+        double c = a - lab.z * 0.005d;
+
+        double acb = a * a * a;
+        if (acb > 0.008856d) a = acb;
+        else a = (a - offset) * one7787;
+
+        double bcb = b * b * b;
+        if (bcb > 0.008856d) b = bcb;
+        else b = (b - offset) * one7787;
+
+        double ccb = c * c * c;
+        if (ccb > 0.008856d) c = ccb;
+        else c = (c - offset) * one7787;
+
+        return new Vec4 (
+            (float) (b * 0.95047d),
+            (float) a,
+            (float) (c * 1.08883d),
+            lab.w);
     }
 
     /// <summary>
-    /// Returns the relative luminance of the color, based on
-    /// https://en.wikipedia.org/wiki/Relative_luminance .
+    /// Returns the relative luminance of the color.
+    /// Assumes the color is in linear RGB.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>the luminance</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static float Luminance (in Clr c)
+    public static float LinearLuminance (in Clr c)
     {
-        // TODO: Needs to distinguish between sRgb and linear Rgb.
-        return 0.2126f * c._r + 0.7152f * c._g + 0.0722f * c._b;
+        return 0.21264935f * c.r +
+            0.71516913f * c.g +
+            0.07218152f * c.b;
+    }
+
+    /// <summary>
+    /// Converts a color from linear RGB to standard RGB (sRGB).
+    /// </summary>
+    /// <param name="c">the linear color</param>
+    /// <param name="alpha">transform the alpha channel</param>
+    /// <returns>the standard color</returns>
+    public static Clr LinearToStandard (in Clr c, in bool alpha = false)
+    {
+        double inv24 = 1.0d / 2.4d;
+        return new Clr (
+            c.r <= 0.0031308f ?
+            c.r * 12.92f :
+            (float) (Math.Pow (c.r, inv24) * 1.055d - 0.055d),
+
+            c.g <= 0.0031308f ?
+            c.g * 12.92f :
+            (float) (Math.Pow (c.g, inv24) * 1.055d - 0.055d),
+
+            c.b <= 0.0031308f ?
+            c.b * 12.92f :
+            (float) (Math.Pow (c.b, inv24) * 1.055d - 0.055d),
+
+            alpha ? c.a <= 0.0031308f ?
+            c.a * 12.92f :
+            (float) (Math.Pow (c.a, inv24) * 1.055d - 0.055d) :
+            c.a);
+    }
+
+    /// <summary>
+    /// Converts a color from linear RGB to CIE XYZ.
+    /// The alpha channel is unaffected by the transformation.
+    /// </summary>
+    /// <param name="c">the linear color</param>
+    /// <returns>the XYZ color</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static Vec4 LinearToXYZ (in Clr c)
+    {
+        return new Vec4 (
+            0.41241086f * c.r + 0.35758457f * c.g + 0.1804538f * c.b,
+            0.21264935f * c.r + 0.71516913f * c.g + 0.07218152f * c.b,
+            0.019331759f * c.r + 0.11919486f * c.g + 0.95039004f * c.b,
+            c.a);
     }
 
     /// <summary>
@@ -811,28 +762,15 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Mixes two colors according to their hue, saturation and brightness by a
-    /// step in the range [0.0, 1.0] .
-    /// </summary>
-    /// <param name="a">origin color</param>
-    /// <param name="b">destination color</param>
-    /// <param name="t">step</param>
-    /// <returns>the mixed color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr MixHsba (in Clr a, in Clr b, in Vec4 t)
-    {
-        return Clr.HsbaToRgba (Vec4.Mix (Clr.RgbaToHsba (a), Clr.RgbaToHsba (b), t));
-    }
-
-    /// <summary>
     /// Mixes two colors by a 50-50 ratio.
+    /// Assumes the colors are in linear RGB.
     /// </summary>
     /// <param name="a">origin color</param>
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
     /// <returns>the mixed color</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr MixRgba (in Clr a, in Clr b)
+    public static Clr MixRgbaLinear (in Clr a, in Clr b)
     {
         return new Clr (
             0.5f * (a._r + b._r),
@@ -843,12 +781,13 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
 
     /// <summary>
     /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Assumes the colors are in linear RGB.
     /// </summary>
     /// <param name="a">origin color</param>
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
     /// <returns>the mixed color</returns>
-    public static Clr MixRgba (in Clr a, in Clr b, in float t)
+    public static Clr MixRgbaLinear (in Clr a, in Clr b, in float t)
     {
         float u = 1.0f - t;
         return new Clr (
@@ -859,37 +798,39 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Mixes two colors using a third as a step.
+    /// Mixes two colors by a 50-50 ratio.
+    /// Assumes the colors are in standard RGB; converts them to
+    /// linear, then mixes them, then converts to standard.
     /// </summary>
     /// <param name="a">origin color</param>
     /// <param name="b">destination color</param>
-    /// <param name="t">step color</param>
+    /// <param name="t">step</param>
     /// <returns>the mixed color</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr MixRgba (in Clr a, in Clr b, in Clr t)
+    public static Clr MixRgbaStandard (in Clr a, in Clr b)
     {
-        return new Clr (
-            Utils.Mix (a._r, b._r, t._r),
-            Utils.Mix (a._g, b._g, t._g),
-            Utils.Mix (a._b, b._b, t._b),
-            Utils.Mix (a._a, b._a, t._a));
+        return Clr.LinearToStandard (
+            Clr.MixRgbaLinear (
+                Clr.StandardToLinear (a),
+                Clr.StandardToLinear (b)));
     }
 
     /// <summary>
-    /// Mixes two colors using a Vec4 as a step.
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Assumes the colors are in standard RGB; converts them to
+    /// linear, then mixes them, then converts to standard.
     /// </summary>
     /// <param name="a">origin color</param>
     /// <param name="b">destination color</param>
-    /// <param name="t">step vector</param>
+    /// <param name="t">step</param>
     /// <returns>the mixed color</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr MixRgba (in Clr a, in Clr b, in Vec4 t)
+    public static Clr MixRgbaStandard (in Clr a, in Clr b, in float t)
     {
-        return new Clr (
-            Utils.Mix (a._r, b._r, t.x),
-            Utils.Mix (a._g, b._g, t.y),
-            Utils.Mix (a._b, b._b, t.z),
-            Utils.Mix (a._a, b._a, t.w));
+        return Clr.LinearToStandard (
+            Clr.MixRgbaLinear (
+                Clr.StandardToLinear (a),
+                Clr.StandardToLinear (b), t));
     }
 
     /// <summary>
@@ -905,31 +846,16 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Raises each component of the color, except for the alpha channel, to a
-    /// power. Useful for gamma adjustment.
-    /// </summary>
-    /// <param name="a">the color</param>
-    /// <param name="b">the power</param>
-    /// <returns>the adjusted color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr Pow (in Clr a, in float b)
-    {
-        return new Clr (
-            Utils.Pow (a._r, b),
-            Utils.Pow (a._g, b),
-            Utils.Pow (a._b, b),
-            a._a);
-    }
-
-    /// <summary>
     /// Multiplies the red, green and blue color channels of a color by the
     /// alpha channel.
     /// </summary>
     /// <param name="c">the color</param>
     /// <returns>the premultiplied color</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr PreMul (in Clr c)
+    public static Clr Premul (in Clr c)
     {
+        if (c.a <= 0.0f) return Clr.ClearBlack;
+        if (c.a >= 1.0f) return new Clr (c.r, c.g, c.b, 1.0f);
         return new Clr (
             c._r * c._a,
             c._g * c._a,
@@ -1044,38 +970,43 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Generates a clamped Hermite step for an input factor; to be used in
-    /// conjunction with a mixing function.
+    /// Returns the relative luminance of the color.
+    /// Converts the color from standard RGB to linear.
     /// </summary>
-    /// <param name="edge0">left edge</param>
-    /// <param name="edge1">right edge</param>
-    /// <param name="x">factor</param>
-    /// <returns>the smooth step</returns>
+    /// <param name="c">color</param>
+    /// <returns>the luminance</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr SmoothStep (in Clr edge0, in Clr edge1, in Clr x)
+    public static float StandardLuminance (in Clr c)
     {
-        return new Clr (
-            Utils.SmoothStep (edge0._r, edge1._r, x._r),
-            Utils.SmoothStep (edge0._g, edge1._g, x._g),
-            Utils.SmoothStep (edge0._b, edge1._b, x._b),
-            Utils.SmoothStep (edge0._a, edge1._a, x._a));
+        return Clr.LinearLuminance (Clr.StandardToLinear (c));
     }
 
     /// <summary>
-    /// Generates a clamped boolean step for an input factor; to be used in
-    /// conjunction with a mixing function.
+    /// Converts a color from standard RGB (sRGB) to linear RGB.
     /// </summary>
-    /// <param name="edge">edge</param>
-    /// <param name="x">factor</param>
-    /// <returns>the step</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr Step (in Clr edge, in Clr x)
+    /// <param name="c">the standard color</param>
+    /// <param name="alpha">transform the alpha channel</param>
+    /// <returns>the linear color</returns>
+    public static Clr StandardToLinear (in Clr c, in bool alpha = false)
     {
+        double inv1055 = 1.0d / 1.055d;
         return new Clr (
-            Utils.Step (edge._r, x._r),
-            Utils.Step (edge._g, x._g),
-            Utils.Step (edge._b, x._b),
-            Utils.Step (edge._a, x._a));
+            c.r <= 0.04045f ?
+            c.r * 0.07739938f :
+            (float) Math.Pow ((c.r + 0.055d) * inv1055, 2.4d),
+
+            c.g <= 0.04045f ?
+            c.g * 0.07739938f :
+            (float) Math.Pow ((c.g + 0.055d) * inv1055, 2.4d),
+
+            c.b <= 0.04045f ?
+            c.b * 0.07739938f :
+            (float) Math.Pow ((c.b + 0.055d) * inv1055, 2.4d),
+
+            alpha ? c.a <= 0.04045f ?
+            c.a * 0.07739938f :
+            (float) Math.Pow ((c.a + 0.055d) * inv1055, 2.4d) :
+            c.a);
     }
 
     /// <summary>
@@ -1087,6 +1018,19 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int ToHexInt (in Clr c)
     {
+        return Clr.ToHexIntUnchecked (Clr.Clamp (c, 0.0f, 1.0f));
+    }
+
+    /// <summary>
+    /// Converts a color to an integer where hexadecimal represents the ARGB
+    /// color channels: 0xAARRGGB . Does not check if the color's components
+    /// are in a valid range, [0.0, 1.0].
+    /// </summary>
+    /// <param name="c">the input color</param>
+    /// <returns>the color in hexadecimal</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static int ToHexIntUnchecked (in Clr c)
+    {
         return (int) (c._a * 0xff + 0.5f) << 0x18 |
             (int) (c._r * 0xff + 0.5f) << 0x10 |
             (int) (c._g * 0xff + 0.5f) << 0x8 |
@@ -1094,122 +1038,107 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
+    /// Converts a color from CIE XYZ to CIE LAB.
+    /// </summary>
+    /// <param name="xyz">the XYZ color</param>
+    /// <returns>the lab color</returns>
+    public static Vec4 XYZToLab (in Vec4 xyz)
+    {
+        double oneThird = 1.0d / 3.0d;
+        double offset = 16.0d / 116.0d;
+
+        double a = xyz.x * 1.0521110608435826d;
+        if (a > 0.008856d) a = Math.Pow (a, oneThird);
+        else a = 7.787d * a + offset;
+
+        double b = xyz.y;
+        if (b > 0.008856d) b = Math.Pow (b, oneThird);
+        else b = 7.787d * b + offset;
+
+        double c = xyz.z * 0.9184170164304805d;
+        if (c > 0.008856d) c = Math.Pow (c, oneThird);
+        else c = 7.787d * c + offset;
+
+        return new Vec4 (
+            (float) (116.0d * b - 16.0d),
+            (float) (500.0d * (a - b)),
+            (float) (200.0d * (b - c)),
+            xyz.w);
+    }
+
+    /// <summary>
+    /// Converts a color from CIE XYZ to linear RGB.
+    /// The alpha channel is unaffected by the transformation.
+    /// </summary>
+    /// <param name="c">the XYZ color</param>
+    /// <returns>the linear color</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static Clr XYZToLinear (in Vec4 v)
+    {
+        return new Clr (
+            3.2408123f * v.x - 1.5373085f * v.y - 0.49858654f * v.z, //
+            -0.969243f * v.x + 1.8759663f * v.y + 0.041555032f * v.z, //
+            0.0556384f * v.x - 0.20400746f * v.y + 1.0571296f * v.z, //
+            v.w);
+    }
+
+    /// <summary>
     /// Returns the color black, (0.0, 0.0, 0.0, 1.0) .
     /// </summary>
     /// <value>black</value>
-    public static Clr Black
-    {
-        get
-        {
-            return new Clr (0.0f, 0.0f, 0.0f, 1.0f);
-        }
-    }
+    public static Clr Black { get { return new Clr (0.0f, 0.0f, 0.0f, 1.0f); } }
 
     /// <summary>
     /// Returns the color blue, (0.0, 0.0, 1.0, 1.0) .
     /// </summary>
     /// <value>blue</value>
-    public static Clr Blue
-    {
-        get
-        {
-            return new Clr (0.0f, 0.0f, 1.0f, 1.0f);
-        }
-    }
+    public static Clr Blue { get { return new Clr (0.0f, 0.0f, 1.0f, 1.0f); } }
 
     /// <summary>
     /// Returns the color clear black, (0.0, 0.0, 0.0, 0.0) .
     /// </summary>
     /// <value>clear black</value>
-    public static Clr ClearBlack
-    {
-        get
-        {
-            return new Clr (0.0f, 0.0f, 0.0f, 0.0f);
-        }
-    }
+    public static Clr ClearBlack { get { return new Clr (0.0f, 0.0f, 0.0f, 0.0f); } }
 
     /// <summary>
     /// Returns the color clear white, (1.0, 1.0, 1.0, 0.0) .
     /// </summary>
     /// <value>clear white</value>
-    public static Clr ClearWhite
-    {
-        get
-        {
-            return new Clr (1.0f, 1.0f, 1.0f, 0.0f);
-        }
-    }
+    public static Clr ClearWhite { get { return new Clr (1.0f, 1.0f, 1.0f, 0.0f); } }
 
     /// <summary>
     /// Returns the color cyan, (0.0, 1.0, 1.0, 1.0) .
     /// </summary>
     /// <value>cyan</value>
-    public static Clr Cyan
-    {
-        get
-        {
-            return new Clr (0.0f, 1.0f, 1.0f, 1.0f);
-        }
-    }
+    public static Clr Cyan { get { return new Clr (0.0f, 1.0f, 1.0f, 1.0f); } }
 
     /// <summary>
     /// Returns the color green, (0.0, 1.0, 0.0, 1.0) .
     /// </summary>
     /// <value>green</value>
-    public static Clr Green
-    {
-        get
-        {
-            return new Clr (0.0f, 1.0f, 0.0f, 1.0f);
-        }
-    }
+    public static Clr Green { get { return new Clr (0.0f, 1.0f, 0.0f, 1.0f); } }
 
     /// <summary>
     /// Returns the color magenta, (1.0, 0.0, 1.0, 1.0) .
     /// </summary>
     /// <value>magenta</value>
-    public static Clr Magenta
-    {
-        get
-        {
-            return new Clr (1.0f, 0.0f, 1.0f, 1.0f);
-        }
-    }
+    public static Clr Magenta { get { return new Clr (1.0f, 0.0f, 1.0f, 1.0f); } }
 
     /// <summary>
     /// Returns the color red, (1.0, 0.0, 0.0, 1.0) .
     /// </summary>
     /// <value>red</value>
-    public static Clr Red
-    {
-        get
-        {
-            return new Clr (1.0f, 0.0f, 0.0f, 1.0f);
-        }
-    }
+    public static Clr Red { get { return new Clr (1.0f, 0.0f, 0.0f, 1.0f); } }
 
     /// <summary>
     /// Returns the color yellow, (1.0, 1.0, 0.0, 1.0) .
     /// </summary>
     /// <value>yellow</value>
-    public static Clr Yellow
-    {
-        get
-        {
-            return new Clr (1.0f, 1.0f, 0.0f, 1.0f);
-        }
-    }
+    public static Clr Yellow { get { return new Clr (1.0f, 1.0f, 0.0f, 1.0f); } }
 
     /// <summary>
     /// Returns the color white, (1.0, 1.0, 1.0, 1.0) .
     /// </summary>
     /// <value>white</value>
-    public static Clr White
-    {
-        get
-        {
-            return new Clr (1.0f, 1.0f, 1.0f, 1.0f);
-        }
-    }
+    public static Clr White { get { return new Clr (1.0f, 1.0f, 1.0f, 1.0f); } }
 }
