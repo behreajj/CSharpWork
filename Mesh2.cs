@@ -654,6 +654,7 @@ public class Mesh2
 
                 target.loops = Loop2.Resize (target.loops, flen);
 
+                // TODO: Flatten array.
                 for (int k = 0, i = 0; i < rval; ++i)
                 {
                     int noff0 = i * cval1;
@@ -666,12 +667,12 @@ public class Mesh2
                         int n01 = noff1 + j;
                         int n11 = n01 + 1;
 
-                        // TODO: This should be a set, since Loop2 is a class.
-                        target.loops[k] = new Loop2 (
+                        Loop2.Quad (
                             new Index2 (n00, n00),
                             new Index2 (n10, n10),
                             new Index2 (n11, n11),
-                            new Index2 (n01, n01));
+                            new Index2 (n01, n01),
+                            target.loops[k]);
                     }
                 }
 
@@ -682,6 +683,7 @@ public class Mesh2
 
                 target.loops = Loop2.Resize (target.loops, flen + flen);
 
+                // TODO: Flatten array.
                 for (int k = 0, i = 0; i < rval; ++i)
                 {
                     int noff0 = i * cval1;
@@ -694,17 +696,17 @@ public class Mesh2
                         int n01 = noff1 + j;
                         int n11 = n01 + 1;
 
-                        // TODO: This should be a set, since Loop2 is a class.
-                        target.loops[k] = new Loop2 (
+                        Loop2.Tri (
                             new Index2 (n00, n00),
                             new Index2 (n10, n10),
-                            new Index2 (n11, n11));
+                            new Index2 (n11, n11),
+                            target.loops[k]);
 
-                        // TODO: This should be a set, since Loop2 is a class.
-                        target.loops[k + 1] = new Loop2 (
+                        Loop2.Tri (
                             new Index2 (n11, n11),
                             new Index2 (n01, n01),
-                            new Index2 (n00, n00));
+                            new Index2 (n00, n00),
+                            target.loops[k + 1]);
                     }
                 }
 
@@ -792,12 +794,12 @@ public class Mesh2
                     int t = 1 + j % last;
                     int u = 1 + (j + 1) % last;
 
-                    // TODO: This should be a set, since Loop2 is a class.
-                    target.loops[i] = new Loop2 (
+                    Loop2.Quad (
                         new Index2 (0, 0),
                         new Index2 (s, s),
                         new Index2 (t, t),
-                        new Index2 (u, u));
+                        new Index2 (u, u),
+                        target.loops[i]);
                 }
 
                 break;

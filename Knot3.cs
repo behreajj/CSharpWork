@@ -153,7 +153,10 @@ public class Knot3
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
     /// <param name="zRh">rear handle z</param>
-    public Knot3 (in float xCo, in float yCo, in float zCo, in float xFh, in float yFh, in float zFh, in float xRh, in float yRh, in float zRh)
+    public Knot3 ( // 
+        in float xCo, in float yCo, in float zCo, //
+        in float xFh, in float yFh, in float zFh, //
+        in float xRh, in float yRh, in float zRh)
     {
         this.Set (
             xCo, yCo, zCo,
@@ -619,7 +622,10 @@ public class Knot3
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
     /// <param name="zRh">rear handle z</param>
-    public Knot3 Set (in float xCo, in float yCo, in float zCo, in float xFh, in float yFh, in float zFh, in float xRh, in float yRh, in float zRh)
+    public Knot3 Set ( // 
+        in float xCo, in float yCo, in float zCo, //
+        in float xFh, in float yFh, in float zFh, //
+        in float xRh, in float yRh, in float zRh)
     {
         this.coord = new Vec3 (xCo, yCo, zCo);
         this.foreHandle = new Vec3 (xFh, yFh, zFh);
@@ -822,49 +828,49 @@ public class Knot3
         Vec3 coPrev = prev.coord;
         Vec3 coNext = next.coord;
 
-        float backx = coPrev.x - coCurr.x;
-        float backy = coPrev.y - coCurr.y;
-        float backz = coPrev.z - coCurr.z;
+        float xBack = coPrev.x - coCurr.x;
+        float yBack = coPrev.y - coCurr.y;
+        float zBack = coPrev.z - coCurr.z;
 
-        float forex = coNext.x - coCurr.x;
-        float forey = coNext.y - coCurr.y;
-        float forez = coNext.z - coCurr.z;
+        float xFore = coNext.x - coCurr.x;
+        float yFore = coNext.y - coCurr.y;
+        float zFore = coNext.z - coCurr.z;
 
-        float bmSq = backx * backx + backy * backy + backz * backz;
+        float bmSq = xBack * xBack + yBack * yBack + zBack * zBack;
         float bmInv = bmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
 
-        float fmSq = forex * forex + forey * forey + forez * forez;
+        float fmSq = xFore * xFore + yFore * yFore + zFore * zFore;
         float fmInv = fmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (fmSq) : 0.0f;
 
-        float dirx = carry.x + backx * bmInv - forex * fmInv;
-        float diry = carry.y + backy * bmInv - forey * fmInv;
-        float dirz = carry.z + backz * bmInv - forez * fmInv;
+        float xDir = carry.x + xBack * bmInv - xFore * fmInv;
+        float yDir = carry.y + yBack * bmInv - yFore * fmInv;
+        float zDir = carry.z + zBack * bmInv - zFore * fmInv;
 
-        float dmSq = dirx * dirx +
-            diry * diry +
-            dirz * dirz;
+        float dmSq = xDir * xDir +
+            yDir * yDir +
+            zDir * zDir;
         float rescl = dmSq != 0.0f ? Utils.OneThird / Utils.SqrtUnchecked (dmSq) : 0.0f;
 
-        float carryx = dirx * rescl;
-        float carryy = diry * rescl;
-        float carryz = dirz * rescl;
+        float xCarry = xDir * rescl;
+        float yCarry = yDir * rescl;
+        float zCarry = zDir * rescl;
 
         float bMag = bmSq * bmInv;
         curr.rearHandle = new Vec3 (
-            coCurr.x + bMag * carryx,
-            coCurr.y + bMag * carryy,
-            coCurr.z + bMag * carryz);
+            coCurr.x + bMag * xCarry,
+            coCurr.y + bMag * yCarry,
+            coCurr.z + bMag * zCarry);
 
         float fMag = fmSq * fmInv;
         curr.foreHandle = new Vec3 (
-            coCurr.x - fMag * carryx,
-            coCurr.y - fMag * carryy,
-            coCurr.z - fMag * carryz);
+            coCurr.x - fMag * xCarry,
+            coCurr.y - fMag * yCarry,
+            coCurr.z - fMag * zCarry);
 
         return new Vec3 (
-            carryx,
-            carryy,
-            carryz);
+            xCarry,
+            yCarry,
+            zCarry);
     }
 
     public static Vec3 SmoothHandlesFirst (in Knot3 curr, in Knot3 next, in Vec3 carry)
@@ -872,41 +878,43 @@ public class Knot3
         Vec3 coCurr = curr.coord;
         Vec3 coNext = next.coord;
 
-        float backx = -coCurr.x;
-        float backy = -coCurr.y;
-        float backz = -coCurr.z;
+        float xBack = -coCurr.x;
+        float yBack = -coCurr.y;
+        float zBack = -coCurr.z;
 
-        float forex = coNext.x - coCurr.x;
-        float forey = coNext.y - coCurr.y;
-        float forez = coNext.z - coCurr.z;
+        float xFore = coNext.x - coCurr.x;
+        float yFore = coNext.y - coCurr.y;
+        float zFore = coNext.z - coCurr.z;
 
-        float bmSq = backx * backx + backy * backy + backz * backz;
+        float bmSq = xBack * xBack +
+            yBack * yBack +
+            zBack * zBack;
         float bmInv = bmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
 
-        float fmSq = forex * forex + forey * forey + forez * forez;
+        float fmSq = xFore * xFore + yFore * yFore + zFore * zFore;
         float fmInv = fmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked (fmSq) : 0.0f;
 
-        float dirx = carry.x + backx * bmInv - forex * fmInv;
-        float diry = carry.y + backy * bmInv - forey * fmInv;
-        float dirz = carry.z + backz * bmInv - forez * fmInv;
+        float xDir = carry.x + xBack * bmInv - xFore * fmInv;
+        float yDir = carry.y + yBack * bmInv - yFore * fmInv;
+        float zDir = carry.z + zBack * bmInv - zFore * fmInv;
 
-        float dmSq = dirx * dirx + diry * diry + dirz * dirz;
+        float dmSq = xDir * xDir + yDir * yDir + zDir * zDir;
         float rescl = dmSq > 0.0f ? Utils.OneThird / Utils.SqrtUnchecked (dmSq) : 0.0f;
 
-        float carryx = dirx * rescl;
-        float carryy = diry * rescl;
-        float carryz = dirz * rescl;
+        float xCarry = xDir * rescl;
+        float yCarry = yDir * rescl;
+        float zCarry = zDir * rescl;
 
         float fMag = fmSq * fmInv;
         curr.foreHandle = new Vec3 (
-            coCurr.x - fMag * carryx,
-            coCurr.y - fMag * carryy,
-            coCurr.z - fMag * carryz);
+            coCurr.x - fMag * xCarry,
+            coCurr.y - fMag * yCarry,
+            coCurr.z - fMag * zCarry);
 
         return new Vec3 (
-            carryx,
-            carryy,
-            carryz);
+            xCarry,
+            yCarry,
+            zCarry);
     }
 
     public static Vec3 SmoothHandlesLast (in Knot3 prev, in Knot3 curr, in Vec3 carry)
@@ -914,40 +922,42 @@ public class Knot3
         Vec3 coCurr = curr.coord;
         Vec3 coPrev = prev.coord;
 
-        float backx = coPrev.x - coCurr.x;
-        float backy = coPrev.y - coCurr.y;
-        float backz = coPrev.z - coCurr.z;
+        float xBack = coPrev.x - coCurr.x;
+        float yBack = coPrev.y - coCurr.y;
+        float zBack = coPrev.z - coCurr.z;
 
-        float forex = -coCurr.x;
-        float forey = -coCurr.y;
-        float forez = -coCurr.z;
+        float xFore = -coCurr.x;
+        float yFore = -coCurr.y;
+        float zFore = -coCurr.z;
 
-        float bmSq = backx * backx + backy * backy + backz * backz;
+        float bmSq = xBack * xBack + yBack * yBack + zBack * zBack;
         float bmInv = bmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
 
-        float fmSq = forex * forex + forey * forey + forez * forez;
+        float fmSq = xFore * xFore +
+            yFore * yFore +
+            zFore * zFore;
         float fmInv = fmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked (fmSq) : 0.0f;
 
-        float dirx = carry.x + backx * bmInv - forex * fmInv;
-        float diry = carry.y + backy * bmInv - forey * fmInv;
-        float dirz = carry.z + backz * bmInv - forez * fmInv;
+        float xDir = carry.x + xBack * bmInv - xFore * fmInv;
+        float yDir = carry.y + yBack * bmInv - yFore * fmInv;
+        float zDir = carry.z + zBack * bmInv - zFore * fmInv;
 
-        float dmSq = dirx * dirx + diry * diry + dirz * dirz;
+        float dmSq = xDir * xDir + yDir * yDir + zDir * zDir;
         float rescl = dmSq > 0.0f ? Utils.OneThird / Utils.SqrtUnchecked (dmSq) : 0.0f;
 
-        float carryx = dirx * rescl;
-        float carryy = diry * rescl;
-        float carryz = dirz * rescl;
+        float xCarry = xDir * rescl;
+        float yCarry = yDir * rescl;
+        float zCarry = zDir * rescl;
 
         float bMag = bmSq * bmInv;
         curr.rearHandle = new Vec3 (
-            coCurr.x + bMag * carryx,
-            coCurr.y + bMag * carryx,
-            coCurr.z + bMag * carryx);
+            coCurr.x + bMag * xCarry,
+            coCurr.y + bMag * yCarry,
+            coCurr.z + bMag * zCarry);
 
         return new Vec3 (
-            carryx,
-            carryy,
-            carryz);
+            xCarry,
+            yCarry,
+            zCarry);
     }
 }

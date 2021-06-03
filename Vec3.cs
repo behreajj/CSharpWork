@@ -51,6 +51,30 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public float z { get { return this._z; } }
 
     /// <summary>
+    /// Gets the x and y components as a 2D vector.
+    /// </summary>
+    /// <returns>2D vector</returns>
+    public Vec2 xy
+    {
+        get
+        {
+            return new Vec2 (this._x, this._y);
+        }
+    }
+
+    /// <summary>
+    /// Gets the x and z components as a 2D vector.
+    /// </summary>
+    /// <returns>2D vector</returns>
+    public Vec2 xz
+    {
+        get
+        {
+            return new Vec2 (this._x, this._z);
+        }
+    }
+
+    /// <summary>
     /// Retrieves a component by index. When the provided index is 2 or -1,
     /// returns z; 1 or -2, y; 0 or -3, x.
     /// </summary>
@@ -2005,7 +2029,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Appends a representation of a vector to a string builder.
     /// </summary>
-    /// <param name="sb">string bulider</param>
+    /// <param name="sb">string builder</param>
     /// <param name="v">vector</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>

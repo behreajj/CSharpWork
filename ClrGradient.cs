@@ -117,11 +117,12 @@ public class ClrGradient : IEnumerable
     /// <returns>the string</returns>
     public string ToString (int places = 4)
     {
+      // TODO: Switch to sb pass by reference mode.
       return new StringBuilder (96)
         .Append ("{ step: ")
         .Append (Utils.ToFixed (this.step, places))
         .Append (", color: ")
-        .Append (this.color.ToString (places))
+        .Append (Clr.ToString (this.color, places))
         .Append (" }")
         .ToString ( );
     }
@@ -333,12 +334,13 @@ public class ClrGradient : IEnumerable
   /// </summary>
   /// <param name="step">step</param>
   /// <returns>the index</returns>
-  protected int BisectLeft (in float step = 0.5f)
+  protected int BisectLeft (in float step)
   {
     int low = 0;
     int high = this.keys.Count;
     while (low < high)
     {
+      // TODO: I think the |0 is for JavaScript only?
       int middle = (low + high) / 2 | 0;
       if (step > this.keys[middle].Step)
         low = middle + 1;
@@ -353,12 +355,13 @@ public class ClrGradient : IEnumerable
   /// </summary>
   /// <param name="step">step</param>
   /// <returns>the index</returns>
-  protected int BisectRight (in float step = 0.5f)
+  protected int BisectRight (in float step)
   {
     int low = 0;
     int high = this.keys.Count;
     while (low < high)
     {
+      // TODO: I think the |0 is for JavaScript only?
       int middle = (low + high) / 2 | 0;
       if (step < this.keys[middle].Step)
         high = middle;
@@ -453,7 +456,7 @@ public class ClrGradient : IEnumerable
   /// </summary>
   /// <param name="count">count</param>
   /// <returns>the colors</returns>
-  public Clr[ ] EvalRange (in int count = 8)
+  public Clr[ ] EvalRange (in int count)
   {
     int vCount = count < 3 ? 3 : count;
     Clr[ ] result = new Clr[vCount];
@@ -470,7 +473,7 @@ public class ClrGradient : IEnumerable
   /// </summary>
   /// <param name="query">query</param>
   /// <returns>the key</returns>
-  protected Key FindGe (in float query = 0.5f)
+  protected Key FindGe (in float query)
   {
     int i = this.BisectLeft (query);
     if (i < this.keys.Count) return this.keys[i];
@@ -482,7 +485,7 @@ public class ClrGradient : IEnumerable
   /// </summary>
   /// <param name="query">query</param>
   /// <returns>the key</returns>
-  protected Key FindLe (in float query = 0.5f)
+  protected Key FindLe (in float query)
   {
     int i = this.BisectRight (query);
     if (i > 0) return this.keys[i - 1];

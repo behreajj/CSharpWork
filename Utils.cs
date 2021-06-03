@@ -512,6 +512,23 @@ public static class Utils
     }
 
     /// <summary>
+    /// Eases from an origin angle in radians to a destination angle according to
+    /// a factor in [0.0, 1.0] .
+    /// </summary>
+    /// <param name="origin">origin angle</param>
+    /// <param name="dest">destination angle</param>
+    /// <param name="t">factor</param>
+    /// <returns>the angle</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static float LerpAngle ( //
+        in float origin, //
+        in float dest, //
+        in float t = 0.5f)
+    {
+        return Utils.LerpAngleNear (origin, dest, t);
+    }
+
+    /// <summary>
     /// Eases from an origin angle in radians to a destination angle using the
     /// shortest direction (either clockwise or counter clockwise) according to
     /// a factor in [0.0, 1.0] .
@@ -520,25 +537,137 @@ public static class Utils
     /// <param name="dest">destination angle</param>
     /// <param name="t">factor</param>
     /// <returns>the angle</returns>
-    public static float LerpAngle (in float origin, in float dest, in float t = 0.5f)
+    public static float LerpAngleNear ( //
+        in float origin, //
+        in float dest, //
+        in float t = 0.5f, //
+        in float range = Utils.Tau)
     {
-        float a = Utils.ModRadians (origin);
-        float b = Utils.ModRadians (dest);
-        float diff = b - a;
-        bool modResult = false;
-        if (a < b && diff > Utils.Pi)
+        float o = Utils.Mod (origin, range);
+        float d = Utils.Mod (dest, range);
+        float diff = d - o;
+        float halfRange = range * 0.5f;
+
+        if (diff == 0.0f) { return o; }
+
+        if (o < d && diff > halfRange)
         {
-            a = a + Utils.Pi;
-            modResult = true;
-        }
-        else if (a > b && diff < -Utils.Pi)
-        {
-            b = b + Utils.Pi;
-            modResult = true;
+            return Utils.Mod (
+                (1.0f - t) * (o + range) +
+                t * d,
+                range);
         }
 
-        float fac = (1.0f - t) * a + t * b;
-        return modResult ? Utils.ModRadians (fac) : fac;
+        if (o > d && diff < -halfRange)
+        {
+            return Utils.Mod (
+                (1.0f - t) * o +
+                t * (d + range),
+                range);
+        }
+
+        return (1.0f - t) * o + t * d;
+    }
+
+    /// <summary>
+    /// Eases from an origin angle in radians to a destination angle using the
+    /// furthest direction (either clockwise or counter clockwise) according to
+    /// a factor in [0.0, 1.0] .
+    /// </summary>
+    /// <param name="origin">origin angle</param>
+    /// <param name="dest">destination angle</param>
+    /// <param name="t">factor</param>
+    /// <returns>the angle</returns>
+    public static float LerpAngleFar ( //
+        in float origin, //
+        in float dest, //
+        in float t = 0.5f, //
+        in float range = Utils.Tau)
+    {
+        float o = Utils.Mod (origin, range);
+        float d = Utils.Mod (dest, range);
+        float diff = d - o;
+        float halfRange = range * 0.5f;
+
+        if (diff == 0.0f || (o < diff && diff < -halfRange))
+        {
+            return Utils.Mod (
+                (1.0f - t) * (o + range) + t * d,
+                range);
+        }
+
+        if (o > d && diff > -halfRange)
+        {
+            return Utils.Mod (
+                (1.0f - t) * o + t * (d + range),
+                range);
+        }
+
+        return (1.0f - t) * o + t * d;
+    }
+
+    /// <summary>
+    /// Eases from an origin angle in radians to a destination angle using the
+    /// counter clockwise direction according to
+    /// a factor in [0.0, 1.0] .
+    /// </summary>
+    /// <param name="origin">origin angle</param>
+    /// <param name="dest">destination angle</param>
+    /// <param name="t">factor</param>
+    /// <returns>the angle</returns>
+    public static float LerpAngleCCW ( //
+        in float origin, //
+        in float dest, //
+        in float t = 0.5f, //
+        in float range = Utils.Tau)
+    {
+        float o = Utils.Mod (origin, range);
+        float d = Utils.Mod (dest, range);
+        float diff = d - o;
+
+        if (diff == 0.0f) { return o; }
+
+        if (o > d)
+        {
+            return Utils.Mod (
+                (1.0f - t) * o +
+                t * (d + range),
+                range);
+        }
+
+        return (1.0f - t) * o + t * d;
+    }
+
+    /// <summary>
+    /// Eases from an origin angle in radians to a destination angle using the
+    /// clockwise direction according to
+    /// a factor in [0.0, 1.0] .
+    /// </summary>
+    /// <param name="origin">origin angle</param>
+    /// <param name="dest">destination angle</param>
+    /// <param name="t">factor</param>
+    /// <returns>the angle</returns>
+    public static float LerpAngleCW ( //
+        in float origin, //
+        in float dest, //
+        in float t = 0.5f, //
+        in float range = Utils.Tau)
+    {
+        float o = Utils.Mod (origin, range);
+        float d = Utils.Mod (dest, range);
+        float diff = d - o;
+
+        if (diff == 0.0f) { return d; }
+
+        if (o < d)
+        {
+            return Utils.Mod (
+                (1.0f - t) * (o + range) +
+                t * d,
+                range);
+        }
+
+        return (1.0f - t) * o + t * d;
     }
 
     /// <summary>

@@ -60,6 +60,18 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public float w { get { return this._w; } }
 
     /// <summary>
+    /// Gets the first three components as a 3D vector.
+    /// </summary>
+    /// <returns>3D vector</returns>
+    public Vec3 xyz
+    {
+        get
+        {
+            return new Vec3 (this._x, this._y, this._z);
+        }
+    }
+
+    /// <summary>
     /// Retrieves a component by index. When the provided index is 3 or -1,
     /// returns w; 2 or -2, z; 1 or -3, y; 0 or -4, x.
     /// </summary>
@@ -154,6 +166,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
+        // TODO: Update to Vec2,3 string method.
         return Vec4.ToString (this, 4);
     }
 

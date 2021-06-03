@@ -1734,7 +1734,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Appends a representation of a vector to a string builder.
     /// </summary>
-    /// <param name="sb">string bulider</param>
+    /// <param name="sb">string builder</param>
     /// <param name="v">vector</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>

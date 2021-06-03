@@ -146,7 +146,10 @@ public class Knot2
     /// <param name="yFh">fore handle y</param>
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
-    public Knot2 (in float xCo, in float yCo, in float xFh, in float yFh, in float xRh, in float yRh)
+    public Knot2 ( //
+        in float xCo, in float yCo, //
+        in float xFh, in float yFh, //
+        in float xRh, in float yRh)
     {
         this.Set (
             xCo, yCo,
@@ -538,7 +541,10 @@ public class Knot2
     /// <param name="yFh">fore handle y</param>
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
-    public Knot2 Set (in float xCo, in float yCo, in float xFh, in float yFh, in float xRh, in float yRh)
+    public Knot2 Set ( //
+        in float xCo, in float yCo, //
+        in float xFh, in float yFh, //
+        in float xRh, in float yRh)
     {
         this.coord = new Vec2 (xCo, yCo);
         this.foreHandle = new Vec2 (xFh, yFh);

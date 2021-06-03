@@ -84,6 +84,12 @@ public class Loop2
         return sb.ToString ( );
     }
 
+    public static Loop2 Quad (in Index2 a, in Index2 b, in Index2 c, in Index2 d, in Loop2 target)
+    {
+        target.indices = new Index2[ ] { a, b, c, d };
+        return target;
+    }
+
     public static Loop2[ ] Resize (in Loop2[ ] arr, in int sz)
     {
         if (sz < 1) return new Loop2[ ] { };
@@ -158,5 +164,11 @@ public class Loop2
 
         sb.Append (']');
         return sb.ToString ( );
+    }
+
+    public static Loop2 Tri (in Index2 a, in Index2 b, in Index2 c, in Loop2 target)
+    {
+        target.indices = new Index2[ ] { a, b, c };
+        return target;
     }
 }

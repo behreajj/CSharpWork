@@ -107,6 +107,12 @@ public class Loop3
         return result;
     }
 
+    public static Loop3 Quad (in Index3 a, in Index3 b, in Index3 c, in Index3 d, in Loop3 target)
+    {
+        target.indices = new Index3[ ] { a, b, c, d };
+        return target;
+    }
+
     public static Loop3[ ] Resize (in Loop3[ ] arr, in int sz)
     {
         if (sz < 1) return new Loop3[ ] { };
@@ -191,5 +197,11 @@ public class Loop3
 
         sb.Append (']');
         return sb.ToString ( );
+    }
+
+    public static Loop3 Tri (in Index3 a, in Index3 b, in Index3 c, in Loop3 target)
+    {
+        target.indices = new Index3[ ] { a, b, c };
+        return target;
     }
 }

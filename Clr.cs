@@ -131,11 +131,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="a">alpha channel</param>
     public Clr (in float r = 1.0f, in float g = 1.0f, in float b = 1.0f, in float a = 1.0f)
     {
-        // this._r = Utils.Clamp (r, 0.0f, 1.0f);
-        // this._g = Utils.Clamp (g, 0.0f, 1.0f);
-        // this._b = Utils.Clamp (b, 0.0f, 1.0f);
-        // this._a = Utils.Clamp (a, 0.0f, 1.0f);
-
         this._r = r;
         this._g = g;
         this._b = b;
@@ -170,8 +165,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        // TODO: Update ToString to match Vec2,3,4
-        return this.ToString (4);
+        return Clr.ToString (this);
     }
 
     /// <summary>
@@ -237,73 +231,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Returns a string representation of this color.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (in int places = 4)
-    {
-        return new StringBuilder (96)
-            .Append ("{ r: ")
-            .Append (Utils.ToFixed (this._r, places))
-            .Append (", g: ")
-            .Append (Utils.ToFixed (this._g, places))
-            .Append (", b: ")
-            .Append (Utils.ToFixed (this._b, places))
-            .Append (", a: ")
-            .Append (Utils.ToFixed (this._a, places))
-            .Append (" }")
-            .ToString ( );
-    }
-
-    /// <summary>
     /// Returns a named value tuple containing this color's components.
     /// </summary>
     /// <returns>the tuple</returns>
     public (float r, float g, float b, float a) ToTuple ( )
     {
         return (r: this._r, g: this._g, b: this._b, a: this._a);
-    }
-
-    /// <summary>
-    /// Converts a boolean to a color by supplying the boolean to all the
-    /// color's channels: 1.0 for true; 0.0 for false.
-    /// </summary>
-    /// <param name="b">the boolean</param>
-    /// <returns>the color</returns>
-    public static explicit operator Clr (in bool b)
-    {
-        float v = b ? 1.0f : 0.0f;
-        return new Clr (v, v, v, v);
-    }
-
-    /// <summary>
-    /// Converts an unsign ed byte to a color by supplying it to all the color's
-    /// channels.
-    /// </summary>
-    /// <param name="ub">value</param>
-    public static explicit operator Clr (in byte ub)
-    {
-        return new Clr (ub, ub, ub, ub);
-    }
-
-    /// <summary>
-    /// Converts a signed byte to a color by supplying it to all the color's
-    /// channels.
-    /// </summary>
-    /// <param name="sb">value</param>
-    public static explicit operator Clr (in sbyte sb)
-    {
-        return new Clr (sb, sb, sb, sb);
-    }
-
-    /// <summary>
-    /// Converts a float to a color by supplying it to all the color's channels.
-    /// </summary>
-    /// <param name="v">value</param>
-    public static explicit operator Clr (in float v)
-    {
-        return new Clr (v, v, v, v);
     }
 
     /// <summary>
@@ -529,7 +462,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         return new Clr (
             (c >> 0x10 & 0xff) * Utils.One255,
-            (c >> 0x8 & 0xff) * Utils.One255,
+            (c >> 0x08 & 0xff) * Utils.One255,
             (c & 0xff) * Utils.One255,
             (c >> 0x18 & 0xff) * Utils.One255);
     }
@@ -545,7 +478,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         return new Clr (
             (c >> 0x10 & 0xff) * Utils.One255,
-            (c >> 0x8 & 0xff) * Utils.One255,
+            (c >> 0x08 & 0xff) * Utils.One255,
             (c & 0xff) * Utils.One255,
             (c >> 0x18 & 0xff) * Utils.One255);
     }
@@ -561,65 +494,104 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         return new Clr (
             (c >> 0x10 & 0xff) * Utils.One255,
-            (c >> 0x8 & 0xff) * Utils.One255,
+            (c >> 0x08 & 0xff) * Utils.One255,
             (c & 0xff) * Utils.One255,
             (c >> 0x18 & 0xff) * Utils.One255);
     }
 
     /// <summary>
-    /// Converts from a vector representing hue, saturation and brightness to a
-    /// color with red, green and blue channels.
+    /// Converts from hue, saturation, lightness and alpha to
+    /// a color with red, green, blue and alpha. All
+    /// arguments are expected to be in the range [0.0, 1.0].
     /// </summary>
-    /// <param name="v">vector</param>
-    /// <returns>the color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr HsbaToRgba (in Vec4 v)
+    /// <param name="hsla">hsla color</param>
+    /// <returns>rgba color</returns>
+    public static Clr HslaToRgba (in Vec4 hsla)
     {
-        return HsbaToRgba (v.x, v.y, v.z, v.w);
+        float aCl = Utils.Clamp (hsla.w, 0.0f, 1.0f);
+        float light = hsla.z;
+        if (light <= 0.0f) return new Clr (0.0f, 0.0f, 0.0f, aCl);
+        if (light >= 1.0f) return new Clr (1.0f, 1.0f, 1.0f, aCl);
+
+        float sat = hsla.y;
+        if (sat <= 0.0f) return new Clr (light, light, light, aCl);
+
+        float scl = sat > 1.0f ? 1.0f : sat;
+        float q = light < 0.5f ?
+            light * (1.0f + scl) :
+            light + scl - light * scl;
+        float p = light + light - q;
+        float qnp6 = (q - p) * 6.0f;
+
+        float rHue = Utils.Mod1 (hsla.x + Utils.OneThird);
+        float gHue = Utils.Mod1 (hsla.x);
+        float bHue = Utils.Mod1 (hsla.x - Utils.OneThird);
+
+        float r = p;
+        if (rHue < Utils.OneSix) { r = p + qnp6 * rHue; }
+        else if (rHue < 0.5f) { r = q; }
+        else if (rHue < Utils.TwoThirds)
+        {
+            r = p + qnp6 * (Utils.TwoThirds - rHue);
+        }
+
+        float g = p;
+        if (gHue < Utils.OneSix) { g = p + qnp6 * gHue; }
+        else if (gHue < 0.5f) { g = q; }
+        else if (gHue < Utils.TwoThirds)
+        {
+            g = p + qnp6 * (Utils.TwoThirds - gHue);
+        }
+
+        float b = p;
+        if (bHue < Utils.OneSix) { b = p + qnp6 * bHue; }
+        else if (bHue < 0.5f) { b = q; }
+        else if (bHue < Utils.TwoThirds)
+        {
+            b = p + qnp6 * (Utils.TwoThirds - bHue);
+        }
+
+        return new Clr (r, g, b, aCl);
     }
 
     /// <summary>
-    /// Converts from hue, saturation and brightness to a color with red, green
-    /// and blue channels.
+    /// Converts from hue, saturation, value and alpha to
+    /// a color with red, green, blue and alpha. All
+    /// arguments are expected to be in the range [0.0, 1.0].
     /// </summary>
-    /// <param name="hue">hue</param>
-    /// <param name="sat">saturation</param>
-    /// <param name="bri">brightness</param>
-    /// <param name="alpha">alpha</param>
-    /// <returns>the color</returns>
-    public static Clr HsbaToRgba ( //
-        in float hue = 1.0f, //
-        in float sat = 1.0f, //
-        in float bri = 1.0f, //
-        in float alpha = 1.0f)
+    /// <param name="hsva">hsva color</param>
+    /// <returns>rgba color</returns>
+    public static Clr HsvaToRgba (in Vec4 hsva)
     {
-        if (sat <= 0.0f) return new Clr (bri, bri, bri, alpha);
+        float h = Utils.Mod1 (hsva.x) * 6.0f;
+        float s = Utils.Clamp (hsva.y, 0.0f, 1.0f);
+        float v = Utils.Clamp (hsva.z, 0.0f, 1.0f);
+        float a = Utils.Clamp (hsva.w, 0.0f, 1.0f);
 
-        float h = Utils.Mod1 (hue) * 6.0f;
         int sector = (int) h;
-        float secf = (float) sector;
-
-        float tint1 = bri * (1.0f - sat);
-        float tint2 = bri * (1.0f - sat * (h - secf));
-        float tint3 = bri * (1.0f - sat * (1.0f + secf - h));
+        float secf = sector;
+        float tint1 = v * (1.0f - s);
+        float tint2 = v * (1.0f - s * (h - secf));
+        float tint3 = v * (1.0f - s * (1.0f + secf - h));
 
         switch (sector)
         {
             case 0:
-                return new Clr (bri, tint3, tint1, alpha);
+                return new Clr (v, tint3, tint1, a);
             case 1:
-                return new Clr (tint2, bri, tint1, alpha);
+                return new Clr (tint2, v, tint1, a);
             case 2:
-                return new Clr (tint1, bri, tint3, alpha);
+                return new Clr (tint1, v, tint3, a);
             case 3:
-                return new Clr (tint1, tint2, bri, alpha);
+                return new Clr (tint1, tint2, v, a);
             case 4:
-                return new Clr (tint3, tint1, bri, alpha);
+                return new Clr (tint3, tint1, v, a);
             case 5:
-                return new Clr (bri, tint1, tint2, alpha);
+                return new Clr (v, tint1, tint2, a);
             default:
                 return Clr.White;
         }
+
     }
 
     /// <summary>
@@ -627,7 +599,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="lab">the lab color</param>
     /// <returns>the xyz color</returns>
-    public static Vec4 LabToXYZ (Vec4 lab)
+    public static Vec4 LabaToXyza (Vec4 lab)
     {
         double offset = 16.0d / 116.0d;
         double one116 = 1.0d / 116.0d;
@@ -638,16 +610,16 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         double c = a - lab.z * 0.005d;
 
         double acb = a * a * a;
-        if (acb > 0.008856d) a = acb;
-        else a = (a - offset) * one7787;
+        if (acb > 0.008856d) { a = acb; }
+        else { a = (a - offset) * one7787; }
 
         double bcb = b * b * b;
-        if (bcb > 0.008856d) b = bcb;
-        else b = (b - offset) * one7787;
+        if (bcb > 0.008856d) { b = bcb; }
+        else { b = (b - offset) * one7787; }
 
         double ccb = c * c * c;
-        if (ccb > 0.008856d) c = ccb;
-        else c = (c - offset) * one7787;
+        if (ccb > 0.008856d) { c = ccb; }
+        else { c = (c - offset) * one7787; }
 
         return new Vec4 (
             (float) (b * 0.95047d),
@@ -665,9 +637,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float LinearLuminance (in Clr c)
     {
-        return 0.21264935f * c.r +
-            0.71516913f * c.g +
-            0.07218152f * c.b;
+        return 0.21264935f * c._r +
+            0.71516913f * c._g +
+            0.07218152f * c._b;
     }
 
     /// <summary>
@@ -680,22 +652,22 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         double inv24 = 1.0d / 2.4d;
         return new Clr (
-            c.r <= 0.0031308f ?
-            c.r * 12.92f :
-            (float) (Math.Pow (c.r, inv24) * 1.055d - 0.055d),
+            c._r <= 0.0031308f ?
+            c._r * 12.92f :
+            (float) (Math.Pow (c._r, inv24) * 1.055d - 0.055d),
 
-            c.g <= 0.0031308f ?
-            c.g * 12.92f :
-            (float) (Math.Pow (c.g, inv24) * 1.055d - 0.055d),
+            c._g <= 0.0031308f ?
+            c._g * 12.92f :
+            (float) (Math.Pow (c._g, inv24) * 1.055d - 0.055d),
 
-            c.b <= 0.0031308f ?
-            c.b * 12.92f :
-            (float) (Math.Pow (c.b, inv24) * 1.055d - 0.055d),
+            c._b <= 0.0031308f ?
+            c._b * 12.92f :
+            (float) (Math.Pow (c._b, inv24) * 1.055d - 0.055d),
 
-            alpha ? c.a <= 0.0031308f ?
-            c.a * 12.92f :
-            (float) (Math.Pow (c.a, inv24) * 1.055d - 0.055d) :
-            c.a);
+            alpha ? c._a <= 0.0031308f ?
+            c._a * 12.92f :
+            (float) (Math.Pow (c._a, inv24) * 1.055d - 0.055d) :
+            c._a);
     }
 
     /// <summary>
@@ -705,13 +677,13 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="c">the linear color</param>
     /// <returns>the XYZ color</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Vec4 LinearToXYZ (in Clr c)
+    public static Vec4 LinearToXyza (in Clr c)
     {
         return new Vec4 (
-            0.41241086f * c.r + 0.35758457f * c.g + 0.1804538f * c.b,
-            0.21264935f * c.r + 0.71516913f * c.g + 0.07218152f * c.b,
-            0.019331759f * c.r + 0.11919486f * c.g + 0.95039004f * c.b,
-            c.a);
+            0.41241086f * c._r + 0.35758457f * c._g + 0.1804538f * c._b,
+            0.21264935f * c._r + 0.71516913f * c._g + 0.07218152f * c._b,
+            0.019331759f * c._r + 0.11919486f * c._g + 0.95039004f * c._b,
+            c._a);
     }
 
     /// <summary>
@@ -744,21 +716,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             Utils.Min (a._g, b._g),
             Utils.Min (a._b, b._b),
             Utils.Min (a._a, b._a));
-    }
-
-    /// <summary>
-    /// Mixes two colors according to their hue, saturation and brightness by a
-    /// step in the range [0.0, 1.0] .
-    /// </summary>
-    /// <param name="a">origin color</param>
-    /// <param name="b">destination color</param>
-    /// <param name="t">step</param>
-    /// <returns>the mixed color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr MixHsba (in Clr a, in Clr b, in float t = 0.5f)
-    {
-        //TODO: Refactor to use lerpnear for hue?
-        return Clr.HsbaToRgba (Vec4.Mix (Clr.RgbaToHsba (a), Clr.RgbaToHsba (b), t));
     }
 
     /// <summary>
@@ -855,7 +812,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     public static Clr Premul (in Clr c)
     {
         if (c.a <= 0.0f) return Clr.ClearBlack;
-        if (c.a >= 1.0f) return new Clr (c.r, c.g, c.b, 1.0f);
+        if (c.a >= 1.0f) return new Clr (c._r, c._g, c._b, 1.0f);
         return new Clr (
             c._r * c._a,
             c._g * c._a,
@@ -921,52 +878,96 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Converts a color to a vector which holds hue, saturation, brightness and
-    /// alpha.
+    /// Converts from a color's, red, green, blue and alpha
+    /// channels to hue, saturation, lightness and alpha.
     /// </summary>
-    /// <param name="c">the color</param>
-    /// <returns>the output vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Vec4 RgbaToHsba (in Clr c)
+    /// <param name="c">color</param>
+    /// <returns>hsla</returns>
+    public static Vec4 RgbaToHsla (in Clr c)
     {
-        return RgbaToHsba (c._r, c._g, c._b, c._a);
+        float red = c._r;
+        float green = c._g;
+        float blue = c._b;
+        float alpha = c._a;
+
+        float gbmx = green > blue ? green : blue;
+        float gbmn = green < blue ? green : blue;
+        float mx = gbmx > red ? gbmx : red;
+        float mn = gbmn < red ? gbmn : red;
+
+        float light = (mx + mn) * 0.5f;
+        if (mx == mn)
+        {
+            return new Vec4 (0.0f, 0.0f, light, alpha);
+        }
+        else
+        {
+            float diff = mx - mn;
+            float sum = mx + mn;
+            float hue;
+            if (mx == red)
+            {
+                hue = (green - blue) / diff;
+                if (green < blue) { hue += 6.0f; }
+            }
+            else if (mx == green)
+            {
+                hue = 2.0f + (blue - red) / diff;
+            }
+            else
+            {
+                hue = 4.0f + (red - green) / diff;
+            }
+            hue *= Utils.OneSix;
+            float sat = light > 0.5f ?
+                diff / (2.0f - sum) :
+                diff / sum;
+            return new Vec4 (hue, sat, light, alpha);
+        }
     }
 
     /// <summary>
-    /// Converts RGBA channels to a vector which holds hue, saturation,
-    /// brightness and alpha.
+    /// Converts from a color's, red, green, blue and alpha
+    /// channels to hue, saturation, value and alpha.
     /// </summary>
-    /// <param name="red">the red channel</param>
-    /// <param name="green">the green channel</param>
-    /// <param name="blue">the blue channel</param>
-    /// <param name="alpha">the alpha channel</param>
-    /// <returns>the output vector</returns>
-    public static Vec4 RgbaToHsba ( //
-        in float red = 1.0f, //
-        in float green = 1.0f, //
-        in float blue = 1.0f, // 
-        in float alpha = 1.0f)
+    /// <param name="c">color</param>
+    /// <returns>hsva</returns>
+    public static Vec4 RgbaToHsva (in Clr c)
     {
-        float bri = Utils.Max (red, green, blue);
-        float mn = Utils.Min (red, green, blue);
-        float delta = bri - mn;
+        float red = c._r;
+        float green = c._g;
+        float blue = c._b;
+        float alpha = c._a;
+
+        float gbmx = green > blue ? green : blue;
+        float gbmn = green < blue ? green : blue;
+        float val = gbmx > red ? gbmx : red;
+        float mn = gbmn < red ? gbmn : red;
+
+        float diff = val - mn;
         float hue = 0.0f;
 
-        if (delta != 0.0f)
+        if (diff != 0.0f)
         {
-            if (red == bri)
-                hue = (green - blue) / delta;
-            else if (green == bri)
-                hue = 2.0f + (blue - red) / delta;
+            if (red == val)
+            {
+                hue = (green - blue) / diff;
+                if (green < blue) { hue += 6.0f; }
+            }
+            else if (green == val)
+            {
+                hue = 2.0f + (blue - red) / diff;
+            }
             else
-                hue = 4.0f + (red - green) / delta;
+            {
+                hue = 4.0f + (red - green) / diff;
+            }
 
             hue *= Utils.OneSix;
-            if (hue < 0.0f) ++hue;
         }
 
-        float sat = (bri != 0.0f) ? delta / bri : 0.0f;
-        return new Vec4 (hue, sat, bri, alpha);
+        float sat = val != 0.0f ? diff / val : 0.0f;
+        return new Vec4 (hue, sat, val, alpha);
     }
 
     /// <summary>
@@ -991,22 +992,22 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         double inv1055 = 1.0d / 1.055d;
         return new Clr (
-            c.r <= 0.04045f ?
-            c.r * 0.07739938f :
-            (float) Math.Pow ((c.r + 0.055d) * inv1055, 2.4d),
+            c._r <= 0.04045f ?
+            c._r * 0.07739938f :
+            (float) Math.Pow ((c._r + 0.055d) * inv1055, 2.4d),
 
-            c.g <= 0.04045f ?
-            c.g * 0.07739938f :
-            (float) Math.Pow ((c.g + 0.055d) * inv1055, 2.4d),
+            c._g <= 0.04045f ?
+            c._g * 0.07739938f :
+            (float) Math.Pow ((c._g + 0.055d) * inv1055, 2.4d),
 
-            c.b <= 0.04045f ?
-            c.b * 0.07739938f :
-            (float) Math.Pow ((c.b + 0.055d) * inv1055, 2.4d),
+            c._b <= 0.04045f ?
+            c._b * 0.07739938f :
+            (float) Math.Pow ((c._b + 0.055d) * inv1055, 2.4d),
 
-            alpha ? c.a <= 0.04045f ?
-            c.a * 0.07739938f :
-            (float) Math.Pow ((c.a + 0.055d) * inv1055, 2.4d) :
-            c.a);
+            alpha ? c._a <= 0.04045f ?
+            c._a * 0.07739938f :
+            (float) Math.Pow ((c._a + 0.055d) * inv1055, 2.4d) :
+            c._a);
     }
 
     /// <summary>
@@ -1033,8 +1034,42 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         return (int) (c._a * 0xff + 0.5f) << 0x18 |
             (int) (c._r * 0xff + 0.5f) << 0x10 |
-            (int) (c._g * 0xff + 0.5f) << 0x8 |
+            (int) (c._g * 0xff + 0.5f) << 0x08 |
             (int) (c._b * 0xff + 0.5f);
+    }
+
+    /// <summary>
+    /// Returns a string representation of a color.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    [MethodImpl (MethodImplOptions.AggressiveInlining)]
+    public static string ToString (in Clr c, in int places = 4)
+    {
+        return Clr.ToString (new StringBuilder (96), c, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a representation of a color to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="c">color</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Clr c, in int places = 4)
+    {
+        sb.Append ("{ r: ");
+        Utils.ToFixed (sb, c._r, places);
+        sb.Append (", g: ");
+        Utils.ToFixed (sb, c._g, places);
+        sb.Append (", b: ");
+        Utils.ToFixed (sb, c._b, places);
+        sb.Append (", a: ");
+        Utils.ToFixed (sb, c._a, places);
+        sb.Append (' ');
+        sb.Append ('}');
+        return sb;
     }
 
     /// <summary>
@@ -1042,7 +1077,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="xyz">the XYZ color</param>
     /// <returns>the lab color</returns>
-    public static Vec4 XYZToLab (in Vec4 xyz)
+    public static Vec4 XyzaToLaba (in Vec4 xyz)
     {
         double oneThird = 1.0d / 3.0d;
         double offset = 16.0d / 116.0d;
@@ -1073,7 +1108,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="c">the XYZ color</param>
     /// <returns>the linear color</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr XYZToLinear (in Vec4 v)
+    public static Clr XyzaToLinear (in Vec4 v)
     {
         return new Clr (
             3.2408123f * v.x - 1.5373085f * v.y - 0.49858654f * v.z, //
