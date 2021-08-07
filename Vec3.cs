@@ -174,12 +174,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the evaluation</returns>
     public int CompareTo (Vec3 v)
     {
-        return (this._z > v._z) ? 1 :
-            (this._z < v._z) ? -1 :
-            (this._y > v._y) ? 1 :
+        return (this._z < v._z) ? -1 :
+            (this._z > v._z) ? 1 :
             (this._y < v._y) ? -1 :
-            (this._x > v._x) ? 1 :
+            (this._y > v._y) ? 1 :
             (this._x < v._x) ? -1 :
+            (this._x > v._x) ? 1 :
             0;
     }
 
@@ -934,22 +934,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Clamps a vector to a range within the lower and upper bound.
-    /// </summary>
-    /// <param name="v">the input vector</param>
-    /// <param name="lb">the range lower bound</param>
-    /// <param name="ub">the range upper bound</param>
-    /// <returns>the clamped vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Vec3 Clamp (in Vec3 v, in Vec3 lb, in Vec3 ub)
-    {
-        return new Vec3 (
-            Utils.Clamp (v._x, lb._x, ub._x),
-            Utils.Clamp (v._y, lb._y, ub._y),
-            Utils.Clamp (v._z, lb._z, ub._z));
-    }
-
-    /// <summary>
     /// Concatenates two one-dimensional Vec2 arrays.
     /// </summary>
     /// <param name="a">left array</param>
@@ -1258,18 +1242,30 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Generates a 3D array of vectors.
     /// </summary>
+    /// <returns>the array</returns>
+    public static Vec3[, , ] Grid ( )
+    {
+        return Vec3.GridCartesian (
+            new Vec3 (-1.0f, -1.0f, -1.0f),
+            new Vec3 (1.0f, 1.0f, 1.0f));
+    }
+
+    /// <summary>
+    /// Generates a 3D array of vectors representing
+    /// a Cartesian Grid.
+    /// </summary>
+    /// <param name="lowerBound">lower bound</param>
+    /// <param name="upperBound">upper bound</param>
     /// <param name="cols">number of columns</param>
     /// <param name="rows">number of rows</param>
     /// <param name="layers">number of layers</param>
-    /// <param name="lowerBound">lower bound</param>
-    /// <param name="upperBound">upper bound</param>
     /// <returns>the array</returns>
-    public static Vec3[, , ] Grid ( //
-        in int cols, //
-        in int rows, //
-        in int layers, //
+    public static Vec3[, , ] GridCartesian ( //
         in Vec3 lowerBound, //
-        in Vec3 upperBound)
+        in Vec3 upperBound, //
+        in int cols = 8, //
+        in int rows = 8, //
+        in int layers = 8)
     {
         int lval = layers < 2 ? 2 : layers;
         int rval = rows < 2 ? 2 : rows;

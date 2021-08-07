@@ -4,12 +4,32 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 /// <summary>
-/// A readonly struct. Supports RGBA and HSBA color spaces. Supports conversion
+/// A readonly struct. Supports conversion
 /// to and from integers where color channels are in the format 0xAARRGGBB.
 /// </summary>
 [Serializable]
 public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
 {
+    /// <summary>
+    /// Arbitrary hue in HSL assigned to desaturated colors that are closer to light.
+    /// </summary>
+    public const float HslHueLight = 48.0f / 360.0f;
+
+    /// <summary>
+    /// Arbitrary hue in HSL assigned to desaturated colors that are closer to shadow.
+    /// </summary>
+    public const float HslHueShadow = 255.0f / 360.0f;
+
+    /// <summary>
+    /// Arbitrary hue in LCh assigned to desaturated colors that are closer to light.
+    /// </summary>
+    public const float LchHueLight = 99.0f / 360.0f;
+
+    /// <summary>
+    /// Arbitrary hue in LCh assigned to desaturated colors that are closer to shadow.
+    /// </summary>
+    public const float LchHueShadow = 308.0f / 360.0f;
+
     /// <summary>
     /// The red color channel.
     /// </summary>
@@ -420,23 +440,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Clamps a color to a lower and upper bound.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <param name="lb">lower bound</param>
-    /// <param name="ub">upper bound</param>
-    /// <returns>the clamped color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr Clamp (in Clr c, in Clr lb, in Clr ub)
-    {
-        return new Clr (
-            Utils.Clamp (c._r, lb._r, ub._r),
-            Utils.Clamp (c._g, lb._g, ub._g),
-            Utils.Clamp (c._b, lb._b, ub._b),
-            Utils.Clamp (c._a, lb._a, ub._a));
-    }
-
-    /// <summary>
     /// Tests to see if a color contains a value.
     /// </summary>
     /// <param name="c">color</param>
@@ -599,7 +602,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="lab">the lab color</param>
     /// <returns>the xyz color</returns>
-    public static Vec4 LabaToXyza (Vec4 lab)
+    public static Vec4 LabaToXyza (in Vec4 lab)
     {
         double offset = 16.0d / 116.0d;
         double one116 = 1.0d / 116.0d;
@@ -684,38 +687,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             0.21264935f * c._r + 0.71516913f * c._g + 0.07218152f * c._b,
             0.019331759f * c._r + 0.11919486f * c._g + 0.95039004f * c._b,
             c._a);
-    }
-
-    /// <summary>
-    /// Finds the maximum for each channel of two input colors.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>the maximum</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr Max (in Clr a, in Clr b)
-    {
-        return new Clr (
-            Utils.Max (a._r, b._r),
-            Utils.Max (a._g, b._g),
-            Utils.Max (a._b, b._b),
-            Utils.Max (a._a, b._a));
-    }
-
-    /// <summary>
-    /// Finds the minimum for each channel of two input colors.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>the minimum</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Clr Min (in Clr a, in Clr b)
-    {
-        return new Clr (
-            Utils.Min (a._r, b._r),
-            Utils.Min (a._g, b._g),
-            Utils.Min (a._b, b._b),
-            Utils.Min (a._a, b._a));
     }
 
     /// <summary>
@@ -885,32 +856,43 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>hsla</returns>
     public static Vec4 RgbaToHsla (in Clr c)
     {
-        float red = c._r;
-        float green = c._g;
-        float blue = c._b;
-        float alpha = c._a;
+        float red = Utils.Clamp (c._r, 0.0f, 1.0f);
+        float green = Utils.Clamp (c._g, 0.0f, 1.0f);
+        float blue = Utils.Clamp (c._b, 0.0f, 1.0f);
+        float alpha = Utils.Clamp (c._a, 0.0f, 1.0f);
 
         float gbmx = green > blue ? green : blue;
         float gbmn = green < blue ? green : blue;
         float mx = gbmx > red ? gbmx : red;
         float mn = gbmn < red ? gbmn : red;
 
-        float light = (mx + mn) * 0.5f;
-        if (mx == mn)
+        float sum = mx + mn;
+        float diff = mx - mn;
+        float light = sum * 0.5f;
+
+        if (light <= Utils.One255)
         {
-            return new Vec4 (0.0f, 0.0f, light, alpha);
+            return new Vec4 (Clr.HslHueShadow, 0.0f, 0.0f, alpha);
+        }
+        else if (light >= 1.0f - Utils.One255)
+        {
+            return new Vec4 (Clr.HslHueLight, 0.0f, 1.0f, alpha);
+        }
+        else if (diff <= Utils.One255)
+        {
+            return new Vec4 (
+                Utils.LerpAngleNear (Clr.HslHueShadow, Clr.HslHueLight, light, 1.0f),
+                0.0f, light, alpha);
         }
         else
         {
-            float diff = mx - mn;
-            float sum = mx + mn;
             float hue;
-            if (mx == red)
+            if (Utils.Approx (red, mx, Utils.One255))
             {
                 hue = (green - blue) / diff;
                 if (green < blue) { hue += 6.0f; }
             }
-            else if (mx == green)
+            else if (Utils.Approx (green, mx, Utils.One255))
             {
                 hue = 2.0f + (blue - red) / diff;
             }
@@ -918,11 +900,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             {
                 hue = 4.0f + (red - green) / diff;
             }
-            hue *= Utils.OneSix;
-            float sat = light > 0.5f ?
-                diff / (2.0f - sum) :
-                diff / sum;
-            return new Vec4 (hue, sat, light, alpha);
+
+            float sat = light > 0.5f ? diff / (2.0f - sum) : diff / sum;
+            return new Vec4 (hue * Utils.OneSix, sat, light, alpha);
         }
     }
 
@@ -934,40 +914,57 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>hsva</returns>
     public static Vec4 RgbaToHsva (in Clr c)
     {
-        float red = c._r;
-        float green = c._g;
-        float blue = c._b;
-        float alpha = c._a;
+        float red = Utils.Clamp (c._r, 0.0f, 1.0f);
+        float green = Utils.Clamp (c._g, 0.0f, 1.0f);
+        float blue = Utils.Clamp (c._b, 0.0f, 1.0f);
+        float alpha = Utils.Clamp (c._a, 0.0f, 1.0f);
 
         float gbmx = green > blue ? green : blue;
         float gbmn = green < blue ? green : blue;
-        float val = gbmx > red ? gbmx : red;
-        float mn = gbmn < red ? gbmn : red;
+        float mx = gbmx > red ? gbmx : red;
 
-        float diff = val - mn;
-        float hue = 0.0f;
-
-        if (diff != 0.0f)
+        if (mx <= Utils.One255)
         {
-            if (red == val)
+            return new Vec4 (Clr.HslHueShadow, 0.0f, 0.0f, alpha);
+        }
+        else
+        {
+            float mn = gbmn < red ? gbmn : red;
+            float diff = mx - mn;
+            if (diff <= Utils.One255)
             {
-                hue = (green - blue) / diff;
-                if (green < blue) { hue += 6.0f; }
-            }
-            else if (green == val)
-            {
-                hue = 2.0f + (blue - red) / diff;
+                float light = (mx + mn) * 0.5f;
+                if (light >= 1.0f - Utils.One255)
+                {
+                    return new Vec4 (Clr.HslHueLight, 0.0f, 1.0f, alpha);
+                }
+                else
+                {
+                    return new Vec4 (
+                        Utils.LerpAngleNear (Clr.HslHueShadow, Clr.HslHueLight, light, 1.0f),
+                        0.0f, mx, alpha);
+                }
             }
             else
             {
-                hue = 4.0f + (red - green) / diff;
+                float hue;
+                if (Utils.Approx (red, mx, Utils.One255))
+                {
+                    hue = (green - blue) / diff;
+                    if (green < blue) { hue += 6.0f; }
+                }
+                else if (Utils.Approx (green, mx, Utils.One255))
+                {
+                    hue = 2.0f + (blue - red) / diff;
+                }
+                else
+                {
+                    hue = 4.0f + (red - green) / diff;
+                }
+
+                return new Vec4 (hue * Utils.OneSix, diff / mx, mx, alpha);
             }
-
-            hue *= Utils.OneSix;
         }
-
-        float sat = val != 0.0f ? diff / val : 0.0f;
-        return new Vec4 (hue, sat, val, alpha);
     }
 
     /// <summary>

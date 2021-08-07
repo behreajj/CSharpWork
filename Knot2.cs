@@ -712,7 +712,13 @@ public class Knot2
     /// <param name="xCenter">x center</param>
     /// <param name="yCenter">y center</param>
     /// <returns>the knot</returns>
-    public static Knot2 FromPolar (in float cosa = 1.0f, in float sina = 0.0f, in float radius = 1.0f, in float handleMag = Utils.FourThirds, in float xCenter = 0.0f, in float yCenter = 0.0f)
+    public static Knot2 FromPolar ( //
+        in float cosa = 1.0f, //
+        in float sina = 0.0f, //
+        in float radius = 1.0f, //
+        in float handleMag = Utils.FourThirds, //
+        in float xCenter = 0.0f, //
+        in float yCenter = 0.0f)
     {
         float cox = xCenter + radius * cosa;
         float coy = yCenter + radius * sina;

@@ -1182,7 +1182,6 @@ public static class Utils
     /// <param name="edge1">right edge</param>
     /// <param name="x">factor</param>
     /// <returns>the smooth step</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float SmoothStep (in float edge0 = 0.0f, in float edge1 = 1.0f, in float x = 0.5f)
     {
         float t = Utils.LinearStep (edge0, edge1, x);

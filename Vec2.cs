@@ -131,10 +131,10 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the evaluation</returns>
     public int CompareTo (Vec2 v)
     {
-        return (this._y > v._y) ? 1 :
-            (this._y < v._y) ? -1 :
-            (this._x > v._x) ? 1 :
+        return (this._y < v._y) ? -1 :
+            (this._y > v._y) ? 1 :
             (this._x < v._x) ? -1 :
+            (this._x > v._x) ? 1 :
             0;
     }
 
@@ -794,21 +794,6 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Clamps a vector to a range within the lower and upper bound.
-    /// </summary>
-    /// <param name="v">the input vector</param>
-    /// <param name="lb">the range lower bound</param>
-    /// <param name="ub">the range upper bound</param>
-    /// <returns>the clamped vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Vec2 Clamp (in Vec2 v, in Vec2 lb, in Vec2 ub)
-    {
-        return new Vec2 (
-            Utils.Clamp (v._x, lb._x, ub._x),
-            Utils.Clamp (v._y, lb._y, ub._y));
-    }
-
-    /// <summary>
     /// Concatenates two one-dimensional Vec2 arrays.
     /// </summary>
     /// <param name="a">left array</param>
@@ -1076,16 +1061,28 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Generates a 2D array of vectors.
     /// </summary>
-    /// <param name="cols">number of columns</param>
-    /// <param name="rows">number of rows</param>
+    /// <returns>the array</returns>
+    public static Vec2[, ] Grid ( )
+    {
+        return Vec2.GridCartesian (
+            new Vec2 (-1.0f, -1.0f),
+            new Vec2 (1.0f, 1.0f));
+    }
+
+    /// <summary>
+    /// Generates a 2D array of vectors representing
+    /// a Cartesian Grid.
+    /// </summary>
     /// <param name="lowerBound">lower bound</param>
     /// <param name="upperBound">upper bound</param>
+    /// <param name="cols">number of columns</param>
+    /// <param name="rows">number of rows</param>
     /// <returns>the array</returns>
-    public static Vec2[, ] Grid ( //
-        in int cols, //
-        in int rows, //
+    public static Vec2[, ] GridCartesian ( //
         in Vec2 lowerBound, //
-        in Vec2 upperBound)
+        in Vec2 upperBound, //
+        in int cols = 8, //
+        in int rows = 8)
     {
         int rval = rows < 2 ? 2 : rows;
         int cval = cols < 2 ? 2 : cols;

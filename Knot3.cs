@@ -822,7 +822,11 @@ public class Knot3
         return knot.rearHandle - knot.coord;
     }
 
-    public static Vec3 SmoothHandles (in Knot3 prev, in Knot3 curr, in Knot3 next, in Vec3 carry)
+    public static Vec3 SmoothHandles ( //
+        in Knot3 prev, //
+        in Knot3 curr, //
+        in Knot3 next, //
+        in Vec3 carry)
     {
         Vec3 coCurr = curr.coord;
         Vec3 coPrev = prev.coord;
@@ -836,10 +840,14 @@ public class Knot3
         float yFore = coNext.y - coCurr.y;
         float zFore = coNext.z - coCurr.z;
 
-        float bmSq = xBack * xBack + yBack * yBack + zBack * zBack;
+        float bmSq = xBack * xBack +
+            yBack * yBack +
+            zBack * zBack;
         float bmInv = bmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
 
-        float fmSq = xFore * xFore + yFore * yFore + zFore * zFore;
+        float fmSq = xFore * xFore +
+            yFore * yFore +
+            zFore * zFore;
         float fmInv = fmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked (fmSq) : 0.0f;
 
         float xDir = carry.x + xBack * bmInv - xFore * fmInv;
@@ -873,7 +881,10 @@ public class Knot3
             zCarry);
     }
 
-    public static Vec3 SmoothHandlesFirst (in Knot3 curr, in Knot3 next, in Vec3 carry)
+    public static Vec3 SmoothHandlesFirst ( //
+        in Knot3 curr, // 
+        in Knot3 next, //
+        in Vec3 carry)
     {
         Vec3 coCurr = curr.coord;
         Vec3 coNext = next.coord;
@@ -891,14 +902,18 @@ public class Knot3
             zBack * zBack;
         float bmInv = bmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
 
-        float fmSq = xFore * xFore + yFore * yFore + zFore * zFore;
+        float fmSq = xFore * xFore +
+            yFore * yFore +
+            zFore * zFore;
         float fmInv = fmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked (fmSq) : 0.0f;
 
         float xDir = carry.x + xBack * bmInv - xFore * fmInv;
         float yDir = carry.y + yBack * bmInv - yFore * fmInv;
         float zDir = carry.z + zBack * bmInv - zFore * fmInv;
 
-        float dmSq = xDir * xDir + yDir * yDir + zDir * zDir;
+        float dmSq = xDir * xDir +
+            yDir * yDir +
+            zDir * zDir;
         float rescl = dmSq > 0.0f ? Utils.OneThird / Utils.SqrtUnchecked (dmSq) : 0.0f;
 
         float xCarry = xDir * rescl;
@@ -917,7 +932,10 @@ public class Knot3
             zCarry);
     }
 
-    public static Vec3 SmoothHandlesLast (in Knot3 prev, in Knot3 curr, in Vec3 carry)
+    public static Vec3 SmoothHandlesLast ( //
+        in Knot3 prev, //
+        in Knot3 curr, //
+        in Vec3 carry)
     {
         Vec3 coCurr = curr.coord;
         Vec3 coPrev = prev.coord;
@@ -930,7 +948,9 @@ public class Knot3
         float yFore = -coCurr.y;
         float zFore = -coCurr.z;
 
-        float bmSq = xBack * xBack + yBack * yBack + zBack * zBack;
+        float bmSq = xBack * xBack +
+            yBack * yBack +
+            zBack * zBack;
         float bmInv = bmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked (bmSq) : 0.0f;
 
         float fmSq = xFore * xFore +
@@ -942,7 +962,9 @@ public class Knot3
         float yDir = carry.y + yBack * bmInv - yFore * fmInv;
         float zDir = carry.z + zBack * bmInv - zFore * fmInv;
 
-        float dmSq = xDir * xDir + yDir * yDir + zDir * zDir;
+        float dmSq = xDir * xDir +
+            yDir * yDir +
+            zDir * zDir;
         float rescl = dmSq > 0.0f ? Utils.OneThird / Utils.SqrtUnchecked (dmSq) : 0.0f;
 
         float xCarry = xDir * rescl;

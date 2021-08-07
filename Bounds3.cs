@@ -8,7 +8,13 @@ public struct Bounds3
     public Vec3 Max { get { return this.max; } }
     public Vec3 Min { get { return this.min; } }
 
-    public Bounds3 (in float xMin = -0.5f, in float yMin = -0.5f, in float zMin = -0.5f, in float xMax = 0.5f, in float yMax = 0.5f, in float zMax = 0.5f)
+    public Bounds3 ( //
+        in float xMin = -0.5f, //
+        in float yMin = -0.5f, //
+        in float zMin = -0.5f, //
+        in float xMax = 0.5f, //
+        in float yMax = 0.5f, //
+        in float zMax = 0.5f)
     {
         this.min = new Vec3 (xMin, yMin, zMin);
         this.max = new Vec3 (xMax, yMax, zMax);

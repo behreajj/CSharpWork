@@ -180,14 +180,14 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the evaluation</returns>
     public int CompareTo (Vec4 v)
     {
-        return (this._w > v._w) ? 1 :
-            (this._w < v._w) ? -1 :
-            (this._z > v._z) ? 1 :
+        return (this._w < v._w) ? -1 :
+            (this._w > v._w) ? 1 :
             (this._z < v._z) ? -1 :
-            (this._y > v._y) ? 1 :
+            (this._z > v._z) ? 1 :
             (this._y < v._y) ? -1 :
-            (this._x > v._x) ? 1 :
+            (this._y > v._y) ? 1 :
             (this._x < v._x) ? -1 :
+            (this._x > v._x) ? 1 :
             0;
     }
 
@@ -803,23 +803,6 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Clamps a vector to a range within the lower and upper bound.
-    /// </summary>
-    /// <param name="v">the input vector</param>
-    /// <param name="lb">the range lower bound</param>
-    /// <param name="ub">the range upper bound</param>
-    /// <returns>the clamped vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Vec4 Clamp (in Vec4 v, in Vec4 lb, in Vec4 ub)
-    {
-        return new Vec4 (
-            Utils.Clamp (v._x, lb._x, ub._x),
-            Utils.Clamp (v._y, lb._y, ub._y),
-            Utils.Clamp (v._z, lb._z, ub._z),
-            Utils.Clamp (v._w, lb._w, ub._w));
-    }
-
-    /// <summary>
     /// Tests to see if the vector contains a value
     /// </summary>
     /// <param name="a">the vector</param>
@@ -1040,20 +1023,32 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Generates a 4D array of vectors.
     /// </summary>
+    /// <returns>the array</returns>
+    public static Vec4[, , , ] Grid ( )
+    {
+        return Vec4.GridCartesian (
+            new Vec4 (-1.0f, -1.0f, -1.0f, -1.0f),
+            new Vec4 (1.0f, 1.0f, 1.0f, 1.0f));
+    }
+
+    /// <summary>
+    /// Generates a 4D array of vectors representing
+    /// a Cartesian Grid.
+    /// </summary>
+    /// <param name="lowerBound">lower bound</param>
+    /// <param name="upperBound">upper bound</param>
     /// <param name="cols">number of columns</param>
     /// <param name="rows">number of rows</param>
     /// <param name="layers">number of layers</param>
     /// <param name="steps">number of steps</param>
-    /// <param name="lowerBound">lower bound</param>
-    /// <param name="upperBound">upper bound</param>
     /// <returns>the array</returns>
-    public static Vec4[, , , ] Grid ( //
-        in int cols, //
-        in int rows, //
-        in int layers, //
-        in int steps, //
+    public static Vec4[, , , ] GridCartesian ( //
         in Vec4 lowerBound, //
-        in Vec4 upperBound)
+        in Vec4 upperBound, //
+        in int cols = 8, //
+        in int rows = 8, //
+        in int layers = 8, //
+        in int steps = 8)
     {
         int sval = steps < 2 ? 2 : steps;
         int lval = layers < 2 ? 2 : layers;

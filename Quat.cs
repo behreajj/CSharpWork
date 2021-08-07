@@ -315,19 +315,19 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <summary>
     /// Promotes a real number to a quaternion.
     /// </summary>
-    /// <param name="v">real number</param>
-    public static implicit operator Quat (in float v)
+    /// <param name="real">real number</param>
+    public static implicit operator Quat (in float real)
     {
-        return new Quat (v, new Vec3 (0.0f, 0.0f, 0.0f));
+        return new Quat (real, new Vec3 (0.0f, 0.0f, 0.0f));
     }
 
     /// <summary>
-    /// Promotes a vector to a pure quaternion.
+    /// Promotes an imaginary vector to a pure quaternion.
     /// </summary>
-    /// <param name="v">vector</param>
-    public static implicit operator Quat (in Vec3 v)
+    /// <param name="imag">vector</param>
+    public static implicit operator Quat (in Vec3 imag)
     {
-        return new Quat (0.0f, new Vec3 (v.x, v.y, v.z));
+        return new Quat (0.0f, new Vec3 (imag.x, imag.y, imag.z));
     }
 
     /// <summary>
@@ -496,7 +496,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
             float bInv = 1.0f / b;
             return new Quat (a.real * bInv, a.imag * bInv);
         }
-        return new Quat ( );
+        return Quat.Identity;
     }
 
     /// <summary>
@@ -671,12 +671,13 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
+    /// <param name="tolerance">tolerance</param>
     /// <returns>evaluation</returns>
     [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static bool Approx (in Quat a, in Quat b)
+    public static bool Approx (in Quat a, in Quat b, in float tolerance = Utils.Epsilon)
     {
-        return Utils.Approx (a.real, b.real) &&
-            Vec3.Approx (a.imag, b.imag);
+        return Utils.Approx (a.real, b.real, tolerance) &&
+            Vec3.Approx (a.imag, b.imag, tolerance);
     }
 
     /// <summary>

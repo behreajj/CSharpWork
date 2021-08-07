@@ -119,10 +119,10 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns></returns>
     public int CompareTo (Complex z)
     {
-        return (this.imag > z.imag) ? 1 :
-            (this.imag < z.imag) ? -1 :
-            (this.real > z.real) ? 1 :
+        return (this.imag < z.imag) ? -1 :
+            (this.imag > z.imag) ? 1 :
             (this.real < z.real) ? -1 :
+            (this.real > z.real) ? 1 :
             0;
     }
 
