@@ -649,7 +649,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="q">quaternion</param>
     /// <returns>evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool All (in Quat q)
     {
         return (q.real != 0.0f) && Vec3.All (q.imag);
@@ -660,7 +659,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="q">quaternion</param>
     /// <returns>evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool Any (in Quat q)
     {
         return (q.real != 0.0f) || Vec3.Any (q.imag);
@@ -673,7 +671,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <param name="b">right comparisand</param>
     /// <param name="tolerance">tolerance</param>
     /// <returns>evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool Approx (in Quat a, in Quat b, in float tolerance = Utils.Epsilon)
     {
         return Utils.Approx (a.real, b.real, tolerance) &&
@@ -688,7 +685,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="q">quaternion</param>
     /// <returns>conjugate</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Quat Conj (in Quat q)
     {
         return new Quat (q.real, -q.imag);
@@ -703,7 +699,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Dot (in Quat a, in Quat b)
     {
         return a.real * b.real + Vec3.Dot (a.imag, b.imag);
@@ -789,7 +784,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="q">the quaternion</param>
     /// <returns>the inverse</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Quat Inverse (in Quat q)
     {
         return Quat.Conj (q) / Quat.MagSq (q);
@@ -834,7 +828,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="q">the quaternion</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool IsIdentity (in Quat q)
     {
         return q.real == 1.0f && Vec3.None (q.imag);
@@ -846,7 +839,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="q">the quaternion</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool IsPure (in Quat q)
     {
         return q.real == 0.0f;
@@ -857,7 +849,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="q">the quaternion</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool IsVersor (in Quat q)
     {
         return Utils.Approx (Quat.MagSq (q), 1.0f);
@@ -872,7 +863,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="q">the quaternion</param>
     /// <returns>the magnitude</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Mag (in Quat q)
     {
         return Utils.Sqrt (Quat.MagSq (q));
@@ -889,7 +879,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="q">the quaternion</param>
     /// <returns>the magnitude squared</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float MagSq (in Quat q)
     {
         return q.real * q.real + Vec3.MagSq (q.imag);
@@ -1028,7 +1017,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="q">the quaternion</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool None (in Quat q)
     {
         return q.real == 0.0f && Vec3.None (q.imag);
@@ -1044,7 +1032,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="q">the input quaternion</param>
     /// <returns>the normalized quaternion</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Quat Normalize (in Quat q)
     {
         return q / Quat.Mag (q);

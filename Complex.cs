@@ -409,7 +409,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="z">complex number</param>
     /// <returns>the absolute</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Abs (in Complex z)
     {
         return Utils.Sqrt (Complex.AbsSq (z));
@@ -421,7 +420,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="z">complex number</param>
     /// <returns>the absolute squared</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float AbsSq (in Complex z)
     {
         return z.real * z.real + z.imag * z.imag;
@@ -432,7 +430,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="z">complex number</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool All (in Complex z)
     {
         return z.real != 0.0f && z.imag != 0.0f;
@@ -443,7 +440,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="z">complex number</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool Any (in Complex z)
     {
         return z.real != 0.0f || z.imag != 0.0f;
@@ -457,7 +453,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <param name="b">right comparisand</param>
     /// <param name="tolerance">tolerance</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool Approx (in Complex a, in Complex b, in float tolerance = Utils.Epsilon)
     {
         return Utils.Approx (a.real, b.real, tolerance) &&
@@ -470,7 +465,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="z">complex number</param>
     /// <returns>the conjugate</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Complex Conj (in Complex z)
     {
         return new Complex (z.real, -z.imag);
@@ -496,7 +490,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="z">complex number</param>
     /// <returns>result</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Complex Exp (in Complex z)
     {
         return Complex.Rect (Utils.Exp (z.real), z.imag);
@@ -523,7 +516,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="z">complex number</param>
     /// <returns>the logarithm</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Complex Log (in Complex z)
     {
         return new Complex (
@@ -565,7 +557,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="z">complex number</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool None (in Complex z)
     {
         return z.real == 0.0f && z.imag == 0.0f;
@@ -577,7 +568,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="z">complex number</param>
     /// <returns>the phase</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Phase (in Complex z)
     {
         return Utils.Atan2 (z.imag, z.real);
@@ -589,7 +579,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="z">complex number</param>
     /// <returns>the tuple</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static (float r, float phi) Polar (in Complex z)
     {
         return (r: Complex.Phase (z), phi: Complex.Abs (z));
@@ -603,7 +592,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Complex Pow (in Complex a, in Complex b)
     {
         return Complex.Exp (b * Complex.Log (a));
@@ -617,7 +605,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Complex Pow (in Complex a, in float b)
     {
         return Complex.Exp (b * Complex.Log (a));
@@ -631,7 +618,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Complex Pow (in float a, in Complex b)
     {
         return Complex.Exp (b * Complex.Log (a));
@@ -644,7 +630,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <param name="rhoMin">radius minimum</param>
     /// <param name="rhoMax">radius maximum</param>
     /// <returns>random complex number</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Complex Random (in System.Random rng, in float rhoMin = 1.0f, in float rhoMax = 1.0f)
     {
         return Complex.Rect (
@@ -690,7 +675,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="a">value</param>
     /// <returns>square root</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Complex Sqrt (in float a)
     {
         return (a > 0.0f) ?

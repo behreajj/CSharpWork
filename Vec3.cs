@@ -4,8 +4,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 /// <summary>
-/// A readonly struct influenced by GLSL, OSL and Processing's PVector. This is
-/// intended for storing points and directions in three-dimensional graphics
+/// A readonly struct influenced by GLSL and OSL. This is intended
+/// for storing points and directions in three-dimensional graphics
 /// programs.
 /// </summary>
 [Serializable]
@@ -657,7 +657,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the absolute vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Abs (in Vec3 v)
     {
         return new Vec3 (
@@ -672,7 +671,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool All (in Vec3 v)
     {
         return v._x != 0.0f &&
@@ -686,7 +684,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">the first vector</param>
     /// <param name="b">the second vector</param>
     /// <returns>the angle</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float AngleBetween (in Vec3 a, in Vec3 b)
     {
         return Vec3.Any (a) && Vec3.Any (b) ?
@@ -700,7 +697,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool Any (in Vec3 v)
     {
         return v._x != 0.0f ||
@@ -732,7 +728,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="b">right comparisand</param>
     /// <param name="tolerance">the tolerance</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool Approx (in Vec3 a, in Vec3 b, in float tolerance = Utils.Epsilon)
     {
         return Utils.Approx (a._x, b._x, tolerance) &&
@@ -747,7 +742,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="b">the magnitude</param>
     /// <param name="tolerance">the tolerance</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool ApproxMag (in Vec3 a, in float b = 1.0f, in float tolerance = Utils.Epsilon)
     {
         return Utils.Approx (Vec3.MagSq (a), b * b, tolerance);
@@ -759,7 +753,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool AreParallel (in Vec3 a, in Vec3 b, in float tolerance = Utils.Epsilon)
     {
         return (Utils.Abs (a._y * b._z - a._z * b._y) <= tolerance) &&
@@ -772,7 +765,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the angle in radians</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float AzimuthSigned (in Vec3 v)
     {
         return Utils.Atan2 (v._y, v._x);
@@ -783,7 +775,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the angle in radians</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float AzimuthUnsigned (in Vec3 v)
     {
         return Utils.ModRadians (Vec3.AzimuthSigned (v));
@@ -891,7 +882,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="ap1">second anchor point</param>
     /// <param name="step">step</param>
     /// <returns>the tangent along the curve</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 BezierTanUnit ( //
         in Vec3 ap0, //
         in Vec3 cp0, //
@@ -908,7 +898,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the result</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Ceil (in Vec3 v)
     {
         return new Vec3 (
@@ -924,7 +913,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="lb">the range lower bound</param>
     /// <param name="ub">the range upper bound</param>
     /// <returns>the clamped vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Clamp (in Vec3 v, in float lb = 0.0f, in float ub = 1.0f)
     {
         return new Vec3 (
@@ -974,7 +962,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">the vector</param>
     /// <param name="b">the value</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool Contains (in Vec3 a, in float b)
     {
         return Utils.Approx (a._x, b) ||
@@ -988,7 +975,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">the magnitude</param>
     /// <param name="b">the sign</param>
     /// <returns>the signed vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 CopySign (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
@@ -1022,7 +1008,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the cross product</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Cross (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
@@ -1037,7 +1022,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the absolute difference</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Diff (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
@@ -1068,7 +1052,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the Euclidean distance</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float DistEuclidean (in Vec3 a, in Vec3 b)
     {
         // double dx = b._x - a._x; double dy = b._y - a._y; double dz = b._z -
@@ -1142,7 +1125,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the dot product</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Dot (in Vec3 a, in Vec3 b)
     {
         return a._x * b._x +
@@ -1157,7 +1139,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the filtered vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Filter (in Vec3 v, in Vec3 lb, in Vec3 ub)
     {
         return new Vec3 (
@@ -1171,7 +1152,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the floor</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Floor (in Vec3 v)
     {
         return new Vec3 (
@@ -1186,7 +1166,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Fmod (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
@@ -1200,7 +1179,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the fractional portion</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Fract (in Vec3 v)
     {
         return new Vec3 (
@@ -1303,7 +1281,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the signed inclination</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float InclinationSigned (in Vec3 v)
     {
         return Utils.HalfPi - Vec3.InclinationUnsigned (v);
@@ -1326,7 +1303,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v"></param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool IsUnit (in Vec3 v)
     {
         return Utils.Approx (Vec3.MagSq (v), 1.0f);
@@ -1357,7 +1333,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="edge1">right edge</param>
     /// <param name="x">factor</param>
     /// <returns>the linear step</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 LinearStep (in Vec3 edge0, in Vec3 edge1, in Vec3 x)
     {
         return new Vec3 (
@@ -1374,7 +1349,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v"></param>
     /// <returns>the magnitude</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float Mag (in Vec3 v)
     {
         return Utils.Sqrt (Vec3.MagSq (v));
@@ -1390,7 +1364,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v"></param>
     /// <returns>the magnitude squared</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float MagSq (in Vec3 v)
     {
         return v._x * v._x +
@@ -1407,8 +1380,11 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
     /// <returns>the mapped value</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
-    public static Vec3 Map (in Vec3 v, in Vec3 lbOrigin, in Vec3 ubOrigin, in Vec3 lbDest, in Vec3 ubDest)
+    public static Vec3 Map (in Vec3 v, //
+        in Vec3 lbOrigin, //
+        in Vec3 ubOrigin, //
+        in Vec3 lbDest, //
+        in Vec3 ubDest)
     {
         return new Vec3 (
             Utils.Map (v._x, lbOrigin._x, ubOrigin._x, lbDest._x, ubDest._x),
@@ -1423,7 +1399,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">the input value</param>
     /// <param name="b">the upper bound</param>
     /// <returns>the maximum value</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Max (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
@@ -1439,7 +1414,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">the input value</param>
     /// <param name="b">the lower bound</param>
     /// <returns>the minimum value</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Min (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
@@ -1454,7 +1428,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">the original vector</param>
     /// <param name="b">the destination vector</param>
     /// <returns>the mix</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Mix (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
@@ -1489,7 +1462,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="b">the destination vector</param>
     /// <param name="t">the step</param>
     /// <returns>the mix</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Mix (in Vec3 a, in Vec3 b, in Vec3 t)
     {
         return new Vec3 (
@@ -1504,7 +1476,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Mod (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
@@ -1519,7 +1490,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the result</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Mod1 (in Vec3 v)
     {
         return new Vec3 (
@@ -1534,7 +1504,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool None (in Vec3 v)
     {
         return v._x == 0.0f &&
@@ -1549,7 +1518,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the unit vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Normalize (in Vec3 v)
     {
         return v / Vec3.Mag (v);
@@ -1560,7 +1528,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the vector</param>
     /// <returns>the truth table opposite</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Not (in Vec3 v)
     {
         return new Vec3 (
@@ -1575,7 +1542,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the result</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Pow (in Vec3 a, in Vec3 b)
     {
         return new Vec3 (
@@ -1605,7 +1571,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>the vector projection</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 ProjectVector (in Vec3 a, in Vec3 b)
     {
         return b * Vec3.ProjectScalar (a, b);
@@ -1617,7 +1582,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">vector</param>
     /// <param name="z">z component</param>
     /// <returns>vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Promote (in Vec2 v, in float z = 0.0f)
     {
         return new Vec3 (v.x, v.y, z);
@@ -1649,7 +1613,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the random vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 RandomCartesian (in System.Random rng, in Vec3 lb, in Vec3 ub)
     {
         return new Vec3 (
@@ -1666,7 +1629,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the random vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 RandomCartesian (in System.Random rng, in float lb = 0.0f, in float ub = 1.0f)
     {
         return new Vec3 (
@@ -1682,7 +1644,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="rhoMin">the minimum radius</param>
     /// <param name="rhoMax">the maximum radius</param>
     /// <returns>the output vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 RandomSpherical (in System.Random rng, in float rhoMin = 1.0f, in float rhoMax = 1.0f)
     {
         return Vec3.FromSpherical (
@@ -1704,7 +1665,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="i">the incident vector</param>
     /// <param name="n">the normal vector</param>
     /// <returns>the reflected vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Reflect (in Vec3 i, in Vec3 n)
     {
         return i - ((2.0f * Vec3.Dot (n, i)) * n);
@@ -1733,7 +1693,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">the vector</param>
     /// <param name="scalar">the scalar</param>
     /// <returns>the rescaled vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Rescale (in Vec3 v, in float scalar)
     {
         return Utils.Div (scalar, Vec3.Mag (v)) * v;
@@ -1843,7 +1802,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
     /// <returns>the rotated vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 RotateX (in Vec3 v, in float cosa, in float sina)
     {
         return new Vec3 (
@@ -1877,7 +1835,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
     /// <returns>the rotated vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 RotateY (in Vec3 v, in float cosa, in float sina)
     {
         return new Vec3 (
@@ -1911,7 +1868,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
     /// <returns>the rotated vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 RotateZ (in Vec3 v, in float cosa, in float sina)
     {
         return new Vec3 (
@@ -1925,7 +1881,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the rounded vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Round (in Vec3 v)
     {
         return new Vec3 (
@@ -1940,7 +1895,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">the input vector</param>
     /// <param name="places">the number of places</param>
     /// <returns>the rounded vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Round (in Vec3 v, in int places)
     {
         return new Vec3 (
@@ -1954,7 +1908,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the sign</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Sign (in Vec3 v)
     {
         return new Vec3 (
@@ -1971,7 +1924,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="edge1">right edge</param>
     /// <param name="x">factor</param>
     /// <returns>the smooth step</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 SmoothStep (in Vec3 edge0, in Vec3 edge1, in Vec3 x)
     {
         return new Vec3 (
@@ -1987,7 +1939,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="edge">edge</param>
     /// <param name="x">factor</param>
     /// <returns>the step</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Step (in Vec3 edge, in Vec3 x)
     {
         return new Vec3 (
@@ -2016,7 +1967,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">vector</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static string ToString (in Vec3 v, in int places = 4)
     {
         return Vec3.ToString (new StringBuilder (64), v, places).ToString ( );
@@ -2048,7 +1998,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="places">print precision</param>
     /// <returns>string</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static string ToString (in Vec3[ ] arr, in int places = 4)
     {
         return Vec3.ToString (new StringBuilder (arr.Length * 64), arr, places).ToString ( );
@@ -2091,7 +2040,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">the input vector</param>
     /// <returns>the truncation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Trunc (in Vec3 v)
     {
         return new Vec3 (
@@ -2110,7 +2058,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the wrapped vector</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec3 Wrap (in Vec3 v, in Vec3 lb, in Vec3 ub)
     {
         return new Vec3 (

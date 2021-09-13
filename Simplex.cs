@@ -184,7 +184,6 @@ public static class Simplex
         { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 }
     };
 
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     private static Vec2 Gradient2 (
         int i = 0,
         int j = 0,
@@ -193,7 +192,6 @@ public static class Simplex
         return Simplex.Grad2Lut[Simplex.Hash (i, j, seed) & 0x7];
     }
 
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     private static Vec3 Gradient3 (
         int i = 0,
         int j = 0,
@@ -204,7 +202,6 @@ public static class Simplex
             0xf];
     }
 
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     private static Vec4 Gradient4 (
         int i = 0,
         int j = 0,
@@ -263,7 +260,6 @@ public static class Simplex
         return c;
     }
 
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static (float fac, Vec4 deriv) Eval4 (in Vec4 v, int seed = Utils.HashBase)
     {
         return Simplex.Eval4 (v.x, v.y, v.z, v.w, seed);
@@ -458,7 +454,6 @@ public static class Simplex
             deriv: new Vec4 (derivx, derivy, derivz, derivw));
     }
 
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static (float fac, Vec3 deriv) Eval3 (in Vec3 v, int seed = Utils.HashBase)
     {
         return Simplex.Eval3 (v.x, v.y, v.z, seed);
@@ -639,7 +634,6 @@ public static class Simplex
             deriv: new Vec3 (derivx, derivy, derivz));
     }
 
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static (float fac, Vec2 deriv) Eval2 (in Vec2 v, int seed = Utils.HashBase)
     {
         return Simplex.Eval2 (v.x, v.y, seed);

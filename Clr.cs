@@ -209,7 +209,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the equivalence</returns>
     public bool Equals (Clr c)
     {
-        return Clr.ToHexInt (this) == Clr.ToHexInt (c);
+        return Clr.EqAlphaSatArith (this, c);
     }
 
     /// <summary>
@@ -401,7 +401,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="c">the color</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool All (in Clr c)
     {
         return (c._a > 0.0f) &&
@@ -416,7 +415,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="c">the color</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool Any (in Clr c)
     {
         return c._a > 0.0f;
@@ -429,7 +427,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>the clamped color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Clr Clamp (in Clr c, in float lb = 0.0f, in float ub = 1.0f)
     {
         return new Clr (
@@ -445,7 +442,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="c">color</param>
     /// <param name="v">value</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool Contains (in Clr c, in float v)
     {
         return Utils.Approx (c._a, v) ||
@@ -455,12 +451,55 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
+    /// Checks if two colors have equivalent alpha channels when converted to
+    /// bytes in [0, 255]. Uses saturation arithmetic.
+    /// </summary>
+    /// <param name="a">left comparisand</param>
+    /// <param name="b">right comparisand</param>
+    /// <returns>the evaluation</returns>
+    public static bool EqAlphaSatArith (in Clr a, in Clr b)
+    {
+        return (int) (0.5f + Utils.Clamp (a.a, 0.0f, 1.0f) * 0xff) ==
+            (int) (0.5f + Utils.Clamp (b.a, 0.0f, 1.0f) * 0xff);
+    }
+
+    /// <summary>
+    /// Checks if two colors have equivalent red, green and blue channels when
+    /// converted to bytes in [0, 255]. Uses saturation arithmetic.
+    /// </summary>
+    /// <param name="a">left comparisand</param>
+    /// <param name="b">right comparisand</param>
+    /// <returns>the evaluation</returns>
+    public static bool EqRgbSatArith (in Clr a, in Clr b)
+    {
+        return (int) (0.5f + Utils.Clamp (a.b, 0.0f, 1.0f) * 0xff) ==
+            (int) (0.5f + Utils.Clamp (b.b, 0.0f, 1.0f) * 0xff) &&
+            (int) (0.5f + Utils.Clamp (a.g, 0.0f, 1.0f) * 0xff) ==
+            (int) (0.5f + Utils.Clamp (b.g, 0.0f, 1.0f) * 0xff) &&
+            (int) (0.5f + Utils.Clamp (a.r, 0.0f, 1.0f) * 0xff) ==
+            (int) (0.5f + Utils.Clamp (b.r, 0.0f, 1.0f) * 0xff);
+    }
+
+    /// <summary>
+    /// Checks if two colors have equivalent red, green, blue and alph
+    /// channels when converted to bytes in [0, 255]. Uses saturation
+    /// arithmetic.
+    /// </summary>
+    /// <param name="a">left comparisand</param>
+    /// <param name="b">right comparisand</param>
+    /// <returns>the evaluation</returns>
+    public static bool EqSatArith (in Clr a, in Clr b)
+    {
+        return Clr.EqAlphaSatArith (a, b) &&
+            Clr.EqRgbSatArith (a, b);
+    }
+
+    /// <summary>
     /// Convert a hexadecimal representation of a color stored as 0xAARRGGBB
     /// into a color.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>the color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Clr FromHex (in int c)
     {
         return new Clr (
@@ -476,7 +515,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>the color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Clr FromHex (in uint c)
     {
         return new Clr (
@@ -492,7 +530,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>the color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Clr FromHex (in long c)
     {
         return new Clr (
@@ -637,7 +674,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>the luminance</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float LinearLuminance (in Clr c)
     {
         return 0.21264935f * c._r +
@@ -679,7 +715,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="c">the linear color</param>
     /// <returns>the XYZ color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Vec4 LinearToXyza (in Clr c)
     {
         return new Vec4 (
@@ -697,7 +732,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
     /// <returns>the mixed color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Clr MixRgbaLinear (in Clr a, in Clr b)
     {
         return new Clr (
@@ -734,7 +768,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
     /// <returns>the mixed color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Clr MixRgbaStandard (in Clr a, in Clr b)
     {
         return Clr.LinearToStandard (
@@ -752,7 +785,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
     /// <returns>the mixed color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Clr MixRgbaStandard (in Clr a, in Clr b, in float t)
     {
         return Clr.LinearToStandard (
@@ -767,7 +799,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="c">the color</param>
     /// <returns>the evaluation</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static bool None (in Clr c)
     {
         return c._a <= 0.0f;
@@ -779,7 +810,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="c">the color</param>
     /// <returns>the premultiplied color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Clr Premul (in Clr c)
     {
         if (c.a <= 0.0f) return Clr.ClearBlack;
@@ -821,7 +851,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Clr RandomRgba (in Random rng, in float lb = 0.0f, in float ub = 1.0f)
     {
         return new Clr (
@@ -838,7 +867,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
     /// <returns>the color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Clr RandomRgba (in Random rng, in Clr lb, in Clr ub)
     {
         return new Clr (
@@ -973,7 +1001,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>the luminance</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static float StandardLuminance (in Clr c)
     {
         return Clr.LinearLuminance (Clr.StandardToLinear (c));
@@ -1013,7 +1040,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="c">the input color</param>
     /// <returns>the color in hexadecimal</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int ToHexInt (in Clr c)
     {
         return Clr.ToHexIntUnchecked (Clr.Clamp (c, 0.0f, 1.0f));
@@ -1026,7 +1052,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="c">the input color</param>
     /// <returns>the color in hexadecimal</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static int ToHexIntUnchecked (in Clr c)
     {
         return (int) (c._a * 0xff + 0.5f) << 0x18 |
@@ -1041,7 +1066,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="c">color</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static string ToString (in Clr c, in int places = 4)
     {
         return Clr.ToString (new StringBuilder (96), c, places).ToString ( );
@@ -1104,7 +1128,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <param name="c">the XYZ color</param>
     /// <returns>the linear color</returns>
-    [MethodImpl (MethodImplOptions.AggressiveInlining)]
     public static Clr XyzaToLinear (in Vec4 v)
     {
         return new Clr (
