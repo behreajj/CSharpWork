@@ -670,41 +670,6 @@ public readonly struct Mat3 : IEnumerable
     }
 
     /// <summary>
-    /// Divides one matrix by another. Equivalent to multiplying the numerator
-    /// and the inverse of the denominator.
-    /// </summary>
-    /// <param name="a">numerator</param>
-    /// <param name="b">denominator</param>
-    /// <returns>quotient</returns>
-    public static Mat3 operator / (in Mat3 a, in Mat3 b)
-    {
-        return a * Mat3.Inverse (b);
-    }
-
-    /// <summary>
-    /// Divides a matrix by a scalar.
-    /// </summary>
-    /// <param name="a">numerator</param>
-    /// <param name="b">denominator</param>
-    /// <returns>quotient</returns>
-    public static Mat3 operator / (in Mat3 a, in float b)
-    {
-        return (b != 0.0f) ? a * (1.0f / b) : Mat3.Identity;
-    }
-
-    /// <summary>
-    /// Divides a scalar by a matrix. Equivalent to multiplying the numerator
-    /// and the inverse of the denominator.
-    /// </summary>
-    /// <param name="a">numerator</param>
-    /// <param name="b">denominator</param>
-    /// <returns>quotient</returns>
-    public static Mat3 operator / (in float a, in Mat3 b)
-    {
-        return a * Mat3.Inverse (b);
-    }
-
-    /// <summary>
     /// Adds two matrices together.
     /// </summary>
     /// <param name="a">left operand</param>
@@ -1128,7 +1093,7 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">input matrix</param>
     /// <returns>rotated matrix</returns>
-    public static Mat3 RotateElmsCcw (in Mat3 m)
+    public static Mat3 RotateElmsCCW (in Mat3 m)
     {
         return new Mat3 (
             m._m02, m._m12, m._m22,
@@ -1141,7 +1106,7 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">input matrix</param>
     /// <returns>rotated matrix</returns>
-    public static Mat3 RotateElmsCw (in Mat3 m)
+    public static Mat3 RotateElmsCW (in Mat3 m)
     {
         return new Mat3 (
             m._m20, m._m10, m._m00,

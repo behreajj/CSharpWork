@@ -39,7 +39,8 @@ public class Palette : IEnumerable
 
             set
             {
-                this.color = value;
+                if (Clr.None (value)) { this.color = Clr.ClearBlack; }
+                else { this.color = value; }
             }
         }
 
@@ -69,7 +70,7 @@ public class Palette : IEnumerable
         /// </summary>
         /// <param name="color">color</param>
         /// <param name="name">name</param>
-        public Entry (Clr color = new Clr ( ), string name = "")
+        public Entry (in Clr color = new Clr ( ), in string name = "")
         {
             this.Color = color;
             this.Name = name;
@@ -94,6 +95,7 @@ public class Palette : IEnumerable
         /// <returns>the hash code</returns>
         public override int GetHashCode ( )
         {
+            if (Clr.None (this.color)) { return 0; }
             return this.color.GetHashCode ( );
         }
 
@@ -105,10 +107,15 @@ public class Palette : IEnumerable
         public int CompareTo (Entry pe)
         {
             if (pe == null) { return 1; }
+
+            bool leftZeroAlpha = Clr.None (this.color);
+            bool rightZeroAlpha = Clr.None (pe.color);
+            if (leftZeroAlpha && rightZeroAlpha) { return 0; }
+            if (leftZeroAlpha) { return -1; }
+            if (rightZeroAlpha) { return 1; }
+
             int left = Clr.ToHexInt (this.color);
             int right = Clr.ToHexInt (pe.color);
-            if (left == 0 && right != 0) { return -1; }
-            if (right == 0 && left != 0) { return 1; }
             return (left < right) ? -1 : (left > right) ? 1 : 0;
         }
 
@@ -138,7 +145,7 @@ public class Palette : IEnumerable
         /// <param name="color"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public Entry Set (Clr color, string name)
+        public Entry Set (in Clr color, in string name)
         {
             this.Color = color;
             this.Name = name;
@@ -146,23 +153,100 @@ public class Palette : IEnumerable
         }
 
         /// <summary>
-        /// Appends an element to an array of entries.
+        /// Converrts a color to a palette entry.
+        /// </summary>
+        /// <param name="c">color</param>
+        public static implicit operator Entry (in Clr c)
+        {
+            return new Entry (c, "");
+        }
+
+        /// <summary>
+        /// Appends an entry to an array of entries.
         /// </summary>
         /// <param name="a">array</param>
-        /// <param name="b">element</param>
+        /// <param name="b">entry</param>
         /// <returns>array</returns>
         public static Entry[ ] Append (in Entry[ ] a, in Entry b)
         {
             bool aNull = a == null;
             bool bNull = b == null;
             if (aNull && bNull) { return new Entry[ ] { }; }
-            if (aNull) { return new Entry[ ] { b }; }
             if (bNull) { return a; }
+            if (aNull) { return new Entry[ ] { b }; }
+
             int aLen = a.Length;
             Entry[ ] result = new Entry[aLen + 1];
             System.Array.Copy (a, 0, result, 0, aLen);
             result[aLen] = b;
             return result;
+        }
+
+        /// <summary>
+        /// Inserts an entry into an array of entries at an index.
+        /// </summary>
+        /// <param name="a">array</param>
+        /// <param name="index">index</param>
+        /// <param name="b">entry</param>
+        /// <returns>array</returns>
+        public static Entry[ ] Insert (in Entry[ ] a, in int index, in Entry b)
+        {
+            bool aNull = a == null;
+            bool bNull = b == null;
+            if (aNull && bNull) { return new Entry[ ] { }; }
+            if (bNull) { return a; }
+            if (aNull) { return new Entry[ ] { b }; }
+
+            int aLen = a.Length;
+            int valIdx = Utils.Mod (index, aLen + 1);
+            Entry[ ] result = new Entry[aLen + 1];
+            System.Array.Copy (a, 0, result, 0, valIdx);
+            result[valIdx] = b;
+            System.Array.Copy (a, valIdx, result, valIdx + 1, aLen - valIdx);
+            return result;
+        }
+
+        /// <summary>
+        /// Prepends an entry to an array of entries.
+        /// </summary>
+        /// <param name="a">array</param>
+        /// <param name="b">entry</param>
+        /// <returns>array</returns>
+        public static Entry[ ] Prepend (in Entry[ ] a, in Entry b)
+        {
+            bool aNull = a == null;
+            bool bNull = b == null;
+            if (aNull && bNull) { return new Entry[ ] { }; }
+            if (bNull) { return a; }
+            if (aNull) { return new Entry[ ] { b }; }
+
+            int aLen = a.Length;
+            Entry[ ] result = new Entry[aLen + 1];
+            result[0] = b;
+            System.Array.Copy (a, 0, result, 1, aLen);
+            return result;
+        }
+
+        /// <summary>
+        /// Removes an entry from from an array at an index.
+        /// </summary>
+        /// <param name="a">array</param>
+        /// <param name="index">index</param>
+        /// <returns>array</returns>
+        public static (Entry[ ], Entry) RemoveAt (in Entry[ ] a, in int index)
+        {
+            bool aNull = a == null;
+            if (aNull) { return (new Entry[ ] { }, null); }
+
+            int aLen = a.Length;
+            if (aLen < 1) { return (new Entry[ ] { }, null); }
+            if (aLen < 2) { return (new Entry[ ] { }, a[0]); }
+
+            int valIdx = Utils.Mod (index, aLen);
+            Entry[ ] result = new Entry[aLen - 1];
+            System.Array.Copy (a, 0, result, 0, valIdx);
+            System.Array.Copy (a, valIdx + 1, result, valIdx, aLen - 1 - valIdx);
+            return (result, a[valIdx]);
         }
 
         /// <summary>
@@ -235,6 +319,40 @@ public class Palette : IEnumerable
         }
 
         /// <summary>
+        /// Returns a string representation of an entry
+        /// suitable for a PAL file extension.
+        /// </summary>
+        /// <param name="pe">entry</param>
+        /// <param name="places">number of decimal places</param>
+        /// <returns>string</returns>
+        public static string ToPalString (in Entry pe)
+        {
+            return Entry.ToPalString (new StringBuilder (16), pe).ToString ( );
+        }
+
+        /// <summary>
+        /// Appends a representation of an entry to a string builder,
+        /// formatted for the PAL file extension.
+        /// </summary>
+        /// <param name="sb">string builder</param>
+        /// <param name="pe">entry</param>
+        /// <param name="places">number of decimal places</param>
+        /// <returns>string builder</returns>
+        public static StringBuilder ToPalString (in StringBuilder sb, in Entry pe)
+        {
+            Clr c = pe.Color;
+            int r = (int) (Utils.Clamp (c.r, 0.0f, 1.0f) * 0xff + 0.5f);
+            int g = (int) (Utils.Clamp (c.g, 0.0f, 1.0f) * 0xff + 0.5f);
+            int b = (int) (Utils.Clamp (c.b, 0.0f, 1.0f) * 0xff + 0.5f);
+            sb.Append (r.ToString ( ).PadLeft (3, ' '));
+            sb.Append (' ');
+            sb.Append (g.ToString ( ).PadLeft (3, ' '));
+            sb.Append (' ');
+            sb.Append (b.ToString ( ).PadLeft (3, ' '));
+            return sb;
+        }
+
+        /// <summary>
         /// Returns a string representation of an entry.
         /// </summary>
         /// <param name="pe">entry</param>
@@ -268,7 +386,7 @@ public class Palette : IEnumerable
     /// <summary>
     /// The palette's author.
     /// </summary>
-    protected String author;
+    protected String author = "Anonymous";
 
     /// <summary>
     /// The array of entries in the palette.
@@ -278,7 +396,7 @@ public class Palette : IEnumerable
     /// <summary>
     /// The palette's name.
     /// </summary>
-    protected String name;
+    protected String name = "Palette";
 
     /// <summary>
     /// The palette's author.
@@ -323,7 +441,7 @@ public class Palette : IEnumerable
     public int Length { get { return this.entries.Length; } }
 
     /// <summary>
-    /// Constructs a palette with no colors.
+    /// Constructs an empty default palette.
     /// </summary>
     /// <param name="name">name</param>
     /// <param name="author">author</param>
@@ -331,6 +449,53 @@ public class Palette : IEnumerable
     {
         this.Name = name;
         this.Author = author;
+    }
+
+    /// <summary>
+    /// Constructs a palette from an array of colors.
+    /// </summary>
+    /// <param name="name">name</param>
+    /// <param name="author">author</param>
+    /// <param name="colors">colors</param>
+    public Palette (string name, string author, params Clr[ ] colors)
+    {
+        this.Name = name;
+        this.Author = author;
+
+        int len = colors.Length;
+        this.entries = new Entry[len];
+        for (int i = 0; i < len; ++i)
+        {
+            this.entries[i] = new Entry (colors[i], "");
+        }
+    }
+
+    /// <summary>
+    /// Constructs a palette from an array of entries.
+    /// </summary>
+    /// <param name="name">name</param>
+    /// <param name="author">author</param>
+    /// <param name="colors">colors</param>
+    public Palette (string name, string author, params Entry[ ] pes)
+    {
+        this.Name = name;
+        this.Author = author;
+
+        int len = pes.Length;
+        this.entries = new Entry[len];
+        for (int i = 0; i < len; ++i)
+        {
+            Entry source = pes[i];
+            if (source != null)
+            {
+                this.entries[i] = source;
+            }
+            else
+            {
+                this.entries[i] = new Entry (Clr.ClearBlack, "");
+            }
+        }
+
     }
 
     /// <summary>
@@ -372,49 +537,110 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
-    /// Returns a string representation of a palette.
+    /// Appends a color to this palette.
+    /// Optionally, allows the color to be named.
     /// </summary>
-    /// <param name="pal">palette</param>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>string</returns>
-    public static string ToString (in Palette pal, in int places = 4)
+    /// <param name="color">color</param>
+    /// <param name="name">name</param>
+    /// <returns>this palette</returns>
+    public Palette Append (in Clr color, in String name = "")
     {
-        return Palette.ToString (new StringBuilder (1024), pal, places).ToString ( );
+        return this.Append (new Entry (color, name));
     }
 
     /// <summary>
-    /// Appendsa a representation of a palette to a string builder.
+    /// Appends a palette entry to this palette.
     /// </summary>
-    /// <param name="sb">string builder</param>
-    /// <param name="pal">palette</param>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Palette pal, in int places = 4)
+    /// <param name="entry">entry</param>
+    /// <returns>this palette</returns>
+    public Palette Append (in Entry entry)
     {
-        sb.Append ("{ name: \"");
-        sb.Append (pal.name);
-        sb.Append ("\", author: \"");
-        sb.Append (pal.author);
+        this.entries = Entry.Append (this.entries, entry);
+        return this;
+    }
 
-        sb.Append ("\", entries: [ ");
-        Entry[ ] entries = pal.entries;
-        int len = entries.Length;
-        int last = len - 1;
-        for (int i = 0; i < len; ++i)
-        {
-            Entry entry = entries[i];
-            if (entry != null)
-            {
-                Entry.ToString (sb, entry, places);
-                if (i < last)
-                {
-                    sb.Append (',').Append (' ');
-                }
-            }
-        }
-        sb.Append (" ] }");
+    /// <summary>
+    /// Inserts a palette entry into this palette at an index.
+    /// </summary>
+    /// <param name="index">index</param>
+    /// <param name="color">color</param>
+    /// <param name="name">name</param>
+    /// <returns>this palette</returns>
+    public Palette Insert (in int index, in Clr color, in String name = "")
+    {
+        return this.Insert (index, new Entry (color, name));
+    }
 
-        return sb;
+    /// <summary>
+    /// Inserts a palette entry into this palette at an index.
+    /// </summary>
+    /// <param name="entry">entry</param>
+    /// <param name="index">index</param>
+    /// <returns>this palette</returns>
+    public Palette Insert (in int index, in Entry entry)
+    {
+        this.entries = Entry.Insert (this.entries, index, entry);
+        return this;
+    }
+
+    /// <summary>
+    /// Appends a color to this palette.
+    /// Optionally, allows the color to be named.
+    /// </summary>
+    /// <param name="color">color</param>
+    /// <param name="name">name</param>
+    /// <returns>this palette</returns>
+    public Palette Prepend (in Clr color, in String name = "")
+    {
+        return this.Prepend (new Entry (color, name));
+    }
+
+    /// <summary>
+    /// Appends a palette entry to this palette.
+    /// </summary>
+    /// <param name="entry">entry</param>
+    /// <returns>this palette</returns>
+    public Palette Prepend (in Entry entry)
+    {
+        this.entries = Entry.Prepend (this.entries, entry);
+        return this;
+    }
+
+    /// <summary>
+    /// Removes a palette entry at an index.
+    /// Returns the entry. The entry returned may be null if
+    /// the palette was empty.
+    /// </summary>
+    /// <param name="index">index</param>
+    /// <returns>removed entry</returns>
+    public Entry RemoveAt (in int index)
+    {
+        (Entry[ ], Entry) result = Entry.RemoveAt (this.entries, index);
+        this.entries = result.Item1;
+        return result.Item2;
+    }
+
+    /// <summary>
+    /// Returns a palette with three primary colors -- red, green and blue --
+    /// and three secondary colors -- yellow, cyan and magenta -- in the
+    /// standard RGB color space.
+    /// </summary>
+    /// <param name="target">palette</param>
+    /// <returns>palette</returns>
+    public static Palette Rgb (in Palette target)
+    {
+        target.entries = Entry.Resize (target.entries, 6);
+        Entry[ ] entries = target.entries;
+        entries[0].Set (Clr.Red, "Red");
+        entries[1].Set (Clr.Yellow, "Yellow");
+        entries[2].Set (Clr.Green, "Green");
+        entries[3].Set (Clr.Cyan, "Cyan");
+        entries[4].Set (Clr.Blue, "Blue");
+        entries[5].Set (Clr.Magenta, "Magenta");
+
+        target.Name = "Rgb";
+        target.Author = "Anonymous";
+        return target;
     }
 
     /// <summary>
@@ -460,25 +686,123 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
-    /// Returns a palette with three primary colors -- red, green and blue --
-    /// and three secondary colors -- yellow, cyan and magenta -- in the
-    /// standard RGB color space.
+    /// Returns a representation of the palette as a
+    /// PAL file string.
     /// </summary>
-    /// <param name="target">palette</param>
-    /// <returns>palette</returns>
-    public static Palette Rgb (in Palette target)
+    /// <param name="pal">palette</param>
+    /// <returns>string</returns>
+    public static string ToPalString (in Palette pal)
     {
-        target.entries = Entry.Resize (target.entries, 6);
-        Entry[ ] entries = target.entries;
-        entries[0].Set (Clr.Red, "Red");
-        entries[1].Set (Clr.Yellow, "Yellow");
-        entries[2].Set (Clr.Green, "Green");
-        entries[3].Set (Clr.Cyan, "Cyan");
-        entries[4].Set (Clr.Blue, "Blue");
-        entries[5].Set (Clr.Magenta, "Magenta");
+        return Palette.ToPalString (new StringBuilder (1024), pal).ToString ( );
+    }
 
-        target.Name = "Rgb";
-        target.Author = "Anonymous";
+    /// <summary>
+    /// Appends a representation of this palette as a
+    /// PAL file to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="pal">palette</param>
+    public static StringBuilder ToPalString (in StringBuilder sb, in Palette pal)
+    {
+        Entry[ ] entries = pal.entries;
+        int len = entries.Length;
+        int last = len - 1;
+
+        sb.Append ("JASC-PAL\n0100\n");
+        sb.Append (len);
+        for (int i = 0; i < len; ++i)
+        {
+            Entry entry = entries[i];
+            if (entry != null)
+            {
+                sb.Append ('\n');
+                Entry.ToPalString (sb, entry);
+            }
+        }
+        return sb;
+    }
+
+    /// <summary>
+    /// Returns a string representation of a palette.
+    /// </summary>
+    /// <param name="pal">palette</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    public static string ToString (in Palette pal, in int places = 4)
+    {
+        return Palette.ToString (new StringBuilder (1024), pal, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appendsa a representation of a palette to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="pal">palette</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Palette pal, in int places = 4)
+    {
+        sb.Append ("{ name: \"");
+        sb.Append (pal.name);
+        sb.Append ("\", author: \"");
+        sb.Append (pal.author);
+
+        sb.Append ("\", entries: [ ");
+        Entry[ ] entries = pal.entries;
+        int len = entries.Length;
+        int last = len - 1;
+        for (int i = 0; i < len; ++i)
+        {
+            Entry entry = entries[i];
+            if (entry != null)
+            {
+                Entry.ToString (sb, entry, places);
+                if (i < last)
+                {
+                    sb.Append (',');
+                    sb.Append (' ');
+                }
+            }
+        }
+        sb.Append (" ] }");
+
+        return sb;
+    }
+
+    /// <summary>
+    /// Sets the target palette's entries to the unique elements
+    /// of the source palette.
+    /// </summary>
+    /// <param name="source">source palette</param>
+    /// <param name="target">target palette</param>
+    /// <returns>target palette</returns>
+    public static Palette UniqueEntries (in Palette source, in Palette target)
+    {
+        Entry[ ] sourceEntries = source.entries;
+        int len = sourceEntries.Length;
+        int index = 0;
+        Dictionary<Entry, int> clrDict = new Dictionary<Entry, int> (len);
+
+        for (int i = 0; i < len; ++i)
+        {
+            Entry sourceEntry = sourceEntries[i];
+            if (!clrDict.ContainsKey (sourceEntry))
+            {
+                clrDict.Add (sourceEntry, index);
+                ++index;
+            }
+        }
+
+        Entry[ ] uniqueEntries = new Entry[clrDict.Count];
+        foreach (KeyValuePair<Entry, int> kvp in clrDict)
+        {
+            Entry uniqueEntry = kvp.Key;
+            uniqueEntries[kvp.Value] = new Entry (
+                uniqueEntry.Color,
+                uniqueEntry.Name);
+        }
+
+        target.entries = uniqueEntries;
         return target;
     }
 }

@@ -1320,6 +1320,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the unit vector</returns>
     public static Vec2 Normalize (in Vec2 v)
     {
+        // TODO: Inline?
         return v / Vec2.Mag (v);
     }
 

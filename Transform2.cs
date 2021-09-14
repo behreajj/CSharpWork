@@ -312,6 +312,7 @@ public class Transform2
     /// <returns>the string</returns>
     public string ToString (in int places = 4)
     {
+        // TODO: Standardize.
         return new StringBuilder (160)
             .Append ("{ location: ")
             .Append (Vec2.ToString (this.location, places))

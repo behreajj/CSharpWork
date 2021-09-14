@@ -227,7 +227,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return ToString (4);
+        return Quat.ToString (this);
     }
 
     /// <summary>
@@ -281,22 +281,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         arr[i + 2] = this.imag.y;
         arr[i + 3] = this.imag.z;
         return arr;
-    }
-
-    /// <summary>
-    /// Returns a string representation of this quaternion.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (int places = 4)
-    {
-        return new StringBuilder (128)
-            .Append ("{ real: ")
-            .Append (Utils.ToFixed (this.real, places))
-            .Append (", imag: ")
-            .Append (Vec3.ToString (this.imag, places))
-            .Append (" }")
-            .ToString ( );
     }
 
     /// <summary>
@@ -479,7 +463,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>quotient</returns>
     public static Quat operator / (in Quat a, in Quat b)
     {
-        return a * Quat.Inverse (b);
+        if (Quat.Any (b))
+        {
+            return a * Quat.Inverse (b);
+        }
+        return Quat.Identity;
     }
 
     /// <summary>
@@ -506,7 +494,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>quotient</returns>
     public static Quat operator / (in float a, in Quat b)
     {
-        return a * Quat.Inverse (b);
+        if (Quat.Any (b))
+        {
+            return a * Quat.Inverse (b);
+        }
+        return Quat.Identity;
     }
 
     /// <summary>
@@ -518,7 +510,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>quotient</returns>
     public static Quat operator / (in Quat a, in Vec3 b)
     {
-        return a * (-b / Vec3.MagSq (b));
+        if (Vec3.Any (b))
+        {
+            return a * (-b / Vec3.MagSq (b));
+        }
+        return Quat.Identity;
     }
 
     /// <summary>
@@ -530,7 +526,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>quotient</returns>
     public static Quat operator / (in Vec3 a, in Quat b)
     {
-        return a * Quat.Inverse (b);
+        if (Quat.Any (b))
+        {
+            return a * Quat.Inverse (b);
+        }
+        return Quat.Identity;
     }
 
     /// <summary>
@@ -785,7 +785,17 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>the inverse</returns>
     public static Quat Inverse (in Quat q)
     {
-        return Quat.Conj (q) / Quat.MagSq (q);
+        // This should be inlined to avoid circularity with division
+        // operator definitions above, where divide by zero must return
+        // consistent results for floats, vectors, quaternions.
+        Vec3 i = q.imag;
+        float mSq = q.real * q.real + Vec3.MagSq (i);
+        if (mSq != 0.0f)
+        {
+            float msi = 1.0f / mSq;
+            return new Quat (q.real * msi, -i.x * msi, -i.y * msi, -i.z * msi);
+        }
+        return Quat.Identity;
     }
 
     /// <summary>
@@ -992,6 +1002,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>the rotated vector</returns>
     public static Vec3 MulVector (in Quat q, in Vec3 v)
     {
+        // Quat product = (q * source) / q; return product.imag;
+
         float w = q.real;
         Vec3 i = q.imag;
         float qx = i.x;
@@ -1007,8 +1019,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
             ix * w + iz * qy - iw * qx - iy * qz,
             iy * w + ix * qz - iw * qy - iz * qx,
             iz * w + iy * qx - iw * qz - ix * qy);
-
-        // Quat product = (q * source) / q; return product.imag;
     }
 
     /// <summary>
@@ -1033,7 +1043,14 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>the normalized quaternion</returns>
     public static Quat Normalize (in Quat q)
     {
-        return q / Quat.Mag (q);
+        Vec3 i = q.imag;
+        float mSq = q.real * q.real + Vec3.MagSq (i);
+        if (mSq != 0.0f)
+        {
+            float mInv = 1.0f / Utils.SqrtUnchecked (mSq);
+            return new Quat (q.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
+        }
+        return Quat.Identity;
     }
 
     /// <summary>
@@ -1297,6 +1314,35 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         return (
             angle: angle,
             axis: new Vec3 (ax * mInv, ay * mInv, az * mInv));
+    }
+
+    /// <summary>
+    /// Returns a string representation of a quaternion.
+    /// </summary>
+    /// <param name="v">quaternion</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    public static string ToString (in Quat q, in int places = 4)
+    {
+        return Quat.ToString (new StringBuilder (128), q, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a representation of a quaternion to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="q">quaternion</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Quat q, in int places = 4)
+    {
+        sb.Append ("{ real: ");
+        Utils.ToFixed (sb, q.real, places);
+        sb.Append (", imag: ");
+        Vec3.ToString (sb, q.imag, places);
+        sb.Append (' ');
+        sb.Append ('}');
+        return sb;
     }
 
     /// <summary>

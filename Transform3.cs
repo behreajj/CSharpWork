@@ -331,15 +331,16 @@ public class Transform3
     /// <returns>the string</returns>
     public string ToString (in int places = 4)
     {
-        return new StringBuilder (354)
-            .Append ("{ location: ")
-            .Append (Vec3.ToString (this.location, places))
-            .Append (", rotation: ")
-            .Append (this.rotation.ToString (places))
-            .Append (", scale: ")
-            .Append (Vec3.ToString (this.scale, places))
-            .Append (" }")
-            .ToString ( );
+        // TODO: Standardize.
+        StringBuilder sb = new StringBuilder (354)
+            .Append ("{ location: ");
+        Vec3.ToString (sb, this.location, places);
+        sb.Append (", rotation: ");
+        Quat.ToString (sb, this.rotation, places);
+        sb.Append (", scale: ");
+        Vec3.ToString (sb, this.scale, places);
+        sb.Append (" }");
+        return sb.ToString ( );
     }
 
     /// <summary>

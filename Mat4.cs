@@ -903,41 +903,6 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
-    /// Divides one matrix by another. Equivalent to multiplying the numerator
-    /// and the inverse of the denominator.
-    /// </summary>
-    /// <param name="a">numerator</param>
-    /// <param name="b">denominator</param>
-    /// <returns>quotient</returns>
-    public static Mat4 operator / (in Mat4 a, in Mat4 b)
-    {
-        return a * Mat4.Inverse (b);
-    }
-
-    /// <summary>
-    /// Divides a matrix by a scalar.
-    /// </summary>
-    /// <param name="a">numerator</param>
-    /// <param name="b">denominator</param>
-    /// <returns>quotient</returns>
-    public static Mat4 operator / (in Mat4 a, in float b)
-    {
-        return (b != 0.0f) ? a * (1.0f / b) : Mat4.Identity;
-    }
-
-    /// <summary>
-    /// Divides a scalar by a matrix. Equivalent to multiplying the numerator
-    /// and the inverse of the denominator.
-    /// </summary>
-    /// <param name="a">numerator</param>
-    /// <param name="b">denominator</param>
-    /// <returns>quotient</returns>
-    public static Mat4 operator / (in float a, in Mat4 b)
-    {
-        return a * Mat4.Inverse (b);
-    }
-
-    /// <summary>
     /// Adds two matrices together.
     /// </summary>
     /// <param name="a">left operand</param>
@@ -1771,7 +1736,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">input matrix</param>
     /// <returns>rotated matrix</returns>
-    public static Mat4 RotateElmsCcw (in Mat4 m)
+    public static Mat4 RotateElmsCCW (in Mat4 m)
     {
         return new Mat4 (
             m._m03, m._m13, m._m23, m._m33,
@@ -1785,7 +1750,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">input matrix</param>
     /// <returns>rotated matrix</returns>
-    public static Mat4 RotateElmsCw (in Mat4 m)
+    public static Mat4 RotateElmsCW (in Mat4 m)
     {
         return new Mat4 (
             m._m30, m._m20, m._m10, m._m00,
