@@ -14,6 +14,7 @@ public class ClrGradient : IEnumerable
   /// Stores a color at a given step (or percent) in the range [0.0, 1.0] .
   /// Equality and hash are based solely on the step, not on the color it holds.
   /// </summary>
+  [Serializable]
   public readonly struct Key : IComparable<Key>, IEquatable<Key>
   {
     /// <summary>
@@ -58,7 +59,7 @@ public class ClrGradient : IEnumerable
     {
       if (Object.ReferenceEquals (this, value)) return true;
       if (Object.ReferenceEquals (null, value)) return false;
-      if (value is Key) return this.Equals ((Key) value);
+      if (value is ClrGradient.Key) return this.Equals ((ClrGradient.Key) value);
       return false;
     }
 
@@ -89,8 +90,8 @@ public class ClrGradient : IEnumerable
     /// <returns>the comparison</returns>
     public int CompareTo (Key k)
     {
-      return (this.step > k.step) ? 1 :
-        (this.step < k.step) ? -1 :
+      return (this.step < k.step) ? -1 :
+        (this.step > k.step) ? 1 :
         0;
     }
 
@@ -102,12 +103,7 @@ public class ClrGradient : IEnumerable
     /// <returns>the evaluation</returns>
     public bool Equals (Key k)
     {
-      if (this.step.GetHashCode ( ) != k.step.GetHashCode ( ))
-      {
-        return false;
-      }
-
-      return true;
+      return this.GetHashCode ( ) == k.GetHashCode ( );
     }
 
     /// <summary>
@@ -117,14 +113,7 @@ public class ClrGradient : IEnumerable
     /// <returns>the string</returns>
     public string ToString (int places = 4)
     {
-      // TODO: Switch to sb pass by reference mode.
-      return new StringBuilder (96)
-        .Append ("{ step: ")
-        .Append (Utils.ToFixed (this.step, places))
-        .Append (", color: ")
-        .Append (Clr.ToString (this.color, places))
-        .Append (" }")
-        .ToString ( );
+      return Key.ToString (this);
     }
 
     /// <summary>
@@ -196,6 +185,35 @@ public class ClrGradient : IEnumerable
     {
       return a.step == b.step;
     }
+
+    /// <summary>
+    /// Returns a string representation of a key.
+    /// </summary>
+    /// <param name="key">color key</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    public static string ToString (in Key key, in int places = 4)
+    {
+      return Key.ToString (new StringBuilder (96), key, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a representation of a key to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="key">color key</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Key key, in int places = 4)
+    {
+      sb.Append ("{ step: ");
+      Utils.ToFixed (sb, key.step, places);
+      sb.Append (", color: ");
+      Clr.ToString (sb, key.color, places);
+      sb.Append (' ');
+      sb.Append ('}');
+      return sb;
+    }
   }
 
   /// <summary>
@@ -204,31 +222,17 @@ public class ClrGradient : IEnumerable
   protected readonly List<Key> keys = new List<Key> (16);
 
   /// <summary>
-  /// Returns an array containing the color gradient's keys.
-  /// </summary>
-  /// <returns>the array</returns>
-  public Key[ ] Keys
-  {
-    get
-    {
-      Key[ ] result = new Key[this.keys.Count];
-      this.keys.CopyTo (result);
-      return result;
-    }
-  }
-
-  /// <summary>
   /// Returns the number of color keys in this gradient.
   /// </summary>
   /// <value>the length</value>
   public int Length { get { return this.keys.Count; } }
 
   /// <summary>
-  /// Constructs a color gradient with two keys, clear black at 0.0 and opaque
-  /// white at 1.0 .
+  /// Constructs a color gradient.
   /// </summary>
   public ClrGradient ( )
   {
+    // TODO: Reconsider this...
     this.keys.Add (new Key (0.0f, Clr.ClearBlack));
     this.keys.Add (new Key (1.0f, Clr.White));
   }
@@ -292,6 +296,7 @@ public class ClrGradient : IEnumerable
   /// <returns>the string</returns>
   public override string ToString ( )
   {
+    // TODO: Switch to using standard static method.
     return this.ToString (4);
   }
 
@@ -340,7 +345,7 @@ public class ClrGradient : IEnumerable
     int high = this.keys.Count;
     while (low < high)
     {
-      // TODO: I think the |0 is for JavaScript only?
+      // The | 0 is floor div.
       int middle = (low + high) / 2 | 0;
       if (step > this.keys[middle].Step)
         low = middle + 1;
@@ -361,7 +366,7 @@ public class ClrGradient : IEnumerable
     int high = this.keys.Count;
     while (low < high)
     {
-      // TODO: I think the |0 is for JavaScript only?
+      // The | 0 is floor div?
       int middle = (low + high) / 2 | 0;
       if (step < this.keys[middle].Step)
         high = middle;
@@ -660,17 +665,19 @@ public class ClrGradient : IEnumerable
   /// <returns>the string</returns>
   public string ToString (in int places = 4)
   {
+    // TODO: Switch to static format for this.
     int len = this.keys.Count;
     int last = len - 1;
 
     StringBuilder sb = new StringBuilder (16 + 128 * len);
     sb.Append ("{ keys: [ ");
-    for (int i = 0; i < len; ++i)
+    for (int i = 0; i < last; ++i)
     {
-      Key key = this.keys[i];
-      sb.Append (key.ToString (places));
-      if (i < last) sb.Append (", ");
+      Key.ToString (sb, this.keys[i], places);
+      sb.Append (',');
+      sb.Append (' ');
     }
+    Key.ToString (sb, this.keys[last], places);
     sb.Append (" ] }");
     return sb.ToString ( );
   }

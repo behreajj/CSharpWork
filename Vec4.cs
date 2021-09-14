@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 /// <summary>
@@ -166,8 +165,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        // TODO: Update to Vec2,3 string method.
-        return Vec4.ToString (this, 4);
+        return Vec4.ToString (this);
     }
 
     /// <summary>
@@ -302,7 +300,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Converts a vector to a boolean by finding whether all of its components
     /// are non-zero.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the boolean</returns>
     public static explicit operator bool (in Vec4 v)
     {
@@ -312,7 +310,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Converts a vector to a float by finding its magnitude.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the float</returns>
     public static explicit operator float (in Vec4 v)
     {
@@ -323,7 +321,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// A vector evaluates to true when all of its components are not equal to
     /// zero.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the evaluation</returns>
     public static bool operator true (in Vec4 v)
     {
@@ -334,7 +332,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// A vector evaluates to false when all of its components are equal to
     /// zero.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the evaluation</returns>
     public static bool operator false (in Vec4 v)
     {
@@ -344,7 +342,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Evaluates a vector as a boolean. Equivalent to using the ~ operator.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the opposite</returns>
     public static Vec4 operator ! (in Vec4 v)
     {
@@ -354,7 +352,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Evaluates a vector as a boolean. Equivalent to using the ! operator.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the complement</returns>
     public static Vec4 operator ~ (in Vec4 v)
     {
@@ -410,9 +408,9 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Negates the input vector
+    /// Negates vector
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the negation</returns>
     public static Vec4 operator - (in Vec4 v)
     {
@@ -700,7 +698,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Finds the absolute value of each vector component.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the absolute vector</returns>
     public static Vec4 Abs (in Vec4 v)
     {
@@ -715,7 +713,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Tests to see if all the vector's components are non-zero. Useful when
     /// testing valid dimensions (width and depth) stored in vectors.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the evaluation</returns>
     public static bool All (in Vec4 v)
     {
@@ -728,7 +726,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Tests to see if any of the vector's components are non-zero.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the evaluation</returns>
     public static bool Any (in Vec4 v)
     {
@@ -756,7 +754,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Tests to see if a vector has, approximately, the specified magnitude.
     /// </summary>
-    /// <param name="a">the input vector</param>
+    /// <param name="a">vector</param>
     /// <param name="b">the magnitude</param>
     /// <param name="tolerance">the tolerance</param>
     /// <returns>the evaluation</returns>
@@ -768,7 +766,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Raises each component of the vector to the nearest greater integer.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the result</returns>
     public static Vec4 Ceil (in Vec4 v)
     {
@@ -782,7 +780,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Clamps a vector to a range within the lower and upper bound.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <param name="lb">the range lower bound</param>
     /// <param name="ub">the range upper bound</param>
     /// <returns>the clamped vector</returns>
@@ -946,11 +944,11 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Filters each component of the input vector against a lower and upper
+    /// Filters each component of vector against a lower and upper
     /// bound. If the component is within the range, its value is retained;
     /// otherwise, it is set to 0.0 .
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the filtered vector</returns>
     public static Vec4 Filter (in Vec4 v, in Vec4 lb, in Vec4 ub)
     {
@@ -964,7 +962,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Floors each component of the vector.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the floor</returns>
     public static Vec4 Floor (in Vec4 v)
     {
@@ -993,7 +991,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Returns the fractional portion of the vector's components.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the fractional portion</returns>
     public static Vec4 Fract (in Vec4 v)
     {
@@ -1086,7 +1084,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Limits a vector's magnitude to a scalar. Does nothing if the vector is
     /// beneath the limit.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <param name="limit">the limit</param>
     /// <returns>the limited vector</returns>
     public static Vec4 Limit (in Vec4 v, in float limit)
@@ -1126,12 +1124,11 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the magnitude</returns>
     public static float Mag (in Vec4 v)
     {
-        return Utils.Sqrt (Vec4.Mag (v));
-
         // double xd = v._x; double yd = v._y; double zd = v._z; double wd =
         // v._w;
-
         // return (float) Math.Sqrt (xd * xd + yd * yd + zd * zd + wd * wd);
+
+        return Utils.Sqrt (Vec4.Mag (v));
     }
 
     /// <summary>
@@ -1152,13 +1149,14 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Maps an input vector from an original range to a target range.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <param name="lbOrigin">lower bound of original range</param>
     /// <param name="ubOrigin">upper bound of original range</param>
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
     /// <returns>the mapped value</returns>
-    public static Vec4 Map (in Vec4 v, //
+    public static Vec4 Map ( //
+        in Vec4 v, //
         in Vec4 lbOrigin, //
         in Vec4 ubOrigin, // 
         in Vec4 lbDest, //
@@ -1172,11 +1170,11 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Sets the target vector to the maximum of the input vector and an upper
+    /// Sets the target vector to the maximum of vector and an upper
     /// bound.
     /// </summary>
     /// <param name="a">the input value</param>
-    /// <param name="b">the upper bound</param>
+    /// <param name="b">upper bound</param>
     /// <returns>the maximum value</returns>
     public static Vec4 Max (in Vec4 a, in Vec4 b)
     {
@@ -1188,11 +1186,11 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Sets the target vector to the minimum of the input vector and a lower
+    /// Sets the target vector to the minimum of vector and a lower
     /// bound.
     /// </summary>
     /// <param name="a">the input value</param>
-    /// <param name="b">the lower bound</param>
+    /// <param name="b">lower bound</param>
     /// <returns>the minimum value</returns>
     public static Vec4 Min (in Vec4 a, in Vec4 b)
     {
@@ -1274,7 +1272,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// the vector. For Vec2s, useful for managing texture coordinates in the
     /// range [0.0, 1.0] .
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the result</returns>
     public static Vec4 Mod1 (in Vec4 v)
     {
@@ -1289,7 +1287,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Tests to see if all the vector's components are zero. Useful when
     /// safeguarding against invalid directions.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the evaluation</returns>
     public static bool None (in Vec4 v)
     {
@@ -1304,7 +1302,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// The result is a unit vector, as it lies on the circumference of a unit
     /// circle.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the unit vector</returns>
     public static Vec4 Normalize (in Vec4 v)
     {
@@ -1413,8 +1411,8 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// and an upper bound.
     /// </summary>
     /// <param name="rng">the random number generator</param>
-    /// <param name="lb">the lower bound</param>
-    /// <param name="ub">the upper bound</param>
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
     /// <returns>the random vector</returns>
     public static Vec4 RandomCartesian (in System.Random rng, in Vec4 lb, in Vec4 ub)
     {
@@ -1430,8 +1428,8 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// and an upper bound.
     /// </summary>
     /// <param name="rng">the random number generator</param>
-    /// <param name="lb">the lower bound</param>
-    /// <param name="ub">the upper bound</param>
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
     /// <returns>the random vector</returns>
     public static Vec4 RandomCartesian (in System.Random rng, in float lb = 0.0f, in float ub = 1.0f)
     {
@@ -1486,7 +1484,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Rounds each component of the vector to the nearest whole number.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the rounded vector</returns>
     public static Vec4 Round (in Vec4 v)
     {
@@ -1500,7 +1498,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Rounds each component of the vector to a specified number of places.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <param name="places">the number of places</param>
     /// <returns>the rounded vector</returns>
     public static Vec4 Round (in Vec4 v, in int places)
@@ -1515,7 +1513,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Finds the sign of the vector: -1, if negative; 1, if positive.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the sign</returns>
     public static Vec4 Sign (in Vec4 v)
     {
@@ -1595,7 +1593,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Truncates each component of the vector.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the truncation</returns>
     public static Vec4 Trunc (in Vec4 v)
     {
@@ -1613,8 +1611,8 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// In cases where the lower bound is 0.0, use Mod instead.
     /// </summary>
     /// <param name="v">the vector</param>
-    /// <param name="lb">the lower bound</param>
-    /// <param name="ub">the upper bound</param>
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
     /// <returns>the wrapped vector</returns>
     public static Vec4 Wrap (in Vec4 v, in Vec4 lb, in Vec4 ub)
     {

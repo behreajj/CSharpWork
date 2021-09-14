@@ -196,9 +196,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the evaluation</returns>
     public int CompareTo (Clr c)
     {
-        int aint = Clr.ToHexInt (this);
-        int bint = Clr.ToHexInt (c);
-        return (aint > bint) ? 1 : (aint < bint) ? -1 : 0;
+        int left = Clr.ToHexInt (this);
+        int right = Clr.ToHexInt (c);
+        return (left < right) ? -1 : (left > right) ? 1 : 0;
     }
 
     /// <summary>
@@ -209,7 +209,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the equivalence</returns>
     public bool Equals (Clr c)
     {
-        return Clr.EqAlphaSatArith (this, c);
+        return Clr.EqSatArith (this, c);
     }
 
     /// <summary>
@@ -1058,6 +1058,35 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             (int) (c._r * 0xff + 0.5f) << 0x10 |
             (int) (c._g * 0xff + 0.5f) << 0x08 |
             (int) (c._b * 0xff + 0.5f);
+    }
+
+    /// <summary>
+    /// Returns a string representation of a color in web-friendly hexadecimal
+    /// format, i.e., in RRGGBB order. Does not prepend a hash tag. Clamps all
+    /// values to [0.0, 1.0] before converting to a byte.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>string</returns>
+    public static string ToHexWeb (in Clr c)
+    {
+        return Clr.ToHexWeb (new StringBuilder (6), c).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a string representation of a color in web-friendly hexdecimal
+    /// to a string builder. Does not prepend a hash tag. Clamps all values
+    /// to [0.0, 1.0] before converting to a byte.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="c">color</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToHexWeb (in StringBuilder sb, in Clr c)
+    {
+        int r = (int) (Utils.Clamp (c._r, 0.0f, 1.0f) * 0xff + 0.5f);
+        int g = (int) (Utils.Clamp (c._g, 0.0f, 1.0f) * 0xff + 0.5f);
+        int b = (int) (Utils.Clamp (c._b, 0.0f, 1.0f) * 0xff + 0.5f);
+        sb.AppendFormat ("{0:X6}", (r << 0x10 | g << 0x08 | b));
+        return sb;
     }
 
     /// <summary>

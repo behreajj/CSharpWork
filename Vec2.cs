@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 /// <summary>
@@ -219,7 +218,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Converts a vector to a boolean by finding whether all of its components
     /// are non-zero.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     public static explicit operator bool (in Vec2 v)
     {
         return Vec2.All (v);
@@ -228,7 +227,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Converts a vector to a float by finding its magnitude.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     public static explicit operator float (in Vec2 v)
     {
         return Vec2.Mag (v);
@@ -238,7 +237,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// A vector evaluates to true when all of its components are not equal to
     /// zero.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the evaluation</returns>
     public static bool operator true (in Vec2 v)
     {
@@ -249,7 +248,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// A vector evaluates to false when all of its components are equal to
     /// zero.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the evaluation</returns>
     public static bool operator false (in Vec2 v)
     {
@@ -259,7 +258,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Evaluates a vector as a boolean. Equivalent to using the ~ operator.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the opposite</returns>
     public static Vec2 operator ! (in Vec2 v)
     {
@@ -269,7 +268,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Evaluates a vector as a boolean. Equivalent to using the ! operator.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the complement</returns>
     public static Vec2 operator ~ (in Vec2 v)
     {
@@ -319,9 +318,9 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Negates the input vector
+    /// Negates vector
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the negation</returns>
     public static Vec2 operator - (in Vec2 v)
     {
@@ -557,7 +556,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Finds the absolute value of each vector component.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the absolute vector</returns>
     public static Vec2 Abs (in Vec2 v)
     {
@@ -570,7 +569,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Tests to see if all the vector's components are non-zero. Useful when
     /// testing valid dimensions (width and depth) stored in vectors.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the evaluation</returns>
     public static bool All (in Vec2 v)
     {
@@ -594,7 +593,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Tests to see if any of the vector's components are non-zero.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the evaluation</returns>
     public static bool Any (in Vec2 v)
     {
@@ -634,7 +633,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Tests to see if a vector has, approximately, the specified magnitude.
     /// </summary>
-    /// <param name="a">the input vector</param>
+    /// <param name="a">vector</param>
     /// <param name="b">the magnitude</param>
     /// <param name="tolerance">the tolerance</param>
     /// <returns>the evaluation</returns>
@@ -761,7 +760,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Raises each component of the vector to the nearest greater integer.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the result</returns>
     public static Vec2 Ceil (in Vec2 v)
     {
@@ -773,7 +772,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Clamps a vector to a range within the lower and upper bound.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <param name="lb">the range lower bound</param>
     /// <param name="ub">the range upper bound</param>
     /// <returns>the clamped vector</returns>
@@ -968,11 +967,11 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Filters each component of the input vector against a lower and upper
+    /// Filters each component of vector against a lower and upper
     /// bound. If the component is within the range, its value is retained;
     /// otherwise, it is set to 0.0 .
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the filtered vector</returns>
     public static Vec2 Filter (in Vec2 v, in Vec2 lb, in Vec2 ub)
     {
@@ -984,7 +983,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Floors each component of the vector.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the floor</returns>
     public static Vec2 Floor (in Vec2 v)
     {
@@ -1009,7 +1008,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Returns the fractional portion of the vector's components.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the fractional portion</returns>
     public static Vec2 Fract (in Vec2 v)
     {
@@ -1124,7 +1123,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Limits a vector's magnitude to a scalar. Does nothing if the vector is
     /// beneath the limit.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <param name="limit">the limit</param>
     /// <returns>the limited vector</returns>
     public static Vec2 Limit (in Vec2 v, in float limit)
@@ -1162,10 +1161,10 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the magnitude</returns>
     public static float Mag (in Vec2 v)
     {
-        return Utils.Sqrt (Vec2.MagSq (v));
-
         // double xd = v._x; double yd = v._y;
         // return (float) Math.Sqrt (xd * xd + yd * yd);
+
+        return Utils.Sqrt (Vec2.MagSq (v));
     }
 
     /// <summary>
@@ -1183,13 +1182,13 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Maps an input vector from an original range to a target range.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <param name="lbOrigin">lower bound of original range</param>
     /// <param name="ubOrigin">upper bound of original range</param>
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
     /// <returns>the mapped value</returns>
-    public static Vec2 Map (
+    public static Vec2 Map ( //
         in Vec2 v, //
         in Vec2 lbOrigin, //
         in Vec2 ubOrigin, //
@@ -1202,11 +1201,11 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Sets the target vector to the maximum of the input vector and an upper
+    /// Sets the target vector to the maximum of vector and an upper
     /// bound.
     /// </summary>
     /// <param name="a">the input value</param>
-    /// <param name="b">the upper bound</param>
+    /// <param name="b">upper bound</param>
     /// <returns>the maximum value</returns>
     public static Vec2 Max (in Vec2 a, in Vec2 b)
     {
@@ -1216,11 +1215,11 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Sets the target vector to the minimum of the input vector and a lower
+    /// Sets the target vector to the minimum of vector and a lower
     /// bound.
     /// </summary>
     /// <param name="a">the input value</param>
-    /// <param name="b">the lower bound</param>
+    /// <param name="b">lower bound</param>
     /// <returns>the minimum value</returns>
     public static Vec2 Min (in Vec2 a, in Vec2 b)
     {
@@ -1292,7 +1291,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// the vector. For Vec2s, useful for managing texture coordinates in the
     /// range [0.0, 1.0] .
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the result</returns>
     public static Vec2 Mod1 (in Vec2 v)
     {
@@ -1305,7 +1304,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Tests to see if all the vector's components are zero. Useful when
     /// safeguarding against invalid directions.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the evaluation</returns>
     public static bool None (in Vec2 v)
     {
@@ -1317,7 +1316,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// The result is a unit vector, as it lies on the circumference of a unit
     /// circle.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the unit vector</returns>
     public static Vec2 Normalize (in Vec2 v)
     {
@@ -1358,7 +1357,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     ///
     /// In terms of the components, perp ( x, y ) = ( -y, x ) .
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the perpendicular</returns>
     public static Vec2 PerpendicularCCW (in Vec2 v)
     {
@@ -1387,7 +1386,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     ///
     /// In terms of the components, perp ( x, y ) = ( y, -x ) .
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the perpendicular</returns>
     public static Vec2 PerpendicularCW (in Vec2 v)
     {
@@ -1455,8 +1454,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// and an upper bound.
     /// </summary>
     /// <param name="rng">the random number generator</param>
-    /// <param name="lb">the lower bound</param>
-    /// <param name="ub">the upper bound</param>
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
     /// <returns>the random vector</returns>
     public static Vec2 RandomCartesian (in System.Random rng, in Vec2 lb, in Vec2 ub)
     {
@@ -1470,8 +1469,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// and an upper bound.
     /// </summary>
     /// <param name="rng">the random number generator</param>
-    /// <param name="lb">the lower bound</param>
-    /// <param name="ub">the upper bound</param>
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
     /// <returns>the random vector</returns>
     public static Vec2 RandomCartesian (in System.Random rng, in float lb = 0.0f, in float ub = 1.0f)
     {
@@ -1530,9 +1529,9 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Normalizes a vector, then multiplies it by a scalar, in effect setting
     /// its magnitude to that scalar.
     /// </summary>
-    /// <param name="v">the vector</param>
-    /// <param name="scalar">the scalar</param>
-    /// <returns>the rescaled vector</returns>
+    /// <param name="v">vector</param>
+    /// <param name="scalar">scalar</param>
+    /// <returns>rescaled vector</returns>
     public static Vec2 Rescale (in Vec2 v, in float scalar = 1.0f)
     {
         return Utils.Div (scalar, Vec2.Mag (v)) * v;
@@ -1543,7 +1542,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// </summary>
     /// <param name="arr">array</param>
     /// <param name="sz">new size</param>
-    /// <returns>the resized array</returns>
+    /// <returns>resized array</returns>
     public static Vec2[ ] Resize (in Vec2[ ] arr, in int sz)
     {
         if (sz < 1) return new Vec2[ ] { };
@@ -1562,7 +1561,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Rotates a vector around the z axis by using an angle in radians.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <param name="radians">the angle in radians</param>
     /// <returns>the rotated vector</returns>
     public static Vec2 RotateZ (in Vec2 v, in float radians)
@@ -1580,7 +1579,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// of vectors can be efficiently rotated without repeatedly calling cos and
     /// sin.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
     /// <returns>the rotated vector</returns>
@@ -1594,7 +1593,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Rounds each component of the vector to the nearest whole number.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the rounded vector</returns>
     public static Vec2 Round (in Vec2 v)
     {
@@ -1606,7 +1605,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Rounds each component of the vector to a specified number of places.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <param name="places">the number of places</param>
     /// <returns>the rounded vector</returns>
     public static Vec2 Round (in Vec2 v, in int places)
@@ -1619,7 +1618,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Finds the sign of the vector: -1, if negative; 1, if positive.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the sign</returns>
     public static Vec2 Sign (in Vec2 v)
     {
@@ -1661,7 +1660,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Returns a named value tuple containing the vector's signed heading,
     /// theta; and magnitude, rho.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>a tuple</returns>
     public static (float theta, float rho) ToPolar (in Vec2 v)
     {
@@ -1745,7 +1744,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Truncates each component of the vector.
     /// </summary>
-    /// <param name="v">the input vector</param>
+    /// <param name="v">vector</param>
     /// <returns>the truncation</returns>
     public static Vec2 Trunc (in Vec2 v)
     {
@@ -1761,8 +1760,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// In cases where the lower bound is 0.0, use Mod instead.
     /// </summary>
     /// <param name="v">the vector</param>
-    /// <param name="lb">the lower bound</param>
-    /// <param name="ub">the upper bound</param>
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
     /// <returns>the wrapped vector</returns>
     public static Vec2 Wrap (in Vec2 v, in Vec2 lb, in Vec2 ub)
     {
