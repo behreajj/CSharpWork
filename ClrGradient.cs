@@ -356,7 +356,7 @@ public class ClrGradient : IEnumerable
         int high = this.keys.Count;
         while (low < high)
         {
-            // The | 0 is floor div?
+            // The | 0 is floor div.
             int middle = (low + high) / 2 | 0;
             if (step < this.keys[middle].Step)
                 high = middle;

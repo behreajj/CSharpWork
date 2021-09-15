@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -495,10 +494,13 @@ public class Palette
     /// <param name="author">author</param>
     public Palette (in string name = "Palette", in string author = "Anonymous")
     {
-        // TODO: Implement a Palette.Tag inner class which has a name
+        // TODO: Consider a Palette.Tag inner class which has a name
         // and an int[] array which references indices in the palette.
         // Each palete will have a list/array of tags, which allow the
         // user to cluster together a palette into arbitrary groups.
+        // Problem is that it will be a challenge to keep tag indices
+        // up-to-date when the palette changes, entries are removed, etc.
+        // Maybe use a list of Entries, since they are classes.
         this.Name = name;
         this.Author = author;
     }
@@ -695,6 +697,54 @@ public class Palette
     }
 
     /// <summary>
+    /// Reverses the source palette.
+    /// </summary>
+    /// <param name="source">source palette</param>
+    /// <param name="target">target palette</param>
+    /// <returns>reversed palette</returns>
+    public static Palette Reverse (in Palette source, in Palette target)
+    {
+        return Palette.Reverse (source, 0, source.entries.Length, target);
+    }
+
+    /// <summary>
+    /// Reverses a subset of the source palette.
+    /// </summary>
+    /// <param name="source">source palette</param>
+    /// <param name="index">start index</param>
+    /// <param name="length">sample length</param>
+    /// <param name="target">target palette</param>
+    /// <returns>reversed palette</returns>
+    public static Palette Reverse (in Palette source, in int index, in int length, in Palette target)
+    {
+        Entry[ ] sourceEntries = source.entries;
+        int sourceLen = sourceEntries.Length;
+
+        Entry[ ] reversedEntries = new Entry[sourceLen];
+        System.Array.Copy (sourceEntries, 0, reversedEntries, 0, sourceLen);
+
+        int valIdx = Utils.Mod (index, sourceLen);
+        int valLen = Utils.Clamp (length, 1, sourceLen);
+        System.Array.Reverse (reversedEntries, valIdx, valLen);
+
+        if (Object.ReferenceEquals (source, target))
+        {
+            target.entries = reversedEntries;
+        }
+        else
+        {
+            target.entries = Entry.Resize (target.entries, sourceLen);
+            for (int i = 0; i < sourceLen; ++i)
+            {
+                Entry reversed = reversedEntries[i];
+                target.entries[i].Set (reversed.Color, reversed.Name);
+            }
+        }
+
+        return target;
+    }
+
+    /// <summary>
     /// Returns a palette with three primary colors -- red, green and blue --
     /// and three secondary colors -- yellow, cyan and magenta -- in the
     /// standard RGB color space.
@@ -721,20 +771,19 @@ public class Palette
     /// Returns a subset of a palette.
     /// </summary>
     /// <param name="source">source palette</param>
-    /// <param name="startIndex">start count</param>
-    /// <param name="count">sample count</param>
+    /// <param name="index">start index</param>
+    /// <param name="length">sample length</param>
     /// <param name="target">target palette</param>
     /// <returns>subset</returns>
-    public static Palette Subset (in Palette source, in int startIndex, in int count, in Palette target)
+    public static Palette Subset (in Palette source, in int index, in int length, in Palette target)
     {
-        int valCount = Utils.Max (1, count);
-
         Entry[ ] sourceEntries = source.entries;
-        Entry[ ] subsetEntries = new Entry[valCount];
-        int srcLen = sourceEntries.Length;
-        for (int i = 0; i < valCount; ++i)
+        int sourceLen = sourceEntries.Length;
+        int valLen = Utils.Clamp (length, 1, sourceLen);
+        Entry[ ] subsetEntries = new Entry[valLen];
+        for (int i = 0; i < valLen; ++i)
         {
-            int k = Utils.Mod (startIndex + i, srcLen);
+            int k = Utils.Mod (index + i, sourceLen);
             subsetEntries[i] = sourceEntries[k];
         }
 
@@ -744,8 +793,8 @@ public class Palette
         }
         else
         {
-            target.entries = Entry.Resize (target.entries, valCount);
-            for (int i = 0; i < valCount; ++i)
+            target.entries = Entry.Resize (target.entries, valLen);
+            for (int i = 0; i < valLen; ++i)
             {
                 Entry subsetEntry = subsetEntries[i];
                 target.entries[i].Set (subsetEntry.Color, subsetEntry.Name);

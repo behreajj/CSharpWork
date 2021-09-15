@@ -458,8 +458,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the evaluation</returns>
     public static bool EqAlphaSatArith (in Clr a, in Clr b)
     {
-        return (int) (0.5f + Utils.Clamp (a.a, 0.0f, 1.0f) * 0xff) ==
-            (int) (0.5f + Utils.Clamp (b.a, 0.0f, 1.0f) * 0xff);
+        return (int) (0.5f + Utils.Clamp (a._a, 0.0f, 1.0f) * 0xff) ==
+            (int) (0.5f + Utils.Clamp (b._a, 0.0f, 1.0f) * 0xff);
     }
 
     /// <summary>
@@ -471,12 +471,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the evaluation</returns>
     public static bool EqRgbSatArith (in Clr a, in Clr b)
     {
-        return (int) (0.5f + Utils.Clamp (a.b, 0.0f, 1.0f) * 0xff) ==
-            (int) (0.5f + Utils.Clamp (b.b, 0.0f, 1.0f) * 0xff) &&
-            (int) (0.5f + Utils.Clamp (a.g, 0.0f, 1.0f) * 0xff) ==
-            (int) (0.5f + Utils.Clamp (b.g, 0.0f, 1.0f) * 0xff) &&
-            (int) (0.5f + Utils.Clamp (a.r, 0.0f, 1.0f) * 0xff) ==
-            (int) (0.5f + Utils.Clamp (b.r, 0.0f, 1.0f) * 0xff);
+        return (int) (0.5f + Utils.Clamp (a._b, 0.0f, 1.0f) * 0xff) ==
+            (int) (0.5f + Utils.Clamp (b._b, 0.0f, 1.0f) * 0xff) &&
+            (int) (0.5f + Utils.Clamp (a._g, 0.0f, 1.0f) * 0xff) ==
+            (int) (0.5f + Utils.Clamp (b._g, 0.0f, 1.0f) * 0xff) &&
+            (int) (0.5f + Utils.Clamp (a._r, 0.0f, 1.0f) * 0xff) ==
+            (int) (0.5f + Utils.Clamp (b._r, 0.0f, 1.0f) * 0xff);
     }
 
     /// <summary>

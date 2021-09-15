@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// The polygon type to be used when constructing new meshes.
 /// </summary>
 public enum PolyType : int
