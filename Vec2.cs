@@ -812,10 +812,10 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
 
         int aLen = a.Length;
         int bLen = b.Length;
-        Vec2[ ] result = new Vec2[aLen + bLen];
-        System.Array.Copy (a, 0, result, 0, aLen);
-        System.Array.Copy (b, 0, result, aLen, bLen);
-        return result;
+        Vec2[ ] result2 = new Vec2[aLen + bLen];
+        System.Array.Copy (a, 0, result2, 0, aLen);
+        System.Array.Copy (b, 0, result2, aLen, bLen);
+        return result2;
     }
 
     /// <summary>

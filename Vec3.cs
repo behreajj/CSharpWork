@@ -949,10 +949,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 
         int aLen = a.Length;
         int bLen = b.Length;
-        Vec3[ ] result = new Vec3[aLen + bLen];
-        System.Array.Copy (a, 0, result, 0, aLen);
-        System.Array.Copy (b, 0, result, aLen, bLen);
-        return result;
+        Vec3[ ] result2 = new Vec3[aLen + bLen];
+        System.Array.Copy (a, 0, result2, 0, aLen);
+        System.Array.Copy (b, 0, result2, aLen, bLen);
+        return result2;
     }
 
     /// <summary>

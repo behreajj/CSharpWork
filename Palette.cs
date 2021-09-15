@@ -8,14 +8,19 @@ using System.Text;
 /// Stores name and author of the palette.
 /// </summary>
 [Serializable]
-public class Palette : IEnumerable
+public class Palette
 {
     /// <summary>
     /// Associates a color with a name.
     /// </summary>
     [Serializable]
-    public class Entry : IComparable<Entry>, IEquatable<Entry>
+    public sealed class Entry : IComparable<Entry>, IEquatable<Entry>
     {
+        /// <summary>
+        /// Character limit for entry names.
+        /// </summary>
+        public const int NameCharLimit = 64;
+
         /// <summary>
         /// The entry's color.
         /// </summary>
@@ -28,6 +33,8 @@ public class Palette : IEnumerable
 
         /// <summary>
         /// The entry's color.
+        /// If the color's alpha is less than
+        /// zero, clear black is used instead.
         /// </summary>
         /// <value>color</value>
         public Clr Color
@@ -39,13 +46,21 @@ public class Palette : IEnumerable
 
             set
             {
-                if (Clr.None (value)) { this.color = Clr.ClearBlack; }
-                else { this.color = value; }
+                if (Clr.None (value))
+                {
+                    this.color = Clr.ClearBlack;
+                }
+                else
+                {
+                    this.color = value;
+                }
             }
         }
 
         /// <summary>
         /// The entry's name.
+        /// If the name is invalid, the entry's color
+        /// in web-friendly hexadcimal is used instead.
         /// </summary>
         /// <value>name</value>
         public string Name
@@ -58,19 +73,33 @@ public class Palette : IEnumerable
             set
             {
                 string trval = value.Trim ( );
-                if (trval.Length > 0) { this.name = trval; }
-                else { this.name = Clr.ToHexWeb (this.color); }
+                if (trval.Length > 0)
+                {
+                    this.name = trval.Substring (0,
+                        Utils.Min (trval.Length, Entry.NameCharLimit));
+                }
+                else
+                {
+                    this.name = Clr.ToHexWeb (this.color);
+                }
             }
         }
 
         /// <summary>
+        /// Constructs an empty entry.
+        /// </summary>
+        public Entry ( )
+        {
+            this.Color = Clr.ClearBlack;
+            this.Name = "Empty";
+        }
+
+        /// <summary>
         /// Constructs an entry from a color and a name.
-        /// Defaults to using the color's web-friendly
-        /// hexadecimal representation as a name.
         /// </summary>
         /// <param name="color">color</param>
         /// <param name="name">name</param>
-        public Entry (in Clr color = new Clr ( ), in string name = "")
+        public Entry (in Clr color, in string name = "")
         {
             this.Color = color;
             this.Name = name;
@@ -97,6 +126,15 @@ public class Palette : IEnumerable
         {
             if (Clr.None (this.color)) { return 0; }
             return this.color.GetHashCode ( );
+        }
+
+        /// <summary>
+        /// Returns a string representation of this entry.
+        /// </summary>
+        /// <returns>the string</returns>
+        public override string ToString ( )
+        {
+            return Entry.ToString (this);
         }
 
         /// <summary>
@@ -128,15 +166,6 @@ public class Palette : IEnumerable
         public bool Equals (Entry pe)
         {
             return this.GetHashCode ( ) == pe.GetHashCode ( );
-        }
-
-        /// <summary>
-        /// Returns a string representation of this entry.
-        /// </summary>
-        /// <returns>the string</returns>
-        public override string ToString ( )
-        {
-            return Entry.ToString (this);
         }
 
         /// <summary>
@@ -291,7 +320,8 @@ public class Palette : IEnumerable
         /// <returns>string</returns>
         public static string ToGplString (in Entry pe)
         {
-            return Entry.ToGplString (new StringBuilder (64), pe).ToString ( );
+            return Entry.ToGplString (new StringBuilder (
+                16 + Entry.NameCharLimit), pe).ToString ( );
         }
 
         /// <summary>
@@ -384,6 +414,16 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
+    /// Character limit for author name.
+    /// </summary>
+    public const int AuthorCharLimit = 96;
+
+    /// <summary>
+    /// Character limit for palette name.
+    /// </summary>
+    public const int NameCharLimit = 64;
+
+    /// <summary>
     /// The palette's author.
     /// </summary>
     protected String author = "Anonymous";
@@ -412,9 +452,19 @@ public class Palette : IEnumerable
         set
         {
             string trval = value.Trim ( );
-            if (trval.Length > 0) this.author = trval;
+            if (trval.Length > 0)
+            {
+                this.author = trval.Substring (0,
+                    Utils.Min (trval.Length, Palette.AuthorCharLimit));
+            }
         }
     }
+
+    /// <summary>
+    /// Returns the number of entries in this palette.
+    /// </summary>
+    /// <value>the length</value>
+    public int Length { get { return this.entries.Length; } }
 
     /// <summary>
     /// The palette's name.
@@ -430,23 +480,25 @@ public class Palette : IEnumerable
         set
         {
             string trval = value.Trim ( );
-            if (trval.Length > 0) this.name = trval;
+            if (trval.Length > 0)
+            {
+                this.name = trval.Substring (0,
+                    Utils.Min (trval.Length, Palette.NameCharLimit));
+            }
         }
     }
-
-    /// <summary>
-    /// Returns the number of entries in this palette.
-    /// </summary>
-    /// <value>the length</value>
-    public int Length { get { return this.entries.Length; } }
 
     /// <summary>
     /// Constructs an empty default palette.
     /// </summary>
     /// <param name="name">name</param>
     /// <param name="author">author</param>
-    public Palette (string name = "Palette", string author = "Anonymous")
+    public Palette (in string name = "Palette", in string author = "Anonymous")
     {
+        // TODO: Implement a Palette.Tag inner class which has a name
+        // and an int[] array which references indices in the palette.
+        // Each palete will have a list/array of tags, which allow the
+        // user to cluster together a palette into arbitrary groups.
         this.Name = name;
         this.Author = author;
     }
@@ -457,7 +509,7 @@ public class Palette : IEnumerable
     /// <param name="name">name</param>
     /// <param name="author">author</param>
     /// <param name="colors">colors</param>
-    public Palette (string name, string author, params Clr[ ] colors)
+    public Palette (in string name, in string author, params Clr[ ] colors)
     {
         this.Name = name;
         this.Author = author;
@@ -471,69 +523,12 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
-    /// Constructs a palette from an array of entries.
-    /// </summary>
-    /// <param name="name">name</param>
-    /// <param name="author">author</param>
-    /// <param name="colors">colors</param>
-    public Palette (string name, string author, params Entry[ ] pes)
-    {
-        this.Name = name;
-        this.Author = author;
-
-        int len = pes.Length;
-        this.entries = new Entry[len];
-        for (int i = 0; i < len; ++i)
-        {
-            Entry source = pes[i];
-            if (source != null)
-            {
-                this.entries[i] = source;
-            }
-            else
-            {
-                this.entries[i] = new Entry (Clr.ClearBlack, "");
-            }
-        }
-
-    }
-
-    /// <summary>
     /// Returns a string representation of this palette.
     /// </summary>
     /// <returns>the string</returns>
     public override string ToString ( )
     {
         return Palette.ToString (this);
-    }
-
-    /// <summary>
-    /// Gets the enumerator for the entries of this palette.
-    /// </summary>
-    /// <returns>the enumerator</returns>
-    public IEnumerator GetEnumerator ( )
-    {
-        return this.entries.GetEnumerator ( );
-    }
-
-    /// <summary>
-    /// Retrieves a palette entry by index.
-    /// </summary>
-    /// <value>palette entry</value>
-    public Entry this [int i]
-    {
-        get
-        {
-            return this.entries[Utils.Mod (i, this.entries.Length)];
-        }
-
-        set
-        {
-            if (value != null)
-            {
-                this.entries[Utils.Mod (i, this.entries.Length)] = value;
-            }
-        }
     }
 
     /// <summary>
@@ -545,18 +540,29 @@ public class Palette : IEnumerable
     /// <returns>this palette</returns>
     public Palette Append (in Clr color, in String name = "")
     {
-        return this.Append (new Entry (color, name));
+        this.entries = Entry.Append (this.entries,
+            new Entry (color, name));
+        return this;
     }
 
     /// <summary>
-    /// Appends a palette entry to this palette.
+    /// Gets the color of a palette entry at an index.
     /// </summary>
-    /// <param name="entry">entry</param>
-    /// <returns>this palette</returns>
-    public Palette Append (in Entry entry)
+    /// <param name="i">index</param>
+    /// <returns>color</returns>
+    public Clr GetColor (in int i)
     {
-        this.entries = Entry.Append (this.entries, entry);
-        return this;
+        return this.entries[i].Color;
+    }
+
+    /// <summary>
+    /// Gets the name of a palette entry at an index.
+    /// </summary>
+    /// <param name="i">index</param>
+    /// <returns>name</returns>
+    public string GetName (in int i)
+    {
+        return this.entries[i].Name;
     }
 
     /// <summary>
@@ -568,23 +574,13 @@ public class Palette : IEnumerable
     /// <returns>this palette</returns>
     public Palette Insert (in int index, in Clr color, in String name = "")
     {
-        return this.Insert (index, new Entry (color, name));
-    }
-
-    /// <summary>
-    /// Inserts a palette entry into this palette at an index.
-    /// </summary>
-    /// <param name="entry">entry</param>
-    /// <param name="index">index</param>
-    /// <returns>this palette</returns>
-    public Palette Insert (in int index, in Entry entry)
-    {
-        this.entries = Entry.Insert (this.entries, index, entry);
+        this.entries = Entry.Insert (this.entries, index,
+            new Entry (color, name));
         return this;
     }
 
     /// <summary>
-    /// Appends a color to this palette.
+    /// Prepends a color to this palette.
     /// Optionally, allows the color to be named.
     /// </summary>
     /// <param name="color">color</param>
@@ -592,32 +588,110 @@ public class Palette : IEnumerable
     /// <returns>this palette</returns>
     public Palette Prepend (in Clr color, in String name = "")
     {
-        return this.Prepend (new Entry (color, name));
-    }
-
-    /// <summary>
-    /// Appends a palette entry to this palette.
-    /// </summary>
-    /// <param name="entry">entry</param>
-    /// <returns>this palette</returns>
-    public Palette Prepend (in Entry entry)
-    {
-        this.entries = Entry.Prepend (this.entries, entry);
+        this.entries = Entry.Prepend (this.entries,
+            new Entry (color, name));
         return this;
     }
 
     /// <summary>
     /// Removes a palette entry at an index.
-    /// Returns the entry. The entry returned may be null if
-    /// the palette was empty.
+    /// Returns the entry color if the removal
+    /// was successful; otherwise, returns clear
+    /// black.
     /// </summary>
     /// <param name="index">index</param>
     /// <returns>removed entry</returns>
-    public Entry RemoveAt (in int index)
+    public Clr RemoveAt (in int index)
     {
         (Entry[ ], Entry) result = Entry.RemoveAt (this.entries, index);
         this.entries = result.Item1;
-        return result.Item2;
+        if (result.Item2 != null)
+        {
+            return result.Item2.Color;
+        }
+        else
+        {
+            return Clr.ClearBlack;
+        }
+    }
+
+    /// <summary>
+    /// Sets the color of a palette entry at an index.
+    /// </summary>
+    /// <param name="i">index</param>
+    /// <param name="color">color</param>
+    public void SetColor (in int i, in Clr color)
+    {
+        this.entries[i].Color = color;
+    }
+
+    /// <summary>
+    /// Sets the name of a palette entry at an index.
+    /// </summary>
+    /// <param name="i">index</param>
+    /// <param name="name">name</param>
+    public void SetName (in int i, in string name)
+    {
+        this.entries[i].Name = name;
+    }
+
+    /// <summary>
+    /// Concatenates two palettes together.
+    /// </summary>
+    /// <param name="a">left palette</param>
+    /// <param name="b">right palette</param>
+    /// <param name="target">target palette</param>
+    /// <returns>concatenation</returns>
+    public static Palette Concat (in Palette a, in Palette b, in Palette target)
+    {
+        Entry[ ] aEntries = a.entries;
+        Entry[ ] bEntries = b.entries;
+        int aLen = aEntries.Length;
+        int bLen = bEntries.Length;
+        int cLen = aLen + bLen;
+        target.entries = Entry.Resize (target.entries, cLen);
+        Entry[ ] cEntries = target.entries;
+
+        if (Object.ReferenceEquals (a, target))
+        {
+            for (int j = 0, k = aLen; j < bLen; ++j, ++k)
+            {
+                Entry bEntry = bEntries[j];
+                cEntries[k].Set (bEntry.Color, bEntry.Name);
+            }
+        }
+        else if (Object.ReferenceEquals (b, target))
+        {
+            // Shift right hand entries forward.
+            for (int j = 0, k = aLen; j < bLen; ++j, ++k)
+            {
+                Entry temp = cEntries[j];
+                cEntries[j] = cEntries[k];
+                cEntries[k] = temp;
+            }
+
+            for (int i = 0; i < aLen; ++i)
+            {
+                Entry aEntry = aEntries[i];
+                cEntries[i].Set (aEntry.Color, aEntry.Name);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < aLen; ++i)
+            {
+                Entry aEntry = aEntries[i];
+                cEntries[i].Set (aEntry.Color, aEntry.Name);
+            }
+
+            for (int j = 0, k = aLen; j < bLen; ++j, ++k)
+            {
+                Entry bEntry = bEntries[j];
+                cEntries[k].Set (bEntry.Color, bEntry.Name);
+            }
+        }
+
+        return target;
     }
 
     /// <summary>
@@ -644,6 +718,44 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
+    /// Returns a subset of a palette.
+    /// </summary>
+    /// <param name="source">source palette</param>
+    /// <param name="startIndex">start count</param>
+    /// <param name="count">sample count</param>
+    /// <param name="target">target palette</param>
+    /// <returns>subset</returns>
+    public static Palette Subset (in Palette source, in int startIndex, in int count, in Palette target)
+    {
+        int valCount = Utils.Max (1, count);
+
+        Entry[ ] sourceEntries = source.entries;
+        Entry[ ] subsetEntries = new Entry[valCount];
+        int srcLen = sourceEntries.Length;
+        for (int i = 0; i < valCount; ++i)
+        {
+            int k = Utils.Mod (startIndex + i, srcLen);
+            subsetEntries[i] = sourceEntries[k];
+        }
+
+        if (Object.ReferenceEquals (source, target))
+        {
+            target.entries = subsetEntries;
+        }
+        else
+        {
+            target.entries = Entry.Resize (target.entries, valCount);
+            for (int i = 0; i < valCount; ++i)
+            {
+                Entry subsetEntry = subsetEntries[i];
+                target.entries[i].Set (subsetEntry.Color, subsetEntry.Name);
+            }
+        }
+
+        return target;
+    }
+
+    /// <summary>
     /// Returns a representation of the palette as a
     /// GPL file string.
     /// </summary>
@@ -660,11 +772,14 @@ public class Palette : IEnumerable
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="pal">palette</param>
-    public static StringBuilder ToGplString (in StringBuilder sb, in Palette pal)
+    /// <param name="columns">display columns</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToGplString (in StringBuilder sb, in Palette pal, in int columns = 0)
     {
         sb.Append ("GIMP Palette\nName: ");
         sb.Append (pal.name);
-        sb.Append ("\nColumns: 0");
+        sb.Append ("\nColumns: ");
+        sb.Append (columns);
         sb.Append ("\n# Author: ");
         sb.Append (pal.author);
 
@@ -702,6 +817,7 @@ public class Palette : IEnumerable
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="pal">palette</param>
+    /// <returns>string builder</returns>
     public static StringBuilder ToPalString (in StringBuilder sb, in Palette pal)
     {
         Entry[ ] entries = pal.entries;
@@ -776,7 +892,7 @@ public class Palette : IEnumerable
     /// <param name="source">source palette</param>
     /// <param name="target">target palette</param>
     /// <returns>target palette</returns>
-    public static Palette UniqueEntries (in Palette source, in Palette target)
+    public static Palette Uniques (in Palette source, in Palette target)
     {
         Entry[ ] sourceEntries = source.entries;
         int len = sourceEntries.Length;
@@ -794,12 +910,22 @@ public class Palette : IEnumerable
         }
 
         Entry[ ] uniqueEntries = new Entry[clrDict.Count];
-        foreach (KeyValuePair<Entry, int> kvp in clrDict)
+        if (Object.ReferenceEquals (source, target))
         {
-            Entry uniqueEntry = kvp.Key;
-            uniqueEntries[kvp.Value] = new Entry (
-                uniqueEntry.Color,
-                uniqueEntry.Name);
+            foreach (KeyValuePair<Entry, int> kvp in clrDict)
+            {
+                uniqueEntries[kvp.Value] = kvp.Key;
+            }
+        }
+        else
+        {
+            foreach (KeyValuePair<Entry, int> kvp in clrDict)
+            {
+                Entry uniqueEntry = kvp.Key;
+                uniqueEntries[kvp.Value] = new Entry (
+                    uniqueEntry.Color,
+                    uniqueEntry.Name);
+            }
         }
 
         target.entries = uniqueEntries;
