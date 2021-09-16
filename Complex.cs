@@ -80,9 +80,9 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>the equivalence</returns>
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) return true;
-        if (Object.ReferenceEquals (null, value)) return false;
-        if (value is Complex) return this.Equals ((Complex) value);
+        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Complex) { return this.Equals ((Complex) value); }
         return false;
     }
 
@@ -134,8 +134,8 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>the equivalence</returns>
     public bool Equals (Complex z)
     {
-        if (this.real.GetHashCode ( ) != z.real.GetHashCode ( )) return false;
-        if (this.imag.GetHashCode ( ) != z.imag.GetHashCode ( )) return false;
+        if (this.real.GetHashCode ( ) != z.real.GetHashCode ( )) { return false; }
+        if (this.imag.GetHashCode ( ) != z.imag.GetHashCode ( )) { return false; }
         return true;
     }
 
@@ -322,7 +322,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>the quotient</returns>
     public static Complex operator / (in Complex a, in float b)
     {
-        if (b != 0.0f) return new Complex (a.real / b, a.imag / b);
+        if (b != 0.0f) { return new Complex (a.real / b, a.imag / b); }
         return new Complex ( );
     }
 
@@ -534,7 +534,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         float czdi = c.real * z.imag + c.imag * z.real + d.imag;
 
         float mSq = czdr * czdr + czdi * czdi;
-        if (mSq <= 0.0f) return new Complex ( );
+        if (mSq <= 0.0f) { return new Complex ( ); }
 
         // Numerator: (a * z) + b .
         float azbr = a.real * z.real - a.imag * z.imag + b.real;
@@ -647,9 +647,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>complex number</returns>
     public static Complex Rect (in float r = 1.0f, in float phi = 0.0f)
     {
-        float sinp = 0.0f;
-        float cosp = 0.0f;
-        Utils.SinCos (phi, out sinp, out cosp);
+        Utils.SinCos (phi, out float sinp, out float cosp);
         return new Complex (r * cosp, r * sinp);
     }
 

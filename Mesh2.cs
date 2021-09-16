@@ -334,7 +334,6 @@ public class Mesh2
         Vec2[ ] vtsNew = new Vec2[loopLen];
 
         /* Find new corners. */
-        float u = 1.0f - fac;
         for (int j = 0; j < loopLen; ++j)
         {
             int k = (j + 1) % loopLen;
@@ -538,7 +537,7 @@ public class Mesh2
         int iMax = vRings - 1;
         int iMin = -iMax;
 
-        Vec2[ ] vts = target.texCoords = new Vec2[ ]
+        target.texCoords = new Vec2[ ]
         {
             new Vec2 (0.5f, 1.0f),
             new Vec2 (0.0669873f, 0.75f),

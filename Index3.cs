@@ -87,9 +87,9 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
 
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) return true;
-        if (Object.ReferenceEquals (null, value)) return false;
-        if (value is Index3) return this.Equals ((Index3) value);
+        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Index3) { return this.Equals ((Index3) value); }
         return false;
     }
 
@@ -110,9 +110,9 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
 
     public bool Equals (Index3 i)
     {
-        if (this._v != i._v) return false;
-        if (this._vt != i._vt) return false;
-        if (this._vn != i._vn) return false;
+        if (this._v != i._v) { return false; }
+        if (this._vt != i._vt) { return false; }
+        if (this._vn != i._vn) { return false; }
         return true;
     }
 
@@ -157,7 +157,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
 
     public static Index3[ ] Resize (in Index3[ ] arr, in int sz)
     {
-        if (sz < 1) return new Index3[ ] { };
+        if (sz < 1) { return new Index3[ ] { }; }
         Index3[ ] result = new Index3[sz];
 
         if (arr != null)

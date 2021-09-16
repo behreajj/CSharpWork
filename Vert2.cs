@@ -41,58 +41,6 @@ public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>, IEnumerabl
     public Vec2 TexCoord { get { return this.texCoord; } }
 
     /// <summary>
-    /// Retrieves a component by index. Components are ordered as coordinate,
-    /// texture coordinate normal.
-    /// </summary>
-    /// <value>the value</value>
-    public float this [int i]
-    {
-        get
-        {
-            switch (i)
-            {
-                case 0:
-                case -4:
-                    return this.coord.x;
-                case 1:
-                case -3:
-                    return this.coord.y;
-                case 2:
-                case -2:
-                    return this.texCoord.x;
-                case 3:
-                case -1:
-                    return this.texCoord.y;
-                default:
-                    return 0.0f;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Retrieves a component by index. Components are ordered as coordinate,
-    /// texture coordinate normal.
-    /// </summary>
-    /// <value>the value</value>
-    public float this [int i, int j]
-    {
-        get
-        {
-            switch (i)
-            {
-                case 0:
-                case -2:
-                    return this.coord[j];
-                case 1:
-                case -1:
-                    return this.texCoord[j];
-                default:
-                    return 0.0f;
-            }
-        }
-    }
-
-    /// <summary>
     /// Constructs a vertex from a coordinate and texture coordinate.
     /// </summary>
     /// <param name="coord">coordinate</param>
@@ -110,9 +58,9 @@ public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>, IEnumerabl
     /// <returns>the equivalence</returns>
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) return true;
-        if (Object.ReferenceEquals (null, value)) return false;
-        if (value is Vert2) return this.Equals ((Vert2) value);
+        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Vert2) { return this.Equals ((Vert2) value); }
         return false;
     }
 
@@ -161,8 +109,8 @@ public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>, IEnumerabl
     /// <returns>equivalence</returns>
     public bool Equals (Vert2 v)
     {
-        if (this.coord.GetHashCode ( ) != v.coord.GetHashCode ( )) return false;
-        if (this.texCoord.GetHashCode ( ) != v.texCoord.GetHashCode ( )) return false;
+        if (this.coord.GetHashCode ( ) != v.coord.GetHashCode ( )) { return false; }
+        if (this.texCoord.GetHashCode ( ) != v.texCoord.GetHashCode ( )) { return false; }
         return true;
     }
 

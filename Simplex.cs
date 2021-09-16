@@ -396,16 +396,11 @@ public static class Simplex
             n4 = g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4;
         }
 
-        float derivx = 0.0f;
-        float derivy = 0.0f;
-        float derivz = 0.0f;
-        float derivw = 0.0f;
-
         float tmp0 = t20 * t0 * n0;
-        derivx = tmp0 * x0;
-        derivy = tmp0 * y0;
-        derivz = tmp0 * z0;
-        derivw = tmp0 * w0;
+        float derivx = tmp0 * x0;
+        float derivy = tmp0 * y0;
+        float derivz = tmp0 * z0;
+        float derivw = tmp0 * w0;
 
         float tmp1 = t21 * t1 * n1;
         derivx += tmp1 * x1;
@@ -594,14 +589,10 @@ public static class Simplex
             n3 = g3.x * x3 + g3.y * y3 + g3.z * z3;
         }
 
-        float derivx = 0.0f;
-        float derivy = 0.0f;
-        float derivz = 0.0f;
-
         float tmp0 = t20 * t0 * n0;
-        derivx = tmp0 * x0;
-        derivy = tmp0 * y0;
-        derivz = tmp0 * z0;
+        float derivx = tmp0 * x0;
+        float derivy = tmp0 * y0;
+        float derivz = tmp0 * z0;
 
         float tmp1 = t21 * t1 * n1;
         derivx += tmp1 * x1;
@@ -712,12 +703,9 @@ public static class Simplex
             n2 = g2.x * x2 + g2.y * y2;
         }
 
-        float derivx = 0.0f;
-        float derivy = 0.0f;
-
         float tmp0 = t20 * t0 * n0;
-        derivx = tmp0 * x0;
-        derivy = tmp0 * y0;
+        float derivx = tmp0 * x0;
+        float derivy = tmp0 * y0;
 
         float tmp1 = t21 * t1 * n1;
         derivx += tmp1 * x1;

@@ -187,7 +187,8 @@ public class Knot3
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return ToString (4);
+        // TODO: Switch to static format.
+        return this.ToString (4);
     }
 
     /// <summary>
@@ -336,9 +337,7 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 Rotate (in float radians, in Vec3 axis)
     {
-        float sina = 0.0f;
-        float cosa = 1.0f;
-        Utils.SinCos (radians, out sina, out cosa);
+        Utils.SinCos (radians, out float sina, out float cosa);
         return this.Rotate (cosa, sina, axis);
     }
 
@@ -414,9 +413,7 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 RotateX (in float radians)
     {
-        float sina = 0.0f;
-        float cosa = 1.0f;
-        Utils.SinCos (radians, out sina, out cosa);
+        Utils.SinCos (radians, out float sina, out float cosa);
         return this.RotateX (cosa, sina);
     }
 
@@ -445,9 +442,7 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 RotateY (in float radians)
     {
-        float sina = 0.0f;
-        float cosa = 1.0f;
-        Utils.SinCos (radians, out sina, out cosa);
+        Utils.SinCos (radians, out float sina, out float cosa);
         return this.RotateY (cosa, sina);
     }
 
@@ -476,9 +471,7 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 RotateZ (in float radians)
     {
-        float sina = 0.0f;
-        float cosa = 1.0f;
-        Utils.SinCos (radians, out sina, out cosa);
+        Utils.SinCos (radians, out float sina, out float cosa);
         return this.RotateZ (cosa, sina);
     }
 
@@ -641,6 +634,7 @@ public class Knot3
     /// <returns>the string</returns>
     public string ToString (int places = 4)
     {
+        // TODO: Refactor to use static pbr.
         return new StringBuilder (512)
             .Append ("{ coord: ")
             .Append (Vec3.ToString (this.coord, places))

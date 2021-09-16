@@ -93,7 +93,7 @@ public class Transform2
 
         set
         {
-            if (Vec2.All (value)) this.scale = value;
+            if (Vec2.All (value)) { this.scale = value; }
         }
     }
 

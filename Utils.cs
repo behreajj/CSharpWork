@@ -164,8 +164,8 @@ public static class Utils
     /// <returns>the angle in radians</returns>
     public static float Acos (in float value)
     {
-        if (value <= -1.0f) return Utils.Pi;
-        if (value >= 1.0f) return 0.0f;
+        if (value <= -1.0f) { return Utils.Pi; }
+        if (value >= 1.0f) { return 0.0f; }
 
         bool ltZero = value < 0.0f;
         float x = ltZero ? -value : value;
@@ -221,8 +221,8 @@ public static class Utils
     /// <returns>the angle in radians</returns>
     public static float Asin (in float value)
     {
-        if (value <= -1.0f) return -Utils.HalfPi;
-        if (value >= 1.0f) return Utils.HalfPi;
+        if (value <= -1.0f) { return -Utils.HalfPi; }
+        if (value >= 1.0f) { return Utils.HalfPi; }
 
         bool ltZero = value < 0.0f;
         float x = ltZero ? -value : value;
@@ -257,7 +257,7 @@ public static class Utils
 
         bool yGtX = yAbs > xAbs;
         float t0 = yGtX ? yAbs : xAbs;
-        if (t0 == 0.0f) return 0.0f;
+        if (t0 == 0.0f) { return 0.0f; }
         float t2 = (yGtX ? xAbs : yAbs) / t0;
 
         float t3 = t2 * t2;
@@ -481,14 +481,7 @@ public static class Utils
     /// <returns>the inverse square root</returns>
     public static float InvSqrtUnchecked (in float a)
     {
-        // return (float) (1.0d / Math.Sqrt ((double) a));
-
-        float vhalf = a * 0.5f;
-        float y = 1.792843f - 0.8537347f * a;
-        y *= 1.5f - vhalf * y * y;
-        y *= 1.5f - vhalf * y * y;
-        y *= 1.5f - vhalf * y * y;
-        return y;
+        return (float) (1.0d / Math.Sqrt (a));
     }
 
     /// <summary>
@@ -660,7 +653,7 @@ public static class Utils
     public static float LinearStep (in float edge0 = 0.0f, in float edge1 = 1.0f, in float x = 0.5f)
     {
         float denom = edge1 - edge0;
-        if (denom != 0.0f) return Utils.Clamp ((x - edge0) / denom, 0.0f, 1.0f);
+        if (denom != 0.0f) { return Utils.Clamp ((x - edge0) / denom, 0.0f, 1.0f); }
         return 0.0f;
     }
 
@@ -857,7 +850,7 @@ public static class Utils
 
     /// <summary>
     /// Applies floor modulo to the operands. Returns the left operand when the
-    /// right operand is zero.
+    /// right operand is zero. Also known as the Euclidean remainder.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -956,8 +949,8 @@ public static class Utils
     public static float PingPong (in float a, in float b, in float t, in float pause = 1.0f)
     {
         float x = 0.5f + 0.5f * pause * Utils.SinCosEval (t - 0.5f);
-        if (t <= 0.0f) return a;
-        if (t >= 1.0f) return b;
+        if (t <= 0.0f) { return a; }
+        if (t >= 1.0f) { return b; }
         return (1.0f - x) * a + x * b;
     }
 
@@ -982,7 +975,7 @@ public static class Utils
     /// <returns>the quantized value</returns>
     public static float Quantize (in float v, in int levels)
     {
-        if (levels < 2) return v;
+        if (levels < 2) { return v; }
         float lf = (float) levels;
         return Utils.Floor (0.5f + v * lf) / lf;
     }
@@ -1093,7 +1086,7 @@ public static class Utils
         if (r2z)
         {
             float r0z = 1.0f - r1y;
-            r0z = r0z * r0z;
+            r0z *= r0z;
             r1z = 24.980804f * r0z - 60.14581f;
             r1z = r1z * r0z + 85.45379f;
             r1z = r1z * r0z - 64.939354f;
@@ -1105,7 +1098,7 @@ public static class Utils
         r1y = 0.0f;
         if (r1y >= -9.0f ^ (r2x | r2z))
         {
-            r0y = r0y * r0y;
+            r0y *= r0y;
             r1y = 60.14581f - r0y * 24.980804f;
             r1y = r1y * r0y - 85.45379f;
             r1y = r1y * r0y + 64.939354f;
@@ -1201,7 +1194,6 @@ public static class Utils
     /// <returns>the square root</returns>
     public static float SqrtUnchecked (in float v)
     {
-        // return v * Utils.InvSqrtUnchecked (v);
         return (float) Math.Sqrt ((double) v);
     }
 
@@ -1254,9 +1246,9 @@ public static class Utils
         /*
          * Dispense with v and places edge cases.
          */
-        if (float.IsNaN (v)) return sb.Append ("0.0");
-        if (places < 0) return sb.Append ((int) v);
-        if (places < 1) return sb.Append ((float) ((int) v));
+        if (float.IsNaN (v)) { return sb.Append ("0.0"); }
+        if (places < 0) { return sb.Append ((int) v); }
+        if (places < 1) { return sb.Append ((float) ((int) v)); }
         if (v <= float.MinValue || v >= float.MaxValue)
         {
             return sb.Append (v);
@@ -1271,7 +1263,7 @@ public static class Utils
         float abs = ltZero ? -v : v;
         int trunc = (int) abs;
         int oldLen = sb.Length;
-        int len = 0;
+        int len;
 
         /*
          * Start the string builder with the integral
@@ -1299,9 +1291,8 @@ public static class Utils
          * number of places will be used.
          */
         int maxPlaces = 9 - len;
-        if (maxPlaces < 1) return sb.Append (v);
-        int vetPlaces = places < maxPlaces ?
-            places : maxPlaces;
+        if (maxPlaces < 1) { return sb.Append (v); }
+        int vetPlaces = places < maxPlaces ? places : maxPlaces;
 
         /* 
          * Separate each digit by subtracting the truncation from

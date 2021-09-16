@@ -138,9 +138,9 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the equivalence</returns>
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) return true;
-        if (Object.ReferenceEquals (null, value)) return false;
-        if (value is Vec4) return this.Equals ((Vec4) value);
+        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Vec4) { return this.Equals ((Vec4) value); }
         return false;
     }
 
@@ -198,10 +198,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the equivalence</returns>
     public bool Equals (Vec4 v)
     {
-        if (this._w.GetHashCode ( ) != v._w.GetHashCode ( )) return false;
-        if (this._z.GetHashCode ( ) != v._z.GetHashCode ( )) return false;
-        if (this._y.GetHashCode ( ) != v._y.GetHashCode ( )) return false;
-        if (this._x.GetHashCode ( ) != v._x.GetHashCode ( )) return false;
+        if (this._w.GetHashCode ( ) != v._w.GetHashCode ( )) { return false; }
+        if (this._z.GetHashCode ( ) != v._z.GetHashCode ( )) { return false; }
+        if (this._y.GetHashCode ( ) != v._y.GetHashCode ( )) { return false; }
+        if (this._x.GetHashCode ( ) != v._x.GetHashCode ( )) { return false; }
         return true;
     }
 
@@ -497,7 +497,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
                 a._z * bInv,
                 a._w * bInv);
         }
-        return new Vec4 ( );
+        return Vec4.Zero;
     }
 
     /// <summary>
@@ -534,7 +534,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the result</returns>
     public static Vec4 operator % (in Vec4 a, in float b)
     {
-        if (b != 0.0f) return new Vec4 (a._x % b, a._y % b, a._z % b, a._w % b);
+        if (b != 0.0f) { return new Vec4 (a._x % b, a._y % b, a._z % b, a._w % b); }
         return a;
     }
 
@@ -1347,7 +1347,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static float ProjectScalar (in Vec4 a, in Vec4 b)
     {
         float bSq = Vec4.MagSq (b);
-        if (bSq != 0.0f) return Vec4.Dot (a, b) / bSq;
+        if (bSq != 0.0f) { return Vec4.Dot (a, b) / bSq; }
         return 0.0f;
     }
 
@@ -1396,7 +1396,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the quantized vector</returns>
     public static Vec4 Quantize (in Vec4 v, in int levels = 8)
     {
-        if (levels < 2) return new Vec4 (v._x, v._y, v._z, v._w);
+        if (levels < 2) { return new Vec4 (v._x, v._y, v._z, v._w); }
         float levf = (float) levels;
         float delta = 1.0f / levf;
         return new Vec4 (
@@ -1464,9 +1464,8 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     {
         float iDotN = Vec4.Dot (i, n);
         float k = 1.0f - eta * eta * (1.0f - iDotN * iDotN);
-        if (k < 0.0f) return new Vec4 ( );
-        return (eta * i) -
-            (n * (eta * iDotN + Utils.Sqrt (k)));
+        if (k < 0.0f) { return new Vec4 ( ); }
+        return (eta * i) - (n * (eta * iDotN + Utils.Sqrt (k)));
     }
 
     /// <summary>

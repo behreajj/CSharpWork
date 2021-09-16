@@ -92,7 +92,7 @@ public class Loop2
 
     public static Loop2[ ] Resize (in Loop2[ ] arr, in int sz)
     {
-        if (sz < 1) return new Loop2[ ] { };
+        if (sz < 1) { return new Loop2[ ] { }; }
         Loop2[ ] result = new Loop2[sz];
 
         if (arr != null)

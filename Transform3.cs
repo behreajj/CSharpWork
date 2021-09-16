@@ -64,7 +64,7 @@ public class Transform3
 
         set
         {
-            if (Quat.Any (value)) this.rotation = value;
+            if (Quat.Any (value)) { this.rotation = value; }
         }
     }
 
@@ -81,7 +81,7 @@ public class Transform3
 
         set
         {
-            if (Vec3.All (value)) this.scale = value;
+            if (Vec3.All (value)) { this.scale = value; }
         }
     }
 

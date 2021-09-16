@@ -71,9 +71,9 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
 
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) return true;
-        if (Object.ReferenceEquals (null, value)) return false;
-        if (value is Index2) return this.Equals ((Index2) value);
+        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Index2) { return this.Equals ((Index2) value); }
         return false;
     }
 
@@ -88,13 +88,14 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
 
     public override string ToString ( )
     {
+        // TODO: Use static format.
         return this.ToString (3);
     }
 
     public bool Equals (Index2 i)
     {
-        if (this._v != i._v) return false;
-        if (this._vt != i._vt) return false;
+        if (this._v != i._v) { return false; }
+        if (this._vt != i._vt) { return false; }
         return true;
     }
 
@@ -127,7 +128,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
 
     public static Index2[ ] Resize (in Index2[ ] arr, in int sz)
     {
-        if (sz < 1) return new Index2[ ] { };
+        if (sz < 1) { return new Index2[ ] { }; }
         Index2[ ] result = new Index2[sz];
 
         if (arr != null)

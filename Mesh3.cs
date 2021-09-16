@@ -826,7 +826,7 @@ public class Mesh3
         }
 
         // Determine aspect ratio.
-        float vtAspectRatio = 1.0f;
+        float vtAspectRatio;
         switch (profile)
         {
             case CapsuleUvProfile.Aspect:

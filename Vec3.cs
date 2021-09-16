@@ -134,9 +134,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the equivalence</returns>
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) return true;
-        if (Object.ReferenceEquals (null, value)) return false;
-        if (value is Vec3) return this.Equals ((Vec3) value);
+        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Vec3) { return this.Equals ((Vec3) value); }
         return false;
     }
 
@@ -191,9 +191,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the equivalence</returns>
     public bool Equals (Vec3 v)
     {
-        if (this._z.GetHashCode ( ) != v._z.GetHashCode ( )) return false;
-        if (this._y.GetHashCode ( ) != v._y.GetHashCode ( )) return false;
-        if (this._x.GetHashCode ( ) != v._x.GetHashCode ( )) return false;
+        if (this._z.GetHashCode ( ) != v._z.GetHashCode ( )) { return false; }
+        if (this._y.GetHashCode ( ) != v._y.GetHashCode ( )) { return false; }
+        if (this._x.GetHashCode ( ) != v._x.GetHashCode ( )) { return false; }
         return true;
     }
 
@@ -463,7 +463,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
                 a._y * bInv,
                 a._z * bInv);
         }
-        return new Vec3 ( );
+        return Vec3.Zero;
     }
 
     /// <summary>
@@ -499,7 +499,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the result</returns>
     public static Vec3 operator % (in Vec3 a, in float b)
     {
-        if (b != 0.0f) return new Vec3 (a._x % b, a._y % b, a._z % b);
+        if (b != 0.0f) { return new Vec3 (a._x % b, a._y % b, a._z % b); }
         return a;
     }
 
@@ -799,8 +799,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         in Vec3 ap1, //
         in float step)
     {
-        if (step <= 0.0f) return new Vec3 (ap0._x, ap0._y, ap0._z);
-        else if (step >= 1.0f) return new Vec3 (ap1._x, ap1._y, ap1._z);
+        if (step <= 0.0f) { return new Vec3 (ap0._x, ap0._y, ap0._z); }
+        else if (step >= 1.0f) { return new Vec3 (ap1._x, ap1._y, ap1._z); }
 
         float u = 1.0f - step;
         float tcb = step * step;
@@ -849,8 +849,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         in Vec3 ap1, //
         in float step)
     {
-        if (step <= 0.0f) return cp0 - ap0;
-        else if (step >= 1.0f) return ap1 - cp1;
+        if (step <= 0.0f) { return cp0 - ap0; }
+        else if (step >= 1.0f) { return ap1 - cp1; }
 
         float u = 1.0f - step;
         float t3 = step + step + step;
@@ -1201,14 +1201,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         in float inclination = 0.0f, // 
         in float radius = 1.0f)
     {
-        float sint = 0.0f;
-        float cost = 0.0f;
-        Utils.SinCos (azimuth, out sint, out cost);
-
-        float sinp = 0.0f;
-        float cosp = 0.0f;
-        Utils.SinCos (inclination, out sinp, out cosp);
-
+        Utils.SinCos (azimuth, out float sint, out float cost);
+        Utils.SinCos (inclination, out float sinp, out float cosp);
         float rsp = radius * sinp;
         return new Vec3 (
             rsp * cost,
@@ -1559,7 +1553,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static float ProjectScalar (in Vec3 a, in Vec3 b)
     {
         float bSq = Vec3.MagSq (b);
-        if (bSq != 0.0f) return Vec3.Dot (a, b) / bSq;
+        if (bSq != 0.0f) { return Vec3.Dot (a, b) / bSq; }
         return 0.0f;
     }
 
@@ -1596,7 +1590,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the quantized vector</returns>
     public static Vec3 Quantize (in Vec3 v, in int levels = 8)
     {
-        if (levels < 2) return new Vec3 (v._x, v._y, v._z);
+        if (levels < 2) { return new Vec3 (v._x, v._y, v._z); }
         float levf = (float) levels;
         float delta = 1.0f / levf;
         return new Vec3 (
@@ -1681,9 +1675,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     {
         float iDotN = Vec3.Dot (i, n);
         float k = 1.0f - eta * eta * (1.0f - iDotN * iDotN);
-        if (k < 0.0f) return new Vec3 ( );
-        return (eta * i) -
-            (n * (eta * iDotN + Utils.Sqrt (k)));
+        if (k < 0.0f) { return new Vec3 ( ); }
+        return (eta * i) - (n * (eta * iDotN + Utils.Sqrt (k)));
     }
 
     /// <summary>
@@ -1706,7 +1699,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the resized array</returns>
     public static Vec3[ ] Resize (in Vec3[ ] arr, in int sz)
     {
-        if (sz < 1) return new Vec3[ ] { };
+        if (sz < 1) { return new Vec3[ ] { }; }
         Vec3[ ] result = new Vec3[sz];
 
         if (arr != null)
@@ -1731,9 +1724,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the rotated vector</returns>
     public static Vec3 Rotate (in Vec3 v, in float radians, in Vec3 axis)
     {
-        float sina = 0.0f;
-        float cosa = 0.0f;
-        Utils.SinCos (radians, out sina, out cosa);
+        Utils.SinCos (radians, out float sina, out float cosa);
         return Vec3.Rotate (v, cosa, sina, axis);
     }
 
@@ -1785,9 +1776,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the rotated vector</returns>
     public static Vec3 RotateX (in Vec3 v, in float radians)
     {
-        float sina = 0.0f;
-        float cosa = 0.0f;
-        Utils.SinCos (radians, out sina, out cosa);
+        Utils.SinCos (radians, out float sina, out float cosa);
         return Vec3.RotateX (v, cosa, sina);
     }
 
@@ -1818,9 +1807,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the rotated vector</returns>
     public static Vec3 RotateY (in Vec3 v, in float radians)
     {
-        float sina = 0.0f;
-        float cosa = 0.0f;
-        Utils.SinCos (radians, out sina, out cosa);
+        Utils.SinCos (radians, out float sina, out float cosa);
         return Vec3.RotateY (v, cosa, sina);
     }
 
@@ -1851,9 +1838,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the rotated vector</returns>
     public static Vec3 RotateZ (in Vec3 v, in float radians)
     {
-        float sina = 0.0f;
-        float cosa = 0.0f;
-        Utils.SinCos (radians, out sina, out cosa);
+        Utils.SinCos (radians, out float sina, out float cosa);
         return Vec3.RotateZ (v, cosa, sina);
     }
 

@@ -57,9 +57,9 @@ public class ClrGradient : IEnumerable
         /// <returns>the equivalence</returns>
         public override bool Equals (object value)
         {
-            if (Object.ReferenceEquals (this, value)) return true;
-            if (Object.ReferenceEquals (null, value)) return false;
-            if (value is ClrGradient.Key) return this.Equals ((ClrGradient.Key) value);
+            if (Object.ReferenceEquals (this, value)) { return true; }
+            if (value is null) { return false; }
+            if (value is ClrGradient.Key) { return this.Equals ((ClrGradient.Key) value); }
             return false;
         }
 
@@ -338,9 +338,13 @@ public class ClrGradient : IEnumerable
             // The | 0 is floor div.
             int middle = (low + high) / 2 | 0;
             if (step > this.keys[middle].Step)
+            {
                 low = middle + 1;
+            }
             else
+            { 
                 high = middle;
+            }
         }
         return low;
     }
@@ -359,9 +363,13 @@ public class ClrGradient : IEnumerable
             // The | 0 is floor div.
             int middle = (low + high) / 2 | 0;
             if (step < this.keys[middle].Step)
+            {
                 high = middle;
+            }
             else
+            {
                 low = middle + 1;
+            }
         }
         return low;
     }
@@ -438,7 +446,7 @@ public class ClrGradient : IEnumerable
         Key nextKey = this.FindGe (step);
         float prevStep = prevKey.Step;
         float nextStep = nextKey.Step;
-        if (prevStep == nextStep) return prevKey.Color;
+        if (prevStep == nextStep) { return prevKey.Color; }
         float fac = (step - nextStep) / (prevStep - nextStep);
 
         // TODO: How can a static method be passed in to this function?
@@ -471,7 +479,7 @@ public class ClrGradient : IEnumerable
     protected Key FindGe (in float query)
     {
         int i = this.BisectLeft (query);
-        if (i < this.keys.Count) return this.keys[i];
+        if (i < this.keys.Count) { return this.keys[i]; }
         return this.keys[this.keys.Count - 1];
     }
 
@@ -483,7 +491,7 @@ public class ClrGradient : IEnumerable
     protected Key FindLe (in float query)
     {
         int i = this.BisectRight (query);
-        if (i > 0) return this.keys[i - 1];
+        if (i > 0) { return this.keys[i - 1]; }
         return this.keys[0];
     }
 
@@ -515,7 +523,7 @@ public class ClrGradient : IEnumerable
     public ClrGradient Insert (in Key key)
     {
         int query = this.ContainsKey (key);
-        if (query != -1) this.keys.RemoveAt (query);
+        if (query != -1) { this.keys.RemoveAt (query); }
         this.InsortRight (key);
         return this;
     }
@@ -527,7 +535,7 @@ public class ClrGradient : IEnumerable
     /// <returns></returns>
     public ClrGradient InsertAll (params Key[ ] keys)
     {
-        foreach (Key key in keys) this.Insert (key);
+        foreach (Key key in keys) { this.Insert (key); }
         return this;
     }
 

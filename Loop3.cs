@@ -115,7 +115,7 @@ public class Loop3
 
     public static Loop3[ ] Resize (in Loop3[ ] arr, in int sz)
     {
-        if (sz < 1) return new Loop3[ ] { };
+        if (sz < 1) { return new Loop3[ ] { }; }
         Loop3[ ] result = new Loop3[sz];
 
         if (arr != null)

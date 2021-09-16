@@ -200,9 +200,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>the equivalence</returns>F
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) return true;
-        if (Object.ReferenceEquals (null, value)) return false;
-        if (value is Quat) return this.Equals ((Quat) value);
+        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Quat) { return this.Equals ((Quat) value); }
         return false;
     }
 
@@ -238,8 +238,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>the equivalence</returns>
     public bool Equals (Quat q)
     {
-        if (this.real.GetHashCode ( ) != q.real.GetHashCode ( )) return false;
-        if (this.imag.GetHashCode ( ) != q.imag.GetHashCode ( )) return false;
+        if (this.real.GetHashCode ( ) != q.real.GetHashCode ( )) { return false; }
+        if (this.imag.GetHashCode ( ) != q.imag.GetHashCode ( )) { return false; }
         return true;
     }
 
@@ -714,9 +714,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>quaternion</returns>
     public static Quat FromAngle (in float radians)
     {
-        float sina = 0.0f;
-        float cosa = 0.0f;
-        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out sina, out cosa);
+        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out float sina, out float cosa);
         return new Quat (cosa, 0.0f, 0.0f, sina);
     }
 
@@ -730,7 +728,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     public static Quat FromAxisAngle (in float radians, in Vec3 axis)
     {
         float amSq = Vec3.MagSq (axis);
-        if (amSq == 0.0f) return Quat.Identity;
+        if (amSq == 0.0f) { return Quat.Identity; }
 
         float nx = axis.x;
         float ny = axis.y;
@@ -744,9 +742,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
             nz *= amInv;
         }
 
-        float sinHalf = 0.0f;
-        float cosHalf = 0.0f;
-        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out sinHalf, out cosHalf);
+        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out float sinHalf, out float cosHalf);
         return new Quat (cosHalf,
             new Vec3 (nx * sinHalf,
                 ny * sinHalf,
@@ -939,10 +935,10 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         float sinTheta = Utils.Sqrt (1.0f - dotp * dotp);
 
         // The complementary step, i.e., 1.0 - step.
-        float u = 1.0f;
+        float u;
 
         // The step.
-        float v = 0.0f;
+        float v;
 
         if (sinTheta > Utils.Epsilon)
         {
@@ -1070,13 +1066,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         float x0 = Utils.Sqrt (1.0f - r1);
         float x1 = Utils.Sqrt (r1);
 
-        float sint0 = 0.0f;
-        float cost0 = 0.0f;
-        Utils.SinCos (t0, out sint0, out cost0);
-
-        float sint1 = 0.0f;
-        float cost1 = 0.0f;
-        Utils.SinCos (t1, out sint1, out cost1);
+        Utils.SinCos (t0, out float sint0, out float cost0);
+        Utils.SinCos (t1, out float sint1, out float cost1);
 
         return new Quat (
             x0 * sint0,
@@ -1115,9 +1106,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>the rotated quaternion</returns>
     public static Quat RotateX (in Quat q, in float radians)
     {
-        float sina = 0.0f;
-        float cosa = 0.0f;
-        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out sina, out cosa);
+        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out float sina, out float cosa);
         return Quat.RotateX (q, cosa, sina);
     }
 
@@ -1151,9 +1140,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>the rotated quaternion</returns>
     public static Quat RotateY (in Quat q, in float radians)
     {
-        float sina = 0.0f;
-        float cosa = 0.0f;
-        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out sina, out cosa);
+        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out float sina, out float cosa);
         return Quat.RotateY (q, cosa, sina);
     }
 
@@ -1187,9 +1174,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>the rotated quaternion</returns>
     public static Quat RotateZ (in Quat q, in float radians)
     {
-        float sina = 0.0f;
-        float cosa = 0.0f;
-        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out sina, out cosa);
+        Utils.SinCos ((radians % Utils.Tau) * 0.5f, out float sina, out float cosa);
         return Quat.RotateZ (q, cosa, sina);
     }
 

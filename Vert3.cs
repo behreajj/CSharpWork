@@ -54,73 +54,6 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>, IEnumerabl
     public Vec2 TexCoord { get { return this.texCoord; } }
 
     /// <summary>
-    /// Retrieves a component by index. Components are ordered as coordinate,
-    /// texture coordinate normal.
-    /// </summary>
-    /// <value>the value</value>
-    public float this [int i]
-    {
-        get
-        {
-            switch (i)
-            {
-                case 0:
-                case -8:
-                    return this.coord.x;
-                case 1:
-                case -7:
-                    return this.coord.y;
-                case 2:
-                case -6:
-                    return this.coord.z;
-                case 3:
-                case -5:
-                    return this.texCoord.x;
-                case 4:
-                case -4:
-                    return this.texCoord.y;
-                case 5:
-                case -3:
-                    return this.normal.x;
-                case 6:
-                case -2:
-                    return this.normal.y;
-                case 7:
-                case -1:
-                    return this.normal.z;
-                default:
-                    return 0.0f;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Retrieves a component by index. Components are ordered as coordinate,
-    /// texture coordinate normal.
-    /// </summary>
-    /// <value>the value</value>
-    public float this [int i, int j]
-    {
-        get
-        {
-            switch (i)
-            {
-                case 0:
-                case -3:
-                    return this.coord[j];
-                case 1:
-                case -2:
-                    return this.texCoord[j];
-                case 2:
-                case -1:
-                    return this.normal[j];
-                default:
-                    return 0.0f;
-            }
-        }
-    }
-
-    /// <summary>
     /// Constructs a vertex from a coordinate, texture coordinate and normal.
     /// </summary>
     /// <param name="coord">coordinate</param>
@@ -140,9 +73,9 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>, IEnumerabl
     /// <returns>the equivalence</returns>
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) return true;
-        if (Object.ReferenceEquals (null, value)) return false;
-        if (value is Vert3) return this.Equals ((Vert3) value);
+        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Vert3) { return this.Equals ((Vert3) value); }
         return false;
     }
 
@@ -193,9 +126,9 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>, IEnumerabl
     /// <returns>equivalence</returns>
     public bool Equals (Vert3 v)
     {
-        if (this.coord.GetHashCode ( ) != v.coord.GetHashCode ( )) return false;
-        if (this.texCoord.GetHashCode ( ) != v.texCoord.GetHashCode ( )) return false;
-        if (this.normal.GetHashCode ( ) != v.normal.GetHashCode ( )) return false;
+        if (this.coord.GetHashCode ( ) != v.coord.GetHashCode ( )) { return false; }
+        if (this.texCoord.GetHashCode ( ) != v.texCoord.GetHashCode ( )) { return false; }
+        if (this.normal.GetHashCode ( ) != v.normal.GetHashCode ( )) { return false; }
         return true;
     }
 

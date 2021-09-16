@@ -1,12 +1,10 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 /// <summary>
 /// Organizes a 2D Bezier curve into a list of knots. Provides a function to
-/// retrieve a point and tangent on a curve from a step in the range [0.0, 1.0]
-/// .
+/// retrieve a point and tangent on a curve from a step in the range [0.0, 1.0].
 /// </summary>
 public class Curve2 : IEnumerable
 {
@@ -272,14 +270,9 @@ public class Curve2 : IEnumerable
     public Curve2 Reset ( )
     {
         this.Resize (2);
-        Knot2 kn0 = this.knots[0];
-        Knot2 kn1 = this.knots[1];
-
         this.knots[0].Set (-0.5f, 0.0f, -0.25f, 0.25f, -0.75f, -0.25f);
         this.knots[1].Set (0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
-
         this.closedLoop = false;
-
         return this;
     }
 
@@ -326,7 +319,7 @@ public class Curve2 : IEnumerable
     public Curve2 Reverse ( )
     {
         this.knots.Reverse ( );
-        foreach (Knot2 kn in this.knots) kn.Reverse ( );
+        foreach (Knot2 kn in this.knots) { kn.Reverse ( ); }
         return this;
     }
 
@@ -339,7 +332,7 @@ public class Curve2 : IEnumerable
     {
         float cosa = Utils.Cos (radians);
         float sina = Utils.Sin (radians);
-        foreach (Knot2 kn in this.knots) kn.RotateZ (cosa, sina);
+        foreach (Knot2 kn in this.knots) { kn.RotateZ (cosa, sina); }
         return this;
     }
 
@@ -352,7 +345,7 @@ public class Curve2 : IEnumerable
     {
         if (scale != 0.0f)
         {
-            foreach (Knot2 kn in this.knots) kn.Scale (scale);
+            foreach (Knot2 kn in this.knots) { kn.Scale (scale); }
         }
         return this;
     }
@@ -366,7 +359,7 @@ public class Curve2 : IEnumerable
     {
         if (Vec2.All (scale))
         {
-            foreach (Knot2 kn in this.knots) kn.Scale (scale);
+            foreach (Knot2 kn in this.knots) { kn.Scale (scale); }
         }
         return this;
     }
@@ -399,7 +392,7 @@ public class Curve2 : IEnumerable
         {
             Knot2 knot = this.knots[i];
             sb.Append (knot.ToString (places));
-            if (i < last) sb.Append (", ");
+            if (i < last) { sb.Append (", "); }
         }
         sb.Append (" ] }");
         return sb.ToString ( );
@@ -412,7 +405,7 @@ public class Curve2 : IEnumerable
     /// <returns>this curve</returns>
     public Curve2 Transform (in Mat3 m)
     {
-        foreach (Knot2 kn in this.knots) kn.Transform (m);
+        foreach (Knot2 kn in this.knots) { kn.Transform (m); }
         return this;
     }
 
@@ -428,7 +421,7 @@ public class Curve2 : IEnumerable
     /// <returns>this curve</returns>
     public Curve2 Transform (in Transform2 tr)
     {
-        foreach (Knot2 kn in this.knots) kn.Transform (tr);
+        foreach (Knot2 kn in this.knots) { kn.Transform (tr); }
         return this;
     }
 
@@ -439,7 +432,7 @@ public class Curve2 : IEnumerable
     /// <returns>this curve</returns>
     public Curve2 Translate (in Vec2 v)
     {
-        foreach (Knot2 kn in this.knots) kn.Translate (v);
+        foreach (Knot2 kn in this.knots) { kn.Translate (v); }
         return this;
     }
 
@@ -457,10 +450,10 @@ public class Curve2 : IEnumerable
         List<Knot2> knots = curve.knots;
         int knotLength = knots.Count;
 
-        float tScaled = 0.0f;
-        int i = 0;
-        Knot2 a = null;
-        Knot2 b = null;
+        float tScaled;
+        int i;
+        Knot2 a;
+        Knot2 b;
 
         if (curve.closedLoop)
         {

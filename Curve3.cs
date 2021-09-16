@@ -152,7 +152,7 @@ public class Curve3 : IEnumerable
     public Curve3 AppendAll (params Knot2[ ] kn)
     {
         int len = kn.Length;
-        for (int i = 0; i < len; ++i) this.knots.Add (kn[i]);
+        for (int i = 0; i < len; ++i) { this.knots.Add (kn[i]); }
         return this;
     }
 
@@ -302,7 +302,7 @@ public class Curve3 : IEnumerable
     public Curve3 Reverse ( )
     {
         this.knots.Reverse ( );
-        foreach (Knot3 kn in this.knots) kn.Reverse ( );
+        foreach (Knot3 kn in this.knots) { kn.Reverse ( ); }
         return this;
     }
 
@@ -313,7 +313,7 @@ public class Curve3 : IEnumerable
     /// <returns>this curve</returns>
     public Curve3 Rotate (in Quat q)
     {
-        foreach (Knot3 kn in this.knots) kn.Rotate (q);
+        foreach (Knot3 kn in this.knots) { kn.Rotate (q); }
         return this;
     }
 
@@ -328,7 +328,7 @@ public class Curve3 : IEnumerable
     {
         float cosa = Utils.Cos (radians);
         float sina = Utils.Sin (radians);
-        foreach (Knot3 kn in this.knots) kn.Rotate (cosa, sina, axis);
+        foreach (Knot3 kn in this.knots) { kn.Rotate (cosa, sina, axis); }
         return this;
     }
 
@@ -341,7 +341,7 @@ public class Curve3 : IEnumerable
     {
         float cosa = Utils.Cos (radians);
         float sina = Utils.Sin (radians);
-        foreach (Knot3 kn in this.knots) kn.RotateX (cosa, sina);
+        foreach (Knot3 kn in this.knots) { kn.RotateX (cosa, sina); }
         return this;
     }
 
@@ -354,7 +354,7 @@ public class Curve3 : IEnumerable
     {
         float cosa = Utils.Cos (radians);
         float sina = Utils.Sin (radians);
-        foreach (Knot3 kn in this.knots) kn.RotateY (cosa, sina);
+        foreach (Knot3 kn in this.knots) { kn.RotateY (cosa, sina); }
         return this;
     }
 
@@ -367,7 +367,7 @@ public class Curve3 : IEnumerable
     {
         float cosa = Utils.Cos (radians);
         float sina = Utils.Sin (radians);
-        foreach (Knot3 kn in this.knots) kn.RotateZ (cosa, sina);
+        foreach (Knot3 kn in this.knots) { kn.RotateZ (cosa, sina); }
         return this;
     }
 
@@ -380,7 +380,7 @@ public class Curve3 : IEnumerable
     {
         if (scale != 0.0f)
         {
-            foreach (Knot3 kn in this.knots) kn.Scale (scale);
+            foreach (Knot3 kn in this.knots) { kn.Scale (scale); }
         }
         return this;
     }
@@ -394,7 +394,7 @@ public class Curve3 : IEnumerable
     {
         if (Vec3.All (scale))
         {
-            foreach (Knot3 kn in this.knots) kn.Scale (scale);
+            foreach (Knot3 kn in this.knots) { kn.Scale (scale); }
         }
         return this;
     }
@@ -427,7 +427,7 @@ public class Curve3 : IEnumerable
         {
             Knot3 knot = this.knots[i];
             sb.Append (knot.ToString (places));
-            if (i < last) sb.Append (", ");
+            if (i < last) { sb.Append (", "); }
         }
         sb.Append (" ] }");
         return sb.ToString ( );
@@ -440,7 +440,7 @@ public class Curve3 : IEnumerable
     /// <returns>this curve</returns>
     public Curve3 Transform (in Mat4 m)
     {
-        foreach (Knot3 kn in this.knots) kn.Transform (m);
+        foreach (Knot3 kn in this.knots) { kn.Transform (m); }
         return this;
     }
 
@@ -456,7 +456,7 @@ public class Curve3 : IEnumerable
     /// <returns>this curve</returns>
     public Curve3 Transform (in Transform3 tr)
     {
-        foreach (Knot3 kn in this.knots) kn.Transform (tr);
+        foreach (Knot3 kn in this.knots) { kn.Transform (tr); }
         return this;
     }
 
@@ -467,7 +467,7 @@ public class Curve3 : IEnumerable
     /// <returns>this curve</returns>
     public Curve3 Translate (in Vec3 v)
     {
-        foreach (Knot3 kn in this.knots) kn.Translate (v);
+        foreach (Knot3 kn in this.knots) { kn.Translate (v); }
         return this;
     }
 
@@ -479,7 +479,7 @@ public class Curve3 : IEnumerable
     {
         Curve3 result = new Curve3 ( );
         result.closedLoop = c.ClosedLoop;
-        foreach (Knot2 kn in c) result.Append (kn);
+        foreach (Knot2 kn in c) { result.Append (kn); }
         return result;
     }
 
@@ -497,10 +497,10 @@ public class Curve3 : IEnumerable
         List<Knot3> knots = curve.knots;
         int knotLength = knots.Count;
 
-        float tScaled = 0.0f;
-        int i = 0;
-        Knot3 a = null;
-        Knot3 b = null;
+        float tScaled;
+        int i;
+        Knot3 a;
+        Knot3 b;
 
         if (curve.closedLoop)
         {

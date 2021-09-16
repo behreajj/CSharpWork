@@ -163,9 +163,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the equivalence</returns>
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) return true;
-        if (Object.ReferenceEquals (null, value)) return false;
-        if (value is Clr) return this.Equals ((Clr) value);
+        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Clr) { return this.Equals ((Clr) value); }
         return false;
     }
 
@@ -191,8 +191,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// Compares this color to another in compliance with the IComparable
     /// interface.
     /// </summary>
-    /// <param name="v">the comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <param name="c">comparisand</param>
+    /// <returns>evaluation</returns>
     public int CompareTo (Clr c)
     {
         int left = Clr.ToHexInt (this);
@@ -549,11 +549,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         float aCl = Utils.Clamp (hsla.w, 0.0f, 1.0f);
         float light = hsla.z;
-        if (light <= 0.0f) return new Clr (0.0f, 0.0f, 0.0f, aCl);
-        if (light >= 1.0f) return new Clr (1.0f, 1.0f, 1.0f, aCl);
+        if (light <= 0.0f) { return new Clr (0.0f, 0.0f, 0.0f, aCl); }
+        if (light >= 1.0f) { return new Clr (1.0f, 1.0f, 1.0f, aCl); }
 
         float sat = hsla.y;
-        if (sat <= 0.0f) return new Clr (light, light, light, aCl);
+        if (sat <= 0.0f) { return new Clr (light, light, light, aCl); }
 
         float scl = sat > 1.0f ? 1.0f : sat;
         float q = light < 0.5f ?
@@ -630,7 +630,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             default:
                 return Clr.White;
         }
-
     }
 
     /// <summary>
@@ -811,8 +810,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the premultiplied color</returns>
     public static Clr Premul (in Clr c)
     {
-        if (c.a <= 0.0f) return Clr.ClearBlack;
-        if (c.a >= 1.0f) return new Clr (c._r, c._g, c._b, 1.0f);
+        if (c.a <= 0.0f) { return Clr.ClearBlack; }
+        if (c.a >= 1.0f) { return new Clr (c._r, c._g, c._b, 1.0f); }
         return new Clr (
             c._r * c._a,
             c._g * c._a,
@@ -1132,16 +1131,16 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         double offset = 16.0d / 116.0d;
 
         double a = xyz.x * 1.0521110608435826d;
-        if (a > 0.008856d) a = Math.Pow (a, oneThird);
-        else a = 7.787d * a + offset;
+        if (a > 0.008856d) { a = Math.Pow (a, oneThird); }
+        else { a = 7.787d * a + offset; }
 
         double b = xyz.y;
-        if (b > 0.008856d) b = Math.Pow (b, oneThird);
-        else b = 7.787d * b + offset;
+        if (b > 0.008856d) { b = Math.Pow (b, oneThird); }
+        else { b = 7.787d * b + offset; }
 
         double c = xyz.z * 0.9184170164304805d;
-        if (c > 0.008856d) c = Math.Pow (c, oneThird);
-        else c = 7.787d * c + offset;
+        if (c > 0.008856d) { c = Math.Pow (c, oneThird); }
+        else { c = 7.787d * c + offset; }
 
         return new Vec4 (
             (float) (116.0d * b - 16.0d),

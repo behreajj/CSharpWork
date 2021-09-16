@@ -50,9 +50,9 @@ public readonly struct Edge2 : IEquatable<Edge2>
     /// <returns>the equivalence</returns>
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) return true;
-        if (Object.ReferenceEquals (null, value)) return false;
-        if (value is Edge2) return this.Equals ((Edge2) value);
+        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Edge2) { return this.Equals ((Edge2) value); }
         return false;
     }
 
@@ -86,8 +86,8 @@ public readonly struct Edge2 : IEquatable<Edge2>
     /// <returns>equivalence</returns>
     public bool Equals (Edge2 e)
     {
-        if (this.origin.GetHashCode ( ) != e.origin.GetHashCode ( )) return false;
-        if (this.dest.GetHashCode ( ) != e.dest.GetHashCode ( )) return false;
+        if (this.origin.GetHashCode ( ) != e.origin.GetHashCode ( )) { return false; }
+        if (this.dest.GetHashCode ( ) != e.dest.GetHashCode ( )) { return false; }
         return true;
     }
 

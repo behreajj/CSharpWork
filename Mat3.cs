@@ -328,9 +328,9 @@ public readonly struct Mat3 : IEnumerable
     /// <returns>the equivalence</returns>
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) return true;
-        if (Object.ReferenceEquals (null, value)) return false;
-        if (value is Mat3) return this.Equals ((Mat3) value);
+        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Mat3) { return this.Equals ((Mat3) value); }
         return false;
     }
 
@@ -372,17 +372,17 @@ public readonly struct Mat3 : IEnumerable
     /// <returns>the equivalence</returns>
     public bool Equals (Mat3 m)
     {
-        if (this._m00.GetHashCode ( ) != m._m00.GetHashCode ( )) return false;
-        if (this._m01.GetHashCode ( ) != m._m01.GetHashCode ( )) return false;
-        if (this._m02.GetHashCode ( ) != m._m02.GetHashCode ( )) return false;
+        if (this._m00.GetHashCode ( ) != m._m00.GetHashCode ( )) { return false; }
+        if (this._m01.GetHashCode ( ) != m._m01.GetHashCode ( )) { return false; }
+        if (this._m02.GetHashCode ( ) != m._m02.GetHashCode ( )) { return false; }
 
-        if (this._m10.GetHashCode ( ) != m._m10.GetHashCode ( )) return false;
-        if (this._m11.GetHashCode ( ) != m._m11.GetHashCode ( )) return false;
-        if (this._m12.GetHashCode ( ) != m._m12.GetHashCode ( )) return false;
+        if (this._m10.GetHashCode ( ) != m._m10.GetHashCode ( )) { return false; }
+        if (this._m11.GetHashCode ( ) != m._m11.GetHashCode ( )) { return false; }
+        if (this._m12.GetHashCode ( ) != m._m12.GetHashCode ( )) { return false; }
 
-        if (this._m20.GetHashCode ( ) != m._m20.GetHashCode ( )) return false;
-        if (this._m21.GetHashCode ( ) != m._m21.GetHashCode ( )) return false;
-        if (this._m22.GetHashCode ( ) != m._m22.GetHashCode ( )) return false;
+        if (this._m20.GetHashCode ( ) != m._m20.GetHashCode ( )) { return false; }
+        if (this._m21.GetHashCode ( ) != m._m21.GetHashCode ( )) { return false; }
+        if (this._m22.GetHashCode ( ) != m._m22.GetHashCode ( )) { return false; }
 
         return true;
     }
@@ -915,9 +915,7 @@ public readonly struct Mat3 : IEnumerable
     /// <returns>matrix</returns>
     public static Mat3 FromRotZ (in float radians)
     {
-        float sina = 0.0f;
-        float cosa = 0.0f;
-        Utils.SinCos (radians, out sina, out cosa);
+        Utils.SinCos (radians, out float sina, out float cosa);
         return Mat3.FromRotZ (cosa, sina);
     }
 
