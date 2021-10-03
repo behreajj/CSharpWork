@@ -426,7 +426,7 @@ public class Curve3 : IEnumerable
         for (int i = 0; i < len; ++i)
         {
             Knot3 knot = this.knots[i];
-            sb.Append (knot.ToString (places));
+            Knot3.ToString (sb, knot, places);
             if (i < last) { sb.Append (", "); }
         }
         sb.Append (" ] }");

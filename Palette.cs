@@ -615,14 +615,27 @@ public class Palette
     }
 
     /// <summary>
-    /// Constructs an empty default palette.
+    /// Constructs an empty palette.
+    /// </summary>
+    public Palette ( ) { }
+
+    /// <summary>
+    /// Constructs a palette of a given length with a name and author.
     /// </summary>
     /// <param name="name">name</param>
     /// <param name="author">author</param>
-    public Palette (in string name = "Palette", in string author = "Anonymous")
+    /// <param name="len">palette length</param>
+    public Palette (in string name = "Palette", in string author = "Anonymous", in int len = 1)
     {
         this.Name = name;
         this.Author = author;
+
+        int valLen = Utils.Max (1, len);
+        this.entries = new Entry[valLen];
+        for (int i = 0; i < valLen; ++i)
+        {
+            this.entries[i] = new Entry ( );
+        }
     }
 
     /// <summary>
@@ -676,6 +689,24 @@ public class Palette
     public void AppendTag (in string name, params int[ ] indices)
     {
         this.InsertTag (this.tags.Count, name, indices);
+    }
+
+    /// <summary>
+    /// Contracts this palette's size by the amount.
+    /// </summary>
+    /// <param name="v">amount</param>
+    public void ContractBy (in int v)
+    {
+        this.Resize (this.entries.Length - v);
+    }
+
+    /// <summary>
+    /// Expands this palette's size by the amount.
+    /// </summary>
+    /// <param name="v">amount</param>
+    public void ExpandBy (in int v)
+    {
+        this.Resize (this.entries.Length + v);
     }
 
     /// <summary>
@@ -862,6 +893,16 @@ public class Palette
         {
             this.tags.RemoveAt (index);
         }
+    }
+
+    /// <summary>
+    /// Resizes the palette to the specified length.
+    /// </summary>
+    /// <param name="len">length</param>
+    public void Resize (in int len)
+    {
+        this.entries = Entry.Resize (this.entries, len);
+        this.TrimTagEntries ( );
     }
 
     /// <summary>

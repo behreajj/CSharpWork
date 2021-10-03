@@ -180,8 +180,7 @@ public class Knot2
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        // TODO: Use static format.
-        return this.ToString (4);
+        return Knot2.ToString (this);
     }
 
     /// <summary>
@@ -547,26 +546,6 @@ public class Knot2
     }
 
     /// <summary>
-    /// Returns a string representation of this vector.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (int places = 4)
-    {
-        // TODO: Refactor to use static pbr.
-        return new StringBuilder (256)
-            .Append ("{ coord: ")
-            .Append (Vec2.ToString (this.coord, places))
-            .Append (", foreHandle: ")
-            .Append (Vec2.ToString (this.foreHandle, places))
-            .Append (", rearHandle: ")
-            .Append (Vec2.ToString (this.rearHandle, places))
-            .Append (' ')
-            .Append ('}')
-            .ToString ( );
-    }
-
-    /// <summary>
     /// Transforms this knot by a matrix.
     /// </summary>
     /// <param name="tr">transform</param>
@@ -793,5 +772,36 @@ public class Knot2
     public static Vec2 RearVec (in Knot2 knot)
     {
         return knot.rearHandle - knot.coord;
+    }
+
+    /// <summary>
+    /// Returns a string representation of a knot.
+    /// </summary>
+    /// <param name="kn">knot</param>
+    /// <param name="places">places</param>
+    /// <returns>string</returns>
+    public static string ToString (in Knot2 kn, in int places = 4)
+    {
+        return Knot2.ToString (new StringBuilder (256), kn, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a representation of a knot to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="kn">knot</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Knot2 kn, in int places = 4)
+    {
+        sb.Append ("{ coord: ");
+        Vec2.ToString (sb, kn.coord, places);
+        sb.Append (", foreHandle: ");
+        Vec2.ToString (sb, kn.foreHandle, places);
+        sb.Append (", rearHandle: ");
+        Vec2.ToString (sb, kn.rearHandle, places);
+        sb.Append (' ');
+        sb.Append ('}');
+        return sb;
     }
 }

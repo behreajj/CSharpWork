@@ -584,10 +584,24 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the angle</returns>
     public static float AngleBetween (in Vec2 a, in Vec2 b)
     {
-        return Vec2.Any (a) && Vec2.Any (b) ?
-            Utils.Acos (Vec2.Dot (a, b) /
-                (Vec2.Mag (a) * Vec2.Mag (b))) :
-            0.0f;
+        // Double precision is required for accurate angle distance.
+        if (Vec2.Any (a) && Vec2.Any (b))
+        {
+            double ax = a._x;
+            double ay = a._y;
+
+            double bx = b._x;
+            double by = b._y;
+
+            return (float) Math.Acos (
+                (ax * bx + ay * by) /
+                (Math.Sqrt (ax * ax + ay * ay) *
+                    Math.Sqrt (bx * bx + by * by)));
+        }
+        else
+        {
+            return 0.0f;
+        }
     }
 
     /// <summary>
@@ -832,6 +846,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
 
     /// <summary>
     /// Finds first vector argument with the sign of the second vector argument.
+    /// Returns zero where the sign is zero.
     /// </summary>
     /// <param name="a">the magnitude</param>
     /// <param name="b">the sign</param>

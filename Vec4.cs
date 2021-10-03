@@ -809,6 +809,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
 
     /// <summary>
     /// Finds first vector argument with the sign of the second vector argument.
+    /// Returns zero where the sign is zero.
     /// </summary>
     /// <param name="a">the magnitude</param>
     /// <param name="b">the sign</param>

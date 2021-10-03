@@ -154,7 +154,7 @@ public class Transform3
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return this.ToString (4);
+        return Transform3.ToString (this);
     }
 
     /// <summary>
@@ -306,7 +306,7 @@ public class Transform3
     /// <returns>this transform</returns>
     public Transform3 ScaleTo (in Vec3 v, in Vec3 step)
     {
-        this.Scale = Vec3.Mix (this.scale, v, step);
+        this.Scale = Vec3.Mix (this.scale, Vec3.CopySign (v, this.scale), step);
         return this;
     }
 
@@ -319,28 +319,10 @@ public class Transform3
     /// <returns>this transform</returns>
     public Transform3 ScaleTo (in Vec3 v, in Vec3 step, in Func<Vec3, Vec3, Vec3, Vec3> easing)
     {
-        Vec3 t = easing (this.scale, v, step);
-        this.Scale = Vec3.Mix (this.scale, v, t);
+        Vec3 s = Vec3.CopySign (v, this.scale);
+        Vec3 t = easing (this.scale, s, step);
+        this.Scale = Vec3.Mix (this.scale, s, t);
         return this;
-    }
-
-    /// <summary>
-    /// Returns a string representation of this transform.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (in int places = 4)
-    {
-        // TODO: Standardize.
-        StringBuilder sb = new StringBuilder (354)
-            .Append ("{ location: ");
-        Vec3.ToString (sb, this.location, places);
-        sb.Append (", rotation: ");
-        Quat.ToString (sb, this.rotation, places);
-        sb.Append (", scale: ");
-        Vec3.ToString (sb, this.scale, places);
-        sb.Append (" }");
-        return sb.ToString ( );
     }
 
     /// <summary>
@@ -485,6 +467,37 @@ public class Transform3
     public static (Vec3 right, Vec3 forward, Vec3 up) ToAxes (in Transform3 tr)
     {
         return Quat.ToAxes (tr.rotation);
+    }
+
+    /// <summary>
+    /// Returns a string representation of a transform.
+    /// </summary>
+    /// <param name="tr">transform</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    public static string ToString (in Transform3 tr, in int places = 4)
+    {
+        return Transform3.ToString (new StringBuilder (354), tr, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a representation of a transform to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="tr">transform</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Transform3 tr, in int places = 4)
+    {
+        sb.Append ("{ location: ");
+        Vec3.ToString (sb, tr.location, places);
+        sb.Append (", rotation: ");
+        Quat.ToString (sb, tr.rotation, places);
+        sb.Append (", scale: ");
+        Vec3.ToString (sb, tr.scale, places);
+        sb.Append (' ');
+        sb.Append ('}');
+        return sb;
     }
 
     /// <summary>

@@ -309,7 +309,7 @@ public static class Utils
 
     /// <summary>
     /// Returns the first floating-point argument with the sign of the second
-    /// floating-point argument. 
+    /// floating-point argument. Returns zero if the sign is zero.
     /// </summary>
     /// <param name="mag">the magnitude</param>
     /// <param name="sign">the sign</param>
@@ -362,6 +362,18 @@ public static class Utils
     public static float Diff (in float a, in float b)
     {
         return Utils.Abs (a - b);
+    }
+
+    /// <summary>
+    /// Finds the unsigned distance between two angles.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>unsigned distance</returns>
+    public static float DistAngleUnsigned (in float a, in float b)
+    {
+        return Utils.Pi - Utils.Abs (Utils.Abs (Utils.ModRadians (b) -
+            Utils.ModRadians (a)) - Utils.Pi);
     }
 
     /// <summary>
