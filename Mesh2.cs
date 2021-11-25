@@ -201,7 +201,7 @@ public class Mesh2
     public Mesh2 DeleteFaces (in int faceIndex, in int deletions = 1)
     {
         int aLen = this.loops.Length;
-        int valIdx = Utils.Mod (faceIndex, aLen);
+        int valIdx = Utils.RemFloor (faceIndex, aLen);
         int valDel = Utils.Clamp (deletions, 0, aLen - valIdx);
         int bLen = aLen - valDel;
         Loop2[ ] result = new Loop2[bLen];
@@ -220,7 +220,7 @@ public class Mesh2
     /// <returns>vertex</returns>
     public Vert2 GetVertex (in int faceIndex, in int vertIndex)
     {
-        Index2 index = this.loops[Utils.Mod (faceIndex, this.loops.Length)][vertIndex];
+        Index2 index = this.loops[Utils.RemFloor (faceIndex, this.loops.Length)][vertIndex];
         return new Vert2 (
             this.coords[index.v],
             this.texCoords[index.vt]);
@@ -302,7 +302,7 @@ public class Mesh2
         }
 
         int loopsLen = this.loops.Length;
-        int i = Utils.Mod (faceIndex, loopsLen);
+        int i = Utils.RemFloor (faceIndex, loopsLen);
         Loop2 loop = this.loops[i];
         Index2[ ] indices = loop.Indices;
         int loopLen = indices.Length;
@@ -376,9 +376,9 @@ public class Mesh2
         in float stopAngle = Utils.Pi, //
         in PolyType poly = PolyType.Tri)
     {
-        float a1 = Utils.Mod1 (startAngle * Utils.OneTau);
-        float b1 = Utils.Mod1 (stopAngle * Utils.OneTau);
-        float arcLen1 = Utils.Mod1 (b1 - a1);
+        float a1 = Utils.WrapRadians (startAngle) * Utils.OneTau;
+        float b1 = Utils.WrapRadians (stopAngle) * Utils.OneTau;
+        float arcLen1 = Utils.RemFloor (b1 - a1, 1.0f);
 
         /* 1.0 / 720.0 = 0.001388889f */
         if (arcLen1 < 0.00139f)
@@ -726,7 +726,7 @@ public class Mesh2
         int newLen = poly == PolyType.Ngon ? seg : poly == PolyType.Quad ?
             seg + seg + 1 : seg + 1;
         float rad = Utils.Max (Utils.Epsilon, radius);
-        float offset = Utils.ModRadians (rotation);
+        float offset = Utils.WrapRadians (rotation);
         float toTheta = Utils.Tau / seg;
 
         Vec2[ ] vs = target.coords = Vec2.Resize (target.coords, newLen);
@@ -789,7 +789,7 @@ public class Mesh2
                 /* Find faces. */
                 for (int i = 0, j = 0; i < seg; ++i, j += 2)
                 {
-                    int s = 1 + Utils.Mod (j - 1, last);
+                    int s = 1 + Utils.RemFloor (j - 1, last);
                     int t = 1 + j % last;
                     int u = 1 + (j + 1) % last;
 

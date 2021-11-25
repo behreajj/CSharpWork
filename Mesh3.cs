@@ -228,7 +228,7 @@ public class Mesh3
     /// <returns>vertex</returns>
     public Vert3 GetVertex (in int faceIndex, in int vertIndex)
     {
-        Index3 index = this.loops[Utils.Mod (faceIndex, this.loops.Length)][vertIndex];
+        Index3 index = this.loops[Utils.RemFloor (faceIndex, this.loops.Length)][vertIndex];
         return new Vert3 (
             this.coords[index.v],
             this.texCoords[index.vt],
@@ -346,7 +346,7 @@ public class Mesh3
     public (Loop3[ ] loopsNew, Vec3 vNew, Vec2 vtNew, Vec3 vnNew) SubdivFaceFan (in int faceIdx)
     {
         int facesLen = this.loops.Length;
-        int i = Utils.Mod (faceIdx, facesLen);
+        int i = Utils.RemFloor (faceIdx, facesLen);
         Index3[ ] face = this.loops[i].Indices;
         int faceLen = face.Length;
 
@@ -414,7 +414,7 @@ public class Mesh3
     public (Loop3[ ] loopsNew, Vec3[ ] vsNew, Vec2[ ] vtsNew, Vec3[ ] vnsNew) SubdivFaceCenter (in int faceIdx)
     {
         int facesLen = this.loops.Length;
-        int i = Utils.Mod (faceIdx, facesLen);
+        int i = Utils.RemFloor (faceIdx, facesLen);
         Index3[ ] face = this.loops[i].Indices;
         int faceLen = face.Length;
 
@@ -499,7 +499,7 @@ public class Mesh3
     public (Loop3[ ] loopsNew, Vec3[ ] vsNew, Vec2[ ] vtsNew, Vec3[ ] vnsNew) SubdivFaceInscribe (in int faceIdx)
     {
         int facesLen = this.loops.Length;
-        int i = Utils.Mod (faceIdx, facesLen);
+        int i = Utils.RemFloor (faceIdx, facesLen);
         Index3[ ] face = this.loops[i].Indices;
         int faceLen = face.Length;
 
@@ -1325,6 +1325,16 @@ public class Mesh3
         return target;
     }
 
+    /// <summary>
+    /// Creates a cube, subdivides it, casts its vertices to a sphere, then
+    /// triangulates its faces. The higher the iteration, the more spherical the
+    /// result at the cost of performance.
+    /// </summary>
+    /// <param name="target">output mesh</param>
+    /// <param name="itrs">iterations</param>
+    /// <param name="size">size</param>
+    /// <param name="poly">polygon type</param>
+    /// <returns>dodecahedron</returns>
     public static Mesh3 CubeSphere ( //
         in Mesh3 target, //
         in int itrs = 3, //
@@ -1338,6 +1348,9 @@ public class Mesh3
         target.SubdivFacesCenter (itrs);
         if (poly == PolyType.Tri) { Mesh3.Triangulate (target, target); }
         target.Clean ( );
+
+        // TODO: Redo to use cube-specific algorithm?
+        // https://math.stackexchange.com/questions/118760/can-someone-please-explain-the-cube-to-sphere-mapping-formula-to-me
         Mesh3.CastToSphere (target, target, size);
         return target;
     }

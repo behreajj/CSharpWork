@@ -163,9 +163,18 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the equivalence</returns>
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) { return true; }
-        if (value is null) { return false; }
-        if (value is Clr) { return this.Equals ((Clr) value); }
+        if (Object.ReferenceEquals (this, value))
+        {
+            return true;
+        }
+        if (value is null)
+        {
+            return false;
+        }
+        if (value is Clr)
+        {
+            return this.Equals ((Clr) value);
+        }
         return false;
     }
 
@@ -547,11 +556,20 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         float aCl = Utils.Clamp (hsla.w, 0.0f, 1.0f);
         float light = hsla.z;
-        if (light <= 0.0f) { return new Clr (0.0f, 0.0f, 0.0f, aCl); }
-        if (light >= 1.0f) { return new Clr (1.0f, 1.0f, 1.0f, aCl); }
+        if (light <= 0.0f)
+        {
+            return new Clr (0.0f, 0.0f, 0.0f, aCl);
+        }
+        if (light >= 1.0f)
+        {
+            return new Clr (1.0f, 1.0f, 1.0f, aCl);
+        }
 
         float sat = hsla.y;
-        if (sat <= 0.0f) { return new Clr (light, light, light, aCl); }
+        if (sat <= 0.0f)
+        {
+            return new Clr (light, light, light, aCl);
+        }
 
         float scl = sat > 1.0f ? 1.0f : sat;
         float q = light < 0.5f ?
@@ -560,29 +578,47 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         float p = light + light - q;
         float qnp6 = (q - p) * 6.0f;
 
-        float rHue = Utils.Mod1 (hsla.x + Utils.OneThird);
-        float gHue = Utils.Mod1 (hsla.x);
-        float bHue = Utils.Mod1 (hsla.x - Utils.OneThird);
+        float rHue = Utils.RemFloor (hsla.x + Utils.OneThird, 1.0f);
+        float gHue = Utils.RemFloor (hsla.x, 1.0f);
+        float bHue = Utils.RemFloor (hsla.x - Utils.OneThird, 1.0f);
 
         float r = p;
-        if (rHue < Utils.OneSix) { r = p + qnp6 * rHue; }
-        else if (rHue < 0.5f) { r = q; }
+        if (rHue < Utils.OneSix)
+        {
+            r = p + qnp6 * rHue;
+        }
+        else if (rHue < 0.5f)
+        {
+            r = q;
+        }
         else if (rHue < Utils.TwoThirds)
         {
             r = p + qnp6 * (Utils.TwoThirds - rHue);
         }
 
         float g = p;
-        if (gHue < Utils.OneSix) { g = p + qnp6 * gHue; }
-        else if (gHue < 0.5f) { g = q; }
+        if (gHue < Utils.OneSix)
+        {
+            g = p + qnp6 * gHue;
+        }
+        else if (gHue < 0.5f)
+        {
+            g = q;
+        }
         else if (gHue < Utils.TwoThirds)
         {
             g = p + qnp6 * (Utils.TwoThirds - gHue);
         }
 
         float b = p;
-        if (bHue < Utils.OneSix) { b = p + qnp6 * bHue; }
-        else if (bHue < 0.5f) { b = q; }
+        if (bHue < Utils.OneSix)
+        {
+            b = p + qnp6 * bHue;
+        }
+        else if (bHue < 0.5f)
+        {
+            b = q;
+        }
         else if (bHue < Utils.TwoThirds)
         {
             b = p + qnp6 * (Utils.TwoThirds - bHue);
@@ -600,7 +636,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>rgba color</returns>
     public static Clr HsvaToRgba (in Vec4 hsva)
     {
-        float h = Utils.Mod1 (hsva.x) * 6.0f;
+        float h = Utils.RemFloor (hsva.x, 1.0f) * 6.0f;
         float s = Utils.Clamp (hsva.y, 0.0f, 1.0f);
         float v = Utils.Clamp (hsva.z, 0.0f, 1.0f);
         float a = Utils.Clamp (hsva.w, 0.0f, 1.0f);
@@ -653,7 +689,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         else
         {
             return new Vec4 (
-                Utils.OneTau * Utils.ModRadians (
+                Utils.OneTau * Utils.WrapRadians (
                     (float) Math.Atan2 (b, a)),
                 (float) Math.Sqrt (chromaSq),
                 lab.z,
@@ -740,21 +776,21 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         double inv24 = 1.0d / 2.4d;
         return new Clr (
-            c._r <= 0.0031308f ?
-            c._r * 12.92f :
-            (float) (Math.Pow (c._r, inv24) * 1.055d - 0.055d),
+            c._r > 0.0031308f ?
+            (float) (Math.Pow (c._r, inv24) * 1.055d - 0.055d) :
+            c._r * 12.92f,
 
-            c._g <= 0.0031308f ?
-            c._g * 12.92f :
-            (float) (Math.Pow (c._g, inv24) * 1.055d - 0.055d),
+            c._g > 0.0031308f ?
+            (float) (Math.Pow (c._g, inv24) * 1.055d - 0.055d) :
+            c._g * 12.92f,
 
-            c._b <= 0.0031308f ?
-            c._b * 12.92f :
-            (float) (Math.Pow (c._b, inv24) * 1.055d - 0.055d),
+            c._b > 0.0031308f ?
+            (float) (Math.Pow (c._b, inv24) * 1.055d - 0.055d) :
+            c._b * 12.92f,
 
-            alpha ? c._a <= 0.0031308f ?
-            c._a * 12.92f :
+            alpha ? c._a > 0.0031308f ?
             (float) (Math.Pow (c._a, inv24) * 1.055d - 0.055d) :
+            c._a * 12.92f :
             c._a);
     }
 
@@ -801,6 +837,34 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
 
     /// <summary>
     /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Converts each color from sRGB to HSL, mixes according
+    /// to the step, then converts back to sRGB.
+    /// </summary>
+    /// <param name="a">origin color</param>
+    /// <param name="b">destination color</param>
+    /// <param name="t">step</param>
+    /// <returns>the mixed color</returns>
+    public static Clr MixHsla (in Clr a, in Clr b, in float t)
+    {
+        return Clr.MixHsla (a, b, t, (x, y, z, w) => Utils.LerpAngleNear (x, y, z, w));
+    }
+
+    /// <summary>
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Converts each color from sRGB to HSV, mixes according
+    /// to the step, then converts back to sRGB.
+    /// </summary>
+    /// <param name="a">origin color</param>
+    /// <param name="b">destination color</param>
+    /// <param name="t">step</param>
+    /// <returns>the mixed color</returns>
+    public static Clr MixHsva (in Clr a, in Clr b, in float t)
+    {
+        return Clr.MixHsva (a, b, t, (x, y, z, w) => Utils.LerpAngleNear (x, y, z, w));
+    }
+
+    /// <summary>
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
     /// Converts each color from sRGB to CIE LCH, mixes according
     /// to the step, then converts back to sRGB.
     /// </summary>
@@ -811,6 +875,80 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     public static Clr MixLcha (in Clr a, in Clr b, in float t)
     {
         return Clr.MixLcha (a, b, t, (x, y, z, w) => Utils.LerpAngleNear (x, y, z, w));
+    }
+
+    /// <summary>
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Converts each color from sRGB to HSL, mixes according
+    /// to the step, then converts back to sRGB.
+    /// The easing function is expected to ease from an origin
+    /// hue to a destination by a factor according to a range.
+    /// </summary>
+    /// <param name="a">origin color</param>
+    /// <param name="b">destination color</param>
+    /// <param name="t">step</param>
+    /// <param name="easing">easing function</param>
+    /// <returns>the mixed color</returns>
+    public static Clr MixHsla ( //
+        in Clr a, //
+        in Clr b, //
+        in float t, //
+        in Func<float, float, float, float, float> easing)
+    {
+        Vec4 aHsla = Clr.RgbaToHsla (a);
+        Vec4 bHsla = Clr.RgbaToHsla (b);
+
+        if (aHsla.y < Utils.Epsilon || bHsla.y < Utils.Epsilon)
+        {
+            return Clr.MixRgbaLinear (a, b, t);
+        }
+        else
+        {
+            float u = 1.0f - t;
+            Vec4 cHsla = new Vec4 (
+                easing (aHsla.x, bHsla.x, t, 1.0f),
+                u * aHsla.y + t * bHsla.y,
+                u * aHsla.z + t * bHsla.z,
+                u * aHsla.w + t * bHsla.w);
+            return Clr.HslaToRgba (cHsla);
+        }
+    }
+
+    /// <summary>
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Converts each color from sRGB to HSV, mixes according
+    /// to the step, then converts back to sRGB.
+    /// The easing function is expected to ease from an origin
+    /// hue to a destination by a factor according to a range.
+    /// </summary>
+    /// <param name="a">origin color</param>
+    /// <param name="b">destination color</param>
+    /// <param name="t">step</param>
+    /// <param name="easing">easing function</param>
+    /// <returns>the mixed color</returns>
+    public static Clr MixHsva ( //
+        in Clr a, //
+        in Clr b, //
+        in float t, //
+        in Func<float, float, float, float, float> easing)
+    {
+        Vec4 aHsva = Clr.RgbaToHsva (a);
+        Vec4 bHsva = Clr.RgbaToHsva (b);
+
+        if (aHsva.y < Utils.Epsilon || bHsva.y < Utils.Epsilon)
+        {
+            return Clr.MixRgbaLinear (a, b, t);
+        }
+        else
+        {
+            float u = 1.0f - t;
+            Vec4 cHsva = new Vec4 (
+                easing (aHsva.x, bHsva.x, t, 1.0f),
+                u * aHsva.y + t * bHsva.y,
+                u * aHsva.z + t * bHsva.z,
+                u * aHsva.w + t * bHsva.w);
+            return Clr.HsvaToRgba (cHsva);
+        }
     }
 
     /// <summary>
@@ -854,11 +992,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         else
         {
             float aChr = (float) Math.Sqrt (aChrSq);
-            float aHue = Utils.OneTau * Utils.ModRadians (
+            float aHue = Utils.OneTau * Utils.WrapRadians (
                 (float) Math.Atan2 (ab, aa));
 
             float bChr = (float) Math.Sqrt (bChrSq);
-            float bHue = Utils.OneTau * Utils.ModRadians (
+            float bHue = Utils.OneTau * Utils.WrapRadians (
                 (float) Math.Atan2 (bb, ba));
 
             float u = 1.0f - t;
@@ -866,8 +1004,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
                 easing (aHue, bHue, t, 1.0f),
                 u * aChr + t * bChr,
                 u * aLab.z + t * bLab.z,
-                u * aLab.w + t * bLab.w
-            );
+                u * aLab.w + t * bLab.w);
             cLab = Clr.LchaToLaba (cLch);
         }
 
@@ -981,22 +1118,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a random color from a lower- and upper-bound.
-    /// </summary>
-    /// <param name="rng">the random number generator</param>
-    /// <param name="lb">the lower bound</param>
-    /// <param name="ub">the upper bound</param>
-    /// <returns>the color</returns>
-    public static Clr RandomRgba (in Random rng, in Clr lb, in Clr ub)
-    {
-        return new Clr (
-            Utils.Mix (lb._r, ub._r, (float) rng.NextDouble ( )),
-            Utils.Mix (lb._g, ub._g, (float) rng.NextDouble ( )),
-            Utils.Mix (lb._b, ub._b, (float) rng.NextDouble ( )),
-            Utils.Mix (lb._a, ub._a, (float) rng.NextDouble ( )));
-    }
-
-    /// <summary>
     /// Converts from a color's, red, green, blue and alpha
     /// channels to hue, saturation, lightness and alpha.
     /// </summary>
@@ -1029,7 +1150,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         else if (diff <= Utils.One255)
         {
             return new Vec4 (
-                Utils.LerpAngleNear (Clr.HslHueShade, Clr.HslHueDay, light, 1.0f),
+                Utils.LerpAngleNear (
+                    Clr.HslHueShade, Clr.HslHueDay,
+                    light, 1.0f),
                 0.0f, light, alpha);
         }
         else
@@ -1038,7 +1161,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
             if (Utils.Approx (red, mx, Utils.One255))
             {
                 hue = (green - blue) / diff;
-                if (green < blue) { hue += 6.0f; }
+                if (green < blue)
+                {
+                    hue += 6.0f;
+                }
             }
             else if (Utils.Approx (green, mx, Utils.One255))
             {
@@ -1089,7 +1215,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
                 else
                 {
                     return new Vec4 (
-                        Utils.LerpAngleNear (Clr.HslHueShade, Clr.HslHueDay, light, 1.0f),
+                        Utils.LerpAngleNear (
+                            Clr.HslHueShade, Clr.HslHueDay,
+                            light, 1.0f),
                         0.0f, mx, alpha);
                 }
             }
@@ -1136,21 +1264,21 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     {
         double inv1055 = 1.0d / 1.055d;
         return new Clr (
-            c._r <= 0.04045f ?
-            c._r * 0.07739938f :
-            (float) Math.Pow ((c._r + 0.055d) * inv1055, 2.4d),
+            c._r > 0.04045f ?
+            (float) Math.Pow ((c._r + 0.055d) * inv1055, 2.4d) :
+            c._r * 0.07739938f,
 
-            c._g <= 0.04045f ?
-            c._g * 0.07739938f :
-            (float) Math.Pow ((c._g + 0.055d) * inv1055, 2.4d),
+            c._g > 0.04045f ?
+            (float) Math.Pow ((c._g + 0.055d) * inv1055, 2.4d) :
+            c._g * 0.07739938f,
 
-            c._b <= 0.04045f ?
-            c._b * 0.07739938f :
-            (float) Math.Pow ((c._b + 0.055d) * inv1055, 2.4d),
+            c._b > 0.04045f ?
+            (float) Math.Pow ((c._b + 0.055d) * inv1055, 2.4d) :
+            c._b * 0.07739938f,
 
-            alpha ? c._a <= 0.04045f ?
-            c._a * 0.07739938f :
+            alpha ? c._a > 0.04045f ?
             (float) Math.Pow ((c._a + 0.055d) * inv1055, 2.4d) :
+            c._a * 0.07739938f :
             c._a);
     }
 
@@ -1256,16 +1384,34 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         double offset = 16.0d / 116.0d;
 
         double a = xyz.x * 1.0521110608435826d;
-        if (a > 0.008856d) { a = Math.Pow (a, oneThird); }
-        else { a = 7.787d * a + offset; }
+        if (a > 0.008856d)
+        {
+            a = Math.Pow (a, oneThird);
+        }
+        else
+        {
+            a = 7.787d * a + offset;
+        }
 
         double b = xyz.y;
-        if (b > 0.008856d) { b = Math.Pow (b, oneThird); }
-        else { b = 7.787d * b + offset; }
+        if (b > 0.008856d)
+        {
+            b = Math.Pow (b, oneThird);
+        }
+        else
+        {
+            b = 7.787d * b + offset;
+        }
 
         double c = xyz.z * 0.9184170164304805d;
-        if (c > 0.008856d) { c = Math.Pow (c, oneThird); }
-        else { c = 7.787d * c + offset; }
+        if (c > 0.008856d)
+        {
+            c = Math.Pow (c, oneThird);
+        }
+        else
+        {
+            c = 7.787d * c + offset;
+        }
 
         return new Vec4 (
             (float) (500.0d * (a - b)), // a

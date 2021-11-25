@@ -71,7 +71,7 @@ public class Curve2 : IEnumerable
         get
         {
             return this.closedLoop ?
-                this.knots[Utils.Mod (i, this.knots.Count)] :
+                this.knots[Utils.RemFloor (i, this.knots.Count)] :
                 this.knots[i];
         }
     }
@@ -199,7 +199,7 @@ public class Curve2 : IEnumerable
     /// <returns>the curve</returns>
     public Curve2 Insert (in int i, Knot2 knot)
     {
-        int k = this.closedLoop ? Utils.Mod (i, this.knots.Count + 1) : i;
+        int k = this.closedLoop ? Utils.RemFloor (i, this.knots.Count + 1) : i;
         this.knots.Insert (k, knot);
         return this;
     }
@@ -239,7 +239,7 @@ public class Curve2 : IEnumerable
     /// <returns>the knot</returns>
     public Knot2 RemoveAt (in int i)
     {
-        int j = this.closedLoop ? Utils.Mod (i, this.knots.Count) : i;
+        int j = this.closedLoop ? Utils.RemFloor (i, this.knots.Count) : i;
         Knot2 knot = this.knots[j];
         this.knots.RemoveAt (j);
         return knot;
@@ -457,10 +457,10 @@ public class Curve2 : IEnumerable
 
         if (curve.closedLoop)
         {
-            tScaled = Utils.Mod1 (step) * knotLength;
+            tScaled = Utils.RemFloor (step, 1.0f) * knotLength;
             i = (int) tScaled;
-            a = knots[Utils.Mod (i, knotLength)];
-            b = knots[Utils.Mod (i + 1, knotLength)];
+            a = knots[Utils.RemFloor (i, knotLength)];
+            b = knots[Utils.RemFloor (i + 1, knotLength)];
         }
         else
         {

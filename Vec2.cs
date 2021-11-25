@@ -225,15 +225,6 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Converts a vector to a float by finding its magnitude.
-    /// </summary>
-    /// <param name="v">vector</param>
-    public static explicit operator float (in Vec2 v)
-    {
-        return Vec2.Mag (v);
-    }
-
-    /// <summary>
     /// A vector evaluates to true when all of its components are not equal to
     /// zero.
     /// </summary>
@@ -415,7 +406,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the result</returns>
     public static Vec2 operator % (in Vec2 a, in Vec2 b)
     {
-        return Vec2.Fmod (a, b);
+        return Vec2.RemTrunc (a, b);
     }
 
     /// <summary>
@@ -439,8 +430,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     public static Vec2 operator % (in float a, in Vec2 b)
     {
         return new Vec2 (
-            Utils.Fmod (a, b._x),
-            Utils.Fmod (a, b._y));
+            Utils.RemTrunc (a, b._x),
+            Utils.RemTrunc (a, b._y));
     }
 
     /// <summary>
@@ -1008,19 +999,6 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Applies the % operator (truncation-based modulo) to the left operand.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>the result</returns>
-    public static Vec2 Fmod (in Vec2 a, in Vec2 b)
-    {
-        return new Vec2 (
-            Utils.Fmod (a._x, b._x),
-            Utils.Fmod (a._y, b._y));
-    }
-
-    /// <summary>
     /// Returns the fractional portion of the vector's components.
     /// </summary>
     /// <param name="v">vector</param>
@@ -1117,7 +1095,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>the angle in radians</returns>
     public static float HeadingUnsigned (in Vec2 v)
     {
-        return Utils.ModRadians (Vec2.HeadingSigned (v));
+        return Utils.WrapRadians (Vec2.HeadingSigned (v));
     }
 
     /// <summary>
@@ -1286,33 +1264,6 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Mods each component of the left vector by those of the right.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>the result</returns>
-    public static Vec2 Mod (in Vec2 a, in Vec2 b)
-    {
-        return new Vec2 (
-            Utils.Mod (a._x, b._x),
-            Utils.Mod (a._y, b._y));
-    }
-
-    /// <summary>
-    /// A specialized form of mod which subtracts the floor of the vector from
-    /// the vector. For Vec2s, useful for managing texture coordinates in the
-    /// range [0.0, 1.0] .
-    /// </summary>
-    /// <param name="v">vector</param>
-    /// <returns>the result</returns>
-    public static Vec2 Mod1 (in Vec2 v)
-    {
-        return new Vec2 (
-            Utils.Mod1 (v._x),
-            Utils.Mod1 (v._y));
-    }
-
-    /// <summary>
     /// Tests to see if all the vector's components are zero. Useful when
     /// safeguarding against invalid directions.
     /// </summary>
@@ -1459,6 +1410,32 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         return new Vec2 (
             delta * Utils.Floor (0.5f + a._x * levf),
             delta * Utils.Floor (0.5f + a._y * levf));
+    }
+
+    /// <summary>
+    /// Mods each component of the left vector by those of the right.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the result</returns>
+    public static Vec2 RemFloor (in Vec2 a, in Vec2 b)
+    {
+        return new Vec2 (
+            Utils.RemFloor (a._x, b._x),
+            Utils.RemFloor (a._y, b._y));
+    }
+
+    /// <summary>
+    /// Applies the % operator (truncation-based modulo) to the left operand.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the result</returns>
+    public static Vec2 RemTrunc (in Vec2 a, in Vec2 b)
+    {
+        return new Vec2 (
+            Utils.RemTrunc (a._x, b._x),
+            Utils.RemTrunc (a._y, b._y));
     }
 
     /// <summary>

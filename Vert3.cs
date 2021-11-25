@@ -10,7 +10,7 @@ using System.Text;
 /// independent values.
 /// </summary>
 [Serializable]
-public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>, IEnumerable
+public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
 {
     /// <summary>
     /// The coordinate of the vertex in world space.
@@ -133,62 +133,13 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>, IEnumerabl
     }
 
     /// <summary>
-    /// Returns an enumerator (or iterator) for this vertex, allowing its
-    /// components to be accessed in a foreach loop.
-    /// </summary>
-    /// <returns>the enumerator</returns>
-    public IEnumerator GetEnumerator ( )
-    {
-        yield return this.coord.x;
-        yield return this.coord.y;
-        yield return this.coord.z;
-
-        yield return this.texCoord.x;
-        yield return this.texCoord.y;
-
-        yield return this.normal.x;
-        yield return this.normal.y;
-        yield return this.normal.z;
-    }
-
-    /// <summary>
-    /// Returns a float array containing this vertex's components.
-    /// </summary>
-    /// <returns>the array</returns>
-    public float[ ] ToArray ( )
-    {
-        return this.ToArray (new float[this.Length], 0);
-    }
-
-    /// <summary>
-    /// Puts this vertex's components into an array at a given index.
-    /// </summary>
-    /// <param name="arr">array</param>
-    /// <param name="i">index</param>
-    /// <returns>array</returns>
-    public float[ ] ToArray (in float[ ] arr, in int i = 0)
-    {
-        arr[i] = this.coord.x;
-        arr[i + 1] = this.coord.y;
-        arr[i + 2] = this.coord.z;
-
-        arr[i + 3] = this.texCoord.x;
-        arr[i + 4] = this.texCoord.y;
-
-        arr[i + 5] = this.normal.x;
-        arr[i + 6] = this.normal.y;
-        arr[i + 7] = this.normal.z;
-
-        return arr;
-    }
-
-    /// <summary>
     /// Returns a string representation of this vertex.
     /// </summary>
     /// <param name="places">number of decimal places</param>
     /// <returns>the string</returns>
     public string ToString (in int places = 4)
     {
+        // TODO: Update to pass by reference.
         return new StringBuilder (512)
             .Append ("{ coord: ")
             .Append (Vec3.ToString (this.coord, places))

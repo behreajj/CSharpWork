@@ -255,7 +255,7 @@ public class ClrGradient : IEnumerable
     {
         get
         {
-            return this.keys[Utils.Mod (i, this.keys.Count)];
+            return this.keys[Utils.RemFloor (i, this.keys.Count)];
         }
     }
 
@@ -286,8 +286,7 @@ public class ClrGradient : IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        // TODO: Switch to using standard static method.
-        return this.ToString (4);
+        return ClrGradient.ToString (this);
     }
 
     /// <summary>
@@ -342,7 +341,7 @@ public class ClrGradient : IEnumerable
                 low = middle + 1;
             }
             else
-            { 
+            {
                 high = middle;
             }
         }
@@ -442,15 +441,25 @@ public class ClrGradient : IEnumerable
     /// <returns>color</returns>
     public Clr Eval (in float step)
     {
+        return this.Eval (step, (x, y, z) => Clr.MixRgbaLinear (x, y, z));
+    }
+
+    /// <summary>
+    /// Finds a color given a step in the range [0.0, 1.0]. When the step falls
+    /// between color keys, the resultant color is created by an easing function.
+    /// </summary>
+    /// <param name="step">step</param>
+    /// <param name="easing">easing function</param>
+    /// <returns>color</returns>
+    public Clr Eval (in float step, in Func<Clr, Clr, float, Clr> easing)
+    {
         Key prevKey = this.FindLe (step);
         Key nextKey = this.FindGe (step);
         float prevStep = prevKey.Step;
         float nextStep = nextKey.Step;
         if (prevStep == nextStep) { return prevKey.Color; }
         float fac = (step - nextStep) / (prevStep - nextStep);
-
-        // TODO: How can a static method be passed in to this function?
-        return Clr.MixRgbaLinear (prevKey.Color, nextKey.Color, fac);
+        return easing (prevKey.Color, nextKey.Color, fac);
     }
 
     /// <summary>
@@ -458,15 +467,41 @@ public class ClrGradient : IEnumerable
     /// range [0.0, 1.0] for the supplied count.
     /// </summary>
     /// <param name="count">count</param>
+    /// <param name="origin">origin</param>
+    /// <param name="dest">destination</param>
     /// <returns>the colors</returns>
-    public Clr[ ] EvalRange (in int count)
+    public Clr[ ] EvalRange (in int count, in float origin = 0.0f, in float dest = 1.0f)
+    {
+        return this.EvalRange (count, origin, dest, (x, y, z) => Clr.MixRgbaLinear (x, y, z));
+    }
+
+    /// <summary>
+    /// Evaluates an array of colors for a step distributed evenly across the
+    /// range [0.0, 1.0] for the supplied count.
+    /// </summary>
+    /// <param name="count">count</param>
+    /// <param name="origin">origin</param>
+    /// <param name="dest">destination</param>
+    /// <param name="easing">easing function</param>
+    /// <returns>the colors</returns>
+    public Clr[ ] EvalRange ( //
+        in int count, //
+        in float origin, //
+        in float dest, //
+        in Func<Clr, Clr, float, Clr> easing)
     {
         int vCount = count < 3 ? 3 : count;
+        float vOrigin = Utils.Clamp (origin, 0.0f, 1.0f);
+        float vDest = Utils.Clamp (dest, 0.0f, 1.0f);
+
         Clr[ ] result = new Clr[vCount];
         float toPercent = 1.0f / (vCount - 1.0f);
         for (int i = 0; i < vCount; ++i)
         {
-            result[i] = this.Eval (i * toPercent);
+            float prc = i * toPercent;
+            result[i] = this.Eval (
+                (1.0f - prc) * vOrigin +
+                prc * vDest, easing);
         }
         return result;
     }
@@ -603,7 +638,7 @@ public class ClrGradient : IEnumerable
     /// <returns>the key</returns>
     public Key RemoveAt (in int i = -1)
     {
-        int j = Utils.Mod (i, this.keys.Count);
+        int j = Utils.RemFloor (i, this.keys.Count);
         Key key = this.keys[j];
         this.keys.RemoveAt (j);
         return key;
@@ -654,30 +689,6 @@ public class ClrGradient : IEnumerable
             this.keys[i] = new Key (1.0f - key.Step, key.Color);
         }
         return this;
-    }
-
-    /// <summary>
-    /// Returns a string representation of this gradient.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (in int places = 4)
-    {
-        // TODO: Switch to static format for this.
-        int len = this.keys.Count;
-        int last = len - 1;
-
-        StringBuilder sb = new StringBuilder (16 + 128 * len);
-        sb.Append ("{ keys: [ ");
-        for (int i = 0; i < last; ++i)
-        {
-            Key.ToString (sb, this.keys[i], places);
-            sb.Append (',');
-            sb.Append (' ');
-        }
-        Key.ToString (sb, this.keys[last], places);
-        sb.Append (" ] }");
-        return sb.ToString ( );
     }
 
     /// <summary>
@@ -798,5 +809,41 @@ public class ClrGradient : IEnumerable
         keys.Add (new Key (1.000f, new Clr (0.992157f, 0.905882f, 0.145098f)));
 
         return target;
+    }
+
+    /// <summary>
+    /// Returns a string representation of a color gradient.
+    /// </summary>
+    /// <param name="pal">color gradient</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    public static string ToString (in ClrGradient c, in int places = 4)
+    {
+        return ClrGradient.ToString (new StringBuilder (1024), c, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appendsa a representation of a color gradient to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="c">color gradient</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in ClrGradient c, in int places = 4)
+    {
+        List<Key> keys = c.keys;
+        int len = keys.Count;
+        int last = len - 1;
+
+        sb.Append ("{ keys: [ ");
+        for (int i = 0; i < last; ++i)
+        {
+            Key.ToString (sb, keys[i], places);
+            sb.Append (',');
+            sb.Append (' ');
+        }
+        Key.ToString (sb, keys[last], places);
+        sb.Append (" ] }");
+        return sb;
     }
 }

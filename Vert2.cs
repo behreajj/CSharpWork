@@ -10,7 +10,7 @@ using System.Text;
 /// independent values.
 /// </summary>
 [Serializable]
-public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>, IEnumerable
+public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>
 {
     /// <summary>
     /// The coordinate of the vertex in world space.
@@ -115,52 +115,13 @@ public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>, IEnumerabl
     }
 
     /// <summary>
-    /// Returns an enumerator (or iterator) for this vertex, allowing its
-    /// components to be accessed in a foreach loop.
-    /// </summary>
-    /// <returns>the enumerator</returns>
-    public IEnumerator GetEnumerator ( )
-    {
-        yield return this.coord.x;
-        yield return this.coord.y;
-
-        yield return this.texCoord.x;
-        yield return this.texCoord.y;
-    }
-
-    /// <summary>
-    /// Returns a float array containing this vertex's components.
-    /// </summary>
-    /// <returns>the array</returns>
-    public float[ ] ToArray ( )
-    {
-        return this.ToArray (new float[this.Length], 0);
-    }
-
-    /// <summary>
-    /// Puts this vertex's components into an array at a given index.
-    /// </summary>
-    /// <param name="arr">array</param>
-    /// <param name="i">index</param>
-    /// <returns>array</returns>
-    public float[ ] ToArray (in float[ ] arr, in int i = 0)
-    {
-        arr[i] = this.coord.x;
-        arr[i + 1] = this.coord.y;
-
-        arr[i + 2] = this.texCoord.x;
-        arr[i + 3] = this.texCoord.y;
-
-        return arr;
-    }
-
-    /// <summary>
     /// Returns a string representation of this vertex.
     /// </summary>
     /// <param name="places">number of decimal places</param>
     /// <returns>the string</returns>
     public string ToString (in int places = 4)
     {
+        // TODO: Update to pass by reference.
         return new StringBuilder (256)
             .Append ("{ coord: ")
             .Append (Vec2.ToString (this.coord, places))

@@ -97,9 +97,18 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// <returns>equivalence</returns>
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) { return true; }
-        if (value is null) { return false; }
-        if (value is Bounds3) { return this.Equals ((Bounds3) value); }
+        if (Object.ReferenceEquals (this, value))
+        {
+            return true;
+        }
+        if (value is null)
+        {
+            return false;
+        }
+        if (value is Bounds3)
+        {
+            return this.Equals ((Bounds3) value);
+        }
         return false;
     }
 
@@ -131,9 +140,8 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// <returns>equivalence</returns>
     public bool Equals (Bounds3 b)
     {
-        if (this.min.GetHashCode ( ) != b.min.GetHashCode ( )) { return false; }
-        if (this.max.GetHashCode ( ) != b.max.GetHashCode ( )) { return false; }
-        return true;
+        return this.min.GetHashCode ( ) == b.min.GetHashCode ( ) &&
+            this.max.GetHashCode ( ) == b.max.GetHashCode ( );
     }
 
     /// <summary>
@@ -237,9 +245,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// <returns>bounds</returns>
     public static Bounds3 FromCenterExtent (in Vec3 center, in Vec3 extent)
     {
-        return new Bounds3 (
-            center - extent * 0.5f,
-            center + extent * 0.5f);
+        return Bounds3.FromCenterHalfExtent (center, extent * 0.5f);
     }
 
     /// <summary>
@@ -250,9 +256,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// <returns>bounds</returns>
     public static Bounds3 FromCenterHalfExtent (in Vec3 center, in Vec3 he)
     {
-        return new Bounds3 (
-            center - he,
-            center + he);
+        return new Bounds3 (center - he, center + he);
     }
 
     /// <summary>
@@ -263,7 +267,10 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     public static Bounds3 FromPoints (params Vec3[ ] points)
     {
         int len = points.Length;
-        if (len < 1) { return new Bounds3 ( ); }
+        if (len < 1)
+        {
+            return new Bounds3 ( );
+        }
 
         float lbx = float.MaxValue;
         float lby = float.MaxValue;
@@ -279,12 +286,30 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
             float x = p.x;
             float y = p.y;
             float z = p.z;
-            if (x < lbx) { lbx = x; }
-            if (x > ubx) { ubx = x; }
-            if (y < lby) { lby = y; }
-            if (y > uby) { uby = y; }
-            if (z < lbz) { lbz = z; }
-            if (z > ubz) { ubz = z; }
+            if (x < lbx)
+            {
+                lbx = x;
+            }
+            if (x > ubx)
+            {
+                ubx = x;
+            }
+            if (y < lby)
+            {
+                lby = y;
+            }
+            if (y > uby)
+            {
+                uby = y;
+            }
+            if (z < lbz)
+            {
+                lbz = z;
+            }
+            if (z > ubz)
+            {
+                ubz = z;
+            }
         }
 
         lbx -= Utils.Epsilon * 2.0f;

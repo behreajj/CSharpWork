@@ -24,12 +24,12 @@ public class Loop2
     {
         get
         {
-            return this.indices[Utils.Mod (i, this.indices.Length)];
+            return this.indices[Utils.RemFloor (i, this.indices.Length)];
         }
 
         set
         {
-            this.indices[Utils.Mod (i, this.indices.Length)] = value;
+            this.indices[Utils.RemFloor (i, this.indices.Length)] = value;
         }
     }
 
@@ -116,7 +116,7 @@ public class Loop2
         }
 
         int bLen = insert.Length;
-        int valIdx = Utils.Mod (index, aLen + 1);
+        int valIdx = Utils.RemFloor (index, aLen + 1);
         if (deletions < 1)
         {
             Loop2[ ] result1 = new Loop2[aLen + bLen];

@@ -283,15 +283,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Converts a vector to a float by finding its magnitude.
-    /// </summary>
-    /// <param name="v">vector</param>
-    public static explicit operator float (in Vec3 v)
-    {
-        return Vec3.Mag (v);
-    }
-
-    /// <summary>
     /// A vector evaluates to true when all of its components are not equal to
     /// zero.
     /// </summary>
@@ -488,7 +479,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the result</returns>
     public static Vec3 operator % (in Vec3 a, in Vec3 b)
     {
-        return Vec3.Fmod (a, b);
+        return Vec3.RemTrunc (a, b);
     }
 
     /// <summary>
@@ -512,9 +503,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 operator % (in float a, in Vec3 b)
     {
         return new Vec3 (
-            Utils.Fmod (a, b._x),
-            Utils.Fmod (a, b._y),
-            Utils.Fmod (a, b._z));
+            Utils.RemTrunc (a, b._x),
+            Utils.RemTrunc (a, b._y),
+            Utils.RemTrunc (a, b._z));
     }
 
     /// <summary>
@@ -792,7 +783,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the angle in radians</returns>
     public static float AzimuthUnsigned (in Vec3 v)
     {
-        return Utils.ModRadians (Vec3.AzimuthSigned (v));
+        return Utils.WrapRadians (Vec3.AzimuthSigned (v));
     }
 
     /// <summary>
@@ -1177,20 +1168,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Applies the % operator (truncation-based modulo) to the left operand.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>the result</returns>
-    public static Vec3 Fmod (in Vec3 a, in Vec3 b)
-    {
-        return new Vec3 (
-            Utils.Fmod (a._x, b._x),
-            Utils.Fmod (a._y, b._y),
-            Utils.Fmod (a._z, b._z));
-    }
-
-    /// <summary>
     /// Returns the fractional portion of the vector's components.
     /// </summary>
     /// <param name="v">vector</param>
@@ -1482,34 +1459,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Mods each component of the left vector by those of the right.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>the result</returns>
-    public static Vec3 Mod (in Vec3 a, in Vec3 b)
-    {
-        return new Vec3 (
-            Utils.Mod (a._x, b._x),
-            Utils.Mod (a._y, b._y),
-            Utils.Mod (a._z, b._z));
-    }
-
-    /// <summary>
-    /// A specialized form of mod which subtracts the floor of the vector from
-    /// the vector.
-    /// </summary>
-    /// <param name="v">vector</param>
-    /// <returns>the result</returns>
-    public static Vec3 Mod1 (in Vec3 v)
-    {
-        return new Vec3 (
-            Utils.Mod1 (v._x),
-            Utils.Mod1 (v._y),
-            Utils.Mod1 (v._z));
-    }
-
-    /// <summary>
     /// Tests to see if all the vector's components are zero. Useful when
     /// safeguarding against invalid directions.
     /// </summary>
@@ -1694,6 +1643,34 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float k = 1.0f - eta * eta * (1.0f - iDotN * iDotN);
         if (k < 0.0f) { return new Vec3 ( ); }
         return (eta * i) - (n * (eta * iDotN + Utils.Sqrt (k)));
+    }
+
+    /// <summary>
+    /// Mods each component of the left vector by those of the right.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the result</returns>
+    public static Vec3 RemFloor (in Vec3 a, in Vec3 b)
+    {
+        return new Vec3 (
+            Utils.RemFloor (a._x, b._x),
+            Utils.RemFloor (a._y, b._y),
+            Utils.RemFloor (a._z, b._z));
+    }
+
+    /// <summary>
+    /// Applies the % operator (truncation-based modulo) to the left operand.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>the result</returns>
+    public static Vec3 RemTrunc (in Vec3 a, in Vec3 b)
+    {
+        return new Vec3 (
+            Utils.RemTrunc (a._x, b._x),
+            Utils.RemTrunc (a._y, b._y),
+            Utils.RemTrunc (a._z, b._z));
     }
 
     /// <summary>

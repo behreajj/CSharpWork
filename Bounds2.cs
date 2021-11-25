@@ -93,9 +93,18 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>equivalence</returns>
     public override bool Equals (object value)
     {
-        if (Object.ReferenceEquals (this, value)) { return true; }
-        if (value is null) { return false; }
-        if (value is Bounds2) { return this.Equals ((Bounds2) value); }
+        if (Object.ReferenceEquals (this, value))
+        {
+            return true;
+        }
+        if (value is null)
+        {
+            return false;
+        }
+        if (value is Bounds2)
+        {
+            return this.Equals ((Bounds2) value);
+        }
         return false;
     }
 
@@ -127,9 +136,8 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>equivalence</returns>
     public bool Equals (Bounds2 b)
     {
-        if (this.min.GetHashCode ( ) != b.min.GetHashCode ( )) { return false; }
-        if (this.max.GetHashCode ( ) != b.max.GetHashCode ( )) { return false; }
-        return true;
+        return this.min.GetHashCode ( ) == b.min.GetHashCode ( ) &&
+            this.max.GetHashCode ( ) == b.max.GetHashCode ( );
     }
 
     /// <summary>
@@ -239,9 +247,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>bounds</returns>
     public static Bounds2 FromCenterExtent (in Vec2 center, in Vec2 extent)
     {
-        return new Bounds2 (
-            center - extent * 0.5f,
-            center + extent * 0.5f);
+        return Bounds2.FromCenterHalfExtent (center, extent * 0.5f);
     }
 
     /// <summary>
@@ -252,9 +258,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>bounds</returns>
     public static Bounds2 FromCenterHalfExtent (in Vec2 center, in Vec2 he)
     {
-        return new Bounds2 (
-            center - he,
-            center + he);
+        return new Bounds2 (center - he, center + he);
     }
 
     /// <summary>
@@ -278,10 +282,22 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
             Vec2 p = points[i];
             float x = p.x;
             float y = p.y;
-            if (x < lbx) { lbx = x; }
-            if (x > ubx) { ubx = x; }
-            if (y < lby) { lby = y; }
-            if (y > uby) { uby = y; }
+            if (x < lbx)
+            {
+                lbx = x;
+            }
+            if (x > ubx)
+            {
+                ubx = x;
+            }
+            if (y < lby)
+            {
+                lby = y;
+            }
+            if (y > uby)
+            {
+                uby = y;
+            }
         }
 
         lbx -= Utils.Epsilon * 2.0f;

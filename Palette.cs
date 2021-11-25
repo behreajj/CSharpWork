@@ -228,7 +228,7 @@ public class Palette
             if (aNull) { return new Entry[ ] { b }; }
 
             int aLen = a.Length;
-            int valIdx = Utils.Mod (index, aLen + 1);
+            int valIdx = Utils.RemFloor (index, aLen + 1);
             Entry[ ] result = new Entry[aLen + 1];
             System.Array.Copy (a, 0, result, 0, valIdx);
             result[valIdx] = b;
@@ -272,7 +272,7 @@ public class Palette
             if (aLen < 1) { return (new Entry[ ] { }, null); }
             if (aLen < 2) { return (new Entry[ ] { }, a[0]); }
 
-            int valIdx = Utils.Mod (index, aLen);
+            int valIdx = Utils.RemFloor (index, aLen);
             Entry[ ] result = new Entry[aLen - 1];
             System.Array.Copy (a, 0, result, 0, valIdx);
             System.Array.Copy (a, valIdx + 1, result, valIdx, aLen - 1 - valIdx);
@@ -829,7 +829,7 @@ public class Palette
     public void InsertTag (in int i, in string name, params int[ ] indices)
     {
         Tag tag = new Tag (name);
-        int j = Utils.Mod (i, this.tags.Count + 1);
+        int j = Utils.RemFloor (i, this.tags.Count + 1);
         this.tags.Insert (j, tag);
         this.SetTagIndices (j, indices);
     }
@@ -1072,7 +1072,7 @@ public class Palette
         Entry[ ] reversedEntries = new Entry[sourceLen];
         System.Array.Copy (sourceEntries, 0, reversedEntries, 0, sourceLen);
 
-        int valIdx = Utils.Mod (index, sourceLen);
+        int valIdx = Utils.RemFloor (index, sourceLen);
         int valLen = Utils.Clamp (length, 1, sourceLen - valIdx);
         System.Array.Reverse (reversedEntries, valIdx, valLen);
 
@@ -1134,7 +1134,7 @@ public class Palette
         Entry[ ] subsetEntries = new Entry[valLen];
         for (int i = 0; i < valLen; ++i)
         {
-            int k = Utils.Mod (index + i, sourceLen);
+            int k = Utils.RemFloor (index + i, sourceLen);
             subsetEntries[i] = sourceEntries[k];
         }
 
