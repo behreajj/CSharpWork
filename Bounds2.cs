@@ -34,11 +34,15 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// </summary>
     /// <param name="min">minimum</param>
     /// <param name="max">maximum</param>
-    public Bounds2 (in float min = -0.5f, in float max = 0.5f)
-    {
-        this.min = new Vec2 (min, min);
-        this.max = new Vec2 (max, max);
-    }
+    public Bounds2 (in float min = -0.5f, in float max = 0.5f) : this (min, min, max, max) { }
+
+    /// <summary>
+    /// Creats a bounds from a nonuniform
+    /// minimum and maximum.
+    /// </summary>
+    /// <param name="min">minimum</param>
+    /// <param name="max">maximum</param>
+    public Bounds2 (in Vec2 min, in Vec2 max) : this (min.x, min.y, max.x, max.y) { }
 
     /// <summary>
     /// Creats a bounds from a nonuniform
@@ -54,20 +58,26 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         in float xMax, //
         in float yMax)
     {
+        float bxMin = xMin < xMax ? xMin : xMax;
+        float byMin = yMin < yMax ? yMin : yMax;
+
+        float bxMax = xMax > xMin ? xMax : xMin;
+        float byMax = yMax > yMin ? yMax : yMin;
+
+        if (Utils.Approx (bxMin, bxMax, Utils.Epsilon))
+        {
+            bxMin -= Utils.Epsilon * 2.0f;
+            bxMax += Utils.Epsilon * 2.0f;
+        }
+
+        if (Utils.Approx (byMin, byMax, Utils.Epsilon))
+        {
+            byMin -= Utils.Epsilon * 2.0f;
+            byMax += Utils.Epsilon * 2.0f;
+        }
+
         this.min = new Vec2 (xMin, yMin);
         this.max = new Vec2 (xMax, yMax);
-    }
-
-    /// <summary>
-    /// Creats a bounds from a nonuniform
-    /// minimum and maximum.
-    /// </summary>
-    /// <param name="min">minimum</param>
-    /// <param name="max">maximum</param>
-    public Bounds2 (in Vec2 min, in Vec2 max)
-    {
-        this.min = min;
-        this.max = max;
     }
 
     /// <summary>
@@ -199,7 +209,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>area</returns>
     public static float Area (in Bounds2 b)
     {
-        return Utils.Diff (b.min.x, b.max.x) * Utils.Diff (b.min.y, b.max.y);
+        return (b.max.y - b.min.y) * (b.max.x - b.min.x);
     }
 
     /// <summary>
@@ -236,7 +246,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>extent</returns>
     public static Vec2 Extent (in Bounds2 b)
     {
-        return Vec2.Diff (b.max, b.min);
+        return b.max - b.min;
     }
 
     /// <summary>
@@ -310,6 +320,25 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     }
 
     /// <summary>
+    /// Creates a bounding box that contains both input boxes.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>union</returns>
+    public static Bounds2 FromUnion (in Bounds2 a, in Bounds2 b)
+    {
+        Vec2 aMn = a.min;
+        Vec2 aMx = a.max;
+        Vec2 bMn = b.min;
+        Vec2 bMx = b.max;
+        return new Bounds2 (
+            Utils.Min (aMn.x, bMn.x),
+            Utils.Min (aMn.y, bMn.y),
+            Utils.Max (aMx.x, bMx.x),
+            Utils.Max (aMx.y, bMx.y));
+    }
+
+    /// <summary>
     /// Finds half the extent of the bounds.
     /// </summary>
     /// <param name="b">bounds</param>
@@ -331,6 +360,27 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
             a.min.y < b.max.y ||
             a.max.x > b.min.x ||
             a.min.x < b.max.x;
+    }
+
+    /// <summary>
+    /// Mixes from an origin bounds to a destination by a step.
+    /// </summary>
+    /// <param name="a">original bounds</param>
+    /// <param name="b">destination bounds</param>
+    /// <param name="t">step</param>
+    /// <returns>mix</returns>
+    public static Bounds2 Mix (in Bounds2 a, in Bounds2 b, in float t = 0.5f)
+    {
+        float u = 1.0f - t;
+        Vec2 aMn = a.min;
+        Vec2 bMn = b.min;
+        Vec2 aMx = a.max;
+        Vec2 bMx = b.max;
+        return new Bounds2 (
+            u * aMn.x + t * bMn.x,
+            u * aMn.y + t * bMn.y,
+            u * aMx.x + t * bMx.x,
+            u * aMx.y + t * bMx.y);
     }
 
     /// <summary>
@@ -399,47 +449,6 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         sb.Append (' ');
         sb.Append ('}');
         return sb;
-    }
-
-    /// <summary>
-    /// Returns the validated version of the bounds, where
-    /// the minimum corner is less than the maximum corner
-    /// and the minimum is not equal to the maximum.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>validated</returns>
-    public static Bounds2 Verified (in Bounds2 b)
-    {
-        Vec2 mn = b.min;
-        Vec2 mx = b.max;
-
-        float xMin = mn.x;
-        float yMin = mn.y;
-
-        float xMax = mx.x;
-        float yMax = mx.y;
-
-        float bxMin = xMin < xMax ? xMin : xMax;
-        float byMin = yMin < yMax ? yMin : yMax;
-
-        float bxMax = xMax > xMin ? xMax : xMin;
-        float byMax = yMax > yMin ? yMax : yMin;
-
-        if (Utils.Approx (bxMin, bxMax, Utils.Epsilon))
-        {
-            bxMin -= Utils.Epsilon * 2.0f;
-            bxMax += Utils.Epsilon * 2.0f;
-        }
-
-        if (Utils.Approx (byMin, byMax, Utils.Epsilon))
-        {
-            byMin -= Utils.Epsilon * 2.0f;
-            byMax += Utils.Epsilon * 2.0f;
-        }
-
-        return new Bounds2 (
-            bxMin, byMin,
-            bxMax, byMax);
     }
 
     /// <summary>

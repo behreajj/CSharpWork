@@ -316,7 +316,12 @@ public static class Utils
     /// <returns>magnified sign</returns>
     public static float CopySign (in float mag, in float sign)
     {
-        return Utils.Abs (mag) * Utils.Sign (sign);
+        // Don't use this, as the latter has more flexibility
+        // in terms of how you deal with zero sign.
+        // return Utils.Abs (mag) * Utils.Sign (sign);
+        return (sign < -0.0f) ? -Utils.Abs (mag) :
+            (sign > 0.0f) ? Utils.Abs (mag) :
+            0.0f;
     }
 
     /// <summary>
@@ -888,18 +893,49 @@ public static class Utils
     }
 
     /// <summary>
-    /// Reduces the signal, or granularity, of a value. Applied to a color, this
-    /// yields the 'posterization' effect. Applied to a vector, this yields a
-    /// crenelated effect. Any level less than 2 returns the value unaltered.
+    /// Quantizes a signed number according to a number of levels.
     /// </summary>
     /// <param name="v">input value</param>
     /// <param name="levels">levels</param>
     /// <returns>quantized value</returns>
     public static float Quantize (in float v, in int levels)
     {
-        if (levels < 2) { return v; }
-        float lf = (float) levels;
-        return Utils.Floor (0.5f + v * lf) / lf;
+        return Utils.QuantizeSigned (v, levels);
+    }
+
+    /// <summary>
+    /// Quantizes a signed number according to a number of levels.
+    /// The quantization is centered about the range.
+    /// </summary>
+    /// <param name="v">input value</param>
+    /// <param name="levels">levels</param>
+    /// <returns>quantized value</returns>
+    public static float QuantizeSigned (in float v, in int levels)
+    {
+        if (levels > 0)
+        {
+            float lf = (float) levels;
+            return Utils.Floor (0.5f + v * lf) / lf;
+        }
+        return v;
+    }
+
+    /// <summary>
+    /// Quantizes a positive number according to a number of levels.
+    /// The quantization is based on the left edge.
+    /// </summary>
+    /// <param name="v"></param>
+    /// <param name="levels"></param>
+    /// <returns></returns>
+    public static float QuantizeUnsigned (in float v, in int levels)
+    {
+        if (levels > 1)
+        {
+            float lf = (float) levels;
+            return Utils.Max (0.0f,
+                (Utils.Ceil (v * lf) - 1.0f) / (lf - 1.0f));
+        }
+        return Utils.Max (0.0f, v);
     }
 
     /// <summary>
@@ -1111,47 +1147,6 @@ public static class Utils
     {
         float t = Utils.LinearStep (edge0, edge1, x);
         return t * t * (3.0f - (t + t));
-    }
-
-    /// <summary>
-    /// Splices a 2D array of integers into the midst of another and returns a
-    /// new array containing the splice. Does not mutate arrays in place. If the
-    /// number of deletions exceeds the length of the target array, then a copy
-    /// of the insert array is returned.
-    /// </summary>
-    /// <param name="arr">array</param>
-    /// <param name="index">index</param>
-    /// <param name="deletions">number of deletions</param>
-    /// <param name="insert">elements to insert</param>
-    /// <returns>a new, spliced array</returns>
-    public static int[ ] Splice (in int[ ] arr, in int index, in int deletions, in int[ ] insert)
-    {
-        int alen = arr.Length;
-
-        if (deletions >= alen)
-        {
-            int[ ] result0 = new int[insert.Length];
-            System.Array.Copy (insert, 0, result0, 0, insert.Length);
-            return result0;
-        }
-
-        int blen = insert.Length;
-        int valIdx = Utils.RemFloor (index, alen + 1);
-        if (deletions < 1)
-        {
-            int[ ] result1 = new int[alen + blen];
-            System.Array.Copy (arr, 0, result1, 0, valIdx);
-            System.Array.Copy (insert, 0, result1, valIdx, blen);
-            System.Array.Copy (arr, valIdx, result1, valIdx + blen, alen - valIdx);
-            return result1;
-        }
-
-        int idxOff = valIdx + deletions;
-        int[ ] result2 = new int[alen + blen - deletions];
-        System.Array.Copy (arr, 0, result2, 0, valIdx);
-        System.Array.Copy (insert, 0, result2, valIdx, blen);
-        System.Array.Copy (arr, idxOff, result2, valIdx + blen, alen - idxOff);
-        return result2;
     }
 
     /// <summary>

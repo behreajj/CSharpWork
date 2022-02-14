@@ -34,11 +34,15 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// </summary>
     /// <param name="min">minimum</param>
     /// <param name="max">maximum</param>
-    public Bounds3 (in float min = -0.5f, in float max = 0.5f)
-    {
-        this.min = new Vec3 (min, min, min);
-        this.max = new Vec3 (max, max, max);
-    }
+    public Bounds3 (in float min = -0.5f, in float max = 0.5f) : this (min, min, min, max, max, max) { }
+
+    /// <summary>
+    /// Creats a bounds from a nonuniform
+    /// minimum and maximum.
+    /// </summary>
+    /// <param name="min">minimum</param>
+    /// <param name="max">maximum</param>
+    public Bounds3 (in Vec3 min, in Vec3 max) : this (min.x, min.y, min.z, max.x, max.y, max.z) { }
 
     /// <summary>
     /// Creats a bounds from a nonuniform
@@ -58,20 +62,34 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
         in float yMax, //
         in float zMax)
     {
+        float bxMin = xMin < xMax ? xMin : xMax;
+        float byMin = yMin < yMax ? yMin : yMax;
+        float bzMin = zMin < zMax ? zMin : zMax;
+
+        float bxMax = xMax > xMin ? xMax : xMin;
+        float byMax = yMax > yMin ? yMax : yMin;
+        float bzMax = zMax > zMin ? zMax : zMin;
+
+        if (Utils.Approx (bxMin, bxMax, Utils.Epsilon))
+        {
+            bxMin -= Utils.Epsilon * 2.0f;
+            bxMax += Utils.Epsilon * 2.0f;
+        }
+
+        if (Utils.Approx (byMin, byMax, Utils.Epsilon))
+        {
+            byMin -= Utils.Epsilon * 2.0f;
+            byMax += Utils.Epsilon * 2.0f;
+        }
+
+        if (Utils.Approx (bzMin, bzMax, Utils.Epsilon))
+        {
+            bzMin -= Utils.Epsilon * 2.0f;
+            bzMax += Utils.Epsilon * 2.0f;
+        }
+
         this.min = new Vec3 (xMin, yMin, zMin);
         this.max = new Vec3 (xMax, yMax, zMax);
-    }
-
-    /// <summary>
-    /// Creats a bounds from a nonuniform
-    /// minimum and maximum.
-    /// </summary>
-    /// <param name="min">minimum</param>
-    /// <param name="max">maximum</param>
-    public Bounds3 (in Vec3 min, in Vec3 max)
-    {
-        this.min = min;
-        this.max = max;
     }
 
     /// <summary>
@@ -142,6 +160,17 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     {
         return this.min.GetHashCode ( ) == b.min.GetHashCode ( ) &&
             this.max.GetHashCode ( ) == b.max.GetHashCode ( );
+    }
+
+    /// <summary>
+    /// Promotes a 2D bounds to 3D. The z components are assumed to be the
+    /// minimum and maximum finite numbers.
+    /// </summary>
+    /// <param name="b">bounds</param>
+    /// <returns>bounds</returns>
+    public static implicit operator Bounds3 (in Bounds2 b)
+    {
+        return Bounds3.Promote (b, float.MinValue, float.MaxValue);
     }
 
     /// <summary>
@@ -234,7 +263,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// <returns>extent</returns>
     public static Vec3 Extent (in Bounds3 b)
     {
-        return Vec3.Diff (b.max, b.min);
+        return b.max - b.min;
     }
 
     /// <summary>
@@ -324,6 +353,27 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     }
 
     /// <summary>
+    /// Creates a bounding box that contains both input boxes.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>union</returns>
+    public static Bounds3 FromUnion (in Bounds3 a, in Bounds3 b)
+    {
+        Vec3 aMn = a.min;
+        Vec3 aMx = a.max;
+        Vec3 bMn = b.min;
+        Vec3 bMx = b.max;
+        return new Bounds3 (
+            Utils.Min (aMn.x, bMn.x),
+            Utils.Min (aMn.y, bMn.y),
+            Utils.Min (aMn.z, bMn.z),
+            Utils.Max (aMx.x, bMx.x),
+            Utils.Max (aMx.y, bMx.y),
+            Utils.Max (aMx.z, bMx.z));
+    }
+
+    /// <summary>
     /// Finds half the extent of the bounds.
     /// </summary>
     /// <param name="b">bounds</param>
@@ -350,14 +400,56 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     }
 
     /// <summary>
+    /// Mixes from an origin bounds to a destination by a step.
+    /// </summary>
+    /// <param name="a">original bounds</param>
+    /// <param name="b">destination bounds</param>
+    /// <param name="t">step</param>
+    /// <returns>mix</returns>
+    public static Bounds3 Mix (in Bounds3 a, in Bounds3 b, in float t = 0.5f)
+    {
+        float u = 1.0f - t;
+        Vec3 aMn = a.min;
+        Vec3 bMn = b.min;
+        Vec3 aMx = a.max;
+        Vec3 bMx = b.max;
+        return new Bounds3 (
+            u * aMn.x + t * bMn.x,
+            u * aMn.y + t * bMn.y,
+            u * aMn.z + t * bMn.z,
+            u * aMx.x + t * bMx.x,
+            u * aMx.y + t * bMx.y,
+            u * aMx.z + t * bMx.z);
+    }
+
+    /// <summary>
     /// Evaluates whether the minimum and maximum corners
-    /// of a bounds are approximately equal.
+    /// of a boundsF are approximately equal.
     /// </summary>
     /// <param name="b">bounds</param>
     /// <returns>evaluation</returns>
     public static bool None (in Bounds3 b)
     {
         return Vec3.Approx (b.min, b.max);
+    }
+
+    /// <summary>
+    /// Promotes a 2D bounds to a 3D bounds.
+    /// </summary>
+    /// <param name="b">bounds</param>
+    /// <param name="zMin">z minimum</param>
+    /// <param name="zMax">z maximum</param>
+    /// <returns>bounds</returns>
+    public static Bounds3 Promote ( //
+        in Bounds2 b, //
+        in float zMin = float.MinValue, //
+        in float zMax = float.MaxValue)
+    {
+        Vec2 bMn = b.Min;
+        Vec2 bMx = b.Max;
+        return new Bounds3 (
+            bMn.x, bMn.y, zMin,
+            bMx.x, bMx.y, zMax);
     }
 
     /// <summary>
@@ -429,65 +521,15 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     }
 
     /// <summary>
-    /// Returns the validated version of the bounds, where
-    /// the minimum corner is less than the maximum corner
-    /// and the minimum is not equal to the maximum.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>validated</returns>
-    public static Bounds3 Verified (in Bounds3 b)
-    {
-        Vec3 mn = b.min;
-        Vec3 mx = b.max;
-
-        float xMin = mn.x;
-        float yMin = mn.y;
-        float zMin = mn.z;
-
-        float xMax = mx.x;
-        float yMax = mx.y;
-        float zMax = mx.z;
-
-        float bxMin = xMin < xMax ? xMin : xMax;
-        float byMin = yMin < yMax ? yMin : yMax;
-        float bzMin = zMin < zMax ? zMin : zMax;
-
-        float bxMax = xMax > xMin ? xMax : xMin;
-        float byMax = yMax > yMin ? yMax : yMin;
-        float bzMax = zMax > zMin ? zMax : zMin;
-
-        if (Utils.Approx (bxMin, bxMax, Utils.Epsilon))
-        {
-            bxMin -= Utils.Epsilon * 2.0f;
-            bxMax += Utils.Epsilon * 2.0f;
-        }
-
-        if (Utils.Approx (byMin, byMax, Utils.Epsilon))
-        {
-            byMin -= Utils.Epsilon * 2.0f;
-            byMax += Utils.Epsilon * 2.0f;
-        }
-
-        if (Utils.Approx (bzMin, bzMax, Utils.Epsilon))
-        {
-            bzMin -= Utils.Epsilon * 2.0f;
-            bzMax += Utils.Epsilon * 2.0f;
-        }
-
-        return new Bounds3 (
-            bxMin, byMin, bzMin,
-            bxMax, byMax, bzMax);
-    }
-
-    /// <summary>
     /// Finds the volume of a bounds.
     /// </summary>
     /// <param name="b">bounds</param>
     /// <returns>volume</returns>
     public static float Volume (in Bounds3 b)
     {
-        Vec3 df = Vec3.Diff (b.max, b.min);
-        return df.x * df.y * df.z;
+        return (b.max.z - b.min.z) *
+            (b.max.y - b.min.y) *
+            (b.max.x - b.min.x);
     }
 
     /// <summary>

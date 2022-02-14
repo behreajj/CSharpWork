@@ -1191,8 +1191,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Sets the target vector to the maximum of vector and an upper
-    /// bound.
+    /// Finds the maximum of two vectors by component.
     /// </summary>
     /// <param name="a">the input value</param>
     /// <param name="b">upper bound</param>
@@ -1205,8 +1204,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Sets the target vector to the minimum of vector and a lower
-    /// bound.
+    /// Finds the minimum of two vectors by component.
     /// </summary>
     /// <param name="a">the input value</param>
     /// <param name="b">lower bound</param>
@@ -1396,20 +1394,16 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Reduces the signal, or granularity, of a vector's components. Any level
-    /// less than 2 returns the target set to the input.
+    /// Reduces the signal, or granularity, of a vector's components.
     /// </summary>
-    /// <param name="a">input vector</param>
+    /// <param name="v">input vector</param>
     /// <param name="levels">the levels</param>
     /// <returns>the quantized vector</returns>
-    public static Vec2 Quantize (in Vec2 a, in int levels = 8)
+    public static Vec2 Quantize (in Vec2 v, in int levels = 8)
     {
-        if (levels < 2) { return new Vec2 (a._x, a._y); }
-        float levf = (float) levels;
-        float delta = 1.0f / levf;
         return new Vec2 (
-            delta * Utils.Floor (0.5f + a._x * levf),
-            delta * Utils.Floor (0.5f + a._y * levf));
+            Utils.QuantizeSigned (v._x, levels),
+            Utils.QuantizeSigned (v._y, levels));
     }
 
     /// <summary>
@@ -1522,7 +1516,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>rescaled vector</returns>
     public static Vec2 Rescale (in Vec2 v, in float scalar = 1.0f)
     {
-        return Utils.Div (scalar, Vec2.Mag (v)) * v;
+        return v * Utils.Div (scalar, Vec2.Mag (v));
     }
 
     /// <summary>

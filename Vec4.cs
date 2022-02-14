@@ -1146,8 +1146,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Sets the target vector to the maximum of vector and an upper
-    /// bound.
+    /// Finds the maximum of two vectors by component.
     /// </summary>
     /// <param name="a">the input value</param>
     /// <param name="b">upper bound</param>
@@ -1162,8 +1161,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Sets the target vector to the minimum of vector and a lower
-    /// bound.
+    /// Finds the minimum of two vectors by component.
     /// </summary>
     /// <param name="a">the input value</param>
     /// <param name="b">lower bound</param>
@@ -1333,22 +1331,18 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Reduces the signal, or granularity, of a vector's components. Any level
-    /// less than 2 returns the target set to the input.
+    /// Reduces the signal, or granularity, of a vector's components.
     /// </summary>
     /// <param name="v">input vector</param>
     /// <param name="levels">levels</param>
     /// <returns>the quantized vector</returns>
     public static Vec4 Quantize (in Vec4 v, in int levels = 8)
     {
-        if (levels < 2) { return new Vec4 (v._x, v._y, v._z, v._w); }
-        float levf = (float) levels;
-        float delta = 1.0f / levf;
         return new Vec4 (
-            delta * Utils.Floor (0.5f + v._x * levf),
-            delta * Utils.Floor (0.5f + v._y * levf),
-            delta * Utils.Floor (0.5f + v._z * levf),
-            delta * Utils.Floor (0.5f + v._w * levf));
+            Utils.QuantizeSigned (v._x, levels),
+            Utils.QuantizeSigned (v._y, levels),
+            Utils.QuantizeSigned (v._z, levels),
+            Utils.QuantizeSigned (v._w, levels));
     }
 
     /// <summary>
@@ -1452,7 +1446,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the rescaled vector</returns>
     public static Vec4 Rescale (in Vec4 v, in float scalar = 1.0f)
     {
-        return Utils.Div (scalar, Vec4.Mag (v)) * v;
+        return v * Utils.Div (scalar, Vec4.Mag (v));
     }
 
     /// <summary>

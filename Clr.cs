@@ -1077,28 +1077,122 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Reduces the signal, or granularity, of a color's channels. Any level
-    /// less than 2 or greater than 255 returns sets the target to the input.
+    /// Reduces the signal, or granularity, of a color's channels.
     /// </summary>
     /// <param name="c">the color</param>
     /// <param name="levels">the levels</param>
     /// <returns>the posterized color</returns>
-    public static Clr Quantize (in Clr c, int levels = 127)
+    public static Clr Quantize (in Clr c, in int levels = 8)
     {
-        if (levels > 0 && levels < 256)
-        {
-            float levf = (float) levels;
-            float delta = 1.0f / levf;
-            return new Clr (
-                delta * Utils.Floor (0.5f + c._r * levf),
-                delta * Utils.Floor (0.5f + c._g * levf),
-                delta * Utils.Floor (0.5f + c._b * levf),
-                delta * Utils.Floor (0.5f + c._a * levf));
-        }
-        else
-        {
-            return new Clr (c._r, c._g, c._b, c._a);
-        }
+        return Clr.QuantizeUnsigned (c, levels);
+    }
+
+    /// <summary>
+    /// Reduces the signal, or granularity, of a color's channels.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <param name="levels">levels</param>
+    /// <returns>posterized color</returns>
+    public static Clr QuantizeSigned (in Clr c, in int levels = 8)
+    {
+        return Clr.QuantizeSigned (c, levels, levels, levels, levels);
+    }
+
+    /// <summary>
+    /// Reduces the signal, or granularity, of a color's channels.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <param name="rLevels">red levels</param>
+    /// <param name="gLevels">green levels</param>
+    /// <param name="bLevels">blue levels</param>
+    /// <returns>posterized color</returns>
+    public static Clr QuantizeSigned ( //
+        in Clr c, //
+        in int rLevels = 8, //
+        in int gLevels = 8, //
+        in int bLevels = 8)
+    {
+        return new Clr (
+            Utils.QuantizeSigned (c._r, rLevels),
+            Utils.QuantizeSigned (c._g, gLevels),
+            Utils.QuantizeSigned (c._b, gLevels), c._a);
+    }
+
+    /// <summary>
+    /// Reduces the signal, or granularity, of a color's channels.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <param name="rLevels">red levels</param>
+    /// <param name="gLevels">green levels</param>
+    /// <param name="bLevels">blue levels</param>
+    /// <param name="aLevels">alpha levels</param>
+    /// <returns>posterized color</returns>
+    public static Clr QuantizeSigned ( //
+        in Clr c, //
+        in int rLevels = 8, //
+        in int gLevels = 8, //
+        in int bLevels = 8, //
+        in int aLevels = 8)
+    {
+        return new Clr (
+            Utils.QuantizeSigned (c._r, rLevels),
+            Utils.QuantizeSigned (c._g, gLevels),
+            Utils.QuantizeSigned (c._b, bLevels),
+            Utils.QuantizeSigned (c._a, aLevels));
+    }
+
+    /// <summary>
+    /// Reduces the signal, or granularity, of a color's channels.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <param name="levels">levels</param>
+    /// <returns>posterized color</returns>
+    public static Clr QuantizeUnsigned (in Clr c, in int levels = 8)
+    {
+        return Clr.QuantizeUnsigned (c, levels, levels, levels, levels);
+    }
+
+    /// <summary>
+    /// Reduces the signal, or granularity, of a color's channels.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <param name="rLevels">red levels</param>
+    /// <param name="gLevels">green levels</param>
+    /// <param name="bLevels">blue levels</param>
+    /// <returns>posterized color</returns>
+    public static Clr QuantizeUnsigned ( //
+        in Clr c, //
+        in int rLevels = 8, //
+        in int gLevels = 8, //
+        in int bLevels = 8)
+    {
+        return new Clr (
+            Utils.QuantizeUnsigned (c._r, rLevels),
+            Utils.QuantizeUnsigned (c._g, gLevels),
+            Utils.QuantizeUnsigned (c._b, gLevels), c._a);
+    }
+
+    /// <summary>
+    /// Reduces the signal, or granularity, of a color's channels.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <param name="rLevels">red levels</param>
+    /// <param name="gLevels">green levels</param>
+    /// <param name="bLevels">blue levels</param>
+    /// <param name="aLevels">alpha levels</param>
+    /// <returns>posterized color</returns>
+    public static Clr QuantizeUnsigned ( //
+        in Clr c, //
+        in int rLevels = 8, //
+        in int gLevels = 8, //
+        in int bLevels = 8, //
+        in int aLevels = 8)
+    {
+        return new Clr (
+            Utils.QuantizeUnsigned (c._r, rLevels),
+            Utils.QuantizeUnsigned (c._g, gLevels),
+            Utils.QuantizeUnsigned (c._b, gLevels),
+            Utils.QuantizeUnsigned (c._a, gLevels));
     }
 
     /// <summary>

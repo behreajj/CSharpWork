@@ -702,25 +702,25 @@ public class ClrGradient : IEnumerable
         keys.Clear ( );
         keys.Capacity = 16;
 
-        keys.Add (new Key (0.000f, new Clr (0.988235f, 1.000000f, 0.698039f)));
-        keys.Add (new Key (0.067f, new Clr (0.987190f, 0.843137f, 0.562092f)));
-        keys.Add (new Key (0.167f, new Clr (0.984314f, 0.694118f, 0.446275f)));
-        keys.Add (new Key (0.200f, new Clr (0.981176f, 0.548235f, 0.354510f)));
+        keys.Add (new Key (0.000f, new Clr (0.000000f, 0.000000f, 0.019608f)));
+        keys.Add (new Key (0.067f, new Clr (0.040784f, 0.028758f, 0.110327f)));
+        keys.Add (new Key (0.167f, new Clr (0.093856f, 0.036863f, 0.232941f)));
+        keys.Add (new Key (0.200f, new Clr (0.174118f, 0.006275f, 0.357647f)));
 
-        keys.Add (new Key (0.267f, new Clr (0.962353f, 0.412549f, 0.301176f)));
-        keys.Add (new Key (0.333f, new Clr (0.912418f, 0.286275f, 0.298039f)));
-        keys.Add (new Key (0.400f, new Clr (0.824314f, 0.198431f, 0.334902f)));
-        keys.Add (new Key (0.467f, new Clr (0.703268f, 0.142484f, 0.383007f)));
+        keys.Add (new Key (0.267f, new Clr (0.267974f, 0.002353f, 0.416732f)));
+        keys.Add (new Key (0.333f, new Clr (0.367320f, 0.045752f, 0.432680f)));
+        keys.Add (new Key (0.400f, new Clr (0.471373f, 0.080784f, 0.430588f)));
+        keys.Add (new Key (0.467f, new Clr (0.584052f, 0.110588f, 0.413856f)));
 
-        keys.Add (new Key (0.533f, new Clr (0.584052f, 0.110588f, 0.413856f)));
-        keys.Add (new Key (0.600f, new Clr (0.471373f, 0.080784f, 0.430588f)));
-        keys.Add (new Key (0.667f, new Clr (0.367320f, 0.045752f, 0.432680f)));
-        keys.Add (new Key (0.733f, new Clr (0.267974f, 0.002353f, 0.416732f)));
+        keys.Add (new Key (0.533f, new Clr (0.703268f, 0.142484f, 0.383007f)));
+        keys.Add (new Key (0.600f, new Clr (0.824314f, 0.198431f, 0.334902f)));
+        keys.Add (new Key (0.667f, new Clr (0.912418f, 0.286275f, 0.298039f)));
+        keys.Add (new Key (0.733f, new Clr (0.962353f, 0.412549f, 0.301176f)));
 
-        keys.Add (new Key (0.800f, new Clr (0.174118f, 0.006275f, 0.357647f)));
-        keys.Add (new Key (0.867f, new Clr (0.093856f, 0.036863f, 0.232941f)));
-        keys.Add (new Key (0.933f, new Clr (0.040784f, 0.028758f, 0.110327f)));
-        keys.Add (new Key (1.000f, new Clr (0.000000f, 0.000000f, 0.019608f)));
+        keys.Add (new Key (0.800f, new Clr (0.981176f, 0.548235f, 0.354510f)));
+        keys.Add (new Key (0.867f, new Clr (0.984314f, 0.694118f, 0.446275f)));
+        keys.Add (new Key (0.933f, new Clr (0.987190f, 0.843137f, 0.562092f)));
+        keys.Add (new Key (1.000f, new Clr (0.988235f, 1.000000f, 0.698039f)));
 
         return target;
     }

@@ -1381,8 +1381,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Sets the target vector to the maximum of vector and an upper
-    /// bound.
+    /// Finds the maximum of two vectors by component.
     /// </summary>
     /// <param name="a">the input value</param>
     /// <param name="b">upper bound</param>
@@ -1396,8 +1395,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Sets the target vector to the minimum of vector and a lower
-    /// bound.
+    /// Finds the minimum of two vectors by component.
     /// </summary>
     /// <param name="a">the input value</param>
     /// <param name="b">lower bound</param>
@@ -1548,21 +1546,17 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Reduces the signal, or granularity, of a vector's components. Any level
-    /// less than 2 returns the target set to the input.
+    /// Reduces the signal, or granularity, of a vector's components.
     /// </summary>
     /// <param name="v">input vector</param>
     /// <param name="levels">levels</param>
     /// <returns>the quantized vector</returns>
     public static Vec3 Quantize (in Vec3 v, in int levels = 8)
     {
-        if (levels < 2) { return new Vec3 (v._x, v._y, v._z); }
-        float levf = (float) levels;
-        float delta = 1.0f / levf;
         return new Vec3 (
-            delta * Utils.Floor (0.5f + v._x * levf),
-            delta * Utils.Floor (0.5f + v._y * levf),
-            delta * Utils.Floor (0.5f + v._z * levf));
+            Utils.QuantizeSigned (v._x, levels),
+            Utils.QuantizeSigned (v._y, levels),
+            Utils.QuantizeSigned (v._z, levels));
     }
 
     /// <summary>
@@ -1682,7 +1676,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the rescaled vector</returns>
     public static Vec3 Rescale (in Vec3 v, in float scalar)
     {
-        return Utils.Div (scalar, Vec3.Mag (v)) * v;
+        return v * Utils.Div (scalar, Vec3.Mag (v));
     }
 
     /// <summary>
