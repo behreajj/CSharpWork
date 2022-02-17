@@ -107,22 +107,72 @@ public class Loop3
         return result;
     }
 
-    public static Loop3 Quad (in Index3 a, in Index3 b, in Index3 c, in Index3 d, in Loop3 target)
+    /// <summary>
+    /// Convenience method. Sets the target loop's indices to a new array
+    /// created from the arguments. Creates a quadrilateral.
+    /// </summary>
+    /// <param name="a">first vertex</param>
+    /// <param name="b">second vertex</param>
+    /// <param name="c">third vertex</param>
+    /// <param name="d">fourth vertex</param>
+    /// <param name="target">target loop</param>
+    /// <returns>quadrilateral loop</returns>
+    public static Loop3 Quad ( //
+        in Index3 a, //
+        in Index3 b, //
+        in Index3 c, //
+        in Index3 d, //
+        in Loop3 target)
     {
         target.indices = new Index3[ ] { a, b, c, d };
         return target;
     }
 
-    public static Loop3[ ] Resize (in Loop3[ ] arr, in int sz)
+    /// <summary>
+    /// Resizes an array of loops. If the size is less than one, returns an empty array.
+    /// If the input array is null, creates an array of new loops. Existing loops in the
+    /// old array are passed to the resized array by reference. There is an option to
+    /// resize the length of these existing loops to match the length of new loops.
+    /// </summary>
+    /// <param name="arr">array</param>
+    /// <param name="sz">size</param>
+    /// <param name="vertsPerLoop">vertices per loop</param>
+    /// <param name="resizeExisting">change existing loop length</param>
+    /// <returns>resized array</returns>
+    public static Loop3[ ] Resize ( //
+        in Loop3[ ] arr, //
+        in int sz, //
+        in int vertsPerLoop = 3, //
+        in bool resizeExisting = false)
     {
         if (sz < 1) { return new Loop3[ ] { }; }
         Loop3[ ] result = new Loop3[sz];
 
-        if (arr != null)
+        int vplVal = vertsPerLoop < 3 ? 3 : vertsPerLoop;
+        if (arr == null)
         {
-            int len = arr.Length;
-            int end = sz > len ? len : sz;
-            System.Array.Copy (arr, result, end);
+            for (int i = 0; i < sz; ++i)
+            {
+                result[i] = new Loop3 (vplVal);
+            }
+            return result;
+        }
+
+        int last = arr.Length - 1;
+        for (int i = 0; i < sz; ++i)
+        {
+            if (i > last || arr[i] == null)
+            {
+                result[i] = new Loop3 (vplVal);
+            }
+            else
+            {
+                result[i] = arr[i];
+                if (resizeExisting)
+                {
+                    result[i].indices = Index3.Resize (result[i].indices, vplVal);
+                }
+            }
         }
 
         return result;
@@ -199,7 +249,20 @@ public class Loop3
         return sb.ToString ( );
     }
 
-    public static Loop3 Tri (in Index3 a, in Index3 b, in Index3 c, in Loop3 target)
+    /// <summary>
+    /// Convenience method. Sets the target loop's indices to a new array
+    /// created from the arguments. Creates a triangle.
+    /// </summary>
+    /// <param name="a">first vertex</param>
+    /// <param name="b">second vertex</param>
+    /// <param name="c">third vertex</param>
+    /// <param name="target">target loop</param>
+    /// <returns>triangle loop</returns>
+    public static Loop3 Tri ( //
+        in Index3 a, //
+        in Index3 b, //
+        in Index3 c, //
+        in Loop3 target)
     {
         target.indices = new Index3[ ] { a, b, c };
         return target;

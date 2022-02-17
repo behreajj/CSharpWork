@@ -372,9 +372,9 @@ public class Palette
         public static StringBuilder ToPalString (in StringBuilder sb, in Entry pe)
         {
             Clr c = pe.Color;
-            int r = (int) (Utils.Clamp (c.r, 0.0f, 1.0f) * 0xff + 0.5f);
-            int g = (int) (Utils.Clamp (c.g, 0.0f, 1.0f) * 0xff + 0.5f);
-            int b = (int) (Utils.Clamp (c.b, 0.0f, 1.0f) * 0xff + 0.5f);
+            int r = (int) (0.5f + Utils.Clamp (c.r, 0.0f, 1.0f) * 0xff);
+            int g = (int) (0.5f + Utils.Clamp (c.g, 0.0f, 1.0f) * 0xff);
+            int b = (int) (0.5f + Utils.Clamp (c.b, 0.0f, 1.0f) * 0xff);
             sb.Append (r.ToString ( ).PadLeft (3, ' '));
             sb.Append (' ');
             sb.Append (g.ToString ( ).PadLeft (3, ' '));

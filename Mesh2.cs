@@ -457,19 +457,19 @@ public class Mesh2
             case PolyType.Quad:
 
                 len = sctCount - 1;
-                target.loops = Loop2.Resize (target.loops, len);
+                target.loops = Loop2.Resize (target.loops, len, 4, true);
 
                 for (int k = 0, i = 0, j = 1; k < len; ++k, i += 2, j += 2)
                 {
                     int m = i + 2;
                     int n = j + 2;
 
-                    // TODO: This should be a set, since Loop2 is a class.
-                    target.loops[k] = new Loop2 (
+                    Loop2.Quad (
                         new Index2 (i, i),
                         new Index2 (m, m),
                         new Index2 (n, n),
-                        new Index2 (j, j));
+                        new Index2 (j, j),
+                        target.loops[k]);
                 }
 
                 break;
@@ -478,23 +478,24 @@ public class Mesh2
             default:
 
                 len = sctCount2 - 2;
-                target.loops = Loop2.Resize (target.loops, len);
+                target.loops = Loop2.Resize (target.loops, len, 3, true);
 
                 for (int i = 0, j = 1; i < len; i += 2, j += 2)
                 {
                     int m = i + 2;
                     int n = j + 2;
 
-                    // TODO: This should be a set, since Loop2 is a class.
-                    target.loops[i] = new Loop2 (
+                    Loop2.Tri (
                         new Index2 (i, i),
                         new Index2 (m, m),
-                        new Index2 (j, j));
+                        new Index2 (j, j),
+                        target.loops[i]);
 
-                    target.loops[j] = new Loop2 (
+                    Loop2.Tri (
                         new Index2 (m, m),
                         new Index2 (n, n),
-                        new Index2 (j, j));
+                        new Index2 (j, j),
+                        target.loops[j]);
                 }
 
                 break;
@@ -549,7 +550,7 @@ public class Mesh2
 
         int fsLen = 1 + iMax * vRings * 3;
         Vec2[ ] vs = target.coords = Vec2.Resize (target.coords, fsLen * 6);
-        Loop2[ ] fs = target.loops = Loop2.Resize (target.loops, fsLen);
+        Loop2[ ] fs = target.loops = Loop2.Resize (target.loops, fsLen, 6, true);
 
         int vIdx = 0;
         int fIdx = 0;
@@ -577,14 +578,14 @@ public class Mesh2
                 vs[vIdx + 4] = new Vec2 (right, bottom);
                 vs[vIdx + 5] = new Vec2 (right, top);
 
-                // TODO: This should be a set, since Loop2 is a class.
-                fs[fIdx] = new Loop2 (
+                Loop2.Hex (
                     new Index2 (vIdx, 0),
                     new Index2 (vIdx + 1, 1),
                     new Index2 (vIdx + 2, 2),
                     new Index2 (vIdx + 3, 3),
                     new Index2 (vIdx + 4, 4),
-                    new Index2 (vIdx + 5, 5));
+                    new Index2 (vIdx + 5, 5),
+                    fs[fIdx]);
 
                 ++fIdx;
                 vIdx += 6;
@@ -610,40 +611,25 @@ public class Mesh2
         in int rows = 3, //
         in PolyType poly = PolyType.Tri)
     {
-        int rval = Utils.Max (1, rows);
-        int cval = Utils.Max (1, cols);
+        int rVal = Utils.Max (1, rows);
+        int cVal = Utils.Max (1, cols);
+        int rVal1 = rVal + 1;
+        int cVal1 = cVal + 1;
+        int fLen = rVal * cVal;
+        int fLen1 = rVal1 * cVal1;
 
-        int rval1 = rval + 1;
-        int cval1 = cval + 1;
+        Vec2[ ] vs = target.coords = Vec2.Resize (target.coords, fLen1);
+        Vec2[ ] vts = target.texCoords = Vec2.Resize (target.texCoords, fLen1);
 
-        float iToStep = 1.0f / rval;
-        float jToStep = 1.0f / cval;
-
-        Vec2[ ] vs = target.coords = Vec2.Resize (target.coords, rval1 * cval1);
-        Vec2[ ] vts = target.texCoords = Vec2.Resize (target.texCoords, vs.Length);
-        int flen = rval * cval;
-
-        /* Calculate x values in separate loop. */
-        float[ ] xs = new float[cval1];
-        float[ ] us = new float[cval1];
-        for (int j = 0; j < cval1; ++j)
+        // Set coordinates and texture coordinates.
+        float iToStep = 1.0f / rVal;
+        float jToStep = 1.0f / cVal;
+        for (int k = 0; k < fLen1; ++k)
         {
-            float xPrc = j * jToStep;
-            xs[j] = xPrc - 0.5f;
-            us[j] = xPrc;
-        }
-
-        for (int k = 0, i = 0; i < rval1; ++i)
-        {
-            float yPrc = i * iToStep;
-            float y = yPrc - 0.5f;
-            float v = 1.0f - yPrc;
-
-            for (int j = 0; j < cval1; ++j, ++k)
-            {
-                vs[k] = new Vec2 (xs[j], y);
-                vts[k] = new Vec2 (us[j], v);
-            }
+            float iStep = k / cVal1 * iToStep;
+            float jStep = k % cVal1 * jToStep;
+            vs[k] = new Vec2 (jStep - 0.5f, iStep - 0.5f);
+            vts[k] = new Vec2 (jStep, 1.0f - iStep);
         }
 
         switch (poly)
@@ -651,28 +637,24 @@ public class Mesh2
             case PolyType.Ngon:
             case PolyType.Quad:
 
-                target.loops = Loop2.Resize (target.loops, flen);
-
-                // TODO: Flatten array.
-                for (int k = 0, i = 0; i < rval; ++i)
+                target.loops = Loop2.Resize (target.loops, fLen, 4, true);
+                for (int k = 0; k < fLen; ++k)
                 {
-                    int noff0 = i * cval1;
-                    int noff1 = noff0 + cval1;
+                    int i = k / cVal;
+                    int j = k % cVal;
 
-                    for (int j = 0; j < cval; ++j, ++k)
-                    {
-                        int n00 = noff0 + j;
-                        int n10 = n00 + 1;
-                        int n01 = noff1 + j;
-                        int n11 = n01 + 1;
+                    int cOff0 = i * cVal1;
+                    int c00 = cOff0 + j;
+                    int c10 = c00 + 1;
+                    int c01 = cOff0 + cVal1 + j;
+                    int c11 = c01 + 1;
 
-                        Loop2.Quad (
-                            new Index2 (n00, n00),
-                            new Index2 (n10, n10),
-                            new Index2 (n11, n11),
-                            new Index2 (n01, n01),
-                            target.loops[k]);
-                    }
+                    Loop2.Quad (
+                        new Index2 (c00, c00),
+                        new Index2 (c10, c10),
+                        new Index2 (c11, c11),
+                        new Index2 (c01, c01),
+                        target.loops[k]);
                 }
 
                 break;
@@ -680,33 +662,29 @@ public class Mesh2
             case PolyType.Tri:
             default:
 
-                target.loops = Loop2.Resize (target.loops, flen + flen);
-
-                // TODO: Flatten array.
-                for (int k = 0, i = 0; i < rval; ++i)
+                target.loops = Loop2.Resize (target.loops, fLen * 2, 3, true);
+                for (int m = 0, k = 0; k < fLen; ++k, m += 2)
                 {
-                    int noff0 = i * cval1;
-                    int noff1 = noff0 + cval1;
+                    int i = k / cVal;
+                    int j = k % cVal;
 
-                    for (int j = 0; j < cval; ++j, k += 2)
-                    {
-                        int n00 = noff0 + j;
-                        int n10 = n00 + 1;
-                        int n01 = noff1 + j;
-                        int n11 = n01 + 1;
+                    int cOff0 = i * cVal1;
+                    int c00 = cOff0 + j;
+                    int c10 = c00 + 1;
+                    int c01 = cOff0 + cVal1 + j;
+                    int c11 = c01 + 1;
 
-                        Loop2.Tri (
-                            new Index2 (n00, n00),
-                            new Index2 (n10, n10),
-                            new Index2 (n11, n11),
-                            target.loops[k]);
+                    Loop2.Tri (
+                        new Index2 (c00, c00),
+                        new Index2 (c10, c10),
+                        new Index2 (c11, c11),
+                        target.loops[m]);
 
-                        Loop2.Tri (
-                            new Index2 (n11, n11),
-                            new Index2 (n01, n01),
-                            new Index2 (n00, n00),
-                            target.loops[k + 1]);
-                    }
+                    Loop2.Tri (
+                        new Index2 (c11, c11),
+                        new Index2 (c01, c01),
+                        new Index2 (c00, c00),
+                        target.loops[m + 1]);
                 }
 
                 break;
@@ -737,8 +715,8 @@ public class Mesh2
         {
             case PolyType.Ngon:
 
-                target.loops = Loop2.Resize (target.loops, 1);
-                target.loops[0] = new Loop2 (new Index2[seg]);
+                target.loops = Loop2.Resize (target.loops, 1, seg, true);
+                // target.loops[0] = new Loop2 (new Index2[seg]);
 
                 for (int i = 0; i < seg; ++i)
                 {
@@ -758,12 +736,12 @@ public class Mesh2
 
             case PolyType.Quad:
 
-                target.loops = Loop2.Resize (target.loops, seg);
+                target.loops = Loop2.Resize (target.loops, seg, 4, true);
 
                 vs[0] = Vec2.Zero;
                 vts[0] = Vec2.UvCenter;
 
-                /* Find corners. */
+                // Find corners.
                 for (int i = 0, j = 1; i < seg; ++i, j += 2)
                 {
                     float theta = offset + i * toTheta;
@@ -777,7 +755,7 @@ public class Mesh2
                         0.5f - sinTheta * 0.5f);
                 }
 
-                /* Find midpoints. */
+                // Find midpoints.
                 int last = newLen - 1;
                 for (int i = 0, j = 1, k = 2; i < seg; ++i, j += 2, k += 2)
                 {
@@ -786,7 +764,7 @@ public class Mesh2
                     vts[k] = Vec2.Mix (vts[j], vts[m]);
                 }
 
-                /* Find faces. */
+                // Find faces.
                 for (int i = 0, j = 0; i < seg; ++i, j += 2)
                 {
                     int s = 1 + Utils.RemFloor (j - 1, last);
@@ -806,7 +784,7 @@ public class Mesh2
             case PolyType.Tri:
             default:
 
-                target.loops = Loop2.Resize (target.loops, seg);
+                target.loops = Loop2.Resize (target.loops, seg, 3, true);
 
                 vs[0] = Vec2.Zero;
                 vts[0] = Vec2.UvCenter;
@@ -824,11 +802,11 @@ public class Mesh2
                         cosTheta * 0.5f + 0.5f,
                         0.5f - sinTheta * 0.5f);
 
-                    // TODO: This should be a set, since Loop2 is a class.
-                    target.loops[i] = new Loop2 (
+                    Loop2.Tri (
                         new Index2 (0, 0),
                         new Index2 (j, j),
-                        new Index2 (k, k));
+                        new Index2 (k, k),
+                        target.loops[i]);
                 }
 
                 break;

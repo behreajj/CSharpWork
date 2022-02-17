@@ -1,6 +1,9 @@
 using System;
 using System.Text;
 
+/// <summary>
+/// Implements geometric math utilities for single-precision numbers.
+/// </summary>
 public static class Utils
 {
     /// <summary>

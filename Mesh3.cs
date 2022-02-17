@@ -296,6 +296,12 @@ public class Mesh3
         return this;
     }
 
+    /// <summary>
+    /// Calculates this mesh's normals per face, resulting in flat shading.
+    /// The normals array is reallocated. Sums the cross products of edges
+    /// in a face ( b - a ) x ( c - a ) then normalizes the sum.
+    /// </summary>
+    /// <returns>this mesh</returns>
     public Mesh3 ShadeFlat ( )
     {
         int facesLen = this.loops.Length;
@@ -605,6 +611,7 @@ public class Mesh3
 
     public string ToString (in int padding = 1, in int places = 4)
     {
+        // TODO: Switch to pbr version.
         return new StringBuilder (2048)
             .Append ("{ loops: ")
             .Append (Loop3.ToString (this.loops, padding))
@@ -1231,35 +1238,23 @@ public class Mesh3
                 target.loops = new Loop3[ ]
                 {
                     new Loop3 (
-                    new Index3 (0, 4, 4),
-                    new Index3 (1, 5, 4),
-                    new Index3 (3, 3, 4),
-                    new Index3 (2, 2, 4)),
+                    new Index3 (0, 4, 4), new Index3 (1, 5, 4),
+                    new Index3 (3, 3, 4), new Index3 (2, 2, 4)),
                     new Loop3 (
-                    new Index3 (2, 2, 5),
-                    new Index3 (3, 3, 5),
-                    new Index3 (7, 6, 5),
-                    new Index3 (6, 7, 5)),
+                    new Index3 (2, 2, 5), new Index3 (3, 3, 5),
+                    new Index3 (7, 6, 5), new Index3 (6, 7, 5)),
                     new Loop3 (
-                    new Index3 (6, 7, 0),
-                    new Index3 (7, 6, 0),
-                    new Index3 (5, 8, 0),
-                    new Index3 (4, 9, 0)),
+                    new Index3 (6, 7, 0), new Index3 (7, 6, 0),
+                    new Index3 (5, 8, 0), new Index3 (4, 9, 0)),
                     new Loop3 (
-                    new Index3 (4, 9, 3),
-                    new Index3 (5, 8, 3),
-                    new Index3 (1, 0, 3),
-                    new Index3 (0, 1, 3)),
+                    new Index3 (4, 9, 3), new Index3 (5, 8, 3),
+                    new Index3 (1, 0, 3), new Index3 (0, 1, 3)),
                     new Loop3 (
-                    new Index3 (2, 10, 2),
-                    new Index3 (6, 7, 2),
-                    new Index3 (4, 9, 2),
-                    new Index3 (0, 11, 2)),
+                    new Index3 (2, 10, 2), new Index3 (6, 7, 2),
+                    new Index3 (4, 9, 2), new Index3 (0, 11, 2)),
                     new Loop3 (
-                    new Index3 (7, 6, 1),
-                    new Index3 (3, 13, 1),
-                    new Index3 (1, 12, 1),
-                    new Index3 (5, 8, 1))
+                    new Index3 (7, 6, 1), new Index3 (3, 13, 1),
+                    new Index3 (1, 12, 1), new Index3 (5, 8, 1))
                 };
 
                 break;
@@ -1708,6 +1703,7 @@ public class Mesh3
             new Vec3 (-0.57735026f, -0.57735026f, -0.57735026f)
         };
 
+        // TODO: Update these functions to use Loop3.Resize instead?
         target.loops = new Loop3[ ]
         {
             new Loop3 (
