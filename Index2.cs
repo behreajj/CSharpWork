@@ -88,8 +88,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
 
     public override string ToString ( )
     {
-        // TODO: Use static format.
-        return this.ToString (3);
+        return Index2.ToString (this);
     }
 
     public bool Equals (Index2 i)
@@ -110,17 +109,6 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
         return new int[ ] { this._v, this._vt };
     }
 
-    public string ToString (in int padding = 3)
-    {
-        return new StringBuilder (48)
-            .Append ("{ v: ")
-            .Append (Utils.ToPadded (this._v, padding))
-            .Append (", vt: ")
-            .Append (Utils.ToPadded (this._vt, padding))
-            .Append (" }")
-            .ToString ( );
-    }
-
     public (int v, int vt) ToTuple ( )
     {
         return (v: this._v, vt: this._vt);
@@ -139,5 +127,50 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
         }
 
         return result;
+    }
+
+    public static string ToString (in Index2 i, in int padding = 3)
+    {
+        return Index2.ToString (new StringBuilder (48), i, padding).ToString ( );
+    }
+
+    public static StringBuilder ToString (in StringBuilder sb, in Index2 i, in int padding = 3)
+    {
+        sb.Append ("{ v: ");
+        Utils.ToPadded (sb, i._v, padding);
+        sb.Append (", vt: ");
+        Utils.ToPadded (sb, i._vt, padding);
+        sb.Append (" }");
+        return sb;
+    }
+
+    public static string ToString (in Index2[ ] arr, in int padding = 3)
+    {
+        return Index2.ToString (new StringBuilder (1024), arr, padding).ToString ( );
+    }
+
+    public static StringBuilder ToString (in StringBuilder sb, in Index2[ ] arr, in int padding = 3)
+    {
+        sb.Append ('[');
+        sb.Append (' ');
+
+        if (arr != null)
+        {
+            int len = arr.Length;
+            int last = len - 1;
+
+            for (int i = 0; i < last; ++i)
+            {
+                Index2.ToString (sb, arr[i], padding);
+                sb.Append (',');
+                sb.Append (' ');
+            }
+
+            Index2.ToString (sb, arr[last], padding);
+            sb.Append (' ');
+        }
+
+        sb.Append (']');
+        return sb;
     }
 }

@@ -638,6 +638,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <returns>the string</returns>
     public string ToString (in int places = 4)
     {
+        // TODO: Switch to static sb by reference method.
         return new StringBuilder (512)
             .Append ("{ m00: ")
             .Append (Utils.ToFixed (this._m00, places))

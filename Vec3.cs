@@ -490,7 +490,13 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the result</returns>
     public static Vec3 operator % (in Vec3 a, in float b)
     {
-        if (b != 0.0f) { return new Vec3 (a._x % b, a._y % b, a._z % b); }
+        if (b != 0.0f)
+        {
+            return new Vec3 (
+                a._x % b,
+                a._y % b,
+                a._z % b);
+        }
         return a;
     }
 
@@ -1140,21 +1146,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Filters each component of vector against a lower and upper
-    /// bound. If the component is within the range, its value is retained;
-    /// otherwise, it is set to 0.0 .
-    /// </summary>
-    /// <param name="v">vector</param>
-    /// <returns>the filtered vector</returns>
-    public static Vec3 Filter (in Vec3 v, in Vec3 lb, in Vec3 ub)
-    {
-        return new Vec3 (
-            Utils.Filter (v._x, lb._x, ub._x),
-            Utils.Filter (v._y, lb._y, ub._y),
-            Utils.Filter (v._z, lb._z, ub._z));
-    }
-
-    /// <summary>
     /// Floors each component of the vector.
     /// </summary>
     /// <param name="v">vector</param>
@@ -1635,7 +1626,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     {
         float iDotN = Vec3.Dot (i, n);
         float k = 1.0f - eta * eta * (1.0f - iDotN * iDotN);
-        if (k < 0.0f) { return new Vec3 ( ); }
+        if (k < 0.0f) { return Vec3.Zero; }
         return (eta * i) - (n * (eta * iDotN + Utils.Sqrt (k)));
     }
 
@@ -1887,6 +1878,45 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             Utils.Sign (v._x),
             Utils.Sign (v._y),
             Utils.Sign (v._z));
+    }
+
+    /// <summary>
+    /// Mixes two vectors together with spherical linear interpolation
+    /// by a factor.
+    /// </summary>
+    /// <param name="a">origin</param>
+    /// <param name="b">destination</param>
+    /// <param name="t">factor</param>
+    /// <returns>the vector</returns>
+    public static Vec3 Slerp (in Vec3 a, in Vec3 b, in float t = 0.5f)
+    {
+        double ax = a._x;
+        double ay = a._y;
+        double az = a._z;
+
+        double bx = b._x;
+        double by = b._y;
+        double bz = b._z;
+
+        double abDot = ax * bx + ay * by + az * bz;
+        if (Math.Abs (abDot) > (1.0d - Utils.Epsilon))
+        {
+            // TODO: Improve this edge case?
+            return Vec3.Mix (a, b, t);
+        }
+
+        double omega = Math.Acos (abDot);
+        double omSin = Math.Sin (omega);
+        double omSinInv = (omSin != 0.0d) ? 1.0d / omSin : 1.0d;
+
+        double td = t;
+        double aFac = Math.Sin ((1.0d - td) * omega) * omSinInv;
+        double bFac = Math.Sin (td * omega) * omSinInv;
+
+        return new Vec3 (
+            (float) (aFac * ax + bFac * bx),
+            (float) (aFac * ay + bFac * by),
+            (float) (aFac * az + bFac * bz));
     }
 
     /// <summary>

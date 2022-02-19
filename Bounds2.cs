@@ -239,7 +239,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     }
 
     /// <summary>
-    /// Finds the extent of the bounds, the absolute difference between its
+    /// Finds the extent of the bounds, the difference between its
     /// minimum and maximum corners.
     /// </summary>
     /// <param name="b">bounds</param>

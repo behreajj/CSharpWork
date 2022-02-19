@@ -63,25 +63,7 @@ public class Loop3
 
     public override string ToString ( )
     {
-        return this.ToString (1);
-    }
-
-    public string ToString (in int padding = 1)
-    {
-        int len = this.indices.Length;
-        int last = len - 1;
-        StringBuilder sb = new StringBuilder (96 * len);
-        sb.Append ("{ indices: [ ");
-        for (int i = 0; i < len; ++i)
-        {
-            sb.Append (this.indices[i].ToString (padding));
-            if (i < last)
-            {
-                sb.Append (", ");
-            }
-        }
-        sb.Append (" ] }");
-        return sb.ToString ( );
+        return Loop3.ToString (this);
     }
 
     public static implicit operator Index3[ ] (in Loop3 source)
@@ -217,15 +199,41 @@ public class Loop3
         return result;
     }
 
+    public static string ToString (in Loop3 l, in int padding = 3)
+    {
+        return Loop3.ToString (new StringBuilder (1024), l, padding).ToString ( );
+    }
+
+    public static StringBuilder ToString (in StringBuilder sb, in Loop3 l, in int padding = 3)
+    {
+        sb.Append ("{ indices: ");
+        Index3.ToString (sb, l.indices, padding);
+        sb.Append (' ');
+        sb.Append ('}');
+        return sb;
+    }
+
     /// <summary>
     /// Returns a string representation of an array of loops.
     /// </summary>
     /// <param name="arr">array</param>
     /// <param name="padding">padding</param>
-    /// <returns>the string</returns>
-    public static string ToString (in Loop3[ ] arr, in int padding = 1)
+    /// <returns>string</returns>
+    public static string ToString (in Loop3[ ] arr, in int padding = 3)
     {
-        StringBuilder sb = new StringBuilder (1024);
+        return Loop3.ToString (new StringBuilder (1024), arr, padding).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a string representation of an array of loops
+    /// to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="arr">array</param>
+    /// <param name="padding">padding</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Loop3[ ] arr, in int padding = 3)
+    {
         sb.Append ('[');
         sb.Append (' ');
 
@@ -236,17 +244,17 @@ public class Loop3
 
             for (int i = 0; i < last; ++i)
             {
-                sb.Append (arr[i].ToString (padding));
+                Loop3.ToString (sb, arr[i], padding);
                 sb.Append (',');
                 sb.Append (' ');
             }
 
-            sb.Append (arr[last].ToString (padding));
+            Loop3.ToString (sb, arr[last], padding);
             sb.Append (' ');
         }
 
         sb.Append (']');
-        return sb.ToString ( );
+        return sb;
     }
 
     /// <summary>

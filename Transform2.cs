@@ -239,7 +239,7 @@ public class Transform2
     /// <returns>this transform</returns>
     public Transform2 RotateTo (in float radians, in float step = 1.0f)
     {
-        this.Rotation = Utils.LerpAngle (this.rotation, radians, step);
+        this.Rotation = Utils.LerpAngleNear (this.rotation, radians, step);
         return this;
     }
 

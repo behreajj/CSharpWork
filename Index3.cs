@@ -105,7 +105,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
 
     public override string ToString ( )
     {
-        return this.ToString (3);
+        return Index3.ToString (this);
     }
 
     public bool Equals (Index3 i)
@@ -126,19 +126,6 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     public int[ ] ToArray ( )
     {
         return new int[ ] { this._v, this._vt, this._vn };
-    }
-
-    public string ToString (in int padding = 3)
-    {
-        return new StringBuilder (96)
-            .Append ("{ v: ")
-            .Append (Utils.ToPadded (this._v, padding))
-            .Append (", vt: ")
-            .Append (Utils.ToPadded (this._vt, padding))
-            .Append (", vn: ")
-            .Append (Utils.ToPadded (this._vn, padding))
-            .Append (" }")
-            .ToString ( );
     }
 
     public (int v, int vt, int vn) ToTuple ( )
@@ -168,5 +155,52 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
         }
 
         return result;
+    }
+
+    public static string ToString (in Index3 i, in int padding = 3)
+    {
+        return Index3.ToString (new StringBuilder (96), i, padding).ToString ( );
+    }
+
+    public static StringBuilder ToString (in StringBuilder sb, in Index3 i, in int padding = 3)
+    {
+        sb.Append ("{ v: ");
+        Utils.ToPadded (sb, i._v, padding);
+        sb.Append (", vt: ");
+        Utils.ToPadded (sb, i._vt, padding);
+        sb.Append (", vn: ");
+        Utils.ToPadded (sb, i._vn, padding);
+        sb.Append (" }");
+        return sb;
+    }
+
+    public static string ToString (in Index3[ ] arr, in int padding = 3)
+    {
+        return Index3.ToString (new StringBuilder (1024), arr, padding).ToString ( );
+    }
+
+    public static StringBuilder ToString (in StringBuilder sb, in Index3[ ] arr, in int padding = 3)
+    {
+        sb.Append ('[');
+        sb.Append (' ');
+
+        if (arr != null)
+        {
+            int len = arr.Length;
+            int last = len - 1;
+
+            for (int i = 0; i < last; ++i)
+            {
+                Index3.ToString (sb, arr[i], padding);
+                sb.Append (',');
+                sb.Append (' ');
+            }
+
+            Index3.ToString (sb, arr[last], padding);
+            sb.Append (' ');
+        }
+
+        sb.Append (']');
+        return sb;
     }
 }

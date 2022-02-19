@@ -75,7 +75,7 @@ public readonly struct Edge2 : IEquatable<Edge2>
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return this.ToString (4);
+        return Edge2.ToString (this);
     }
 
     /// <summary>
@@ -91,19 +91,33 @@ public readonly struct Edge2 : IEquatable<Edge2>
         return true;
     }
 
-    /// <summary>
-    /// Returns a string representation of this edge.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (in int places = 4)
+    public static float Heading (in Edge2 e)
     {
-        return new StringBuilder (256)
-            .Append ("{ origin: ")
-            .Append (this.origin.ToString (places))
-            .Append (", dest: ")
-            .Append (this.dest.ToString (places))
-            .Append (" }")
-            .ToString ( );
+        return Vec2.HeadingSigned (e.dest.Coord - e.origin.Coord);
+    }
+
+    public static float Mag (in Edge2 e)
+    {
+        return Vec2.DistEuclidean (e.origin.Coord, e.dest.Coord);
+    }
+
+    public static float MagSq (in Edge2 e)
+    {
+        return Vec2.DistSq (e.origin.Coord, e.dest.Coord);
+    }
+
+    public static string ToString (in Edge2 e, in int places = 4)
+    {
+        return Edge2.ToString (new StringBuilder (256), e, places).ToString ( );
+    }
+
+    public static StringBuilder ToString (in StringBuilder sb, in Edge2 e, in int places = 4)
+    {
+        sb.Append ("{ origin: ");
+        Vert2.ToString (sb, e.origin, places);
+        sb.Append (", dest: ");
+        Vert2.ToString (sb, e.dest, places);
+        sb.Append (" }");
+        return sb;
     }
 }

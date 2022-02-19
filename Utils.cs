@@ -319,8 +319,8 @@ public static class Utils
     /// <returns>magnified sign</returns>
     public static float CopySign (in float mag, in float sign)
     {
-        // Don't use this, as the latter has more flexibility
-        // in terms of how you deal with zero sign.
+        // Don't use abs*sign, as the latter has more
+        // flexibility in terms of how you deal with zero sign.
         // return Utils.Abs (mag) * Utils.Sign (sign);
         return (sign < -0.0f) ? -Utils.Abs (mag) :
             (sign > 0.0f) ? Utils.Abs (mag) :
@@ -416,19 +416,6 @@ public static class Utils
     public static float Exp (in float v)
     {
         return (float) Math.Exp ((double) v);
-    }
-
-    /// <summary>
-    /// Returns the value if it is greater than the lower bound, inclusive, and
-    /// less than the upper bound, exclusive. Otherwise, returns 0.0 .
-    /// </summary>
-    /// <param name="v">input value</param>
-    /// <param name="lb">lower bound</param>
-    /// <param name="ub">upper bound</param>
-    /// <returns>filtered value</returns>
-    public static float Filter (in float v, in float lb = 0.0f, in float ub = 1.0f)
-    {
-        return (v >= lb) && (v < ub) ? v : 0.0f;
     }
 
     /// <summary>
@@ -1288,12 +1275,27 @@ public static class Utils
     }
 
     /// <summary>
-    /// Returns an integer formatted as a string padded by initial zeroes.
+    /// Returns an integer formatted as a string padded with initial zeroes.
     /// </summary>
     /// <param name="v">integer</param>
-    /// <param name="places">number of places</param>
+    /// <param name="padding">leading zeroes</param>
     /// <returns>string</returns>
-    public static String ToPadded (in int v, in int places = 3)
+    public static string ToPadded (in int v, in int padding = 3)
+    {
+        // TODO: Replace all instances of this function with pbr string builder
+        // version below.
+        return Utils.ToPadded (new StringBuilder (16), v, padding).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a string representation of an integer
+    /// padded with initial zeroes to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="v">input value</param>
+    /// <param name="padding">leading zeroes</param>
+    /// <returns>string builder</returns>
+    public static String ToPadded (in StringBuilder sb, in int v, in int padding = 3)
     {
         /*
          * Double precision is needed to preserve accuracy. The max integer value
@@ -1312,9 +1314,8 @@ public static class Utils
             digits[filled++] = -(int) ((y - nAbsVal) * 10.0d - 0.5d);
         }
 
-        StringBuilder sb = new StringBuilder (16);
         if (isNeg) { sb.Append ('-'); }
-        int vplaces = places < 1 ? 1 : places;
+        int vplaces = padding < 1 ? 1 : padding;
         vplaces = filled > vplaces ? filled : vplaces;
         for (int n = vplaces - 1; n > -1; --n)
         {

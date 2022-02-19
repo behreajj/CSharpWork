@@ -256,7 +256,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     }
 
     /// <summary>
-    /// Finds the extent of the bounds, the absolute difference between its
+    /// Finds the extent of the bounds, the difference between its
     /// minimum and maximum corners.
     /// </summary>
     /// <param name="b">bounds</param>

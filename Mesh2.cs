@@ -112,7 +112,52 @@ public class Mesh2
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return this.ToString (1, 4);
+        return Mesh2.ToString (this);
+    }
+
+    /// <summary>
+    /// Calculates texture coordinates (UVs) for this mesh. Finds the
+    /// object-space dimensions of each coordinate, then uses the frame as a
+    /// reference for new UVs, such that the shape acts as a mask for the
+    /// texture (or, the texture fills the shape without repeating).
+    /// </summary>
+    /// <returns>this mesh/returns>
+    public Mesh2 CalcUvs ( )
+    {
+        // TODO: Test.
+        Bounds2 aabb = Mesh2.CalcBounds (this);
+        Vec2 dim = Bounds2.Extent (aabb);
+        Vec2 lb = aabb.Min;
+
+        float lbx = lb.x;
+        float lby = lb.y;
+        float xInv = 1.0f / dim.x;
+        float yInv = 1.0f / dim.y;
+
+        int len = this.coords.Length;
+        this.texCoords = Vec2.Resize (this.texCoords, len);
+        for (int i = 0; i < len; ++i)
+        {
+            Vec2 v = this.coords[i];
+            this.texCoords[i] = new Vec2 (
+                (v.x - lbx) * xInv,
+                1.0f - (v.y - lb.y) * yInv);
+        }
+
+        int loopsLen = this.loops.Length;
+        for (int i = 0; i < loopsLen; ++i)
+        {
+            Loop2 loop = this.loops[i];
+            Index2[ ] srcIndices = loop.Indices;
+            int idcsLen = srcIndices.Length;
+            for (int j = 0; j < idcsLen; ++j)
+            {
+                Index2 src = srcIndices[j];
+                loop.Indices[j] = new Index2 (src.v, src.v);
+            }
+        }
+
+        return this;
     }
 
     /// <summary>
@@ -124,14 +169,12 @@ public class Mesh2
     {
         // TODO: Test.
 
-        /* Transfer arrays to dictionaries where the face index is the key. */
+        // Transfer arrays to dictionaries where the face index is the key. */
         Dictionary<int, Vec2> usedCoords = new Dictionary<int, Vec2> ( );
         Dictionary<int, Vec2> usedTexCoords = new Dictionary<int, Vec2> ( );
 
-        /*
-         * Visit all data arrays with the faces array. Any data not used by any
-         * face will be left out.
-         */
+        // Visit all data arrays with the faces array. Any data not used by any
+        // face will be left out.
         int facesLen = this.loops.Length;
         for (int i = 0; i < facesLen; ++i)
         {
@@ -140,14 +183,14 @@ public class Mesh2
             int vertsLen = verts.Length;
             for (int j = 0; j < vertsLen; ++j)
             {
-                /* The dictionary should ignore repeated visitations. */
+                // The dictionary should ignore repeated visitations.
                 Index2 vert = verts[j];
                 usedCoords[vert.v] = this.coords[vert.v];
                 usedTexCoords[vert.vt] = this.texCoords[vert.vt];
             }
         }
 
-        /* Use a sorted set to filter out similar vectors. */
+        // Use a sorted set to filter out similar vectors.
         SortQuantized2 v2Cmp = new SortQuantized2 ( );
         SortedSet<Vec2> coordsSet = new SortedSet<Vec2> (v2Cmp);
         SortedSet<Vec2> texCoordsSet = new SortedSet<Vec2> (v2Cmp);
@@ -155,11 +198,11 @@ public class Mesh2
         coordsSet.UnionWith (usedCoords.Values);
         texCoordsSet.UnionWith (usedTexCoords.Values);
 
-        /* Dictionary's keys are no longer needed; just values. */
+        // Dictionary's keys are no longer needed; just values.
         Vec2[ ] newCoords = new Vec2[coordsSet.Count];
         Vec2[ ] newTexCoords = new Vec2[texCoordsSet.Count];
 
-        /* Convert from sorted set to arrays. */
+        // Convert from sorted set to arrays.
         coordsSet.CopyTo (newCoords);
         texCoordsSet.CopyTo (newTexCoords);
 
@@ -170,10 +213,8 @@ public class Mesh2
             int vertsLen = verts.Length;
             for (int j = 0; j < vertsLen; ++j)
             {
-                /*
-                 * Find index of vector in new array by using indexed value from old
-                 * array as a reference.
-                 */
+                // Find index of vector in new array by using indexed value from old
+                // array as a reference.
                 Index2 oldVert = verts[j];
                 verts[j] = new Index2 (
                     Array.BinarySearch<Vec2> (newCoords, this.coords[oldVert.v], v2Cmp),
@@ -181,11 +222,11 @@ public class Mesh2
             }
         }
 
-        /* Replace old arrays with the new. */
+        // Replace old arrays with the new.
         this.coords = newCoords;
         this.texCoords = newTexCoords;
 
-        /* Sort faces by center. */
+        // Sort faces by center.
         Array.Sort (this.loops, new SortLoops2 (this.coords));
 
         return this;
@@ -279,19 +320,6 @@ public class Mesh2
         return this;
     }
 
-    public string ToString (in int padding = 1, in int places = 4)
-    {
-        return new StringBuilder (2048)
-            .Append ("{ loops: ")
-            .Append (Loop2.ToString (this.loops, padding))
-            .Append (", coords: ")
-            .Append (Vec2.ToString (this.coords, places))
-            .Append (", texCoords: ")
-            .Append (Vec2.ToString (this.texCoords, places))
-            .Append (" }")
-            .ToString ( );
-    }
-
     public Mesh2 InsetFace (in int faceIndex = 0, in float fac = 0.5f)
     {
         if (fac <= 0.0f) { return this; }
@@ -312,7 +340,7 @@ public class Mesh2
         Loop2[ ] loopsNew = new Loop2[loopLen + 1];
         Loop2 centerLoop = loopsNew[loopLen] = new Loop2 (loopLen);
 
-        /* Sum centers. */
+        // Sum centers.
         Vec2 vCenter = new Vec2 ( );
         Vec2 vtCenter = new Vec2 ( );
         for (int j = 0; j < loopLen; ++j)
@@ -322,7 +350,7 @@ public class Mesh2
             vtCenter += this.texCoords[curr.vt];
         }
 
-        /* Find average. */
+        // Find average.
         if (loopLen > 0)
         {
             float flInv = 1.0f / loopLen;
@@ -333,7 +361,7 @@ public class Mesh2
         Vec2[ ] vsNew = new Vec2[loopLen];
         Vec2[ ] vtsNew = new Vec2[loopLen];
 
-        /* Find new corners. */
+        // Find new corners.
         for (int j = 0; j < loopLen; ++j)
         {
             int k = (j + 1) % loopLen;
@@ -503,6 +531,32 @@ public class Mesh2
 
         return target;
 
+    }
+
+    /// <summary>
+    /// Finds the axis aligned bounding box for a mesh.
+    /// </summary>
+    /// <param name="mesh">mesh</param>
+    /// <returns>bounds</returns>
+    public static Bounds2 CalcBounds (in Mesh2 mesh)
+    {
+        Vec2[ ] coords = mesh.coords;
+        int len = coords.Length;
+        float lbx = Single.MaxValue;
+        float lby = Single.MaxValue;
+        float ubx = Single.MinValue;
+        float uby = Single.MinValue;
+        for (int i = 0; i < len; ++i)
+        {
+            Vec2 coord = coords[i];
+            float x = coord.x;
+            float y = coord.y;
+            if (x < lbx) { lbx = x; }
+            if (x > ubx) { ubx = x; }
+            if (y < lby) { lby = y; }
+            if (y > uby) { uby = y; }
+        }
+        return new Bounds2 (lbx, lby, ubx, uby);
     }
 
     /// <summary>
@@ -693,6 +747,15 @@ public class Mesh2
         return target;
     }
 
+    /// <summary>
+    /// Creates a regular convex polygon.
+    /// </summary>
+    /// <param name="target">target mesh</param>
+    /// <param name="sectors">number of sides</param>
+    /// <param name="radius">radius</param>
+    /// <param name="rotation">rotation</param>
+    /// <param name="poly">polygon type</param>
+    /// <returns>polygon</returns>
     public static Mesh2 Polygon ( //
         in Mesh2 target, //
         in int sectors = 32, //
@@ -716,8 +779,6 @@ public class Mesh2
             case PolyType.Ngon:
 
                 target.loops = Loop2.Resize (target.loops, 1, seg, true);
-                // target.loops[0] = new Loop2 (new Index2[seg]);
-
                 for (int i = 0; i < seg; ++i)
                 {
                     float theta = offset + i * toTheta;
@@ -815,6 +876,54 @@ public class Mesh2
         return target;
     }
 
+    /// <summary>
+    /// Returns a string representation of a mesh.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="m">mesh</param>
+    /// <param name="padding">integer padding</param>
+    /// <param name="places">real number decimals</param>
+    /// <returns>string builder</returns>
+    public static string ToString ( //
+        in Mesh2 m, //
+        in int padding = 1, //
+        in int places = 4)
+    {
+        return Mesh2.ToString (new StringBuilder (2048),
+            m, padding, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a string representation of a mesh to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="m">mesh</param>
+    /// <param name="padding">integer padding</param>
+    /// <param name="places">real number decimals</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString ( //
+        in StringBuilder sb, //
+        in Mesh2 m, //
+        in int padding = 1, //
+        in int places = 4)
+    {
+        sb.Append ("{ loops: ");
+        Loop2.ToString (sb, m.loops, padding);
+        sb.Append (", coords: ");
+        Vec2.ToString (sb, m.coords, places);
+        sb.Append (", texCoords: ");
+        Vec2.ToString (sb, m.texCoords, places);
+        sb.Append (" }");
+        return sb;
+    }
+
+    /// <summary>
+    /// Triangulates all faces in a mesh by drawing diagonals
+    /// from the face's first vertex to all non-adjacent vertices.
+    /// </summary>
+    /// <param name="source">source</param>
+    /// <param name="target">target</param>
+    /// <returns>triangulated mesh</returns>
     public static Mesh2 Triangulate (in Mesh2 source, in Mesh2 target)
     {
         Loop2[ ] loopsSrc = source.loops;

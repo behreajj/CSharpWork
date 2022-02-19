@@ -1082,7 +1082,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="c">the color</param>
     /// <param name="levels">the levels</param>
     /// <returns>the posterized color</returns>
-    public static Clr Quantize (in Clr c, in int levels = 8)
+    public static Clr Quantize (in Clr c, in int levels)
     {
         return Clr.QuantizeUnsigned (c, levels);
     }
@@ -1093,13 +1093,14 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="c">color</param>
     /// <param name="levels">levels</param>
     /// <returns>posterized color</returns>
-    public static Clr QuantizeSigned (in Clr c, in int levels = 8)
+    public static Clr QuantizeSigned (in Clr c, in int levels)
     {
         return Clr.QuantizeSigned (c, levels, levels, levels, levels);
     }
 
     /// <summary>
-    /// Reduces the signal, or granularity, of a color's channels.
+    /// Reduces the signal, or granularity, of a color's red, green
+    /// and blue channels. Does not alter the alpha channel.
     /// </summary>
     /// <param name="c">color</param>
     /// <param name="rLevels">red levels</param>
@@ -1108,9 +1109,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>posterized color</returns>
     public static Clr QuantizeSigned ( //
         in Clr c, //
-        in int rLevels = 8, //
-        in int gLevels = 8, //
-        in int bLevels = 8)
+        in int rLevels, //
+        in int gLevels, //
+        in int bLevels)
     {
         return new Clr (
             Utils.QuantizeSigned (c._r, rLevels),
@@ -1129,10 +1130,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>posterized color</returns>
     public static Clr QuantizeSigned ( //
         in Clr c, //
-        in int rLevels = 8, //
-        in int gLevels = 8, //
-        in int bLevels = 8, //
-        in int aLevels = 8)
+        in int rLevels, //
+        in int gLevels, //
+        in int bLevels, //
+        in int aLevels)
     {
         return new Clr (
             Utils.QuantizeSigned (c._r, rLevels),
@@ -1147,13 +1148,14 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <param name="c">color</param>
     /// <param name="levels">levels</param>
     /// <returns>posterized color</returns>
-    public static Clr QuantizeUnsigned (in Clr c, in int levels = 8)
+    public static Clr QuantizeUnsigned (in Clr c, in int levels)
     {
         return Clr.QuantizeUnsigned (c, levels, levels, levels, levels);
     }
 
     /// <summary>
-    /// Reduces the signal, or granularity, of a color's channels.
+    /// Reduces the signal, or granularity, of a color's red, green
+    /// and blue channels. Does not alter the alpha channel.
     /// </summary>
     /// <param name="c">color</param>
     /// <param name="rLevels">red levels</param>
@@ -1162,9 +1164,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>posterized color</returns>
     public static Clr QuantizeUnsigned ( //
         in Clr c, //
-        in int rLevels = 8, //
-        in int gLevels = 8, //
-        in int bLevels = 8)
+        in int rLevels, //
+        in int gLevels, //
+        in int bLevels)
     {
         return new Clr (
             Utils.QuantizeUnsigned (c._r, rLevels),
@@ -1183,10 +1185,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>posterized color</returns>
     public static Clr QuantizeUnsigned ( //
         in Clr c, //
-        in int rLevels = 8, //
-        in int gLevels = 8, //
-        in int bLevels = 8, //
-        in int aLevels = 8)
+        in int rLevels, //
+        in int gLevels, //
+        in int bLevels, //
+        in int aLevels)
     {
         return new Clr (
             Utils.QuantizeUnsigned (c._r, rLevels),

@@ -75,7 +75,7 @@ public readonly struct Edge3 : IEquatable<Edge3>
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return this.ToString (4);
+        return Edge3.ToString (this);
     }
 
     /// <summary>
@@ -91,19 +91,38 @@ public readonly struct Edge3 : IEquatable<Edge3>
         return true;
     }
 
-    /// <summary>
-    /// Returns a string representation of this edge.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (in int places = 4)
+    public static float Azimuth (in Edge3 e)
     {
-        return new StringBuilder (256)
-            .Append ("{ origin: ")
-            .Append (this.origin.ToString (places))
-            .Append (", dest: ")
-            .Append (this.dest.ToString (places))
-            .Append (" }")
-            .ToString ( );
+        return Vec3.AzimuthSigned (e.dest.Coord - e.origin.Coord);
+    }
+
+    public static float Inclination (in Edge3 e)
+    {
+        return Vec3.InclinationSigned (e.dest.Coord - e.origin.Coord);
+    }
+
+    public static float Mag (in Edge3 e)
+    {
+        return Vec3.DistEuclidean (e.origin.Coord, e.dest.Coord);
+    }
+
+    public static float MagSq (in Edge3 e)
+    {
+        return Vec3.DistSq (e.origin.Coord, e.dest.Coord);
+    }
+
+    public static string ToString (in Edge3 e, in int places = 4)
+    {
+        return Edge3.ToString (new StringBuilder (256), e, places).ToString ( );
+    }
+
+    public static StringBuilder ToString (in StringBuilder sb, in Edge3 e, in int places = 4)
+    {
+        sb.Append ("{ origin: ");
+        Vert3.ToString (sb, e.origin, places);
+        sb.Append (", dest: ");
+        Vert3.ToString (sb, e.dest, places);
+        sb.Append (" }");
+        return sb;
     }
 }

@@ -128,7 +128,7 @@ public class Curve2 : IEnumerable
     /// <returns>string</returns>
     public override string ToString ( )
     {
-        return this.ToString (4);
+        return Curve2.ToString (this);
     }
 
     /// <summary>
@@ -375,30 +375,6 @@ public class Curve2 : IEnumerable
     }
 
     /// <summary>
-    /// Returns the string representation of this curve.
-    /// </summary>
-    /// <param name="places">number of places</param>
-    /// <returns>the string</returns>
-    public string ToString (in int places = 4)
-    {
-        int len = this.knots.Count;
-        int last = len - 1;
-
-        StringBuilder sb = new StringBuilder (64 + 256 * len);
-        sb.Append ("{ closedLoop: ");
-        sb.Append (this.closedLoop ? "false" : "true");
-        sb.Append (", knots: [ ");
-        for (int i = 0; i < len; ++i)
-        {
-            Knot2 knot = this.knots[i];
-            Knot2.ToString (sb, knot, places);
-            if (i < last) { sb.Append (", "); }
-        }
-        sb.Append (" ] }");
-        return sb.ToString ( );
-    }
-
-    /// <summary>
     /// Transforms all knots in the curve by a matrix.
     /// </summary>
     /// <param name="m">matrix</param>
@@ -538,5 +514,42 @@ public class Curve2 : IEnumerable
         target[5].Set (0.235709f, -0.166627f, 0.361728f, -0.2022675f, 0.0505335f, -0.114256f);
 
         return target;
+    }
+
+    /// <summary>
+    /// Returns the string representation of a curve.
+    /// </summary>
+    /// <param name="c">curve</param>
+    /// <param name="places">number of places</param>
+    /// <returns>the string</returns>
+    public static string ToString (in Curve2 c, in int places = 4)
+    {
+        return Curve2.ToString (new StringBuilder (1024), c, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a string representation of a curve to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="c">curve</param>
+    /// <param name="places">number of places</param>
+    /// <returns>the string</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Curve2 c, in int places = 4)
+    {
+        List<Knot2> knots = c.knots;
+        int len = knots.Count;
+        int last = len - 1;
+
+        sb.Append ("{ closedLoop: ");
+        sb.Append (c.closedLoop ? "false" : "true");
+        sb.Append (", knots: [ ");
+        for (int i = 0; i < len; ++i)
+        {
+            Knot2 knot = knots[i];
+            Knot2.ToString (sb, knot, places);
+            if (i < last) { sb.Append (", "); }
+        }
+        sb.Append (" ] }");
+        return sb;
     }
 }

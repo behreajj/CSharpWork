@@ -524,7 +524,14 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the result</returns>
     public static Vec4 operator % (in Vec4 a, in float b)
     {
-        if (b != 0.0f) { return new Vec4 (a._x % b, a._y % b, a._z % b, a._w % b); }
+        if (b != 0.0f)
+        {
+            return new Vec4 (
+                a._x % b,
+                a._y % b,
+                a._z % b,
+                a._w % b);
+        }
         return a;
     }
 
@@ -932,22 +939,6 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
             a._y * b._y +
             a._z * b._z +
             a._w * b._w;
-    }
-
-    /// <summary>
-    /// Filters each component of vector against a lower and upper
-    /// bound. If the component is within the range, its value is retained;
-    /// otherwise, it is set to 0.0 .
-    /// </summary>
-    /// <param name="v">vector</param>
-    /// <returns>the filtered vector</returns>
-    public static Vec4 Filter (in Vec4 v, in Vec4 lb, in Vec4 ub)
-    {
-        return new Vec4 (
-            Utils.Filter (v._x, lb._x, ub._x),
-            Utils.Filter (v._y, lb._y, ub._y),
-            Utils.Filter (v._z, lb._z, ub._z),
-            Utils.Filter (v._w, lb._w, ub._w));
     }
 
     /// <summary>
@@ -1403,7 +1394,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     {
         float iDotN = Vec4.Dot (i, n);
         float k = 1.0f - eta * eta * (1.0f - iDotN * iDotN);
-        if (k < 0.0f) { return new Vec4 ( ); }
+        if (k < 0.0f) { return Vec4.Zero; }
         return (eta * i) - (n * (eta * iDotN + Utils.Sqrt (k)));
     }
 

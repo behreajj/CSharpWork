@@ -99,7 +99,7 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return this.ToString (4);
+        return Vert3.ToString (this);
     }
 
     /// <summary>
@@ -132,22 +132,20 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
         return true;
     }
 
-    /// <summary>
-    /// Returns a string representation of this vertex.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (in int places = 4)
+    public static string ToString (in Vert3 v, in int places = 4)
     {
-        // TODO: Update to pass by reference.
-        return new StringBuilder (512)
-            .Append ("{ coord: ")
-            .Append (Vec3.ToString (this.coord, places))
-            .Append (", texCoord: ")
-            .Append (Vec2.ToString (this.texCoord, places))
-            .Append (", normal: ")
-            .Append (Vec3.ToString (this.normal, places))
-            .Append (" }")
-            .ToString ( );
+        return Vert3.ToString (new StringBuilder (256), v, places).ToString ( );
+    }
+
+    public static StringBuilder ToString (in StringBuilder sb, in Vert3 v, in int places = 4)
+    {
+        sb.Append ("{ coord: ");
+        Vec3.ToString (v.coord, places);
+        sb.Append (", texCoord: ");
+        Vec2.ToString (v.texCoord, places);
+        sb.Append (", normal: ");
+        Vec3.ToString (v.normal, places);
+        sb.Append (" }");
+        return sb;
     }
 }

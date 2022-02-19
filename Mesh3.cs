@@ -611,22 +611,13 @@ public class Mesh3
 
     public string ToString (in int padding = 1, in int places = 4)
     {
-        // TODO: Switch to pbr version.
-        return new StringBuilder (2048)
-            .Append ("{ loops: ")
-            .Append (Loop3.ToString (this.loops, padding))
-            .Append (", coords: ")
-            .Append (Vec3.ToString (this.coords, places))
-            .Append (", texCoords: ")
-            .Append (Vec2.ToString (this.texCoords, places))
-            .Append (", normals: ")
-            .Append (Vec3.ToString (this.normals, places))
-            .Append (" }")
-            .ToString ( );
+        return Mesh3.ToString (this);
     }
 
     public static explicit operator Mesh3 (in Mesh2 source)
     {
+        // TODO: Make this a instance method Set?
+
         Loop2[ ] loopsSrc = source.Loops;
         Vec2[ ] vsSrc = source.Coords;
         Vec2[ ] vtsSrc = source.TexCoords;
@@ -661,53 +652,38 @@ public class Mesh3
         return new Mesh3 (loopsTrg, vsTrg, vtsTrg, vnsTrg);
     }
 
-    public static Mesh3 CastToSphere (in Mesh3 source, in Mesh3 target, in float radius = 0.5f)
+    /// <summary>
+    /// Finds the axis aligned bounding box for a mesh.
+    /// </summary>
+    /// <param name="mesh">mesh</param>
+    /// <returns>bounds</returns>
+    public static Bounds3 CalcBounds (in Mesh3 mesh)
     {
-        float vrad = Utils.Max (Utils.Epsilon, radius);
+        Vec3[ ] coords = mesh.coords;
+        int len = coords.Length;
+        float lbx = Single.MaxValue;
+        float lby = Single.MaxValue;
+        float lbz = Single.MaxValue;
 
-        Loop3[ ] fsSrc = source.loops;
-        Vec3[ ] vsSrc = source.coords;
-        int fsSrcLen = fsSrc.Length;
-        int vsSrcLen = vsSrc.Length;
+        float ubx = Single.MinValue;
+        float uby = Single.MinValue;
+        float ubz = Single.MinValue;
 
-        Loop3[ ] fsTrg = new Loop3[fsSrcLen];
-        Vec3[ ] vsTrg = new Vec3[vsSrcLen];
-        Vec3[ ] vnsTrg = new Vec3[vsSrcLen];
-
-        for (int i = 0; i < vsSrcLen; ++i)
+        for (int i = 0; i < len; ++i)
         {
-            vnsTrg[i] = Vec3.Normalize (vsSrc[i]);
-            vsTrg[i] = vnsTrg[i] * vrad;
+            Vec3 coord = coords[i];
+            float x = coord.x;
+            float y = coord.y;
+            float z = coord.z;
+            if (x < lbx) { lbx = x; }
+            if (x > ubx) { ubx = x; }
+            if (y < lby) { lby = y; }
+            if (y > uby) { uby = y; }
+            if (z < lbz) { lbz = z; }
+            if (z > ubz) { ubz = z; }
         }
 
-        for (int i = 0; i < fsSrcLen; ++i)
-        {
-            Loop3 loopSrc = fsSrc[i];
-            Index3[ ] fSrc = loopSrc.Indices;
-            int fSrcLen = fSrc.Length;
-
-            Loop3 loopTrg = fsTrg[i] = new Loop3 (new Index3[fSrcLen]);
-            Index3[ ] fTrg = loopTrg.Indices;
-
-            for (int j = 0; j < fSrcLen; ++j)
-            {
-                Index3 srcVert = fSrc[j];
-                fTrg[j] = new Index3 (srcVert.v, srcVert.vt, srcVert.v);
-            }
-        }
-
-        if (!Object.ReferenceEquals (source, target))
-        {
-            int vtsLen = source.texCoords.Length;
-            target.texCoords = new Vec2[vtsLen];
-            System.Array.Copy (source.texCoords, target.texCoords, vtsLen);
-        }
-
-        target.loops = fsTrg;
-        target.coords = vsTrg;
-        target.normals = vnsTrg;
-
-        return target;
+        return new Bounds3 (lbx, lby, lbz, ubx, uby, ubz);
     }
 
     /// <summary>
@@ -1171,6 +1147,54 @@ public class Mesh3
                 fCylOffset += 2;
             }
         }
+
+        return target;
+    }
+    public static Mesh3 CastToSphere (in Mesh3 source, in Mesh3 target, in float radius = 0.5f)
+    {
+        float vrad = Utils.Max (Utils.Epsilon, radius);
+
+        Loop3[ ] fsSrc = source.loops;
+        Vec3[ ] vsSrc = source.coords;
+        int fsSrcLen = fsSrc.Length;
+        int vsSrcLen = vsSrc.Length;
+
+        Loop3[ ] fsTrg = new Loop3[fsSrcLen];
+        Vec3[ ] vsTrg = new Vec3[vsSrcLen];
+        Vec3[ ] vnsTrg = new Vec3[vsSrcLen];
+
+        for (int i = 0; i < vsSrcLen; ++i)
+        {
+            vnsTrg[i] = Vec3.Normalize (vsSrc[i]);
+            vsTrg[i] = vnsTrg[i] * vrad;
+        }
+
+        for (int i = 0; i < fsSrcLen; ++i)
+        {
+            Loop3 loopSrc = fsSrc[i];
+            Index3[ ] fSrc = loopSrc.Indices;
+            int fSrcLen = fSrc.Length;
+
+            Loop3 loopTrg = fsTrg[i] = new Loop3 (new Index3[fSrcLen]);
+            Index3[ ] fTrg = loopTrg.Indices;
+
+            for (int j = 0; j < fSrcLen; ++j)
+            {
+                Index3 srcVert = fSrc[j];
+                fTrg[j] = new Index3 (srcVert.v, srcVert.vt, srcVert.v);
+            }
+        }
+
+        if (!Object.ReferenceEquals (source, target))
+        {
+            int vtsLen = source.texCoords.Length;
+            target.texCoords = new Vec2[vtsLen];
+            System.Array.Copy (source.texCoords, target.texCoords, vtsLen);
+        }
+
+        target.loops = fsTrg;
+        target.coords = vsTrg;
+        target.normals = vnsTrg;
 
         return target;
     }
@@ -1743,6 +1767,24 @@ public class Mesh3
         return target;
     }
 
+    public static string ToString (in Mesh3 m, in int padding = 1, in int places = 4)
+    {
+        return Mesh3.ToString (new StringBuilder (2048), m, padding, places).ToString ( );
+    }
+
+    public static StringBuilder ToString (in StringBuilder sb, in Mesh3 m, in int padding = 1, in int places = 4)
+    {
+        sb.Append ("{ loops: ");
+        Loop3.ToString (sb, m.loops, padding);
+        sb.Append (", coords: ");
+        Vec3.ToString (sb, m.coords, places);
+        sb.Append (", texCoords: ");
+        Vec2.ToString (sb, m.texCoords, places);
+        sb.Append (", normals: ");
+        Vec3.ToString (sb, m.normals, places);
+        sb.Append (" }");
+        return sb;
+    }
     public static Mesh3 Triangulate (in Mesh3 source, in Mesh3 target)
     {
         Loop3[ ] loopsSrc = source.loops;

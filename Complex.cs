@@ -105,7 +105,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return this.ToString (4);
+        return Complex.ToString (this);
     }
 
     /// <summary>
@@ -171,22 +171,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         arr[i] = this.real;
         arr[i + 1] = this.imag;
         return arr;
-    }
-
-    /// <summary>
-    /// Returns a string representation of this complex number.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (in int places = 4)
-    {
-        return new StringBuilder (64)
-            .Append ("{ real: ")
-            .Append (Utils.ToFixed (this.real, places))
-            .Append (", imag: ")
-            .Append (Utils.ToFixed (this.imag, places))
-            .Append (" }")
-            .ToString ( );
     }
 
     /// <summary>
@@ -679,5 +663,34 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
             (a < -0.0f) ?
             new Complex (0.0f, Utils.Sqrt (-a)) :
             new Complex ( );
+    }
+
+    /// <summary>
+    /// Returns a string representation of a vector.
+    /// </summary>
+    /// <param name="z">real number</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    public static string ToString (in Complex z, in int places = 4)
+    {
+        return Vec2.ToString (new StringBuilder (64), z, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a representation of a complex number to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="z">complex number</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Complex z, in int places = 4)
+    {
+        sb.Append ("{ real: ");
+        Utils.ToFixed (sb, z.real, places);
+        sb.Append (", imag: ");
+        Utils.ToFixed (sb, z.imag, places);
+        sb.Append (' ');
+        sb.Append ('}');
+        return sb;
     }
 }
