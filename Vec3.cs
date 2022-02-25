@@ -1196,6 +1196,30 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
+    /// Converts a color to a direction.
+    /// If the color is transparent, or its magnitude is
+    /// too small, returns up.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>direction</returns>
+    public static Vec3 FromColor (in Clr c)
+    {
+        if (c.a > 0)
+        {
+            float x = c.r + c.r - 1.0f;
+            float y = c.g + c.g - 1.0f;
+            float z = c.b + c.b - 1.0f;
+            float mSq = x * x + y * y + z * z;
+            if (mSq > 0.0f)
+            {
+                float mInv = Utils.InvSqrtUnchecked (mSq);
+                return new Vec3 (x * mInv, y * mInv, z * mInv);
+            }
+        }
+        return Vec3.Up;
+    }
+
+    /// <summary>
     /// Generates a 3D array of vectors.
     /// </summary>
     /// <returns>the array</returns>
@@ -1899,11 +1923,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         double bz = b._z;
 
         double abDot = ax * bx + ay * by + az * bz;
-        if (Math.Abs (abDot) > (1.0d - Utils.Epsilon))
-        {
-            // TODO: Improve this edge case?
-            return Vec3.Mix (a, b, t);
-        }
+        abDot = Math.Min (Math.Max (abDot, -0.999999d), 0.999999d);
 
         double omega = Math.Acos (abDot);
         double omSin = Math.Sin (omega);

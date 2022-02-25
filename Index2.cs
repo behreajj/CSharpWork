@@ -146,7 +146,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
 
     public static string ToString (in Index2[ ] arr, in int padding = 3)
     {
-        return Index2.ToString (new StringBuilder (1024), arr, padding).ToString ( );
+        return Index2.ToString (new StringBuilder (64), arr, padding).ToString ( );
     }
 
     public static StringBuilder ToString (in StringBuilder sb, in Index2[ ] arr, in int padding = 3)

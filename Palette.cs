@@ -152,8 +152,8 @@ public class Palette
             if (leftZeroAlpha) { return -1; }
             if (rightZeroAlpha) { return 1; }
 
-            int left = Clr.ToHexInt (this.color);
-            int right = Clr.ToHexInt (pe.color);
+            int left = Clr.ToHexArgb (this.color);
+            int right = Clr.ToHexArgb (pe.color);
             return (left < right) ? -1 : (left > right) ? 1 : 0;
         }
 

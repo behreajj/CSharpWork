@@ -7,8 +7,9 @@ using System.Text;
 /// to and from integers where color channels are in the format 0xAARRGGBB.
 /// </summary>
 [Serializable]
-public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
+public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
 {
+
     /// <summary>
     /// Arbitrary hue in HSL assigned to desaturated colors closer to daylight.
     /// </summary>
@@ -78,35 +79,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// </summary>
     /// <value>alpha</value>
     public float a { get { return this._a; } }
-
-    /// <summary>
-    /// Retrieves a channel by index. When the provided index is 3 or -1,
-    /// returns alpha; 2 or -2, blue; 1 or -3, green; 0 or -4, red.
-    /// </summary>
-    /// <value>the component</value>
-    public float this [int i]
-    {
-        get
-        {
-            switch (i)
-            {
-                case 0:
-                case -4:
-                    return this._r;
-                case 1:
-                case -3:
-                    return this._g;
-                case 2:
-                case -2:
-                    return this._b;
-                case 3:
-                case -1:
-                    return this._a;
-                default:
-                    return 0.0f;
-            }
-        }
-    }
 
     /// <summary>
     /// Creates a color from unsigned bytes. Converts each to a single precision
@@ -184,7 +156,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the hash code</returns>
     public override int GetHashCode ( )
     {
-        return Clr.ToHexInt (this);
+        return Clr.ToHexArgb (this);
     }
 
     /// <summary>
@@ -204,8 +176,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>evaluation</returns>
     public int CompareTo (Clr c)
     {
-        int left = Clr.ToHexInt (this);
-        int right = Clr.ToHexInt (c);
+        int left = Clr.ToHexArgb (this);
+        int right = Clr.ToHexArgb (c);
         return (left < right) ? -1 : (left > right) ? 1 : 0;
     }
 
@@ -221,53 +193,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Returns an enumerator (or iterator) for this color, allowing its
-    /// components to be accessed in a foreach loop. The alpha channel is last.
-    /// </summary>
-    /// <returns>the enumerator</returns>
-    public IEnumerator GetEnumerator ( )
-    {
-        yield return this._r;
-        yield return this._g;
-        yield return this._b;
-        yield return this._a;
-    }
-
-    /// <summary>
-    /// Returns a float array of length 4 containing this color's components.
-    /// The alpha channel is last.
-    /// </summary>
-    /// <returns>the array</returns>
-    public float[ ] ToArray ( )
-    {
-        return this.ToArray (new float[this.Length], 0);
-    }
-
-    /// <summary>
-    /// Puts this colors's components into an array at a given index.
-    /// </summary>
-    /// <param name="arr">array</param>
-    /// <param name="i">index</param>
-    /// <returns>array</returns>
-    public float[ ] ToArray (in float[ ] arr, in int i = 0)
-    {
-        arr[i] = this._r;
-        arr[i + 1] = this._g;
-        arr[i + 2] = this._b;
-        arr[i + 3] = this._a;
-        return arr;
-    }
-
-    /// <summary>
-    /// Returns a named value tuple containing this color's components.
-    /// </summary>
-    /// <returns>the tuple</returns>
-    public (float r, float g, float b, float a) ToTuple ( )
-    {
-        return (r: this._r, g: this._g, b: this._b, a: this._a);
-    }
-
-    /// <summary>
     /// Converts a color to a boolean by returning whether its alpha is greater
     /// than zero.
     /// </summary>
@@ -276,36 +201,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     public static explicit operator bool (in Clr c)
     {
         return Clr.Any (c);
-    }
-
-    /// <summary>
-    /// Converts a color to a signed integer.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>the integer</returns>
-    public static explicit operator int (in Clr c)
-    {
-        return Clr.ToHexInt (c);
-    }
-
-    /// <summary>
-    /// Converts a color to an unsigned integer.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>the integer</returns>
-    public static explicit operator uint (in Clr c)
-    {
-        return (uint) Clr.ToHexInt (c);
-    }
-
-    /// <summary>
-    /// Converts a color to a long.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>the long</returns>
-    public static explicit operator long (in Clr c)
-    {
-        return ((long) Clr.ToHexInt (c)) & 0xffffffffL;
     }
 
     /// <summary>
@@ -337,7 +232,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the negated color</returns>
     public static Clr operator ~ (in Clr c)
     {
-        return Clr.FromHex (~Clr.ToHexInt (c));
+        return Clr.FromHexArgb (~Clr.ToHexArgb (c));
     }
 
     /// <summary>
@@ -349,7 +244,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr operator & (in Clr a, in Clr b)
     {
-        return Clr.FromHex (Clr.ToHexInt (a) & Clr.ToHexInt (b));
+        return Clr.FromHexArgb (Clr.ToHexArgb (a) & Clr.ToHexArgb (b));
     }
 
     /// <summary>
@@ -361,7 +256,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr operator | (in Clr a, in Clr b)
     {
-        return Clr.FromHex (Clr.ToHexInt (a) | Clr.ToHexInt (b));
+        return Clr.FromHexArgb (Clr.ToHexArgb (a) | Clr.ToHexArgb (b));
     }
 
     /// <summary>
@@ -373,33 +268,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>the color</returns>
     public static Clr operator ^ (in Clr a, in Clr b)
     {
-        return Clr.FromHex (Clr.ToHexInt (a) ^ Clr.ToHexInt (b));
-    }
-
-    /// <summary>
-    /// Converts a color to an integer, performs a bitwise left shift operation,
-    /// then converts the result to a color. To shift a whole color channel, use
-    /// increments of 8 (8, 16, 24).
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>the shifted color</returns>
-    public static Clr operator << (in Clr a, int b)
-    {
-        return Clr.FromHex (Clr.ToHexInt (a) << b);
-    }
-
-    /// <summary>
-    /// Converts a color to an integer, performs a bitwise right shift
-    /// operation, then converts the result to a color. To shift a whole color
-    /// channel, use increments of 8 (8, 16, 24).
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>the shifted color</returns>
-    public static Clr operator >> (in Clr a, int b)
-    {
-        return Clr.FromHex (Clr.ToHexInt (a) >> b);
+        return Clr.FromHexArgb (Clr.ToHexArgb (a) ^ Clr.ToHexArgb (b));
     }
 
     /// <summary>
@@ -501,12 +370,69 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Convert a hexadecimal representation of a color stored as 0xAARRGGBB
-    /// into a color.
+    /// Converts a 3D vector to a color, as used in normal maps.
+    /// If the vector's magnitude is less than or equal to zero,
+    /// returns (0.5, 0.5, 1.0, 1.0).
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>the color</returns>
+    public static Clr FromDir (in Vec3 v)
+    {
+        float mSq = Vec3.MagSq (v);
+        if (mSq > 0.0f)
+        {
+            float mInv = 0.5f * Utils.InvSqrtUnchecked (mSq);
+            return new Clr (
+                v.x * mInv + 0.5f,
+                v.y * mInv + 0.5f,
+                v.z * mInv + 0.5f,
+                1.0f);
+        }
+        return new Clr (0.5f, 0.5f, 1.0f, 1.0f);
+    }
+
+    /// <summary>
+    /// Converts a hexadecimal representation of a color into a color.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <param name="order">color channel order</param>
+    /// <returns>the color</returns>
+    public static Clr FromHex (in int c, in ColorChannel order = ColorChannel.ARGB)
+    {
+        switch (order)
+        {
+            case ColorChannel.ABGR:
+                return Clr.FromHexAbgr (c);
+            case ColorChannel.RGBA:
+                return Clr.FromHexRgba (c);
+            case ColorChannel.ARGB:
+            default:
+                return Clr.FromHexArgb (c);
+        }
+    }
+
+    /// <summary>
+    /// Converts a hexadecimal representation of a color into a color.
+    /// The integer is expected to be ordered as 0xAABBGGRR.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>the color</returns>
-    public static Clr FromHex (in int c)
+    public static Clr FromHexAbgr (in int c)
+    {
+        return new Clr (
+            (c & 0xff) * Utils.One255,
+            (c >> 0x08 & 0xff) * Utils.One255,
+            (c >> 0x10 & 0xff) * Utils.One255,
+            (c >> 0x18 & 0xff) * Utils.One255);
+    }
+
+    /// <summary>
+    /// Converts a hexadecimal representation of a color into a color.
+    /// The integer is expected to be ordered as 0xAARRGGBB.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>the color</returns>
+    public static Clr FromHexArgb (in int c)
     {
         return new Clr (
             (c >> 0x10 & 0xff) * Utils.One255,
@@ -516,33 +442,18 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Convert a hexadecimal representation of a color stored as 0xAARRGGBB
-    /// into a color.
+    /// Converts a hexadecimal representation of a color into a color.
+    /// The integer is expected to be ordered as 0xRRGGBBAA.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>the color</returns>
-    public static Clr FromHex (in uint c)
+    public static Clr FromHexRgba (in int c)
     {
         return new Clr (
+            (c >> 0x18 & 0xff) * Utils.One255,
             (c >> 0x10 & 0xff) * Utils.One255,
             (c >> 0x08 & 0xff) * Utils.One255,
-            (c & 0xff) * Utils.One255,
-            (c >> 0x18 & 0xff) * Utils.One255);
-    }
-
-    /// <summary>
-    /// Convert a hexadecimal representation of a color stored as 0xAARRGGBB
-    /// into a color.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>the color</returns>
-    public static Clr FromHex (in long c)
-    {
-        return new Clr (
-            (c >> 0x10 & 0xff) * Utils.One255,
-            (c >> 0x08 & 0xff) * Utils.One255,
-            (c & 0xff) * Utils.One255,
-            (c >> 0x18 & 0xff) * Utils.One255);
+            (c & 0xff) * Utils.One255);
     }
 
     /// <summary>
@@ -811,32 +722,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
 
     /// <summary>
     /// Mixes two colors by a step in the range [0.0, 1.0] .
-    /// Converts each color from sRGB to CIE LAB, mixes according
-    /// to the step, then converts back to sRGB.
-    /// </summary>
-    /// <param name="a">origin color</param>
-    /// <param name="b">destination color</param>
-    /// <param name="t">step</param>
-    /// <returns>the mixed color</returns>
-    public static Clr MixLaba (in Clr a, in Clr b, in float t)
-    {
-        Clr aLin = Clr.StandardToLinear (a);
-        Vec4 aXyz = Clr.LinearToXyza (aLin);
-        Vec4 aLab = Clr.XyzaToLaba (aXyz);
-
-        Clr bLin = Clr.StandardToLinear (b);
-        Vec4 bXyz = Clr.LinearToXyza (bLin);
-        Vec4 bLab = Clr.XyzaToLaba (bXyz);
-
-        Vec4 cLab = Vec4.Mix (aLab, bLab, t);
-        Vec4 cXyz = Clr.LabaToXyza (cLab);
-        Clr cLin = Clr.XyzaToLinear (cXyz);
-
-        return Clr.LinearToStandard (cLin);
-    }
-
-    /// <summary>
-    /// Mixes two colors by a step in the range [0.0, 1.0] .
     /// Converts each color from sRGB to HSL, mixes according
     /// to the step, then converts back to sRGB.
     /// </summary>
@@ -847,34 +732,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     public static Clr MixHsla (in Clr a, in Clr b, in float t)
     {
         return Clr.MixHsla (a, b, t, (x, y, z, w) => Utils.LerpAngleNear (x, y, z, w));
-    }
-
-    /// <summary>
-    /// Mixes two colors by a step in the range [0.0, 1.0] .
-    /// Converts each color from sRGB to HSV, mixes according
-    /// to the step, then converts back to sRGB.
-    /// </summary>
-    /// <param name="a">origin color</param>
-    /// <param name="b">destination color</param>
-    /// <param name="t">step</param>
-    /// <returns>the mixed color</returns>
-    public static Clr MixHsva (in Clr a, in Clr b, in float t)
-    {
-        return Clr.MixHsva (a, b, t, (x, y, z, w) => Utils.LerpAngleNear (x, y, z, w));
-    }
-
-    /// <summary>
-    /// Mixes two colors by a step in the range [0.0, 1.0] .
-    /// Converts each color from sRGB to CIE LCH, mixes according
-    /// to the step, then converts back to sRGB.
-    /// </summary>
-    /// <param name="a">origin color</param>
-    /// <param name="b">destination color</param>
-    /// <param name="t">step</param>
-    /// <returns>the mixed color</returns>
-    public static Clr MixLcha (in Clr a, in Clr b, in float t)
-    {
-        return Clr.MixLcha (a, b, t, (x, y, z, w) => Utils.LerpAngleNear (x, y, z, w));
     }
 
     /// <summary>
@@ -918,6 +775,20 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// Mixes two colors by a step in the range [0.0, 1.0] .
     /// Converts each color from sRGB to HSV, mixes according
     /// to the step, then converts back to sRGB.
+    /// </summary>
+    /// <param name="a">origin color</param>
+    /// <param name="b">destination color</param>
+    /// <param name="t">step</param>
+    /// <returns>the mixed color</returns>
+    public static Clr MixHsva (in Clr a, in Clr b, in float t)
+    {
+        return Clr.MixHsva (a, b, t, (x, y, z, w) => Utils.LerpAngleNear (x, y, z, w));
+    }
+
+    /// <summary>
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Converts each color from sRGB to HSV, mixes according
+    /// to the step, then converts back to sRGB.
     /// The easing function is expected to ease from an origin
     /// hue to a destination by a factor according to a range.
     /// </summary>
@@ -949,6 +820,46 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
                 u * aHsva.w + t * bHsva.w);
             return Clr.HsvaToRgba (cHsva);
         }
+    }
+
+    /// <summary>
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Converts each color from sRGB to CIE LAB, mixes according
+    /// to the step, then converts back to sRGB.
+    /// </summary>
+    /// <param name="a">origin color</param>
+    /// <param name="b">destination color</param>
+    /// <param name="t">step</param>
+    /// <returns>the mixed color</returns>
+    public static Clr MixLaba (in Clr a, in Clr b, in float t)
+    {
+        Clr aLin = Clr.StandardToLinear (a);
+        Vec4 aXyz = Clr.LinearToXyza (aLin);
+        Vec4 aLab = Clr.XyzaToLaba (aXyz);
+
+        Clr bLin = Clr.StandardToLinear (b);
+        Vec4 bXyz = Clr.LinearToXyza (bLin);
+        Vec4 bLab = Clr.XyzaToLaba (bXyz);
+
+        Vec4 cLab = Vec4.Mix (aLab, bLab, t);
+        Vec4 cXyz = Clr.LabaToXyza (cLab);
+        Clr cLin = Clr.XyzaToLinear (cXyz);
+
+        return Clr.LinearToStandard (cLin);
+    }
+
+    /// <summary>
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Converts each color from sRGB to CIE LCH, mixes according
+    /// to the step, then converts back to sRGB.
+    /// </summary>
+    /// <param name="a">origin color</param>
+    /// <param name="b">destination color</param>
+    /// <param name="t">step</param>
+    /// <returns>the mixed color</returns>
+    public static Clr MixLcha (in Clr a, in Clr b, in float t)
+    {
+        return Clr.MixLcha (a, b, t, (x, y, z, w) => Utils.LerpAngleNear (x, y, z, w));
     }
 
     /// <summary>
@@ -1061,7 +972,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
 
     /// <summary>
     /// Multiplies the red, green and blue color channels of a color by the
-    /// alpha channel.
+    /// alpha channel. If alpha is less than or equal to zero, returns
+    /// clear black.
     /// </summary>
     /// <param name="c">the color</param>
     /// <returns>the premultiplied color</returns>
@@ -1216,6 +1128,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <summary>
     /// Converts from a color's, red, green, blue and alpha
     /// channels to hue, saturation, lightness and alpha.
+    /// 
+    /// Hue corresponds to x; saturation, y; lightness, z;
+    /// alpha, w.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hsla</returns>
@@ -1279,6 +1194,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <summary>
     /// Converts from a color's, red, green, blue and alpha
     /// channels to hue, saturation, value and alpha.
+    /// 
+    /// Hue corresponds to x; saturation, y; value, z;
+    /// alpha, w.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hsva</returns>
@@ -1379,29 +1297,116 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     }
 
     /// <summary>
-    /// Converts a color to an integer where hexadecimal represents the ARGB
-    /// color channels: 0xAARRGGB .
+    /// Converts a color to an integer.
     /// </summary>
     /// <param name="c">the input color</param>
+    /// <param name="order">color channel order</param>
     /// <returns>the color in hexadecimal</returns>
-    public static int ToHexInt (in Clr c)
+    public static int ToHex (in Clr c, in ColorChannel order = ColorChannel.ARGB)
     {
-        return Clr.ToHexIntUnchecked (Clr.Clamp (c, 0.0f, 1.0f));
+        switch (order)
+        {
+            case ColorChannel.ABGR:
+                return Clr.ToHexAbgr (c);
+            case ColorChannel.RGBA:
+                return Clr.ToHexRgba (c);
+            case ColorChannel.ARGB:
+            default:
+                return Clr.ToHexArgb (c);
+        }
     }
 
     /// <summary>
-    /// Converts a color to an integer where hexadecimal represents the ARGB
-    /// color channels: 0xAARRGGB . Does not check if the color's components
-    /// are in a valid range, [0.0, 1.0].
+    /// Converts a color to an integer. Returns an integer ordered as 0xAABBGGRR.
     /// </summary>
     /// <param name="c">the input color</param>
     /// <returns>the color in hexadecimal</returns>
-    public static int ToHexIntUnchecked (in Clr c)
+    public static int ToHexAbgr (in Clr c)
     {
-        return (int) (c._a * 0xff + 0.5f) << 0x18 |
-            (int) (c._r * 0xff + 0.5f) << 0x10 |
-            (int) (c._g * 0xff + 0.5f) << 0x08 |
-            (int) (c._b * 0xff + 0.5f);
+        return Clr.ToHexAbgrUnchecked (Clr.Clamp (c, 0.0f, 1.0f));
+    }
+
+    /// <summary>
+    /// Converts a color to an integer. Returns an integer ordered as 0xAARRGGBB.
+    /// </summary>
+    /// <param name="c">the input color</param>
+    /// <returns>the color in hexadecimal</returns>
+    public static int ToHexArgb (in Clr c)
+    {
+        return Clr.ToHexArgbUnchecked (Clr.Clamp (c, 0.0f, 1.0f));
+    }
+
+    /// <summary>
+    /// Converts a color to an integer. Returns an integer ordered as 0xRRGGBBAA.
+    /// </summary>
+    /// <param name="c">the input color</param>
+    /// <returns>the color in hexadecimal</returns>
+    public static int ToHexRgba (in Clr c)
+    {
+        return Clr.ToHexRgbaUnchecked (Clr.Clamp (c, 0.0f, 1.0f));
+    }
+
+    /// <summary>
+    /// Converts a color to an integer. Does not check if the color's components
+    /// are in a valid range, [0.0, 1.0].
+    /// </summary>
+    /// <param name="c">the input color</param>
+    /// <param name="order">color channel order</param>
+    /// <returns>the color in hexadecimal</returns>
+    public static int ToHexUnchecked (in Clr c, in ColorChannel order = ColorChannel.ARGB)
+    {
+        switch (order)
+        {
+            case ColorChannel.ABGR:
+                return Clr.ToHexAbgrUnchecked (c);
+            case ColorChannel.RGBA:
+                return Clr.ToHexRgbaUnchecked (c);
+            case ColorChannel.ARGB:
+            default:
+                return Clr.ToHexArgbUnchecked (c);
+        }
+    }
+
+    /// <summary>
+    /// Converts a color to an integer. Does not check if the color's components
+    /// are in a valid range, [0.0, 1.0]. Returns an integer ordered as 0xAABBGGRR.
+    /// </summary>
+    /// <param name="c">the input color</param>
+    /// <returns>the color in hexadecimal</returns>
+    public static int ToHexAbgrUnchecked (in Clr c)
+    {
+        return (int) (c._a * 255.0f + 0.5f) << 0x18 |
+            (int) (c._b * 255.0f + 0.5f) << 0x10 |
+            (int) (c._g * 255.0f + 0.5f) << 0x08 |
+            (int) (c._r * 255.0f + 0.5f);
+    }
+
+    /// <summary>
+    /// Converts a color to an integer. Does not check if the color's components
+    /// are in a valid range, [0.0, 1.0]. Returns an integer ordered as 0xAARRGGBB.
+    /// </summary>
+    /// <param name="c">the input color</param>
+    /// <returns>the color in hexadecimal</returns>
+    public static int ToHexArgbUnchecked (in Clr c)
+    {
+        return (int) (c._a * 255.0f + 0.5f) << 0x18 |
+            (int) (c._r * 255.0f + 0.5f) << 0x10 |
+            (int) (c._g * 255.0f + 0.5f) << 0x08 |
+            (int) (c._b * 255.0f + 0.5f);
+    }
+
+    /// <summary>
+    /// Converts a color to an integer. Does not check if the color's components
+    /// are in a valid range, [0.0, 1.0]. Returns an integer ordered as 0xRRGGBBAA.
+    /// </summary>
+    /// <param name="c">the input color</param>
+    /// <returns>the color in hexadecimal</returns>
+    public static int ToHexRgbaUnchecked (in Clr c)
+    {
+        return (int) (c._r * 255.0f + 0.5f) << 0x18 |
+            (int) (c._g * 255.0f + 0.5f) << 0x10 |
+            (int) (c._b * 255.0f + 0.5f) << 0x08 |
+            (int) (c._a * 255.0f + 0.5f);
     }
 
     /// <summary>
@@ -1426,9 +1431,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
     /// <returns>string builder</returns>
     public static StringBuilder ToHexWeb (in StringBuilder sb, in Clr c)
     {
-        int r = (int) (Utils.Clamp (c._r, 0.0f, 1.0f) * 0xff + 0.5f);
-        int g = (int) (Utils.Clamp (c._g, 0.0f, 1.0f) * 0xff + 0.5f);
-        int b = (int) (Utils.Clamp (c._b, 0.0f, 1.0f) * 0xff + 0.5f);
+        int r = (int) (Utils.Clamp (c._r, 0.0f, 1.0f) * 255.0f + 0.5f);
+        int g = (int) (Utils.Clamp (c._g, 0.0f, 1.0f) * 255.0f + 0.5f);
+        int b = (int) (Utils.Clamp (c._b, 0.0f, 1.0f) * 255.0f + 0.5f);
         sb.AppendFormat ("{0:X6}", (r << 0x10 | g << 0x08 | b));
         return sb;
     }
@@ -1464,6 +1469,25 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>, IEnumerable
         sb.Append (' ');
         sb.Append ('}');
         return sb;
+    }
+
+    /// <summary>
+    /// Divides the red, green and blue color channels of a color by the
+    /// alpha channel. Reverses pre-multiplication. If alpha is less than
+    /// or equal to zero, returns  clear black.
+    /// </summary>
+    /// <param name="c">the color</param>
+    /// <returns>the unpremultiplied color</returns>
+    public static Clr Unpremul (in Clr c)
+    {
+        if (c.a <= 0.0f) { return Clr.ClearBlack; }
+        if (c.a >= 1.0f) { return new Clr (c._r, c._g, c._b, 1.0f); }
+        float aInv = 1.0f / c._a;
+        return new Clr (
+            c._r * aInv,
+            c._g * aInv,
+            c._b * aInv,
+            c._a);
     }
 
     /// <summary>

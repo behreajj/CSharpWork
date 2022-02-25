@@ -1767,6 +1767,131 @@ public class Mesh3
         return target;
     }
 
+    /// <summary>
+    /// Creates a torus, or doughnut. The hole opens onto the y axis.
+    /// </summary>
+    /// <param name="target">output mesh</param>
+    /// <param name="sectors">number of sectors</param>
+    /// <param name="panels">number of panels</param>
+    /// <param name="thickness">thickness</param>
+    /// <param name="radius">radius</param>
+    /// <param name="poly">polygon type</param>
+    /// <returns>the torus</returns>
+    public static Mesh3 Torus ( //
+        in Mesh3 target, //
+        in int sectors = 32, //
+        in int panels = 16, //
+        in float thickness = 0.5f, //
+        in float radius = 0.5f, //
+        in PolyType poly = PolyType.Tri)
+    {
+        // Validate arguments.
+        int vSect = sectors < 3 ? 3 : sectors;
+        int vPanl = panels < 3 ? 3 : panels;
+        float vThick = Utils.Clamp (thickness, Utils.Epsilon, 1.0f -
+            Utils.Epsilon);
+
+        // Radii.
+        float rho0 = Utils.Max (Utils.Epsilon, radius);
+        float rho1 = rho0 * vThick;
+
+        // Values for array accesses. 
+        int vSect1 = vSect + 1;
+        int vPanl1 = vPanl + 1;
+        int vLen = vPanl * vSect;
+        int vtLen = vPanl1 * vSect1;
+        bool isTri = poly == PolyType.Tri;
+        int fsLen = isTri ? vLen + vLen : vLen;
+
+        // Allocate mesh data.
+        Vec3[ ] vs = target.coords = new Vec3[vLen];
+        Vec2[ ] vts = target.texCoords = new Vec2[vtLen];
+        Vec3[ ] vns = target.normals = new Vec3[vLen];
+        Loop3[ ] fs = target.loops = Loop3.Resize (target.loops, fsLen, isTri ? 3 : 4, true);
+
+        // Index conversions.
+        float toU = 1.0f / vSect;
+        float toV = 1.0f / vPanl;
+        float toTheta = Utils.Tau / vSect;
+        float toPhi = Utils.Tau / vPanl;
+
+        int faceIdx = 0;
+        int faceStride = isTri ? 2 : 1;
+
+        for (int k = 0; k < vLen; ++k)
+        {
+            int i = k / vSect;
+            int j = k % vSect;
+
+            // Find theta and phi.
+            float phi = -Utils.Pi + i * toPhi;
+            float theta = j * toTheta;
+            Utils.SinCos (phi, out float cosPhi, out float sinPhi);
+            Utils.SinCos (theta, out float cosTheta, out float sinTheta);
+
+            float rhoCosPhi = rho0 + rho1 * cosPhi;
+            float rhoSinPhi = rho1 * sinPhi;
+
+            vs[k] = new Vec3 (rhoCosPhi * cosTheta, -rhoSinPhi, rhoCosPhi * sinTheta);
+            vns[k] = new Vec3 (cosPhi * cosTheta, -sinPhi, cosPhi * sinTheta);
+
+            int iVNext = (i + 1) % vPanl;
+
+            int vOffCurr = i * vSect;
+            int vOffNext = iVNext * vSect;
+
+            int vtOffCurr = i * vSect1;
+            int vtOffNext = vtOffCurr + vSect1;
+
+            int jVtNext = j + 1;
+            int jVNext = jVtNext % vSect;
+
+            /* Coordinate and normal indices. */
+            int v00 = vOffCurr + j;
+            int v10 = vOffCurr + jVNext;
+            int v11 = vOffNext + jVNext;
+            int v01 = vOffNext + j;
+
+            /* Texture coordinate indices. */
+            int vt00 = vtOffCurr + j;
+            int vt10 = vtOffCurr + jVtNext;
+            int vt11 = vtOffNext + jVtNext;
+            int vt01 = vtOffNext + j;
+
+            if (isTri)
+            {
+                Loop3 tri0 = fs[faceIdx];
+                tri0.Indices[0] = new Index3 (v00, vt00, v00);
+                tri0.Indices[1] = new Index3 (v10, vt10, v10);
+                tri0.Indices[2] = new Index3 (v11, vt11, v11);
+
+                Loop3 tri1 = fs[faceIdx];
+                tri1.Indices[0] = new Index3 (v00, vt00, v00);
+                tri1.Indices[1] = new Index3 (v11, vt11, v11);
+                tri1.Indices[2] = new Index3 (v01, vt01, v01);
+            }
+            else
+            {
+                Loop3 quad = fs[faceIdx];
+                quad.Indices[0] = new Index3 (v00, vt00, v00);
+                quad.Indices[1] = new Index3 (v10, vt10, v10);
+                quad.Indices[2] = new Index3 (v11, vt11, v11);
+                quad.Indices[3] = new Index3 (v01, vt01, v01);
+            }
+
+            faceIdx += faceStride;
+        }
+
+        for (int k = 0; k < vtLen; ++k)
+        {
+            vts[k] = new Vec2 (
+                k % vSect1 * toU,
+                1.0f - k / vSect1 * toV);
+        }
+
+        return target;
+    }
+
     public static string ToString (in Mesh3 m, in int padding = 1, in int places = 4)
     {
         return Mesh3.ToString (new StringBuilder (2048), m, padding, places).ToString ( );

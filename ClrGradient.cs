@@ -184,7 +184,6 @@ public class ClrGradient : IEnumerable
         /// <returns>string</returns>
         public static string ToString (in Key key, in int places = 4)
         {
-            // TODO: Replace with static pass by reference.
             return Key.ToString (new StringBuilder (96), key, places).ToString ( );
         }
 

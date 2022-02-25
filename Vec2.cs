@@ -1460,7 +1460,6 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         return Vec2.FromPolar (
             Utils.Mix (-Utils.Pi, Utils.Pi,
                 (float) rng.NextDouble ( )),
-
             Utils.Mix (rhoMin, rhoMax,
                 (float) rng.NextDouble ( )));
     }

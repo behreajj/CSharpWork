@@ -91,6 +91,24 @@ public readonly struct Edge2 : IEquatable<Edge2>
         return true;
     }
 
+    /// <summary>
+    /// Evaluates whether two edges are neighbors, i.e., both
+    /// share the same vertex coordinate but wind in different
+    /// directions.
+    /// </summary>
+    /// <param name="a">left comparisand</param>
+    /// <param name="b">right comparisand</param>
+    /// <param name="tolerance">tolerance</param>
+    /// <returns>the evaluation</returns>
+    public static bool AreNeighbors ( //
+        in Edge2 a, //
+        in Edge2 b, //
+        in float tolerance = Utils.Epsilon)
+    {
+        return Vec2.Approx (a.origin.Coord, b.dest.Coord, tolerance) &&
+            Vec2.Approx (a.dest.Coord, b.origin.Coord, tolerance);
+    }
+
     public static float Heading (in Edge2 e)
     {
         return Vec2.HeadingSigned (e.dest.Coord - e.origin.Coord);
