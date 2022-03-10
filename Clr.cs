@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Text;
 
 /// <summary>
@@ -372,7 +371,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <summary>
     /// Converts a 3D vector to a color, as used in normal maps.
     /// If the vector's magnitude is less than or equal to zero,
-    /// returns (0.5, 0.5, 1.0, 1.0).
+    /// returns the color representation of up.
     /// </summary>
     /// <param name="v">vector</param>
     /// <returns>the color</returns>
@@ -388,7 +387,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
                 v.z * mInv + 0.5f,
                 1.0f);
         }
-        return new Clr (0.5f, 0.5f, 1.0f, 1.0f);
+        return Clr.Up;
     }
 
     /// <summary>
@@ -1556,6 +1555,13 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     }
 
     /// <summary>
+    /// Returns the normal direction back as a color,
+    /// (0.5, 0.0, 0.5, 1.0).
+    /// </summary>
+    /// <returns>back</returns>
+    public static Clr Back { get { return new Clr (0.5f, 0.0f, 0.5f, 1.0f); } }
+
+    /// <summary>
     /// Returns the color black, (0.0, 0.0, 0.0, 1.0) .
     /// </summary>
     /// <value>black</value>
@@ -1586,10 +1592,31 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     public static Clr Cyan { get { return new Clr (0.0f, 1.0f, 1.0f, 1.0f); } }
 
     /// <summary>
+    /// Returns the normal direction down as a color,
+    /// (0.5, 0.5, 0.0, 1.0).
+    /// </summary>
+    /// <returns>down</returns>
+    public static Clr Down { get { return new Clr (0.5f, 0.5f, 0.0f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the normal direction forward as a color,
+    /// (0.5, 1.0, 0.5, 1.0).
+    /// </summary>
+    /// <returns>forward</returns>
+    public static Clr Forward { get { return new Clr (0.5f, 1.0f, 0.5f, 1.0f); } }
+
+    /// <summary>
     /// Returns the color green, (0.0, 1.0, 0.0, 1.0) .
     /// </summary>
     /// <value>green</value>
     public static Clr Green { get { return new Clr (0.0f, 1.0f, 0.0f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the normal direction left as a color,
+    /// (0.0, 0.5, 0.5, 1.0).
+    /// </summary>
+    /// <returns>left</returns>
+    public static Clr Left { get { return new Clr (0.0f, 0.5f, 0.5f, 1.0f); } }
 
     /// <summary>
     /// Returns the color magenta, (1.0, 0.0, 1.0, 1.0) .
@@ -1604,14 +1631,28 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     public static Clr Red { get { return new Clr (1.0f, 0.0f, 0.0f, 1.0f); } }
 
     /// <summary>
-    /// Returns the color yellow, (1.0, 1.0, 0.0, 1.0) .
+    /// Returns the normal direction right as a color,
+    /// (1.0, 0.5, 0.5, 1.0).
     /// </summary>
-    /// <value>yellow</value>
-    public static Clr Yellow { get { return new Clr (1.0f, 1.0f, 0.0f, 1.0f); } }
+    /// <returns>right</returns>
+    public static Clr Right { get { return new Clr (1.0f, 0.5f, 0.5f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the normal direction up as a color,
+    /// (0.5, 0.5, 1.0, 1.0).
+    /// </summary>
+    /// <returns>up</returns>
+    public static Clr Up { get { return new Clr (0.5f, 0.5f, 1.0f, 1.0f); } }
 
     /// <summary>
     /// Returns the color white, (1.0, 1.0, 1.0, 1.0) .
     /// </summary>
     /// <value>white</value>
     public static Clr White { get { return new Clr (1.0f, 1.0f, 1.0f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the color yellow, (1.0, 1.0, 0.0, 1.0) .
+    /// </summary>
+    /// <value>yellow</value>
+    public static Clr Yellow { get { return new Clr (1.0f, 1.0f, 0.0f, 1.0f); } }
 }

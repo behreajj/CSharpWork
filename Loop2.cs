@@ -1,6 +1,10 @@
 using System;
 using System.Text;
 
+/// <summary>
+/// Represents the edge loop of vertex indices that form the
+/// face of a mesh.
+/// </summary>
 public class Loop2
 {
     protected Index2[ ] indices;
@@ -20,6 +24,11 @@ public class Loop2
 
     public int Length { get { return this.indices.Length; } }
 
+    /// <summary>
+    /// Gets a mesh compound index element at i. Wraps around, so
+    /// negative indices may be used.
+    /// </summary>
+    /// <value>the mesh index</value>
     public Index2 this [int i]
     {
         get
@@ -41,11 +50,20 @@ public class Loop2
         }
     }
 
+    /// <summary>
+    /// Constructs a new loop with three indices, the minimum
+    /// number to form an enclosed face.
+    /// </summary>
     public Loop2 ( )
     {
         this.indices = new Index2[3];
     }
 
+    /// <summary>
+    /// Constructs a loop with the given number of indices,
+    /// a minimum of three.
+    /// </summary>
+    /// <param name="length">index length</param>
     public Loop2 (in int length)
     {
         this.indices = new Index2[length < 3 ? 3 : length];

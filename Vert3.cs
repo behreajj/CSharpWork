@@ -114,7 +114,6 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
         int tcComp = this.texCoord.CompareTo (v.texCoord);
         int coComp = this.coord.CompareTo (v.coord);
 
-        // return nrComp != 0 ? nrComp : tcComp != 0 ? tcComp : coComp;
         return coComp != 0 ? coComp : nrComp != 0 ? nrComp : tcComp;
     }
 

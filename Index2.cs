@@ -63,7 +63,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// </summary>
     /// <param name="v">coordinate index</param>
     /// <param name="vt">texture coordinate index</param>
-    public Index2 (in int v = 0, in int vt = 0)
+    public Index2 (in int v, in int vt)
     {
         this._v = v < 0 ? 0 : v;
         this._vt = vt < 0 ? 0 : vt;
@@ -112,6 +112,16 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     public (int v, int vt) ToTuple ( )
     {
         return (v: this._v, vt: this._vt);
+    }
+
+    /// <summary>
+    /// Sets all elements of an index to the input.
+    /// </summary>
+    /// <param name="i">simple index</param>
+    /// <returns>the index</returns>
+    public static implicit operator Index2 (in int i)
+    {
+        return new Index2 (i, i);
     }
 
     public static Index2[ ] Resize (in Index2[ ] arr, in int sz)

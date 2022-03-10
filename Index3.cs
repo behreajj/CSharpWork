@@ -78,7 +78,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <param name="v">coordinate index</param>
     /// <param name="vt">texture coordinate index</param>
     /// <param name="vn">normal index</param>
-    public Index3 (in int v = 0, in int vt = 0, in int vn = 0)
+    public Index3 (in int v, in int vt, in int vn)
     {
         this._v = v < 0 ? 0 : v;
         this._vt = vt < 0 ? 0 : vt;
@@ -134,9 +134,21 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     }
 
     /// <summary>
-    /// Promotes a 2D index to a 3D index.
+    /// Sets all elements of an index to the input.
+    /// </summary>
+    /// <param name="i">simple index</param>
+    /// <returns>the index</returns>
+    public static implicit operator Index3 (in int i)
+    {
+        return new Index3 (i, i, i);
+    }
+
+    /// <summary>
+    /// Promotes a 2D index to a 3D index. Sets the normal
+    /// index to zero.
     /// </summary>
     /// <param name="i">2D index</param>
+    /// <returns>the promotion</returns>
     public static explicit operator Index3 (in Index2 i)
     {
         return new Index3 (i.v, i.vt, 0);

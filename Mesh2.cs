@@ -877,6 +877,467 @@ public class Mesh2
     }
 
     /// <summary>
+    /// Creates a rounded rectangle. The rounding is a factor,
+    /// expected to fall in the range [0.0, 1.0].
+    /// </summary>
+    /// <param name="target">target mesh</param>
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
+    /// <param name="rnd">rounding</param>
+    /// <param name="res">resolution</param>
+    /// <param name="poly">polygon type</param>
+    /// <returns>the rectangle</returns>
+    public static Mesh2 Rectangle ( //
+        in Mesh2 target, //
+        in Vec2 lb, in Vec2 ub, //
+        in float rnd = 0.25f, //
+        in int res = 8, //
+        in PolyType poly = PolyType.Tri)
+    {
+        return Mesh2.Rectangle (target,
+            lb, ub,
+            rnd, rnd, rnd, rnd,
+            res, res, res, res, poly);
+    }
+
+    /// <summary>
+    /// Creates a rounded rectangle. The rounding is a factor,
+    /// expected to fall in the range [0.0, 1.0].
+    /// </summary>
+    /// <param name="target">target mesh</param>
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
+    /// <param name="tl">top left corner rounding</param>
+    /// <param name="tr">top right corner rounding</param>
+    /// <param name="br">bottom right corner rounding</param>
+    /// <param name="bl">bottom left corner rounding</param>
+    /// <param name="tlRes">top left resolution</param>
+    /// <param name="trRes">top right resolution</param>
+    /// <param name="brRes">bottom right resolution</param>
+    /// <param name="blRes">bottom left resolution</param>
+    /// <param name="poly">polygon type</param>
+    /// <returns>the rectangle</returns>
+    public static Mesh2 Rectangle ( //
+        in Mesh2 target, //
+        in Vec2 lb, in Vec2 ub, //
+        in float tl = 0.25f, in float tr = 0.25f, //
+        in float br = 0.25f, in float bl = 0.25f, //
+        in int tlRes = 8, in int trRes = 8, //
+        in int brRes = 8, in int blRes = 8, //
+        in PolyType poly = PolyType.Quad)
+    {
+        // Validate corners.
+        float lft = Utils.Min (lb.x, ub.x);
+        float rgt = Utils.Max (lb.x, ub.x);
+        float btm = Utils.Min (lb.y, ub.y);
+        float top = Utils.Max (lb.y, ub.y);
+
+        // Protect from zero dimension meshes.
+        float w = rgt - lft;
+        float h = top - btm;
+        bool wInval = w < Utils.Epsilon;
+        bool hInval = h < Utils.Epsilon;
+        if (wInval && hInval)
+        {
+            float cx = (lft + rgt) * 0.5f;
+            float cy = (top + btm) * 0.5f;
+            lft = cx - 0.5f;
+            rgt = cx + 0.5f;
+            btm = cy - 0.5f;
+            top = cy + 0.5f;
+            w = 1.0f;
+            h = 1.0f;
+        }
+        else if (wInval)
+        {
+            // Use vertical proportions.
+            float cx = (lft + rgt) * 0.5f;
+            float hHalf = h * 0.5f;
+            lft = cx - hHalf;
+            rgt = cx + hHalf;
+            w = h;
+        }
+        else if (hInval)
+        {
+            // Use horizontal proportions.
+            float cy = (top + btm) * 0.5f;
+            float wHalf = w * 0.5f;
+            btm = cy - wHalf;
+            top = cy + wHalf;
+            h = w;
+        }
+
+        // Calculate width and height for vts.
+        float wInv = 1.0f / w;
+        float hInv = 1.0f / h;
+
+        // Validate corner insetting factor.
+        float vtlFac = Utils.Min (Utils.Abs (tl), 1.0f - Utils.Epsilon);
+        float vtrFac = Utils.Min (Utils.Abs (tr), 1.0f - Utils.Epsilon);
+        float vbrFac = Utils.Min (Utils.Abs (br), 1.0f - Utils.Epsilon);
+        float vblFac = Utils.Min (Utils.Abs (bl), 1.0f - Utils.Epsilon);
+
+        // Booleans to store whether the corner is round.
+        bool tlIsRnd = vtlFac > 0.0f;
+        bool trIsRnd = vtrFac > 0.0f;
+        bool brIsRnd = vbrFac > 0.0f;
+        bool blIsRnd = vblFac > 0.0f;
+
+        // Half the short edge is the maximum size.
+        // If the corner insetting is zero, then push
+        // the insets in by 25 percent.
+        float se = 0.5f * Utils.Min (w, h);
+        float vtl = se * (tlIsRnd ? vtlFac : 0.25f);
+        float vtr = se * (trIsRnd ? vtrFac : 0.25f);
+        float vbr = se * (brIsRnd ? vbrFac : 0.25f);
+        float vbl = se * (blIsRnd ? vblFac : 0.25f);
+
+        // Validate corner resolution.
+        int vtlRes = tlIsRnd ? Utils.Max (tlRes, 0) : 1;
+        int vtrRes = trIsRnd ? Utils.Max (trRes, 0) : 1;
+        int vbrRes = brIsRnd ? Utils.Max (brRes, 0) : 1;
+        int vblRes = blIsRnd ? Utils.Max (blRes, 0) : 1;
+
+        // Calculate insets.
+        float btmIns0 = btm + vbr;
+        float topIns0 = top - vtr;
+        float rgtIns0 = rgt - vtr;
+        float lftIns0 = lft + vtl;
+        float topIns1 = top - vtl;
+        float btmIns1 = btm + vbl;
+        float lftIns1 = lft + vbl;
+        float rgtIns1 = rgt - vbr;
+
+        // Resize arrays of data.
+        int vsLen = 8 + vtlRes + vblRes + vbrRes + vtrRes;
+        if (poly != PolyType.Ngon) { vsLen = vsLen + 4; }
+
+        Vec2[ ] vs = target.coords = Vec2.Resize (target.coords, vsLen);
+        Vec2[ ] vts = target.texCoords = Vec2.Resize (target.texCoords, vsLen);
+
+        // Calculate vertex index offsets.
+        int tlCrnrIdxStr = 0;
+        int tlCrnrIdxEnd = tlCrnrIdxStr + 1 + vtlRes;
+        int blCrnrIdxStr = tlCrnrIdxEnd + 1;
+        int blCrnrIdxEnd = blCrnrIdxStr + 1 + vblRes;
+        int brCrnrIdxStr = blCrnrIdxEnd + 1;
+        int brCrnrIdxEnd = brCrnrIdxStr + 1 + vbrRes;
+        int trCrnrIdxStr = brCrnrIdxEnd + 1;
+        int trCrnrIdxEnd = trCrnrIdxStr + 1 + vtrRes;
+
+        // Coordinate corners at start and end of arc.
+        vs[tlCrnrIdxStr] = new Vec2 (lftIns0, top);
+        vs[tlCrnrIdxEnd] = new Vec2 (lft, topIns1);
+        vs[blCrnrIdxStr] = new Vec2 (lft, btmIns1);
+        vs[blCrnrIdxEnd] = new Vec2 (lftIns1, btm);
+        vs[brCrnrIdxStr] = new Vec2 (rgtIns1, btm);
+        vs[brCrnrIdxEnd] = new Vec2 (rgt, btmIns0);
+        vs[trCrnrIdxStr] = new Vec2 (rgt, topIns0);
+        vs[trCrnrIdxEnd] = new Vec2 (rgtIns0, top);
+
+        // Texture coordinate corners at start and end of arc.
+        vts[tlCrnrIdxStr] = new Vec2 (vtl * wInv, 0.0f);
+        vts[tlCrnrIdxEnd] = new Vec2 (0.0f, 1.0f - (topIns1 - btm) * hInv);
+        vts[blCrnrIdxStr] = new Vec2 (0.0f, 1.0f - vbl * hInv);
+        vts[blCrnrIdxEnd] = new Vec2 (vbl * wInv, 1.0f);
+        vts[brCrnrIdxStr] = new Vec2 ((rgtIns1 - lft) * wInv, 1.0f);
+        vts[brCrnrIdxEnd] = new Vec2 (1.0f, 1.0f - vbr * hInv);
+        vts[trCrnrIdxStr] = new Vec2 (1.0f, 1.0f - (topIns0 - btm) * hInv);
+        vts[trCrnrIdxEnd] = new Vec2 ((rgtIns0 - lft) * wInv, 0.0f);
+
+        // Find conversion from resolution to theta.
+        float tlToTheta = Utils.HalfPi / (vtlRes + 1.0f);
+        float blToTheta = Utils.HalfPi / (vblRes + 1.0f);
+        float brToTheta = Utils.HalfPi / (vbrRes + 1.0f);
+        float trToTheta = Utils.HalfPi / (vtrRes + 1.0f);
+
+        // Top left arc. Reverse theta progress.
+        if (tlIsRnd)
+        {
+            for (int i = 0; i < vtlRes; ++i)
+            {
+                int j = vtlRes - 1 - i;
+                float theta = (j + 1.0f) * tlToTheta;
+                float x = lftIns0 - vtl * Utils.Cos (theta);
+                float y = topIns1 + vtl * Utils.Sin (theta);
+                vs[tlCrnrIdxStr + 1 + i] = new Vec2 (x, y);
+                vts[tlCrnrIdxStr + 1 + i] = new Vec2 (
+                    (x - lft) * wInv,
+                    1.0f - (y - btm) * hInv);
+            }
+        }
+        else
+        {
+            vs[tlCrnrIdxStr + 1] = new Vec2 (lft, top);
+            vts[tlCrnrIdxStr + 1] = new Vec2 (0.0f, 0.0f);
+        }
+
+        // Bottom left arc.
+        if (blIsRnd)
+        {
+            for (int i = 0; i < vblRes; ++i)
+            {
+                float theta = (i + 1.0f) * blToTheta;
+                float x = lftIns1 - vbl * Utils.Cos (theta);
+                float y = btmIns1 - vbl * Utils.Sin (theta);
+                vs[blCrnrIdxStr + 1 + i] = new Vec2 (x, y);
+                vts[blCrnrIdxStr + 1 + i] = new Vec2 (
+                    (x - lft) * wInv,
+                    1.0f - (y - btm) * hInv);
+            }
+        }
+        else
+        {
+            vs[blCrnrIdxStr + 1] = new Vec2 (lft, btm);
+            vts[blCrnrIdxStr + 1] = new Vec2 (0.0f, 1.0f);
+        }
+
+        // Bottom right arc. Reverse theta progress.
+        if (brIsRnd)
+        {
+            for (int i = 0; i < vbrRes; ++i)
+            {
+                int j = vbrRes - 1 - i;
+                float theta = (j + 1.0f) * brToTheta;
+                float x = rgtIns1 + vbr * Utils.Cos (theta);
+                float y = btmIns0 - vbr * Utils.Sin (theta);
+                vs[brCrnrIdxStr + 1 + i] = new Vec2 (x, y);
+                vts[brCrnrIdxStr + 1 + i] = new Vec2 (
+                    (x - lft) * wInv,
+                    1.0f - (y - btm) * hInv);
+            }
+        }
+        else
+        {
+            vs[brCrnrIdxStr + 1] = new Vec2 (rgt, btm);
+            vts[brCrnrIdxStr + 1] = new Vec2 (1.0f, 1.0f);
+        }
+
+        // Top right arc.
+        if (trIsRnd)
+        {
+            for (int i = 0; i < vtrRes; ++i)
+            {
+                float theta = (i + 1.0f) * trToTheta;
+                float x = rgtIns0 + vtr * Utils.Cos (theta);
+                float y = topIns0 + vtr * Utils.Sin (theta);
+                vs[trCrnrIdxStr + 1 + i] = new Vec2 (x, y);
+                vts[trCrnrIdxStr + 1 + i] = new Vec2 (
+                    (x - lft) * wInv,
+                    1.0f - (y - btm) * hInv);
+            }
+        }
+        else
+        {
+            vs[trCrnrIdxStr + 1] = new Vec2 (rgt, top);
+            vts[trCrnrIdxStr + 1] = new Vec2 (1.0f, 0.0f);
+        }
+
+        if (poly == PolyType.Ngon)
+        {
+            Loop2[ ] fs = target.loops = Loop2.Resize (target.loops, 1, vsLen, true);
+            Loop2 loop = fs[0];
+            for (int i = 0; i < vsLen; ++i)
+            {
+                loop.Indices[i] = new Index2 (i, i);
+            }
+        }
+        else
+        {
+            // Insert inner vertices for quad and tri.
+            int tlTnCrnrIdx = vsLen - 4;
+            int blInCrnrIdx = vsLen - 3;
+            int brInCrnrIdx = vsLen - 2;
+            int trInCrnrIdx = vsLen - 1;
+
+            // Inner coordinate corners.
+            vs[tlTnCrnrIdx] = new Vec2 (lftIns0, topIns1);
+            vs[blInCrnrIdx] = new Vec2 (lftIns1, btmIns1);
+            vs[brInCrnrIdx] = new Vec2 (rgtIns1, btmIns0);
+            vs[trInCrnrIdx] = new Vec2 (rgtIns0, topIns0);
+
+            // Inner texture coordinate corners.
+            vts[tlTnCrnrIdx] = new Vec2 (vtl * wInv, 1.0f - (topIns1 - btm) * hInv);
+            vts[blInCrnrIdx] = new Vec2 (vbl * wInv, 1.0f - vbl * hInv);
+            vts[brInCrnrIdx] = new Vec2 ((rgtIns1 - lft) * wInv, 1.0f - vbr * hInv);
+            vts[trInCrnrIdx] = new Vec2 ((rgtIns0 - lft) * wInv, 1.0f - (topIns0 - btm) * hInv);
+
+            // For calculating the number of face indices.
+            int fsLen = 0;
+            int nonCornerFaces = 0;
+            int vResTotal = vtlRes +
+                vblRes +
+                vbrRes +
+                vtrRes;
+            int fResTotal = vResTotal + 4;
+            Loop2[ ] fs;
+
+            if (poly == PolyType.Quad)
+            {
+                // Face count will be non-uniform, with main faces
+                // being size 4, corner faces being size 3.
+                nonCornerFaces = 5;
+                fsLen = nonCornerFaces + fResTotal;
+                fs = target.loops = Loop2.Resize (target.loops, fsLen, 3, true);
+
+                fs[0].Indices = new Index2[ ]
+                {
+                    new Index2 (tlTnCrnrIdx, tlTnCrnrIdx),
+                    new Index2 (blInCrnrIdx, blInCrnrIdx),
+                    new Index2 (brInCrnrIdx, brInCrnrIdx),
+                    new Index2 (trInCrnrIdx, trInCrnrIdx)
+                };
+
+                fs[1].Indices = new Index2[ ]
+                {
+                    new Index2 (tlCrnrIdxEnd, tlCrnrIdxEnd),
+                    new Index2 (blCrnrIdxStr, blCrnrIdxStr),
+                    new Index2 (blInCrnrIdx, blInCrnrIdx),
+                    new Index2 (tlTnCrnrIdx, tlTnCrnrIdx)
+                };
+
+                fs[2].Indices = new Index2[ ]
+                {
+                    new Index2 (blInCrnrIdx, blInCrnrIdx),
+                    new Index2 (blCrnrIdxEnd, blCrnrIdxEnd),
+                    new Index2 (brCrnrIdxStr, brCrnrIdxStr),
+                    new Index2 (brInCrnrIdx, brInCrnrIdx)
+                };
+
+                fs[3].Indices = new Index2[ ]
+                {
+                    new Index2 (trInCrnrIdx, trInCrnrIdx),
+                    new Index2 (brInCrnrIdx, brInCrnrIdx),
+                    new Index2 (brCrnrIdxEnd, brCrnrIdxEnd),
+                    new Index2 (trCrnrIdxStr, trCrnrIdxStr)
+                };
+
+                fs[4].Indices = new Index2[ ]
+                {
+                    new Index2 (tlCrnrIdxStr, tlCrnrIdxStr),
+                    new Index2 (tlTnCrnrIdx, tlTnCrnrIdx),
+                    new Index2 (trInCrnrIdx, trInCrnrIdx),
+                    new Index2 (trCrnrIdxEnd, trCrnrIdxEnd)
+                };
+            }
+            else
+            {
+                nonCornerFaces = 10;
+                fsLen = nonCornerFaces + fResTotal;
+                fs = target.loops = Loop2.Resize (target.loops, fsLen, 3, true);
+
+                Loop2 f0 = fs[0];
+                f0.Indices[0] = new Index2 (tlTnCrnrIdx, tlTnCrnrIdx);
+                f0.Indices[1] = new Index2 (blInCrnrIdx, blInCrnrIdx);
+                f0.Indices[2] = new Index2 (trInCrnrIdx, trInCrnrIdx);
+
+                Loop2 f1 = fs[1];
+                f1.Indices[0] = new Index2 (blInCrnrIdx, blInCrnrIdx);
+                f1.Indices[1] = new Index2 (brInCrnrIdx, brInCrnrIdx);
+                f1.Indices[2] = new Index2 (trInCrnrIdx, trInCrnrIdx);
+
+                Loop2 f2 = fs[2];
+                f2.Indices[0] = new Index2 (tlCrnrIdxEnd, tlCrnrIdxEnd);
+                f2.Indices[1] = new Index2 (blCrnrIdxStr, blCrnrIdxStr);
+                f2.Indices[2] = new Index2 (tlTnCrnrIdx, tlTnCrnrIdx);
+
+                Loop2 f3 = fs[3];
+                f3.Indices[0] = new Index2 (blCrnrIdxStr, blCrnrIdxStr);
+                f3.Indices[1] = new Index2 (blInCrnrIdx, blInCrnrIdx);
+                f3.Indices[2] = new Index2 (tlTnCrnrIdx, tlTnCrnrIdx);
+
+                Loop2 f4 = fs[4];
+                f4.Indices[0] = new Index2 (blInCrnrIdx, blInCrnrIdx);
+                f4.Indices[1] = new Index2 (blCrnrIdxEnd, blCrnrIdxEnd);
+                f4.Indices[2] = new Index2 (brInCrnrIdx, brInCrnrIdx);
+
+                Loop2 f5 = fs[5];
+                f5.Indices[0] = new Index2 (blCrnrIdxEnd, blCrnrIdxEnd);
+                f5.Indices[1] = new Index2 (brCrnrIdxStr, brCrnrIdxStr);
+                f5.Indices[2] = new Index2 (brInCrnrIdx, brInCrnrIdx);
+
+                Loop2 f6 = fs[6];
+                f6.Indices[0] = new Index2 (trInCrnrIdx, trInCrnrIdx);
+                f6.Indices[1] = new Index2 (brInCrnrIdx, brInCrnrIdx);
+                f6.Indices[2] = new Index2 (trCrnrIdxStr, trCrnrIdxStr);
+
+                Loop2 f7 = fs[7];
+                f7.Indices[0] = new Index2 (brInCrnrIdx, brInCrnrIdx);
+                f7.Indices[1] = new Index2 (brCrnrIdxEnd, brCrnrIdxEnd);
+                f7.Indices[2] = new Index2 (trCrnrIdxStr, trCrnrIdxStr);
+
+                Loop2 f8 = fs[8];
+                f8.Indices[0] = new Index2 (tlCrnrIdxStr, tlCrnrIdxStr);
+                f8.Indices[1] = new Index2 (tlTnCrnrIdx, tlTnCrnrIdx);
+                f8.Indices[2] = new Index2 (trCrnrIdxEnd, trCrnrIdxEnd);
+
+                Loop2 f9 = fs[9];
+                f9.Indices[0] = new Index2 (tlTnCrnrIdx, tlTnCrnrIdx);
+                f9.Indices[1] = new Index2 (trInCrnrIdx, trInCrnrIdx);
+                f9.Indices[2] = new Index2 (trCrnrIdxEnd, trCrnrIdxEnd);
+            }
+
+            // Face count.
+            int fTlRes = vtlRes + 1;
+            int fBlRes = vblRes + 1;
+            int fBrRes = vbrRes + 1;
+            int fTrRes = vtrRes + 1;
+
+            // Index offsets.
+            int fsTlIdxStr = nonCornerFaces;
+            int fsBlIdxStr = fsTlIdxStr + fTlRes;
+            int fsBrIdxStr = fsBlIdxStr + fBlRes;
+            int fs_tr_idx_start = fsBrIdxStr + fBrRes;
+
+            // Top left corner.
+            for (int i = 0; i < fTlRes; ++i)
+            {
+                int b = tlCrnrIdxStr + i;
+                int c = b + 1;
+                Loop2 f = fs[fsTlIdxStr + i];
+                f.Indices[0] = new Index2 (tlTnCrnrIdx, tlTnCrnrIdx);
+                f.Indices[1] = new Index2 (b, b);
+                f.Indices[2] = new Index2 (c, c);
+            }
+
+            // Bottom left corner.
+            for (int i = 0; i < fBlRes; ++i)
+            {
+                int b = blCrnrIdxStr + i;
+                int c = b + 1;
+                Loop2 f = fs[fsBlIdxStr + i];
+                f.Indices[0] = new Index2 (blInCrnrIdx, blInCrnrIdx);
+                f.Indices[1] = new Index2 (b, b);
+                f.Indices[2] = new Index2 (c, c);
+            }
+
+            // Bottom right corner.
+            for (int i = 0; i < fBrRes; ++i)
+            {
+                int b = brCrnrIdxStr + i;
+                int c = b + 1;
+                Loop2 f = fs[fsBrIdxStr + i];
+                f.Indices[0] = new Index2 (brInCrnrIdx, brInCrnrIdx);
+                f.Indices[1] = new Index2 (b, b);
+                f.Indices[2] = new Index2 (c, c);
+            }
+
+            // Top right corner.
+            for (int i = 0; i < fTrRes; ++i)
+            {
+                int b = trCrnrIdxStr + i;
+                int c = b + 1;
+                Loop2 f = fs[fs_tr_idx_start + i];
+                f.Indices[0] = new Index2 (trInCrnrIdx, trInCrnrIdx);
+                f.Indices[1] = new Index2 (b, b);
+                f.Indices[2] = new Index2 (c, c);
+            }
+        }
+
+        return target;
+    }
+
+    /// <summary>
     /// Returns a string representation of a mesh.
     /// </summary>
     /// <param name="sb">string builder</param>
