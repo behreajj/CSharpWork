@@ -893,7 +893,7 @@ public class Mesh2
         in Vec2 lb, in Vec2 ub, //
         in float rnd = 0.25f, //
         in int res = 8, //
-        in PolyType poly = PolyType.Tri //
+        in PolyType poly = PolyType.Tri, //
         in UvProfiles.Rect profile = UvProfiles.Rect.Stretch)
     {
         return Mesh2.Rect (target,
@@ -928,7 +928,7 @@ public class Mesh2
         in float br = 0.25f, in float bl = 0.25f, //
         in int tlRes = 8, in int trRes = 8, //
         in int brRes = 8, in int blRes = 8, //
-        in PolyType poly = PolyType.Quad, //
+        in PolyType poly = PolyType.Tri, //
         in UvProfiles.Rect profile = UvProfiles.Rect.Stretch)
     {
         // Validate corners.
