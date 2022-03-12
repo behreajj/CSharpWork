@@ -981,7 +981,6 @@ public class Mesh2
         float vScl = 1.0f;
         if (profile == UvProfiles.Rect.Contain)
         {
-            // TODO: Implement.
             if (w < h)
             {
                 uScl = w / h;
@@ -1068,15 +1067,47 @@ public class Mesh2
         vs[trCrnrIdxEnd] = new Vec2 (rgtIns0, top);
 
         // Texture coordinate corners at start and end of arc.
-        // TODO: Refactor.
-        vts[tlCrnrIdxStr] = new Vec2 (vtl * wInv, 0.0f);
-        vts[tlCrnrIdxEnd] = new Vec2 (0.0f, 1.0f - (topIns1 - btm) * hInv);
-        vts[blCrnrIdxStr] = new Vec2 (0.0f, 1.0f - vbl * hInv);
-        vts[blCrnrIdxEnd] = new Vec2 (vbl * wInv, 1.0f);
-        vts[brCrnrIdxStr] = new Vec2 ((rgtIns1 - lft) * wInv, 1.0f);
-        vts[brCrnrIdxEnd] = new Vec2 (1.0f, 1.0f - vbr * hInv);
-        vts[trCrnrIdxStr] = new Vec2 (1.0f, 1.0f - (topIns0 - btm) * hInv);
-        vts[trCrnrIdxEnd] = new Vec2 ((rgtIns0 - lft) * wInv, 0.0f);
+        float u0 = vtl * wInv;
+        float v0 = 1.0f;
+        float u1 = 0.0f;
+        float v1 = (topIns1 - btm) * hInv;
+        float u2 = 0.0f;
+        float v2 = vbl * hInv;
+        float u3 = vbl * wInv;
+        float v3 = 0.0f;
+        float u4 = (rgtIns1 - lft) * wInv;
+        float v4 = 0.0f;
+        float u5 = 1.0f;
+        float v5 = vbr * hInv;
+        float u6 = 1.0f;
+        float v6 = (topIns0 - btm) * hInv;
+        float u7 = (rgtIns0 - lft) * wInv;
+        float v7 = 1.0f;
+
+        vts[tlCrnrIdxStr] = new Vec2 (
+            (u0 - 0.5f) * uScl + 0.5f,
+            1.0f - ((v0 - 0.5f) * vScl + 0.5f));
+        vts[tlCrnrIdxEnd] = new Vec2 (
+            (u1 - 0.5f) * uScl + 0.5f,
+            1.0f - ((v1 - 0.5f) * vScl + 0.5f));
+        vts[blCrnrIdxStr] = new Vec2 (
+            (u2 - 0.5f) * uScl + 0.5f,
+            1.0f - ((v2 - 0.5f) * vScl + 0.5f));
+        vts[blCrnrIdxEnd] = new Vec2 (
+            (u3 - 0.5f) * uScl + 0.5f,
+            1.0f - ((v3 - 0.5f) * vScl + 0.5f));
+        vts[brCrnrIdxStr] = new Vec2 (
+            (u4 - 0.5f) * uScl + 0.5f,
+            1.0f - ((v4 - 0.5f) * vScl + 0.5f));
+        vts[brCrnrIdxEnd] = new Vec2 (
+            (u5 - 0.5f) * uScl + 0.5f,
+            1.0f - ((v5 - 0.5f) * vScl + 0.5f));
+        vts[trCrnrIdxStr] = new Vec2 (
+            (u6 - 0.5f) * uScl + 0.5f,
+            1.0f - ((v6 - 0.5f) * vScl + 0.5f));
+        vts[trCrnrIdxEnd] = new Vec2 (
+            (u7 - 0.5f) * uScl + 0.5f,
+            1.0f - ((v7 - 0.5f) * vScl + 0.5f));
 
         // Find conversion from resolution to theta.
         float tlToTheta = Utils.HalfPi / (vtlRes + 1.0f);
@@ -1095,6 +1126,8 @@ public class Mesh2
                 float y = topIns1 + vtl * Utils.Sin (theta);
                 float u = (x - lft) * wInv;
                 float v = (y - btm) * hInv;
+                u = (u - 0.5f) * uScl + 0.5f;
+                v = (v - 0.5f) * vScl + 0.5f;
                 v = 1.0f - v;
                 vs[tlCrnrIdxStr + 1 + i] = new Vec2 (x, y);
                 vts[tlCrnrIdxStr + 1 + i] = new Vec2 (u, v);
@@ -1102,8 +1135,13 @@ public class Mesh2
         }
         else
         {
+            float u = 0.0f;
+            float v = 1.0f;
+            u = (u - 0.5f) * uScl + 0.5f;
+            v = (v - 0.5f) * vScl + 0.5f;
+            v = 1.0f - v;
             vs[tlCrnrIdxStr + 1] = new Vec2 (lft, top);
-            vts[tlCrnrIdxStr + 1] = new Vec2 (0.0f, 0.0f);
+            vts[tlCrnrIdxStr + 1] = new Vec2 (u, v);
         }
 
         // Bottom left arc.
@@ -1116,6 +1154,8 @@ public class Mesh2
                 float y = btmIns1 - vbl * Utils.Sin (theta);
                 float u = (x - lft) * wInv;
                 float v = (y - btm) * hInv;
+                u = (u - 0.5f) * uScl + 0.5f;
+                v = (v - 0.5f) * vScl + 0.5f;
                 v = 1.0f - v;
                 vs[blCrnrIdxStr + 1 + i] = new Vec2 (x, y);
                 vts[blCrnrIdxStr + 1 + i] = new Vec2 (u, v);
@@ -1123,8 +1163,13 @@ public class Mesh2
         }
         else
         {
+            float u = 0.0f;
+            float v = 0.0f;
+            u = (u - 0.5f) * uScl + 0.5f;
+            v = (v - 0.5f) * vScl + 0.5f;
+            v = 1.0f - v;
             vs[blCrnrIdxStr + 1] = new Vec2 (lft, btm);
-            vts[blCrnrIdxStr + 1] = new Vec2 (0.0f, 1.0f);
+            vts[blCrnrIdxStr + 1] = new Vec2 (u, v);
         }
 
         // Bottom right arc. Reverse theta progress.
@@ -1138,6 +1183,8 @@ public class Mesh2
                 float y = btmIns0 - vbr * Utils.Sin (theta);
                 float u = (x - lft) * wInv;
                 float v = (y - btm) * hInv;
+                u = (u - 0.5f) * uScl + 0.5f;
+                v = (v - 0.5f) * vScl + 0.5f;
                 v = 1.0f - v;
                 vs[brCrnrIdxStr + 1 + i] = new Vec2 (x, y);
                 vts[brCrnrIdxStr + 1 + i] = new Vec2 (u, v);
@@ -1145,8 +1192,13 @@ public class Mesh2
         }
         else
         {
+            float u = 1.0f;
+            float v = 0.0f;
+            u = (u - 0.5f) * uScl + 0.5f;
+            v = (v - 0.5f) * vScl + 0.5f;
+            v = 1.0f - v;
             vs[brCrnrIdxStr + 1] = new Vec2 (rgt, btm);
-            vts[brCrnrIdxStr + 1] = new Vec2 (1.0f, 1.0f);
+            vts[brCrnrIdxStr + 1] = new Vec2 (u, v);
         }
 
         // Top right arc.
@@ -1159,6 +1211,8 @@ public class Mesh2
                 float y = topIns0 + vtr * Utils.Sin (theta);
                 float u = (x - lft) * wInv;
                 float v = (y - btm) * hInv;
+                u = (u - 0.5f) * uScl + 0.5f;
+                v = (v - 0.5f) * vScl + 0.5f;
                 v = 1.0f - v;
                 vs[trCrnrIdxStr + 1 + i] = new Vec2 (x, y);
                 vts[trCrnrIdxStr + 1 + i] = new Vec2 (u, v);
@@ -1166,8 +1220,13 @@ public class Mesh2
         }
         else
         {
+            float u = 1.0f;
+            float v = 1.0f;
+            u = (u - 0.5f) * uScl + 0.5f;
+            v = (v - 0.5f) * vScl + 0.5f;
+            v = 1.0f - v;
             vs[trCrnrIdxStr + 1] = new Vec2 (rgt, top);
-            vts[trCrnrIdxStr + 1] = new Vec2 (1.0f, 0.0f);
+            vts[trCrnrIdxStr + 1] = new Vec2 (u, v);
         }
 
         if (poly == PolyType.Ngon)
@@ -1194,11 +1253,27 @@ public class Mesh2
             vs[trInCrnrIdx] = new Vec2 (rgtIns0, topIns0);
 
             // Inner texture coordinate corners.
-            // TODO: Refactor.
-            vts[tlTnCrnrIdx] = new Vec2 (vtl * wInv, 1.0f - (topIns1 - btm) * hInv);
-            vts[blInCrnrIdx] = new Vec2 (vbl * wInv, 1.0f - vbl * hInv);
-            vts[brInCrnrIdx] = new Vec2 ((rgtIns1 - lft) * wInv, 1.0f - vbr * hInv);
-            vts[trInCrnrIdx] = new Vec2 ((rgtIns0 - lft) * wInv, 1.0f - (topIns0 - btm) * hInv);
+            float ui0 = vtl * wInv;
+            float vi0 = (topIns1 - btm) * hInv;
+            float ui1 = vbl * wInv;
+            float vi1 = vbl * hInv;
+            float ui2 = (rgtIns1 - lft) * wInv;
+            float vi2 = vbr * hInv;
+            float ui3 = (rgtIns0 - lft) * wInv;
+            float vi3 = (topIns0 - btm) * hInv;
+
+            vts[tlTnCrnrIdx] = new Vec2 (
+                (ui0 - 0.5f) * uScl + 0.5f,
+                1.0f - ((vi0 - 0.5f) * vScl + 0.5f));
+            vts[blInCrnrIdx] = new Vec2 (
+                (ui1 - 0.5f) * uScl + 0.5f,
+                1.0f - ((vi1 - 0.5f) * vScl + 0.5f));
+            vts[brInCrnrIdx] = new Vec2 (
+                (ui2 - 0.5f) * uScl + 0.5f,
+                1.0f - ((vi2 - 0.5f) * vScl + 0.5f));
+            vts[trInCrnrIdx] = new Vec2 (
+                (ui3 - 0.5f) * uScl + 0.5f,
+                1.0f - ((vi3 - 0.5f) * vScl + 0.5f));
 
             // For calculating the number of face indices.
             int fsLen = 0;
