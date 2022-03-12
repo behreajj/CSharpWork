@@ -351,14 +351,14 @@ public class Transform3
 
     /// <summary>
     /// Multiplies a normal by a transform's inverse. This rotates the normal by
-    /// the inverse quaternion, then multiplies the normal by the scale.
+    /// the inverse quaternion, multiplies the normal by the scale, then normalizes.
     /// </summary>
     /// <param name="transform">transform</param>
     /// <param name="normal">normal</param>
     /// <returns>normal</returns>
     public static Vec3 InvMulNormal (in Transform3 transform, in Vec3 normal)
     {
-        return transform.scale * Quat.InvMulVector (transform.rotation, normal);
+        return Vec3.Normalize (transform.scale * Quat.InvMulVector (transform.rotation, normal));
     }
 
     /// <summary>
@@ -422,14 +422,15 @@ public class Transform3
 
     /// <summary>
     /// Multiplies a normal by a transform. This divides the normal by the
-    /// transform's scale and then rotates it by the transform's rotation.
+    /// transform's scale, rotates it by the transform's rotation, then
+    /// normalizes the result.
     /// </summary>
     /// <param name="transform">transform</param>
     /// <param name="normal">normal</param>
     /// <returns>normal</returns>
     public static Vec3 MulNormal (in Transform3 transform, in Vec3 normal)
     {
-        return Quat.MulVector (transform.rotation, normal / transform.scale);
+        return Vec3.Normalize (Quat.MulVector (transform.rotation, normal / transform.scale));
     }
 
     /// <summary>

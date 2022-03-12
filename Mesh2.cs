@@ -886,18 +886,21 @@ public class Mesh2
     /// <param name="rnd">rounding</param>
     /// <param name="res">resolution</param>
     /// <param name="poly">polygon type</param>
+    /// <param name="profile">UV Profile</param>
     /// <returns>the rectangle</returns>
-    public static Mesh2 Rectangle ( //
+    public static Mesh2 Rect ( //
         in Mesh2 target, //
         in Vec2 lb, in Vec2 ub, //
         in float rnd = 0.25f, //
         in int res = 8, //
-        in PolyType poly = PolyType.Tri)
+        in PolyType poly = PolyType.Tri //
+        in UvProfiles.Rect profile = UvProfiles.Rect.Stretch)
     {
-        return Mesh2.Rectangle (target,
+        return Mesh2.Rect (target,
             lb, ub,
             rnd, rnd, rnd, rnd,
-            res, res, res, res, poly);
+            res, res, res, res,
+            poly, profile);
     }
 
     /// <summary>
@@ -916,15 +919,17 @@ public class Mesh2
     /// <param name="brRes">bottom right resolution</param>
     /// <param name="blRes">bottom left resolution</param>
     /// <param name="poly">polygon type</param>
+    /// <param name="profile">UV Profile</param>
     /// <returns>the rectangle</returns>
-    public static Mesh2 Rectangle ( //
+    public static Mesh2 Rect ( //
         in Mesh2 target, //
         in Vec2 lb, in Vec2 ub, //
         in float tl = 0.25f, in float tr = 0.25f, //
         in float br = 0.25f, in float bl = 0.25f, //
         in int tlRes = 8, in int trRes = 8, //
         in int brRes = 8, in int blRes = 8, //
-        in PolyType poly = PolyType.Quad)
+        in PolyType poly = PolyType.Quad, //
+        in UvProfiles.Rect profile = UvProfiles.Rect.Stretch)
     {
         // Validate corners.
         float lft = Utils.Min (lb.x, ub.x);
@@ -970,6 +975,33 @@ public class Mesh2
         // Calculate width and height for vts.
         float wInv = 1.0f / w;
         float hInv = 1.0f / h;
+
+        // Calculate UV scalar.
+        float uScl = 1.0f;
+        float vScl = 1.0f;
+        if (profile == UvProfiles.Rect.Contain)
+        {
+            // TODO: Implement.
+            if (w < h)
+            {
+                uScl = w / h;
+            }
+            else if (w > h)
+            {
+                vScl = h / w;
+            }
+        }
+        else if (profile == UvProfiles.Rect.Cover)
+        {
+            if (w < h)
+            {
+                vScl = h / w;
+            }
+            else if (w > h)
+            {
+                uScl = w / h;
+            }
+        }
 
         // Validate corner insetting factor.
         float vtlFac = Utils.Min (Utils.Abs (tl), 1.0f - Utils.Epsilon);
@@ -1036,6 +1068,7 @@ public class Mesh2
         vs[trCrnrIdxEnd] = new Vec2 (rgtIns0, top);
 
         // Texture coordinate corners at start and end of arc.
+        // TODO: Refactor.
         vts[tlCrnrIdxStr] = new Vec2 (vtl * wInv, 0.0f);
         vts[tlCrnrIdxEnd] = new Vec2 (0.0f, 1.0f - (topIns1 - btm) * hInv);
         vts[blCrnrIdxStr] = new Vec2 (0.0f, 1.0f - vbl * hInv);
@@ -1060,10 +1093,11 @@ public class Mesh2
                 float theta = (j + 1.0f) * tlToTheta;
                 float x = lftIns0 - vtl * Utils.Cos (theta);
                 float y = topIns1 + vtl * Utils.Sin (theta);
+                float u = (x - lft) * wInv;
+                float v = (y - btm) * hInv;
+                v = 1.0f - v;
                 vs[tlCrnrIdxStr + 1 + i] = new Vec2 (x, y);
-                vts[tlCrnrIdxStr + 1 + i] = new Vec2 (
-                    (x - lft) * wInv,
-                    1.0f - (y - btm) * hInv);
+                vts[tlCrnrIdxStr + 1 + i] = new Vec2 (u, v);
             }
         }
         else
@@ -1080,10 +1114,11 @@ public class Mesh2
                 float theta = (i + 1.0f) * blToTheta;
                 float x = lftIns1 - vbl * Utils.Cos (theta);
                 float y = btmIns1 - vbl * Utils.Sin (theta);
+                float u = (x - lft) * wInv;
+                float v = (y - btm) * hInv;
+                v = 1.0f - v;
                 vs[blCrnrIdxStr + 1 + i] = new Vec2 (x, y);
-                vts[blCrnrIdxStr + 1 + i] = new Vec2 (
-                    (x - lft) * wInv,
-                    1.0f - (y - btm) * hInv);
+                vts[blCrnrIdxStr + 1 + i] = new Vec2 (u, v);
             }
         }
         else
@@ -1101,10 +1136,11 @@ public class Mesh2
                 float theta = (j + 1.0f) * brToTheta;
                 float x = rgtIns1 + vbr * Utils.Cos (theta);
                 float y = btmIns0 - vbr * Utils.Sin (theta);
+                float u = (x - lft) * wInv;
+                float v = (y - btm) * hInv;
+                v = 1.0f - v;
                 vs[brCrnrIdxStr + 1 + i] = new Vec2 (x, y);
-                vts[brCrnrIdxStr + 1 + i] = new Vec2 (
-                    (x - lft) * wInv,
-                    1.0f - (y - btm) * hInv);
+                vts[brCrnrIdxStr + 1 + i] = new Vec2 (u, v);
             }
         }
         else
@@ -1121,10 +1157,11 @@ public class Mesh2
                 float theta = (i + 1.0f) * trToTheta;
                 float x = rgtIns0 + vtr * Utils.Cos (theta);
                 float y = topIns0 + vtr * Utils.Sin (theta);
+                float u = (x - lft) * wInv;
+                float v = (y - btm) * hInv;
+                v = 1.0f - v;
                 vs[trCrnrIdxStr + 1 + i] = new Vec2 (x, y);
-                vts[trCrnrIdxStr + 1 + i] = new Vec2 (
-                    (x - lft) * wInv,
-                    1.0f - (y - btm) * hInv);
+                vts[trCrnrIdxStr + 1 + i] = new Vec2 (u, v);
             }
         }
         else
@@ -1157,6 +1194,7 @@ public class Mesh2
             vs[trInCrnrIdx] = new Vec2 (rgtIns0, topIns0);
 
             // Inner texture coordinate corners.
+            // TODO: Refactor.
             vts[tlTnCrnrIdx] = new Vec2 (vtl * wInv, 1.0f - (topIns1 - btm) * hInv);
             vts[blInCrnrIdx] = new Vec2 (vbl * wInv, 1.0f - vbl * hInv);
             vts[brInCrnrIdx] = new Vec2 ((rgtIns1 - lft) * wInv, 1.0f - vbr * hInv);

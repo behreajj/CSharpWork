@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,16 +8,6 @@ using System.Text;
 /// </summary>
 public class Mesh3
 {
-    /// <summary>
-    /// The UV profile for a capsule.
-    /// </summary>
-    public enum CapsuleUvProfile : int
-    {
-        Fixed = 0,
-        Aspect = 1,
-        Uniform = 2
-    }
-
     /// <summary>
     /// An array of coordinates.
     /// </summary>
@@ -148,7 +137,7 @@ public class Mesh3
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return this.ToString (1, 4);
+        return Mesh3.ToString (this);
     }
 
     /// <summary>
@@ -609,11 +598,68 @@ public class Mesh3
         return this;
     }
 
-    public string ToString (in int padding = 1, in int places = 4)
+    /// <summary>
+    /// Transforms a mesh by an affine transform matrix.
+    /// </summary>
+    /// <param name="m">affine transform</param>
+    /// <returns>this mesh</returns>
+    public Mesh3 Transform (in Mat4 m)
     {
-        return Mesh3.ToString (this);
+        return this.Transform (m, Mat4.Inverse (m));
     }
 
+    /// <summary>
+    /// Transforms a mesh by an affine transform matrix.
+    /// The matrix inverse is required to transform the
+    /// mesh's normals.
+    /// </summary>
+    /// <param name="m">affine transform</param>
+    /// <param name="h">inverse transform</param>
+    /// <returns>this mesh</returns>
+    public Mesh3 Transform (in Mat4 m, in Mat4 h)
+    {
+        int vsLen = this.coords.Length;
+        for (int i = 0; i < vsLen; ++i)
+        {
+            this.coords[i] = Mat4.MulPoint (m, this.coords[i]);
+        }
+
+        int vnsLen = this.normals.Length;
+        for (int j = 0; j < vnsLen; ++j)
+        {
+            this.normals[j] = Mat4.MulInverseNormal (h, this.normals[j]);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Transforms a mesh by a transform
+    /// </summary>
+    /// <param name="t">transform</param>
+    /// <returns>this mesh</returns>
+    public Mesh3 Transform (in Transform3 t)
+    {
+        int vsLen = this.coords.Length;
+        for (int i = 0; i < vsLen; ++i)
+        {
+            this.coords[i] = Transform3.MulPoint (t, this.coords[i]);
+        }
+
+        int vnsLen = this.normals.Length;
+        for (int j = 0; j < vnsLen; ++j)
+        {
+            this.normals[j] = Transform3.MulNormal (t, this.normals[j]);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Promotes a Mesh2 to a Mesh3.
+    /// </summary>
+    /// <param name="source">source mesh</param>
+    /// <returns>the promoted mesh</returns>
     public static explicit operator Mesh3 (in Mesh2 source)
     {
         // TODO: Make this a instance method Set?
@@ -707,7 +753,7 @@ public class Mesh3
         in float depth = 1.0f, //
         in float radius = 0.5f, //
         in PolyType poly = PolyType.Tri, //
-        CapsuleUvProfile profile = CapsuleUvProfile.Aspect)
+        UvProfiles.Capsule profile = UvProfiles.Capsule.Aspect)
     {
         // TODO: REFACTOR to build faces from bottom.
 
@@ -812,15 +858,15 @@ public class Mesh3
         float vtAspectRatio;
         switch (profile)
         {
-            case CapsuleUvProfile.Aspect:
+            case UvProfiles.Capsule.Aspect:
                 vtAspectRatio = verifRad / (verifDepth + 2 * verifRad);
                 break;
 
-            case CapsuleUvProfile.Uniform:
+            case UvProfiles.Capsule.Uniform:
                 vtAspectRatio = (float) halfLats / (verifRingsP1 + verifLats);
                 break;
 
-            case CapsuleUvProfile.Fixed:
+            case UvProfiles.Capsule.Fixed:
             default:
                 vtAspectRatio = Utils.OneThird;
                 break;

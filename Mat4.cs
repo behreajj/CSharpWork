@@ -1574,6 +1574,33 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
+    /// Multiplies a normal with a matrix that has already
+    /// been inverted.
+    /// </summary>
+    /// <param name="h">matrix inverse</param>
+    /// <param name="n">normal</param>
+    /// <returns>product</returns>
+    public static Vec3 MulInverseNormal (in Mat4 h, in Vec3 n)
+    {
+        return Vec3.Normalize (new Vec3 (
+            n.x * h._m00 + n.y * h._m10 + n.z * h._m20,
+            n.x * h._m01 + n.y * h._m11 + n.z * h._m21,
+            n.x * h._m02 + n.y * h._m12 + n.z * h._m22));
+    }
+
+    /// <summary>
+    /// Multiplies a matrix and a normal. Calculates the
+    /// inverse of the matrix to do so.
+    /// </summary>
+    /// <param name="a">matrix</param>
+    /// <param name="n">normal</param>
+    /// <returns>product</returns>
+    public static Vec3 MulNormal (in Mat4 a, in Vec3 b)
+    {
+        return Mat4.MulInverseNormal (Mat4.Inverse (a), b);
+    }
+
+    /// <summary>
     /// Multiplies a matrix and a point. The z component of the point is assumed
     /// to be 0.0 . The w component of the point is assumed to be 1.0 , so the
     /// point is impacted by the matrix's translation.
