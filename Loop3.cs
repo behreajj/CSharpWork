@@ -7,8 +7,15 @@ using System.Text;
 /// </summary>
 public class Loop3
 {
+    /// <summary>
+    /// Array of compound vertex indices.
+    /// </summary>
     protected Index3[ ] indices;
 
+    /// <summary>
+    /// Array of compound vertex indices.
+    /// </summary>
+    /// <value>the index</value>
     public Index3[ ] Indices
     {
         get
@@ -22,6 +29,10 @@ public class Loop3
         }
     }
 
+    /// <summary>
+    /// The number of vertex indices in this loops.
+    /// </summary>
+    /// <value>the length</value>
     public int Length { get { return this.indices.Length; } }
 
     /// <summary>
@@ -39,14 +50,6 @@ public class Loop3
         set
         {
             this.indices[Utils.RemFloor (i, this.indices.Length)] = value;
-        }
-    }
-
-    public int this [int i, int j]
-    {
-        get
-        {
-            return this [i][j];
         }
     }
 
@@ -69,29 +72,31 @@ public class Loop3
         this.indices = new Index3[length < 3 ? 3 : length];
     }
 
+    /// <summary>
+    /// Constructs a loop from an index array.
+    /// </summary>
+    /// <param name="indices">indices</param>
     public Loop3 (in Index3[ ] indices)
     {
         this.indices = indices;
     }
 
+    /// <summary>
+    /// Constructs a loop from a list of indices.
+    /// </summary>
+    /// <param name="indices">indices</param>
     public Loop3 (params Index3[ ] indices)
     {
         this.indices = indices;
     }
 
+    /// <summary>
+    /// Returns a string representation of this vector.
+    /// </summary>
+    /// <returns>the string</returns>
     public override string ToString ( )
     {
         return Loop3.ToString (this);
-    }
-
-    public static implicit operator Index3[ ] (in Loop3 source)
-    {
-        return source.indices;
-    }
-
-    public static implicit operator Loop3 (in Index3[ ] source)
-    {
-        return new Loop3 (source);
     }
 
     /// <summary>
@@ -110,6 +115,29 @@ public class Loop3
             trgIdcs[i] = (Index3) srcIdcs[i];
         }
         return result;
+    }
+
+    /// <summary>
+    /// Convenience method. Sets the target loop's indices to a new array
+    /// created from the arguments. Creates a quadrilateral.
+    /// </summary>
+    /// <param name="a">first vertex</param>
+    /// <param name="b">second vertex</param>
+    /// <param name="c">third vertex</param>
+    /// <param name="d">fourth vertex</param>
+    /// <param name="e">fifth vertex</param>
+    /// <param name="target">target loop</param>
+    /// <returns>quadrilateral loop</returns>
+    public static Loop3 Pentagon ( //
+        in Index3 a, //
+        in Index3 b, //
+        in Index3 c, //
+        in Index3 d, //
+        in Index3 e, //
+        in Loop3 target)
+    {
+        target.indices = new Index3[ ] { a, b, c, d, e };
+        return target;
     }
 
     /// <summary>

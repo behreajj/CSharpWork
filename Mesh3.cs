@@ -105,7 +105,11 @@ public class Mesh3
     /// <summary>
     /// The default constructor.
     /// </summary>
-    public Mesh3 ( ) { }
+    public Mesh3 ( )
+    {
+        // TODO: All loops are classes and so need to be resized,
+        // then reset as references, rather than making new allocations.
+    }
 
     /// <summary>
     /// Constructs a mesh from data.
@@ -114,7 +118,11 @@ public class Mesh3
     /// <param name="coords">coordinates</param>
     /// <param name="texCoords">texture coordinates</param>
     /// <param name="normals">normals</param>
-    public Mesh3 (in Loop3[ ] loops, in Vec3[ ] coords, in Vec2[ ] texCoords, in Vec3[ ] normals)
+    public Mesh3 ( //
+        in Loop3[ ] loops, //
+        in Vec3[ ] coords, //
+        in Vec2[ ] texCoords, //
+        in Vec3[ ] normals)
     {
         this.loops = loops;
         this.coords = coords;
@@ -250,6 +258,46 @@ public class Mesh3
         Vert3[ ] arr = new Vert3[result.Count];
         result.CopyTo (arr);
         return arr;
+    }
+
+    /// <summary>
+    /// Scales this mesh by a uniform scalar.
+    /// Scalar must not be zero.
+    /// </summary>
+    /// <param name="s">scalar</param>
+    /// <returns>this mesh</returns>
+    public Mesh3 Scale (in float s)
+    {
+        if (s != 0.0f)
+        {
+            int vsLen = this.coords.Length;
+            for (int i = 0; i < vsLen; ++i) { this.coords[i] *= s; }
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Scales this mesh by a nonuniform scalar.
+    /// All components of the scalar must be nonzero.
+    /// </summary>
+    /// <param name="s">scalar</param>
+    /// <returns>this mesh</returns>
+    public Mesh3 Scale (in Vec3 s)
+    {
+        if (Vec3.All (s))
+        {
+            int vsLen = this.coords.Length;
+            for (int i = 0; i < vsLen; ++i) { this.coords[i] *= s; }
+
+            int vnsLen = this.normals.Length;
+            for (int i = 0; i < vsLen; ++i)
+            {
+                this.normals[i] = Vec3.Normalize (this.normals[i] / s);
+            }
+        }
+
+        return this;
     }
 
     /// <summary>
@@ -651,6 +699,19 @@ public class Mesh3
         {
             this.normals[j] = Transform3.MulNormal (t, this.normals[j]);
         }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Moves this mesh's coordinates by a vector.
+    /// </summary>
+    /// <param name="t">translation</param>
+    /// <returns>this mesh</returns>
+    public Mesh3 Translate (in Vec3 t)
+    {
+        int vsLen = this.coords.Length;
+        for (int i = 0; i < vsLen; ++i) { this.coords[i] += t; }
 
         return this;
     }
@@ -1430,128 +1491,99 @@ public class Mesh3
     {
         target.coords = new Vec3[ ]
         {
+            new Vec3 (0.0f, -0.02712715f, -0.53454524f),
             new Vec3 (0.0f, 0.33614415f, -0.4165113f),
+            new Vec3 (-0.309017f, -0.19840115f, -0.38938415f),
+            new Vec3 (0.309017f, -0.19840115f, -0.38938415f),
+            new Vec3 (-0.309017f, 0.38938415f, -0.19840115f),
+            new Vec3 (0.309017f, 0.38938415f, -0.19840115f),
+            new Vec3 (-0.5f, 0.05901699f, -0.18163565f),
+            new Vec3 (0.5f, 0.05901699f, -0.18163565f),
+            new Vec3 (-0.19098301f, -0.47552827f, -0.15450847f),
+            new Vec3 (0.19098301f, -0.47552827f, -0.15450847f),
             new Vec3 (-0.19098301f, 0.47552827f, 0.15450847f),
             new Vec3 (0.19098301f, 0.47552827f, 0.15450847f),
-            new Vec3 (0.309017f, 0.19840115f, 0.38938415f),
-            new Vec3 (-0.309017f, 0.19840115f, 0.38938415f),
-            new Vec3 (-0.19098301f, -0.47552827f, -0.15450847f),
-            new Vec3 (-0.309017f, -0.38938415f, 0.19840115f),
-            new Vec3 (0.19098301f, -0.47552827f, -0.15450847f),
-            new Vec3 (0.309017f, -0.19840115f, -0.38938415f),
-            new Vec3 (0.0f, -0.02712715f, -0.53454524f),
-            new Vec3 (0.309017f, 0.38938415f, -0.19840115f),
-            new Vec3 (0.5f, 0.05901699f, -0.18163565f),
-            new Vec3 (-0.309017f, -0.19840115f, -0.38938415f),
-            new Vec3 (-0.5f, 0.05901699f, -0.18163565f),
-            new Vec3 (-0.309017f, 0.38938415f, -0.19840115f),
-            new Vec3 (0.0f, 0.02712715f, 0.53454524f),
-            new Vec3 (0.0f, -0.33614415f, 0.4165113f),
-            new Vec3 (0.309017f, -0.38938415f, 0.19840115f),
+            new Vec3 (-0.5f, -0.05901699f, 0.18163565f),
             new Vec3 (0.5f, -0.05901699f, 0.18163565f),
-            new Vec3 (-0.5f, -0.05901699f, 0.18163565f)
+            new Vec3 (-0.309017f, -0.38938415f, 0.19840115f),
+            new Vec3 (0.309017f, -0.38938415f, 0.19840115f),
+            new Vec3 (-0.309017f, 0.19840115f, 0.38938415f),
+            new Vec3 (0.309017f, 0.19840115f, 0.38938415f),
+            new Vec3 (0.0f, -0.33614415f, 0.4165113f),
+            new Vec3 (0.0f, 0.02712715f, 0.53454524f)
         };
 
         target.texCoords = new Vec2[ ]
         {
-            new Vec2 (0.5f, 0.0f),
-            new Vec2 (0.79389268f, 0.90450847f),
-            new Vec2 (0.02447176f, 0.34549153f),
-            new Vec2 (0.20610738f, 0.90450853f),
-            new Vec2 (0.97552824f, 0.34549141f)
+            new Vec2 (0.099106364f, 0.25323522f),
+            new Vec2 (0.22160856f, 0.25323522f),
+            new Vec2 (0.29731908f, 0.25323522f),
+            new Vec2 (0.4198213f, 0.25323522f),
+            new Vec2 (0.7405362f, 0.25323522f),
+            new Vec2 (0.64142984f, 0.3252402f),
+            new Vec2 (0.8396426f, 0.3252402f),
+            new Vec2 (0.06125109f, 0.36974174f),
+            new Vec2 (0.25946382f, 0.36974174f),
+            new Vec2 (0.45767656f, 0.36974174f),
+            new Vec2 (0.58017874f, 0.36974174f),
+            new Vec2 (0.90089375f, 0.36974174f),
+            new Vec2 (0.03785526f, 0.4417467f),
+            new Vec2 (0.16035746f, 0.4417467f),
+            new Vec2 (0.3585702f, 0.4417467f),
+            new Vec2 (0.4810724f, 0.4417467f),
+            new Vec2 (0.6792851f, 0.4417467f),
+            new Vec2 (0.8017873f, 0.4417467f),
+            new Vec2 (1.0f, 0.4417467f),
+            new Vec2 (0.0f, 0.5582533f),
+            new Vec2 (0.19821273f, 0.5582533f),
+            new Vec2 (0.32071492f, 0.5582533f),
+            new Vec2 (0.51892763f, 0.5582533f),
+            new Vec2 (0.64142984f, 0.5582533f),
+            new Vec2 (0.8396426f, 0.5582533f),
+            new Vec2 (0.9621448f, 0.5582533f),
+            new Vec2 (0.099106364f, 0.63025826f),
+            new Vec2 (0.4198213f, 0.63025826f),
+            new Vec2 (0.54232347f, 0.63025826f),
+            new Vec2 (0.7405362f, 0.63025826f),
+            new Vec2 (0.93874896f, 0.63025826f),
+            new Vec2 (0.16035746f, 0.67475975f),
+            new Vec2 (0.3585702f, 0.67475975f),
+            new Vec2 (0.25946382f, 0.7467648f),
+            new Vec2 (0.58017874f, 0.7467648f),
+            new Vec2 (0.70268095f, 0.7467648f),
+            new Vec2 (0.7783915f, 0.7467648f),
+            new Vec2 (0.90089375f, 0.7467648f)
         };
 
         target.normals = new Vec3[ ]
         {
-            new Vec3 (-0.8506508f, 0.5f, 0.16245979f),
-            new Vec3 (0.0f, -0.9714768f, 0.23713443f),
-            new Vec3 (0.0f, 0.9714768f, -0.23713443f),
-            new Vec3 (0.0f, -0.64655715f, -0.7628655f),
-            new Vec3 (0.5257311f, 0.2628655f, -0.80901694f),
-            new Vec3 (0.0f, 0.64655715f, 0.7628655f),
             new Vec3 (-0.5257311f, 0.2628655f, -0.80901694f),
-            new Vec3 (-0.5257311f, -0.2628655f, 0.80901694f),
-            new Vec3 (0.5257311f, -0.2628655f, 0.80901694f),
-            new Vec3 (0.8506508f, 0.5f, 0.16245979f),
+            new Vec3 (0.5257311f, 0.2628655f, -0.80901694f),
+            new Vec3 (0.0f, -0.64655715f, -0.7628655f),
+            new Vec3 (0.0f, 0.9714768f, -0.23713443f),
+            new Vec3 (-0.8506508f, -0.5f, -0.16245979f),
             new Vec3 (0.8506508f, -0.5f, -0.16245979f),
-            new Vec3 (-0.8506508f, -0.5f, -0.16245979f)
+            new Vec3 (-0.8506508f, 0.5f, 0.16245979f),
+            new Vec3 (0.8506508f, 0.5f, 0.16245979f),
+            new Vec3 (0.0f, -0.9714768f, 0.23713443f),
+            new Vec3 (0.0f, 0.64655715f, 0.7628655f),
+            new Vec3 (-0.5257311f, -0.2628655f, 0.80901694f),
+            new Vec3 (0.5257311f, -0.2628655f, 0.80901694f)
         };
 
-        target.loops = new Loop3[ ]
-        {
-            new Loop3 (
-            new Index3 (2, 0, 2),
-            new Index3 (10, 2, 2),
-            new Index3 (0, 3, 2),
-            new Index3 (14, 1, 2),
-            new Index3 (1, 4, 2)),
-            new Loop3 (
-            new Index3 (1, 0, 5),
-            new Index3 (4, 2, 5),
-            new Index3 (15, 3, 5),
-            new Index3 (3, 1, 5),
-            new Index3 (2, 4, 5)),
-            new Loop3 (
-            new Index3 (7, 0, 1),
-            new Index3 (17, 2, 1),
-            new Index3 (16, 3, 1),
-            new Index3 (6, 1, 1),
-            new Index3 (5, 4, 1)),
-            new Loop3 (
-            new Index3 (5, 0, 3),
-            new Index3 (12, 2, 3),
-            new Index3 (9, 3, 3),
-            new Index3 (8, 1, 3),
-            new Index3 (7, 4, 3)),
-            new Loop3 (
-            new Index3 (9, 0, 4),
-            new Index3 (0, 2, 4),
-            new Index3 (10, 3, 4),
-            new Index3 (11, 1, 4),
-            new Index3 (8, 4, 4)),
-            new Loop3 (
-            new Index3 (0, 0, 6),
-            new Index3 (9, 2, 6),
-            new Index3 (12, 3, 6),
-            new Index3 (13, 1, 6),
-            new Index3 (14, 4, 6)),
-            new Loop3 (
-            new Index3 (16, 0, 7),
-            new Index3 (15, 2, 7),
-            new Index3 (4, 3, 7),
-            new Index3 (19, 1, 7),
-            new Index3 (6, 4, 7)),
-            new Loop3 (
-            new Index3 (15, 0, 8),
-            new Index3 (16, 2, 8),
-            new Index3 (17, 3, 8),
-            new Index3 (18, 1, 8),
-            new Index3 (3, 4, 8)),
-            new Loop3 (
-            new Index3 (11, 0, 9),
-            new Index3 (10, 2, 9),
-            new Index3 (2, 3, 9),
-            new Index3 (3, 1, 9),
-            new Index3 (18, 4, 9)),
-            new Loop3 (
-            new Index3 (18, 0, 10),
-            new Index3 (17, 2, 10),
-            new Index3 (7, 3, 10),
-            new Index3 (8, 1, 10),
-            new Index3 (11, 4, 10)),
-            new Loop3 (
-            new Index3 (13, 0, 11),
-            new Index3 (12, 2, 11),
-            new Index3 (5, 3, 11),
-            new Index3 (6, 1, 11),
-            new Index3 (19, 4, 11)),
-            new Loop3 (
-            new Index3 (19, 0, 0),
-            new Index3 (4, 2, 0),
-            new Index3 (1, 3, 0),
-            new Index3 (14, 1, 0),
-            new Index3 (13, 4, 0))
-        };
+        Loop3[ ] fs = target.loops = Loop3.Resize (target.loops, 12, 5, true);
+        Loop3.Pentagon (new Index3 (1, 29, 0), new Index3 (0, 36, 0), new Index3 (2, 37, 0), new Index3 (6, 30, 0), new Index3 (4, 24, 0), fs[0]);
+        Loop3.Pentagon (new Index3 (0, 35, 1), new Index3 (1, 29, 1), new Index3 (5, 23, 1), new Index3 (7, 28, 1), new Index3 (3, 34, 1), fs[1]);
+        Loop3.Pentagon (new Index3 (8, 20, 2), new Index3 (2, 31, 2), new Index3 (0, 33, 2), new Index3 (3, 32, 2), new Index3 (9, 21, 2), fs[2]);
+        Loop3.Pentagon (new Index3 (11, 16, 3), new Index3 (5, 23, 3), new Index3 (1, 29, 3), new Index3 (4, 24, 3), new Index3 (10, 17, 3), fs[3]);
+        Loop3.Pentagon (new Index3 (13, 15, 5), new Index3 (15, 14, 5), new Index3 (9, 21, 5), new Index3 (3, 27, 5), new Index3 (7, 22, 5), fs[4]);
+        Loop3.Pentagon (new Index3 (6, 19, 4), new Index3 (2, 26, 4), new Index3 (8, 20, 4), new Index3 (14, 13, 4), new Index3 (12, 12, 4), fs[5]);
+        Loop3.Pentagon (new Index3 (12, 18, 6), new Index3 (16, 11, 6), new Index3 (10, 17, 6), new Index3 (4, 24, 6), new Index3 (6, 25, 6), fs[6]);
+        Loop3.Pentagon (new Index3 (7, 22, 7), new Index3 (5, 23, 7), new Index3 (11, 16, 7), new Index3 (17, 10, 7), new Index3 (13, 15, 7), fs[7]);
+        Loop3.Pentagon (new Index3 (9, 21, 8), new Index3 (15, 14, 8), new Index3 (18, 8, 8), new Index3 (14, 13, 8), new Index3 (8, 20, 8), fs[8]);
+        Loop3.Pentagon (new Index3 (10, 17, 9), new Index3 (16, 6, 9), new Index3 (19, 4, 9), new Index3 (17, 5, 9), new Index3 (11, 16, 9), fs[9]);
+        Loop3.Pentagon (new Index3 (19, 2, 11), new Index3 (18, 8, 11), new Index3 (15, 14, 11), new Index3 (13, 9, 11), new Index3 (17, 3, 11), fs[10]);
+        Loop3.Pentagon (new Index3 (18, 8, 10), new Index3 (19, 1, 10), new Index3 (16, 0, 10), new Index3 (12, 7, 10), new Index3 (14, 13, 10), fs[11]);
 
         return target;
     }
@@ -1746,69 +1778,56 @@ public class Mesh3
     {
         target.coords = new Vec3[ ]
         {
+            new Vec3 (0.0f, 0.0f, -0.5f),
             new Vec3 (0.0f, -0.5f, 0.0f),
-            new Vec3 (0.5f, 0.0f, 0.0f),
             new Vec3 (-0.5f, 0.0f, 0.0f),
+            new Vec3 (0.5f, 0.0f, 0.0f),
             new Vec3 (0.0f, 0.5f, 0.0f),
-            new Vec3 (0.0f, 0.0f, 0.5f),
-            new Vec3 (0.0f, 0.0f, -0.5f)
+            new Vec3 (0.0f, 0.0f, 0.5f)
         };
 
         target.texCoords = new Vec2[ ]
         {
-            new Vec2 (0.5f, 0.0f),
-            new Vec2 (1.0f, 1.0f),
-            new Vec2 (0.0f, 1.0f)
+            new Vec2 (0.125f, 0.0f),
+            new Vec2 (0.375f, 0.0f),
+            new Vec2 (0.625f, 0.0f),
+            new Vec2 (0.875f, 0.0f),
+
+            new Vec2 (0.0f, 0.5f),
+            new Vec2 (0.25f, 0.5f),
+            new Vec2 (0.5f, 0.5f),
+            new Vec2 (0.75f, 0.5f),
+            new Vec2 (1.0f, 0.5f),
+
+            new Vec2 (0.125f, 1.0f),
+            new Vec2 (0.375f, 1.0f),
+            new Vec2 (0.625f, 1.0f),
+            new Vec2 (0.875f, 1.0f),
         };
 
         target.normals = new Vec3[ ]
         {
-            new Vec3 (0.57735026f, -0.57735026f, 0.57735026f),
-            new Vec3 (-0.57735026f, 0.57735026f, 0.57735026f),
-            new Vec3 (-0.57735026f, -0.57735026f, 0.57735026f),
-            new Vec3 (0.57735026f, 0.57735026f, 0.57735026f),
+            new Vec3 (-0.57735026f, -0.57735026f, -0.57735026f),
+            new Vec3 (0.57735026f, -0.57735026f, -0.57735026f),
             new Vec3 (-0.57735026f, 0.57735026f, -0.57735026f),
             new Vec3 (0.57735026f, 0.57735026f, -0.57735026f),
-            new Vec3 (0.57735026f, -0.57735026f, -0.57735026f),
-            new Vec3 (-0.57735026f, -0.57735026f, -0.57735026f)
+
+            new Vec3 (-0.57735026f, -0.57735026f, 0.57735026f),
+            new Vec3 (0.57735026f, -0.57735026f, 0.57735026f),
+            new Vec3 (-0.57735026f, 0.57735026f, 0.57735026f),
+            new Vec3 (0.57735026f, 0.57735026f, 0.57735026f),
         };
 
-        // TODO: Update these functions to use Loop3.Resize instead?
-        target.loops = new Loop3[ ]
-        {
-            new Loop3 (
-            new Index3 (0, 2, 0),
-            new Index3 (1, 1, 0),
-            new Index3 (4, 0, 0)),
-            new Loop3 (
-            new Index3 (1, 2, 3),
-            new Index3 (3, 1, 3),
-            new Index3 (4, 0, 3)),
-            new Loop3 (
-            new Index3 (3, 2, 1),
-            new Index3 (2, 1, 1),
-            new Index3 (4, 0, 1)),
-            new Loop3 (
-            new Index3 (2, 2, 2),
-            new Index3 (0, 1, 2),
-            new Index3 (4, 0, 2)),
-            new Loop3 (
-            new Index3 (2, 2, 4),
-            new Index3 (3, 1, 4),
-            new Index3 (5, 0, 4)),
-            new Loop3 (
-            new Index3 (3, 2, 5),
-            new Index3 (1, 1, 5),
-            new Index3 (5, 0, 5)),
-            new Loop3 (
-            new Index3 (1, 2, 6),
-            new Index3 (0, 1, 6),
-            new Index3 (5, 0, 6)),
-            new Loop3 (
-            new Index3 (0, 2, 7),
-            new Index3 (2, 1, 7),
-            new Index3 (5, 0, 7))
-        };
+        Loop3[ ] fs = target.loops = Loop3.Resize (target.loops, 8, 3, true);
+        Loop3.Tri (new Index3 (2, 4, 0), new Index3 (0, 9, 0), new Index3 (1, 5, 0), fs[0]);
+        Loop3.Tri (new Index3 (1, 5, 1), new Index3 (0, 10, 1), new Index3 (3, 6, 1), fs[1]);
+        Loop3.Tri (new Index3 (4, 7, 3), new Index3 (0, 12, 3), new Index3 (2, 8, 3), fs[2]);
+        Loop3.Tri (new Index3 (3, 6, 2), new Index3 (0, 11, 2), new Index3 (4, 7, 2), fs[3]);
+
+        Loop3.Tri (new Index3 (2, 4, 4), new Index3 (1, 5, 4), new Index3 (5, 0, 4), fs[4]);
+        Loop3.Tri (new Index3 (1, 5, 5), new Index3 (3, 6, 5), new Index3 (5, 1, 5), fs[5]);
+        Loop3.Tri (new Index3 (4, 7, 7), new Index3 (2, 8, 7), new Index3 (5, 3, 7), fs[6]);
+        Loop3.Tri (new Index3 (3, 6, 6), new Index3 (4, 7, 6), new Index3 (5, 2, 6), fs[7]);
 
         return target;
     }

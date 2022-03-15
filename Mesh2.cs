@@ -82,7 +82,11 @@ public class Mesh2
     /// <summary>
     /// The default constructor.
     /// </summary>
-    public Mesh2 ( ) { }
+    public Mesh2 ( )
+    {
+        // TODO: All loops are classes and so need to be resized,
+        // then reset as references, rather than making new allocations.
+    }
 
     /// <summary>
     /// Constructs a mesh from data.
@@ -90,7 +94,10 @@ public class Mesh2
     /// <param name="loops">loops</param>
     /// <param name="coords">coordinates</param>
     /// <param name="texCoords">texture coordinates</param>
-    public Mesh2 (in Loop2[ ] loops, in Vec2[ ] coords, in Vec2[ ] texCoords)
+    public Mesh2 ( //
+        in Loop2[ ] loops, //
+        in Vec2[ ] coords, //
+        in Vec2[ ] texCoords)
     {
         this.loops = loops;
         this.coords = coords;
@@ -294,32 +301,6 @@ public class Mesh2
         return arr;
     }
 
-    public Mesh2 Set (in Mesh2 source)
-    {
-        // TODO: Test
-
-        int vsLen = source.coords.Length;
-        this.coords = new Vec2[vsLen];
-        System.Array.Copy (source.coords, this.coords, vsLen);
-
-        int vtsLen = source.texCoords.Length;
-        this.texCoords = new Vec2[vtsLen];
-        System.Array.Copy (source.texCoords, this.texCoords, vtsLen);
-
-        int loopsLen = source.loops.Length;
-        this.loops = new Loop2[loopsLen];
-        for (int i = 0; i < loopsLen; ++i)
-        {
-            Index2[ ] sourceIndices = source.loops[i].Indices;
-            int loopLen = sourceIndices.Length;
-            Index2[ ] targetIndices = new Index2[loopLen];
-            System.Array.Copy (sourceIndices, targetIndices, loopLen);
-            this.loops[i] = new Loop2 (targetIndices);
-        }
-
-        return this;
-    }
-
     public Mesh2 InsetFace (in int faceIndex = 0, in float fac = 0.5f)
     {
         if (fac <= 0.0f) { return this; }
@@ -378,7 +359,6 @@ public class Mesh2
             int vSubdivIdx = vsOldLen + j;
             int vtSubdivIdx = vtsOldLen + j;
 
-            // TODO: This should be a set, since Loop2 is a class.
             loopsNew[j] = new Loop2 (
                 new Index2 (vCornerIdx, vtCornerIdx),
                 new Index2 (vertNext.v, vertNext.vt),
@@ -391,6 +371,114 @@ public class Mesh2
         this.coords = Vec2.Concat (this.coords, vsNew);
         this.texCoords = Vec2.Concat (this.texCoords, vtsNew);
         this.loops = Loop2.Splice (this.loops, i, 1, loopsNew);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Scales this mesh by a uniform scalar.
+    /// Scalar must not be zero.
+    /// </summary>
+    /// <param name="s">scalar</param>
+    /// <returns>this mesh</returns>
+    public Mesh2 Scale (in float s)
+    {
+        if (s != 0.0f)
+        {
+            int vsLen = this.coords.Length;
+            for (int i = 0; i < vsLen; ++i) { this.coords[i] *= s; }
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Scales this mesh by a nonuniform scalar.
+    /// All components of the scalar must be nonzero.
+    /// </summary>
+    /// <param name="s">scalar</param>
+    /// <returns>this mesh</returns>
+    public Mesh2 Scale (in Vec2 s)
+    {
+        if (Vec2.All (s))
+        {
+            int vsLen = this.coords.Length;
+            for (int i = 0; i < vsLen; ++i) { this.coords[i] *= s; }
+        }
+
+        return this;
+    }
+
+    public Mesh2 Set (in Mesh2 source)
+    {
+        // TODO: Test
+
+        int vsLen = source.coords.Length;
+        this.coords = new Vec2[vsLen];
+        System.Array.Copy (source.coords, this.coords, vsLen);
+
+        int vtsLen = source.texCoords.Length;
+        this.texCoords = new Vec2[vtsLen];
+        System.Array.Copy (source.texCoords, this.texCoords, vtsLen);
+
+        int loopsLen = source.loops.Length;
+        this.loops = new Loop2[loopsLen];
+        for (int i = 0; i < loopsLen; ++i)
+        {
+            Index2[ ] sourceIndices = source.loops[i].Indices;
+            int loopLen = sourceIndices.Length;
+            Index2[ ] targetIndices = new Index2[loopLen];
+            System.Array.Copy (sourceIndices, targetIndices, loopLen);
+            this.loops[i] = new Loop2 (targetIndices);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Transforms a mesh by an affine transform matrix.
+    /// </summary>
+    /// <param name="m">affine transform</param>
+    /// <returns>this mesh</returns>
+    public Mesh2 Transform (in Mat3 m)
+    {
+        int vsLen = this.coords.Length;
+        for (int i = 0; i < vsLen; ++i)
+        {
+            this.coords[i] = Mat3.MulPoint (m, this.coords[i]);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Transforms a mesh by a transform
+    /// </summary>
+    /// <param name="t">transform</param>
+    /// <returns>this mesh</returns>
+    public Mesh2 Transform (in Transform2 t)
+    {
+        int vsLen = this.coords.Length;
+        for (int i = 0; i < vsLen; ++i)
+        {
+            this.coords[i] = Transform2.MulPoint (t, this.coords[i]);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Moves this mesh's coordinates by a vector.
+    /// </summary>
+    /// <param name="t">translation</param>
+    /// <returns>this mesh</returns>
+    public Mesh2 Translate (in Vec2 t)
+    {
+        int vsLen = this.coords.Length;
+        for (int i = 0; i < vsLen; ++i)
+        {
+            this.coords[i] += t;
+        }
 
         return this;
     }

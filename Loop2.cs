@@ -7,8 +7,15 @@ using System.Text;
 /// </summary>
 public class Loop2
 {
+    /// <summary>
+    /// Array of compound vertex indices.
+    /// </summary>
     protected Index2[ ] indices;
 
+    /// <summary>
+    /// Array of compound vertex indices.
+    /// </summary>
+    /// <value>the index</value>
     public Index2[ ] Indices
     {
         get
@@ -22,6 +29,10 @@ public class Loop2
         }
     }
 
+    /// <summary>
+    /// The number of vertex indices in this loops.
+    /// </summary>
+    /// <value>the length</value>
     public int Length { get { return this.indices.Length; } }
 
     /// <summary>
@@ -39,14 +50,6 @@ public class Loop2
         set
         {
             this.indices[Utils.RemFloor (i, this.indices.Length)] = value;
-        }
-    }
-
-    public int this [int i, int j]
-    {
-        get
-        {
-            return this [i][j];
         }
     }
 
@@ -69,16 +72,28 @@ public class Loop2
         this.indices = new Index2[length < 3 ? 3 : length];
     }
 
+    /// <summary>
+    /// Constructs a loop from an index array.
+    /// </summary>
+    /// <param name="indices">indices</param>
     public Loop2 (in Index2[ ] indices)
     {
         this.indices = indices;
     }
 
+    /// <summary>
+    /// Constructs a loop from a list of indices.
+    /// </summary>
+    /// <param name="indices">indices</param>
     public Loop2 (params Index2[ ] indices)
     {
         this.indices = indices;
     }
 
+    /// <summary>
+    /// Returns a string representation of this loop.
+    /// </summary>
+    /// <returns>the string</returns>
     public override string ToString ( )
     {
         return Loop2.ToString (this);

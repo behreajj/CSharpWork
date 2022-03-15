@@ -361,7 +361,7 @@ public readonly struct Mat3 : IEnumerable
     /// <returns>the string</returns>
     public override string ToString ( )
     {
-        return this.ToString (4);
+        return Mat3.ToString (this);
     }
 
     /// <summary>
@@ -432,41 +432,6 @@ public readonly struct Mat3 : IEnumerable
             { this._m10, this._m11, this._m12 }, //
             { this._m20, this._m21, this._m22 }
         };
-    }
-
-    /// <summary>
-    /// Returns a string representation of this matrix.
-    /// </summary>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>the string</returns>
-    public string ToString (in int places = 4)
-    {
-
-        // TODO: Switch to static sb by reference method.
-        return new StringBuilder (128)
-            .Append ("{ m00: ")
-            .Append (Utils.ToFixed (this._m00, places))
-            .Append (", m01: ")
-            .Append (Utils.ToFixed (this._m01, places))
-            .Append (", m02: ")
-            .Append (Utils.ToFixed (this._m02, places))
-
-            .Append (", m10: ")
-            .Append (Utils.ToFixed (this._m10, places))
-            .Append (", m11: ")
-            .Append (Utils.ToFixed (this._m11, places))
-            .Append (", m12: ")
-            .Append (Utils.ToFixed (this._m12, places))
-
-            .Append (", m20: ")
-            .Append (Utils.ToFixed (this._m20, places))
-            .Append (", m21: ")
-            .Append (Utils.ToFixed (this._m21, places))
-            .Append (", m22: ")
-            .Append (Utils.ToFixed (this._m22, places))
-
-            .Append (" }")
-            .ToString ( );
     }
 
     /// <summary>
@@ -1112,6 +1077,51 @@ public readonly struct Mat3 : IEnumerable
             m._m20, m._m10, m._m00,
             m._m21, m._m11, m._m01,
             m._m22, m._m12, m._m02);
+    }
+
+    /// <summary>
+    /// Returns a string representation of a matrix.
+    /// </summary>
+    /// <param name="m">matrix</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    public static string ToString (in Mat3 m, in int places = 4)
+    {
+        return Mat3.ToString (new StringBuilder (256), m, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a representation of a matrix to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="m">matrix</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Mat3 m, in int places = 4)
+    {
+        sb.Append ("{ m00: ");
+        Utils.ToFixed (sb, m._m00, places);
+        sb.Append (", m01: ");
+        Utils.ToFixed (sb, m._m01, places);
+        sb.Append (", m02: ");
+        Utils.ToFixed (sb, m._m02, places);
+
+        sb.Append (", m10: ");
+        Utils.ToFixed (sb, m._m10, places);
+        sb.Append (", m11: ");
+        Utils.ToFixed (sb, m._m11, places);
+        sb.Append (", m12: ");
+        Utils.ToFixed (sb, m._m12, places);
+
+        sb.Append (", m20: ");
+        Utils.ToFixed (sb, m._m20, places);
+        sb.Append (", m21: ");
+        Utils.ToFixed (sb, m._m21, places);
+        sb.Append (", m22: ");
+        Utils.ToFixed (sb, m._m22, places);
+
+        sb.Append (" }");
+        return sb;
     }
 
     /// <summary>
