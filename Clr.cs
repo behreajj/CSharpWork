@@ -401,12 +401,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         switch (order)
         {
             case ColorChannel.ABGR:
-                return Clr.FromHexAbgr (c);
+                { return Clr.FromHexAbgr (c); }
             case ColorChannel.RGBA:
-                return Clr.FromHexRgba (c);
+                { return Clr.FromHexRgba (c); }
             case ColorChannel.ARGB:
             default:
-                return Clr.FromHexArgb (c);
+                { return Clr.FromHexArgb (c); }
         }
     }
 
@@ -560,19 +560,19 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         switch (sector)
         {
             case 0:
-                return new Clr (v, tint3, tint1, a);
+                { return new Clr (v, tint3, tint1, a); }
             case 1:
-                return new Clr (tint2, v, tint1, a);
+                { return new Clr (tint2, v, tint1, a); }
             case 2:
-                return new Clr (tint1, v, tint3, a);
+                { return new Clr (tint1, v, tint3, a); }
             case 3:
-                return new Clr (tint1, tint2, v, a);
+                { return new Clr (tint1, tint2, v, a); }
             case 4:
-                return new Clr (tint3, tint1, v, a);
+                { return new Clr (tint3, tint1, v, a); }
             case 5:
-                return new Clr (v, tint1, tint2, a);
+                { return new Clr (v, tint1, tint2, a); }
             default:
-                return Clr.White;
+                { return Clr.White; }
         }
     }
 
@@ -1306,12 +1306,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         switch (order)
         {
             case ColorChannel.ABGR:
-                return Clr.ToHexAbgr (c);
+                { return Clr.ToHexAbgr (c); }
             case ColorChannel.RGBA:
-                return Clr.ToHexRgba (c);
+                { return Clr.ToHexRgba (c); }
             case ColorChannel.ARGB:
             default:
-                return Clr.ToHexArgb (c);
+                { return Clr.ToHexArgb (c); }
         }
     }
 
@@ -1357,12 +1357,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         switch (order)
         {
             case ColorChannel.ABGR:
-                return Clr.ToHexAbgrUnchecked (c);
+                { return Clr.ToHexAbgrUnchecked (c); }
             case ColorChannel.RGBA:
-                return Clr.ToHexRgbaUnchecked (c);
+                { return Clr.ToHexRgbaUnchecked (c); }
             case ColorChannel.ARGB:
             default:
-                return Clr.ToHexArgbUnchecked (c);
+                { return Clr.ToHexArgbUnchecked (c); }
         }
     }
 

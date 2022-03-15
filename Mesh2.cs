@@ -554,66 +554,66 @@ public class Mesh2
         switch (poly)
         {
             case PolyType.Ngon:
-
-                len = sctCount2;
-                int last = len - 1;
-                target.loops = new Loop2[ ] { new Loop2 (len) };
-                Loop2 indices = target.loops[0];
-
-                for (int i = 0, j = 0; i < sctCount; ++i, j += 2)
                 {
-                    int k = sctCount + i;
-                    int m = last - j;
-                    indices[i] = new Index2 (j, j);
-                    indices[k] = new Index2 (m, m);
-                }
+                    len = sctCount2;
+                    int last = len - 1;
+                    target.loops = new Loop2[ ] { new Loop2 (len) };
+                    Loop2 indices = target.loops[0];
 
+                    for (int i = 0, j = 0; i < sctCount; ++i, j += 2)
+                    {
+                        int k = sctCount + i;
+                        int m = last - j;
+                        indices[i] = new Index2 (j, j);
+                        indices[k] = new Index2 (m, m);
+                    }
+                }
                 break;
 
             case PolyType.Quad:
-
-                len = sctCount - 1;
-                target.loops = Loop2.Resize (target.loops, len, 4, true);
-
-                for (int k = 0, i = 0, j = 1; k < len; ++k, i += 2, j += 2)
                 {
-                    int m = i + 2;
-                    int n = j + 2;
+                    len = sctCount - 1;
+                    target.loops = Loop2.Resize (target.loops, len, 4, true);
 
-                    Loop2.Quad (
-                        new Index2 (i, i),
-                        new Index2 (m, m),
-                        new Index2 (n, n),
-                        new Index2 (j, j),
-                        target.loops[k]);
+                    for (int k = 0, i = 0, j = 1; k < len; ++k, i += 2, j += 2)
+                    {
+                        int m = i + 2;
+                        int n = j + 2;
+
+                        Loop2.Quad (
+                            new Index2 (i, i),
+                            new Index2 (m, m),
+                            new Index2 (n, n),
+                            new Index2 (j, j),
+                            target.loops[k]);
+                    }
                 }
-
                 break;
 
             case PolyType.Tri:
             default:
-
-                len = sctCount2 - 2;
-                target.loops = Loop2.Resize (target.loops, len, 3, true);
-
-                for (int i = 0, j = 1; i < len; i += 2, j += 2)
                 {
-                    int m = i + 2;
-                    int n = j + 2;
+                    len = sctCount2 - 2;
+                    target.loops = Loop2.Resize (target.loops, len, 3, true);
 
-                    Loop2.Tri (
-                        new Index2 (i, i),
-                        new Index2 (m, m),
-                        new Index2 (j, j),
-                        target.loops[i]);
+                    for (int i = 0, j = 1; i < len; i += 2, j += 2)
+                    {
+                        int m = i + 2;
+                        int n = j + 2;
 
-                    Loop2.Tri (
-                        new Index2 (m, m),
-                        new Index2 (n, n),
-                        new Index2 (j, j),
-                        target.loops[j]);
+                        Loop2.Tri (
+                            new Index2 (i, i),
+                            new Index2 (m, m),
+                            new Index2 (j, j),
+                            target.loops[i]);
+
+                        Loop2.Tri (
+                            new Index2 (m, m),
+                            new Index2 (n, n),
+                            new Index2 (j, j),
+                            target.loops[j]);
+                    }
                 }
-
                 break;
         }
 
