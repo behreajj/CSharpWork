@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Text;
 
 /// <summary>
@@ -257,6 +256,75 @@ public class Knot3
             this.rearHandle = this.coord + (flipRescale * fDir);
         }
 
+        return this;
+    }
+
+    /// <summary>
+    /// Negates the x component of a knot's
+    /// coordinate and handles, flipping it
+    /// about the x axis.
+    /// </summary>
+    /// <returns>this knot</returns>
+    public Knot3 FlipX ( )
+    {
+        this.coord = new Vec3 ( //
+            -this.coord.x,
+            this.coord.y,
+            this.coord.z);
+        this.foreHandle = new Vec3 ( //
+            -this.foreHandle.x,
+            this.foreHandle.y,
+            this.foreHandle.z);
+        this.rearHandle = new Vec3 ( //
+            -this.rearHandle.x,
+            this.rearHandle.y,
+            this.rearHandle.z);
+        return this;
+    }
+
+    /// <summary>
+    /// Negates the y component of a knot's
+    /// coordinate and handles, flipping it
+    /// about the y axis.
+    /// </summary>
+    /// <returns>this knot</returns>
+    public Knot3 FlipY ( )
+    {
+        this.coord = new Vec3 (
+            this.coord.x, //
+            -this.coord.y,
+            this.coord.z);
+        this.foreHandle = new Vec3 (
+            this.foreHandle.x, //
+            -this.foreHandle.y,
+            this.foreHandle.z);
+        this.rearHandle = new Vec3 (
+            this.rearHandle.x, //
+            -this.rearHandle.y,
+            this.rearHandle.z);
+        return this;
+    }
+
+    /// <summary>
+    /// Negates the z component of a knot's
+    /// coordinate and handles, flipping it
+    /// about the z axis.
+    /// </summary>
+    /// <returns>this knot</returns>
+    public Knot3 FlipZ ( )
+    {
+        this.coord = new Vec3 (
+            this.coord.x,
+            this.coord.y, //
+            -this.coord.z);
+        this.foreHandle = new Vec3 (
+            this.foreHandle.x,
+            this.foreHandle.y, //
+            -this.foreHandle.z);
+        this.rearHandle = new Vec3 (
+            this.rearHandle.x,
+            this.rearHandle.y, //
+            -this.rearHandle.z);
         return this;
     }
 

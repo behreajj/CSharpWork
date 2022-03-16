@@ -110,10 +110,9 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// <returns>evaluation</returns>
     public int CompareTo (Vert3 v)
     {
-        int nrComp = this.normal.CompareTo (v.normal);
-        int tcComp = this.texCoord.CompareTo (v.texCoord);
         int coComp = this.coord.CompareTo (v.coord);
-
+        int tcComp = this.texCoord.CompareTo (v.texCoord);
+        int nrComp = this.normal.CompareTo (v.normal);
         return coComp != 0 ? coComp : nrComp != 0 ? nrComp : tcComp;
     }
 
@@ -131,11 +130,24 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
         return true;
     }
 
+    /// <summary>
+    /// Returns a string representation of a vertex.
+    /// </summary>
+    /// <param name="v">vertex</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
     public static string ToString (in Vert3 v, in int places = 4)
     {
         return Vert3.ToString (new StringBuilder (256), v, places).ToString ( );
     }
 
+    /// <summary>
+    /// Appends a representation of an vertex to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="v">vertex</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
     public static StringBuilder ToString (in StringBuilder sb, in Vert3 v, in int places = 4)
     {
         sb.Append ("{ coord: ");

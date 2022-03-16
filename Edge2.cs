@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Text;
 
 /// <summary>
@@ -109,26 +108,57 @@ public readonly struct Edge2 : IEquatable<Edge2>
             Vec2.Approx (a.dest.Coord, b.origin.Coord, tolerance);
     }
 
+    /// <summary>
+    /// Finds the heading of an edge based on its origin
+    /// and destination coordinates.
+    /// </summary>
+    /// <param name="e">edgge</param>
+    /// <returns>heading</returns>
     public static float Heading (in Edge2 e)
     {
         return Vec2.HeadingSigned (e.dest.Coord - e.origin.Coord);
     }
 
+    /// <summary>
+    /// Finds the magnitude of an edge based on its origin
+    /// and destination coordinates.
+    /// </summary>
+    /// <param name="e">edgge</param>
+    /// <returns>magnitude</returns>
     public static float Mag (in Edge2 e)
     {
         return Vec2.DistEuclidean (e.origin.Coord, e.dest.Coord);
     }
 
+    /// <summary>
+    /// Finds the square magnitude of an edge based on its origin
+    /// and destination coordinates.
+    /// </summary>
+    /// <param name="e">edgge</param>
+    /// <returns>magnitude squared</returns>
     public static float MagSq (in Edge2 e)
     {
         return Vec2.DistSq (e.origin.Coord, e.dest.Coord);
     }
 
+    /// <summary>
+    /// Returns a string representation of an edge.
+    /// </summary>
+    /// <param name="e">edge</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
     public static string ToString (in Edge2 e, in int places = 4)
     {
         return Edge2.ToString (new StringBuilder (256), e, places).ToString ( );
     }
 
+    /// <summary>
+    /// Appends a representation of an edge to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="e">edge</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
     public static StringBuilder ToString (in StringBuilder sb, in Edge2 e, in int places = 4)
     {
         sb.Append ("{ origin: ");

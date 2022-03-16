@@ -100,6 +100,16 @@ public class Loop3
     }
 
     /// <summary>
+    /// Reverses the indices in this loop.
+    /// </summary>
+    /// <returns>this loop</returns>
+    public Loop3 Reverse ( )
+    {
+        Array.Reverse (this.indices);
+        return this;
+    }
+
+    /// <summary>
     /// Promotes a 2D mesh loop to a 3D loop.
     /// </summary>
     /// <param name="source">2D loop</param>

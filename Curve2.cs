@@ -164,6 +164,28 @@ public class Curve2 : IEnumerable
     }
 
     /// <summary>
+    /// Flips this curve on the x axis, then reverses the curve.
+    /// </summary>
+    /// <returns>this curve</returns>
+    public Curve2 FlipX ( )
+    {
+        this.knots.Reverse ( );
+        foreach (Knot2 kn in this.knots) { kn.FlipX ( ); kn.Reverse ( ); }
+        return this;
+    }
+
+    /// <summary>
+    /// Flips this curve on the y axis, then reverses the curve.
+    /// </summary>
+    /// <returns>this curve</returns>
+    public Curve2 FlipY ( )
+    {
+        this.knots.Reverse ( );
+        foreach (Knot2 kn in this.knots) { kn.FlipY ( ); kn.Reverse ( ); }
+        return this;
+    }
+
+    /// <summary>
     /// Gets the enumerator for this curve.
     /// </summary>
     /// <returns>the enumerator</returns>
@@ -543,12 +565,12 @@ public class Curve2 : IEnumerable
         sb.Append ("{ closedLoop: ");
         sb.Append (c.closedLoop ? "false" : "true");
         sb.Append (", knots: [ ");
-        for (int i = 0; i < len; ++i)
+        for (int i = 0; i < last; ++i)
         {
-            Knot2 knot = knots[i];
-            Knot2.ToString (sb, knot, places);
-            if (i < last) { sb.Append (", "); }
+            Knot2.ToString (sb, knots[i], places);
+            sb.Append (", ");
         }
+        Knot2.ToString (sb, knots[last], places);
         sb.Append (" ] }");
         return sb;
     }

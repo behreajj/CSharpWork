@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Text;
 
 /// <summary>
@@ -250,6 +249,46 @@ public class Knot2
             this.rearHandle = this.coord + (flipRescale * fDir);
         }
 
+        return this;
+    }
+
+    /// <summary>
+    /// Negates the x component of a knot's
+    /// coordinate and handles, flipping it
+    /// about the x axis.
+    /// </summary>
+    /// <returns>this knot</returns>
+    public Knot2 FlipX ( )
+    {
+        this.coord = new Vec2 ( //
+            -this.coord.x,
+            this.coord.y);
+        this.foreHandle = new Vec2 ( //
+            -this.foreHandle.x,
+            this.foreHandle.y);
+        this.rearHandle = new Vec2 ( //
+            -this.rearHandle.x,
+            this.rearHandle.y);
+        return this;
+    }
+
+    /// <summary>
+    /// Negates the y component of a knot's
+    /// coordinate and handles, flipping it
+    /// about the y axis.
+    /// </summary>
+    /// <returns>this knot</returns>
+    public Knot2 FlipY ( )
+    {
+        this.coord = new Vec2 (
+            this.coord.x, //
+            -this.coord.y);
+        this.foreHandle = new Vec2 (
+            this.foreHandle.x, //
+            -this.foreHandle.y);
+        this.rearHandle = new Vec2 (
+            this.rearHandle.x, //
+            -this.rearHandle.y);
         return this;
     }
 

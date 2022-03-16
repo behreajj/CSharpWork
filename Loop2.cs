@@ -100,6 +100,16 @@ public class Loop2
     }
 
     /// <summary>
+    /// Reverses the indices in this loop.
+    /// </summary>
+    /// <returns>this loop</returns>
+    public Loop2 Reverse ( )
+    {
+        Array.Reverse (this.indices);
+        return this;
+    }
+
+    /// <summary>
     /// Convenience method. Sets the target loop's indices to a new array
     /// created from the arguments. Creates a hexagon.
     /// </summary>

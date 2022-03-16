@@ -178,6 +178,39 @@ public class Curve3 : IEnumerable
     }
 
     /// <summary>
+    /// Flips this curve on the x axis, then reverses the curve.
+    /// </summary>
+    /// <returns>this curve</returns>
+    public Curve3 FlipX ( )
+    {
+        this.knots.Reverse ( );
+        foreach (Knot3 kn in this.knots) { kn.FlipX ( ); kn.Reverse ( ); }
+        return this;
+    }
+
+    /// <summary>
+    /// Flips this curve on the y axis, then reverses the curve.
+    /// </summary>
+    /// <returns>this curve</returns>
+    public Curve3 FlipY ( )
+    {
+        this.knots.Reverse ( );
+        foreach (Knot3 kn in this.knots) { kn.FlipY ( ); kn.Reverse ( ); }
+        return this;
+    }
+
+    /// <summary>
+    /// Flips this curve on the z axis, then reverses the curve.
+    /// </summary>
+    /// <returns>this curve</returns>
+    public Curve3 FlipZ ( )
+    {
+        this.knots.Reverse ( );
+        foreach (Knot3 kn in this.knots) { kn.FlipZ ( ); kn.Reverse ( ); }
+        return this;
+    }
+
+    /// <summary>
     /// Gets the enumerator for this curve.
     /// </summary>
     /// <returns>the enumerator</returns>
@@ -569,12 +602,12 @@ public class Curve3 : IEnumerable
         sb.Append ("{ closedLoop: ");
         sb.Append (c.closedLoop ? "false" : "true");
         sb.Append (", knots: [ ");
-        for (int i = 0; i < len; ++i)
+        for (int i = 0; i < last; ++i)
         {
-            Knot3 knot = knots[i];
-            Knot3.ToString (sb, knot, places);
-            if (i < last) { sb.Append (", "); }
+            Knot3.ToString (sb, knots[i], places);
+            sb.Append (", ");
         }
+        Knot3.ToString (sb, knots[last], places);
         sb.Append (" ] }");
         return sb;
     }

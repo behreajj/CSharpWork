@@ -94,10 +94,8 @@ public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>
     /// <returns>evaluation</returns>
     public int CompareTo (Vert2 v)
     {
-        int tcComp = this.texCoord.CompareTo (v.texCoord);
         int coComp = this.coord.CompareTo (v.coord);
-
-        // return tcComp != 0 ? tcComp : coComp;
+        int tcComp = this.texCoord.CompareTo (v.texCoord);
         return coComp != 0 ? coComp : tcComp;
     }
 
@@ -114,11 +112,24 @@ public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>
         return true;
     }
 
+    /// <summary>
+    /// Returns a string representation of a vertex.
+    /// </summary>
+    /// <param name="v">vertex</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
     public static string ToString (in Vert2 v, in int places = 4)
     {
         return Vert2.ToString (new StringBuilder (256), v, places).ToString ( );
     }
 
+    /// <summary>
+    /// Appends a representation of an vertex to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="v">vertex</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
     public static StringBuilder ToString (in StringBuilder sb, in Vert2 v, in int places = 4)
     {
         sb.Append ("{ coord: ");

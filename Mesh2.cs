@@ -141,18 +141,25 @@ public class Mesh2
         float xInv = 1.0f / dim.x;
         float yInv = 1.0f / dim.y;
 
-        int len = this.coords.Length;
-        this.texCoords = Vec2.Resize (this.texCoords, len);
-        for (int i = 0; i < len; ++i)
+        float sAspect = 1.0f;
+        float tAspect = 1.0f;
+        if (dim.x < dim.y) { sAspect = dim.x / dim.y; }
+        else if (dim.x > dim.y) { tAspect = dim.y / dim.x; }
+
+        int vsLen = this.coords.Length;
+        this.texCoords = Vec2.Resize (this.texCoords, vsLen);
+        for (int i = 0; i < vsLen; ++i)
         {
             Vec2 v = this.coords[i];
-            this.texCoords[i] = new Vec2 (
-                (v.x - lbx) * xInv,
-                1.0f - (v.y - lb.y) * yInv);
+            float sStretch = (v.x - lbx) * xInv;
+            float tStretch = (v.y - lb.y) * yInv;
+            float s = (sStretch - 0.5f) * sAspect + 0.5f;
+            float t = (tStretch - 0.5f) * tAspect + 0.5f;
+            this.texCoords[i] = new Vec2 (s, 1.0f - t);
         }
 
-        int loopsLen = this.loops.Length;
-        for (int i = 0; i < loopsLen; ++i)
+        int facesLen = this.loops.Length;
+        for (int i = 0; i < facesLen; ++i)
         {
             Loop2 loop = this.loops[i];
             Index2[ ] srcIndices = loop.Indices;
@@ -261,6 +268,74 @@ public class Mesh2
     }
 
     /// <summary>
+    /// Negates the x component of all texture coordinates (u) in the mesh.
+    /// Does so by subtracting the value from 1.0.
+    /// </summary>
+    /// <returns>this mesh.</returns>
+    public Mesh2 FlipU ( )
+    {
+        int vtsLen = this.texCoords.Length;
+        for (int i = 0; i < vtsLen; ++i)
+        {
+            Vec2 vt = this.texCoords[i];
+            this.texCoords[i] = new Vec2 (1.0f - vt.x, vt.y);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Negates the y component of all texture coordinates (v) in the mesh.
+    /// Does so by subtracting the value from 1.0.
+    /// </summary>
+    /// <returns>this mesh.</returns>
+    public Mesh2 FlipV ( )
+    {
+        int vtsLen = this.texCoords.Length;
+        for (int i = 0; i < vtsLen; ++i)
+        {
+            Vec2 vt = this.texCoords[i];
+            this.texCoords[i] = new Vec2 (vt.x, 1.0f - vt.y);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Negates the x component of all coordinates in the mesh,
+    /// then reverses the mesh's faces.
+    /// Use this instead of scaling the mesh by (-1.0, 1.0).
+    /// </summary>
+    /// <returns>this mesh</returns>
+    public Mesh2 FlipX ( )
+    {
+        int vsLen = this.coords.Length;
+        for (int i = 0; i < vsLen; ++i)
+        {
+            Vec2 v = this.coords[i];
+            this.coords[i] = new Vec2 (-v.x, v.y);
+        }
+        this.ReverseFaces ( );
+        return this;
+    }
+
+    /// <summary>
+    /// Negates the y component of all coordinates in the mesh,
+    /// then reverses the mesh's faces.
+    /// Use this instead of scaling the mesh by (1.0, -1.0).
+    /// </summary>
+    /// <returns>this mesh</returns>
+    public Mesh2 FlipY ( )
+    {
+        int vsLen = this.coords.Length;
+        for (int i = 0; i < vsLen; ++i)
+        {
+            Vec2 v = this.coords[i];
+            this.coords[i] = new Vec2 (v.x, -v.y);
+        }
+        this.ReverseFaces ( );
+        return this;
+    }
+
+    /// <summary>
     /// Gets a vertex from the mesh.
     /// </summary>
     /// <param name="faceIndex">face index</param>
@@ -301,13 +376,20 @@ public class Mesh2
         return arr;
     }
 
-    public Mesh2 InsetFace (in int faceIndex = 0, in float fac = 0.5f)
+    public (Loop2[ ] loopsNew, Vec2[ ] vsNew, Vec2[ ] vtsNew) InsetFace (in int faceIndex = 0, in float fac = 0.5f)
     {
-        if (fac <= 0.0f) { return this; }
+        if (fac <= 0.0f)
+        {
+            return (loopsNew: new Loop2[0],
+                vsNew: new Vec2[0],
+                vtsNew: new Vec2[0]);
+        }
         if (fac >= 1.0f)
         {
-            // TODO: Implement subdivFaceFan.
-            return this;
+            var tup = this.SubdivFaceFan (faceIndex);
+            return (loopsNew: tup.loopsNew,
+                vsNew: new Vec2[ ] { tup.vNew },
+                vtsNew: new Vec2[ ] { tup.vtNew });
         }
 
         int loopsLen = this.loops.Length;
@@ -372,6 +454,20 @@ public class Mesh2
         this.texCoords = Vec2.Concat (this.texCoords, vtsNew);
         this.loops = Loop2.Splice (this.loops, i, 1, loopsNew);
 
+        return (loopsNew: loopsNew, vsNew: vsNew, vtsNew: vtsNew);
+    }
+
+    /// <summary>
+    /// Reverses all the face loops in this mesh.
+    /// </summary>
+    /// <returns>this mesh</returns>
+    public Mesh2 ReverseFaces ( )
+    {
+        int fsLen = this.loops.Length;
+        for (int i = 0; i < fsLen; ++i)
+        {
+            this.loops[i].Reverse ( );
+        }
         return this;
     }
 
@@ -436,6 +532,67 @@ public class Mesh2
     }
 
     /// <summary>
+    /// Subdivides a convex face by calculating its center, then connecting its
+    /// vertices to the center. This generates a triangle for the number of
+    /// edges in the face.
+    /// </summary>
+    /// <param name="faceIdx">the face index</param>
+    /// <returns>new data</returns>
+    public (Loop2[ ] loopsNew, Vec2 vNew, Vec2 vtNew) SubdivFaceFan (in int faceIdx)
+    {
+        // TODO: Even though this creates only one center, maybe return arrays in tuple anyway?
+
+        int facesLen = this.loops.Length;
+        int i = Utils.RemFloor (faceIdx, facesLen);
+        Index2[ ] face = this.loops[i].Indices;
+        int faceLen = face.Length;
+
+        Loop2[ ] fsNew = new Loop2[faceLen];
+        Vec2 vCenter = new Vec2 ( );
+        Vec2 vtCenter = new Vec2 ( );
+
+        int vCenterIdx = this.coords.Length;
+        int vtCenterIdx = this.texCoords.Length;
+
+        for (int j = 0; j < faceLen; ++j)
+        {
+            int k = (j + 1) % faceLen;
+
+            Index2 vertCurr = face[j];
+            Index2 vertNext = face[k];
+
+            int vCurrIdx = vertCurr.v;
+            int vtCurrIdx = vertCurr.vt;
+
+            Vec2 vCurr = this.coords[vCurrIdx];
+            Vec2 vtCurr = this.texCoords[vtCurrIdx];
+
+            vCenter += vCurr;
+            vtCenter += vtCurr;
+
+            fsNew[j] = new Loop2 (
+                new Index2 (vCenterIdx, vtCenterIdx),
+                new Index2 (vCurrIdx, vtCurrIdx),
+                new Index2 (vertNext.v, vertNext.vt));
+        }
+
+        if (faceLen > 0)
+        {
+            float flInv = 1.0f / faceLen;
+            vCenter *= flInv;
+            vtCenter *= flInv;
+        }
+
+        this.coords = Vec2.Append (this.coords, vCenter);
+        this.texCoords = Vec2.Append (this.texCoords, vtCenter);
+        this.loops = Loop2.Splice (this.loops, i, 1, fsNew);
+
+        return (loopsNew: fsNew,
+            vNew: vCenter,
+            vtNew: vtCenter);
+    }
+
+    /// <summary>
     /// Transforms a mesh by an affine transform matrix.
     /// </summary>
     /// <param name="m">affine transform</param>
@@ -475,10 +632,7 @@ public class Mesh2
     public Mesh2 Translate (in Vec2 t)
     {
         int vsLen = this.coords.Length;
-        for (int i = 0; i < vsLen; ++i)
-        {
-            this.coords[i] += t;
-        }
+        for (int i = 0; i < vsLen; ++i) { this.coords[i] += t; }
 
         return this;
     }
@@ -495,6 +649,7 @@ public class Mesh2
         float a1 = Utils.WrapRadians (startAngle) * Utils.OneTau;
         float b1 = Utils.WrapRadians (stopAngle) * Utils.OneTau;
         float arcLen1 = Utils.RemFloor (b1 - a1, 1.0f);
+        float oculFac = Utils.Clamp (oculus, Utils.Epsilon, 1.0f - Utils.Epsilon);
 
         /* 1.0 / 720.0 = 0.001388889f */
         if (arcLen1 < 0.00139f)
@@ -505,7 +660,7 @@ public class Mesh2
                 radius: radius,
                 rotation: startAngle,
                 poly: PolyType.Ngon);
-            target.InsetFace (0, 1.0f - oculus);
+            target.InsetFace (0, oculFac);
             target.DeleteFaces (-1, 1);
             return target;
         }
@@ -518,7 +673,6 @@ public class Mesh2
             sctCount2);
 
         float rad = Utils.Max (Utils.Epsilon, radius);
-        float oculFac = Utils.Clamp (oculus, Utils.Epsilon, 1.0f - Utils.Epsilon);
         float oculRad = oculFac * rad;
         float oculRadVt = oculFac * 0.5f;
 
@@ -1069,25 +1223,13 @@ public class Mesh2
         float vScl = 1.0f;
         if (profile == UvProfiles.Rect.Contain)
         {
-            if (w < h)
-            {
-                uScl = w / h;
-            }
-            else if (w > h)
-            {
-                vScl = h / w;
-            }
+            if (w < h) { uScl = w / h; }
+            else if (w > h) { vScl = h / w; }
         }
         else if (profile == UvProfiles.Rect.Cover)
         {
-            if (w < h)
-            {
-                vScl = h / w;
-            }
-            else if (w > h)
-            {
-                uScl = w / h;
-            }
+            if (w < h) { vScl = h / w; }
+            else if (w > h) { uScl = w / h; }
         }
 
         // Validate corner insetting factor.
