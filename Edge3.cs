@@ -131,6 +131,32 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
         return Vec3.AzimuthSigned (e.dest.Coord - e.origin.Coord);
     }
 
+    ///<summary>
+    ///Finds the center of the edge.
+    ///</summary>
+    ///<param name="e">edge</param>
+    ///<returns>center</returns>
+    public static Vec3 Center (in Edge3 e)
+    {
+        return Vec3.Mix (e.origin.Coord, e.dest.Coord);
+    }
+
+    ///<summary>
+    ///Finds a point on an edge according to a factor in
+    ///[0.0, 1.0]. Returns the origin when the factor
+    ///is less than zero; returns the destination when
+    ///the factor is greater then one.
+    ///</summary>
+    ///<param name="e">edge</param>
+    ///<param name="t">factor</param>
+    ///<returns>point</returns>
+    public static Vec3 Eval (in Edge3 e, in float t = 0.5f)
+    {
+        if (t <= 0.0f) { return e.origin.Coord; }
+        if (t >= 1.0f) { return e.dest.Coord; }
+        return Vec3.Mix (e.origin.Coord, e.dest.Coord, t);
+    }
+
     /// <summary>
     /// Finds the inclination of an edge based on its origin
     /// and destination coordinates.
@@ -175,11 +201,9 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     ///<returns>point</returns>
     public static Vec3 Project (in Vec3 a, in Edge3 b)
     {
-        Vec3 orig = b.origin.Coord;
-        Vec3 dest = b.dest.Coord;
-        return Vec3.Mix (orig, dest, Utils.Clamp (
+        return Edge3.Eval (b,
             Vec3.ProjectScalar (
-                a, dest - orig), 0.0f, 1.0f));
+                a, b.dest.Coord - b.origin.Coord));
     }
 
     /// <summary>
@@ -208,5 +232,61 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
         Vert3.ToString (sb, e.dest, places);
         sb.Append (" }");
         return sb;
+    }
+
+    /// <summary>
+    /// Returns a string representation of an array of edges.
+    /// </summary>
+    /// <param name="arr">array</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    public static string ToString (in Edge3 [ ] arr, in int places = 4)
+    {
+        return Edge3.ToString (new StringBuilder (1024), arr, places).ToString ( );
+    }
+
+    /// <summary>
+    /// Appends a string representation of an array of edges
+    /// to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="arr">array</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToString (in StringBuilder sb, in Edge3 [ ] arr, in int places = 4)
+    {
+        sb.Append ('[');
+        sb.Append (' ');
+
+        if (arr != null)
+        {
+            int len = arr.Length;
+            int last = len - 1;
+
+            for (int i = 0; i < last; ++i)
+            {
+                Edge3.ToString (sb, arr [ i ], places);
+                sb.Append (',');
+                sb.Append (' ');
+            }
+
+            Edge3.ToString (sb, arr [ last ], places);
+            sb.Append (' ');
+        }
+
+        sb.Append (']');
+        return sb;
+    }
+
+    /// <summary>
+    /// Finds an edge's vector, i.e., its origin
+    /// coordinate subtracted from its destination
+    /// coordinate.
+    /// </summary>
+    /// <param name="e">edge</param>
+    ///<returns>vector</returns>
+    public static Vec3 Vector (in Edge3 e)
+    {
+        return e.dest.Coord - e.origin.Coord;
     }
 }

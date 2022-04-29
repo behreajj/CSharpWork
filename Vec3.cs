@@ -78,23 +78,23 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// returns z; 1 or -2, y; 0 or -3, x.
     /// </summary>
     /// <value>the component</value>
-    public float this [int i]
+    public float this [ int i ]
     {
         get
         {
             switch (i)
             {
-                case 0:
-                case -3:
-                    return this._x;
-                case 1:
-                case -2:
-                    return this._y;
-                case 2:
-                case -1:
-                    return this._z;
-                default:
-                    return 0.0f;
+            case 0:
+            case -3:
+                return this._x;
+            case 1:
+            case -2:
+                return this._y;
+            case 2:
+            case -1:
+                return this._z;
+            default:
+                return 0.0f;
             }
         }
     }
@@ -213,9 +213,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Returns a float array of length 3 containing this vector's components.
     /// </summary>
     /// <returns>the array</returns>
-    public float[ ] ToArray ( )
+    public float [ ] ToArray ( )
     {
-        return this.ToArray (new float[this.Length], 0);
+        return this.ToArray (new float [ this.Length ], 0);
     }
 
     /// <summary>
@@ -224,11 +224,11 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="i">index</param>
     /// <returns>array</returns>
-    public float[ ] ToArray (in float[ ] arr, in int i = 0)
+    public float [ ] ToArray (in float [ ] arr, in int i = 0)
     {
-        arr[i] = this._x;
-        arr[i + 1] = this._y;
-        arr[i + 2] = this._z;
+        arr [ i ] = this._x;
+        arr [ i + 1 ] = this._y;
+        arr [ i + 2 ] = this._z;
         return arr;
     }
 
@@ -722,14 +722,14 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">array</param>
     /// <param name="b">vector</param>
     /// <returns>the array</returns>
-    public static Vec3[ ] Append (in Vec3[ ] a, in Vec3 b)
+    public static Vec3 [ ] Append (in Vec3 [ ] a, in Vec3 b)
     {
         bool aNull = a == null;
-        if (aNull) { return new Vec3[ ] { b }; }
+        if (aNull) { return new Vec3 [ ] { b }; }
         int aLen = a.Length;
-        Vec3[ ] result = new Vec3[aLen + 1];
+        Vec3 [ ] result = new Vec3 [ aLen + 1 ];
         System.Array.Copy (a, 0, result, 0, aLen);
-        result[aLen] = b;
+        result [ aLen ] = b;
         return result;
     }
 
@@ -939,30 +939,30 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">left array</param>
     /// <param name="b">right array</param>
     /// <returns>the concatenation</returns>
-    public static Vec3[ ] Concat (in Vec3[ ] a, in Vec3[ ] b)
+    public static Vec3 [ ] Concat (in Vec3 [ ] a, in Vec3 [ ] b)
     {
         bool aNull = a == null;
         bool bNull = b == null;
 
-        if (aNull && bNull) { return new Vec3[ ] { }; }
+        if (aNull && bNull) { return new Vec3 [ ] { }; }
 
         if (aNull)
         {
-            Vec3[ ] result0 = new Vec3[b.Length];
+            Vec3 [ ] result0 = new Vec3 [ b.Length ];
             System.Array.Copy (b, 0, result0, 0, b.Length);
             return result0;
         }
 
         if (bNull)
         {
-            Vec3[ ] result1 = new Vec3[a.Length];
+            Vec3 [ ] result1 = new Vec3 [ a.Length ];
             System.Array.Copy (a, 0, result1, 0, a.Length);
             return result1;
         }
 
         int aLen = a.Length;
         int bLen = b.Length;
-        Vec3[ ] result2 = new Vec3[aLen + bLen];
+        Vec3 [ ] result2 = new Vec3 [ aLen + bLen ];
         System.Array.Copy (a, 0, result2, 0, aLen);
         System.Array.Copy (b, 0, result2, aLen, bLen);
         return result2;
@@ -1223,7 +1223,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Generates a 3D array of vectors.
     /// </summary>
     /// <returns>the array</returns>
-    public static Vec3[, , ] Grid ( )
+    public static Vec3 [ , , ] Grid ( )
     {
         return Vec3.GridCartesian (
             new Vec3 (-1.0f, -1.0f, -1.0f),
@@ -1240,7 +1240,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="rows">number of rows</param>
     /// <param name="layers">number of layers</param>
     /// <returns>the array</returns>
-    public static Vec3[, , ] GridCartesian ( //
+    public static Vec3 [ , , ] GridCartesian ( //
         in Vec3 lowerBound, //
         in Vec3 upperBound, //
         in int cols = 8, //
@@ -1255,7 +1255,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float iToStep = 1.0f / (rval - 1.0f);
         float jToStep = 1.0f / (cval - 1.0f);
 
-        Vec3[, , ] result = new Vec3[lval, rval, cval];
+        Vec3 [ , , ] result = new Vec3 [ lval, rval, cval ];
 
         int rcval = rval * cval;
         int len3 = lval * rcval;
@@ -1266,7 +1266,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             int i = m / cval;
             int j = m % cval;
 
-            result[h, i, j] = Vec3.Mix (
+            result [ h, i, j ] = Vec3.Mix (
                 lowerBound,
                 upperBound,
                 new Vec3 (
@@ -1700,10 +1700,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="sz">new size</param>
     /// <returns>the resized array</returns>
-    public static Vec3[ ] Resize (in Vec3[ ] arr, in int sz)
+    public static Vec3 [ ] Resize (in Vec3 [ ] arr, in int sz)
     {
-        if (sz < 1) { return new Vec3[ ] { }; }
-        Vec3[ ] result = new Vec3[sz];
+        if (sz < 1) { return new Vec3 [ ] { }; }
+        Vec3 [ ] result = new Vec3 [ sz ];
 
         if (arr != null)
         {
@@ -2021,7 +2021,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="places">print precision</param>
     /// <returns>string</returns>
-    public static string ToString (in Vec3[ ] arr, in int places = 4)
+    public static string ToString (in Vec3 [ ] arr, in int places = 4)
     {
         return Vec3.ToString (new StringBuilder (arr.Length * 64), arr, places).ToString ( );
     }
@@ -2033,7 +2033,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="places">print precision</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Vec3[ ] arr, in int places = 4)
+    public static StringBuilder ToString (in StringBuilder sb, in Vec3 [ ] arr, in int places = 4)
     {
         sb.Append ('[');
         sb.Append (' ');
@@ -2045,12 +2045,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
 
             for (int i = 0; i < last; ++i)
             {
-                Vec3.ToString (sb, arr[i], places);
+                Vec3.ToString (sb, arr [ i ], places);
                 sb.Append (',');
                 sb.Append (' ');
             }
 
-            Vec3.ToString (sb, arr[last], places);
+            Vec3.ToString (sb, arr [ last ], places);
             sb.Append (' ');
         }
 

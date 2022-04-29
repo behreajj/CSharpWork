@@ -1529,7 +1529,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
 
     /// <summary>
     /// Multiplies a normal with a matrix that has already
-    /// been inverted. Returns up if the input normal is zero.
+    /// been inverted.
     /// </summary>
     /// <param name="h">matrix inverse</param>
     /// <param name="n">normal</param>
@@ -1545,7 +1545,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
             float mInv = Utils.InvSqrtUnchecked (mSq);
             return new Vec3 (x * mInv, y * mInv, z * mInv);
         }
-        return Vec3.Up;
+        return Vec3.Zero;
     }
 
     /// <summary>
@@ -1579,7 +1579,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
                 (a._m10 * b.x + a._m11 * b.y + a._m13) * wInv,
                 (a._m20 * b.x + a._m21 * b.y + a._m23) * wInv);
         }
-        return new Vec3 ( );
+        return Vec3.Zero;
     }
 
     /// <summary>
@@ -1600,7 +1600,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
                 (a._m10 * b.x + a._m11 * b.y + a._m12 * b.z + a._m13) * wInv,
                 (a._m20 * b.x + a._m21 * b.y + a._m22 * b.z + a._m23) * wInv);
         }
-        return new Vec3 ( );
+        return Vec3.Zero;
     }
 
     /// <summary>
@@ -1622,7 +1622,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
                 (a._m10 * b.x + a._m11 * b.y) * wInv,
                 (a._m20 * b.x + a._m21 * b.y) * wInv);
         }
-        return new Vec3 ( );
+        return Vec3.Zero;
     }
 
     /// <summary>
@@ -1644,7 +1644,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
                 (a._m10 * b.x + a._m11 * b.y + a._m12 * b.z) * wInv,
                 (a._m20 * b.x + a._m21 * b.y + a._m22 * b.z) * wInv);
         }
-        return new Vec3 ( );
+        return Vec3.Zero;
     }
 
     /// <summary>

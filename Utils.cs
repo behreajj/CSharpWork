@@ -374,6 +374,7 @@ public static class Utils
 
     /// <summary>
     /// Finds the unsigned distance between two angles.
+    /// Angles are expected to be in radians.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -723,13 +724,13 @@ public static class Utils
     /// </summary>
     /// <param name="values">the list of values</param>
     /// <returns>maximum value</returns>
-    public static float Max (params float[ ] values)
+    public static float Max (params float [ ] values)
     {
         int len = values.Length;
         float result = float.MinValue;
         for (int i = 0; i < len; ++i)
         {
-            float v = values[i];
+            float v = values [ i ];
             if (v > result) { result = v; }
         }
         return result;
@@ -786,13 +787,13 @@ public static class Utils
     /// </summary>
     /// <param name="values">the list of values</param>
     /// <returns>minimum value</returns>
-    public static float Min (params float[ ] values)
+    public static float Min (params float [ ] values)
     {
         int len = values.Length;
         float result = float.MaxValue;
         for (int i = 0; i < len; ++i)
         {
-            float v = values[i];
+            float v = values [ i ];
             if (v < result) { result = v; }
         }
         return result;
@@ -1305,13 +1306,13 @@ public static class Utils
          */
         bool isNeg = v < 0;
         int nAbsVal = isNeg ? v : -v;
-        int[ ] digits = new int[10];
+        int [ ] digits = new int [ 10 ];
         int filled = 0;
         while (nAbsVal < 0)
         {
             double y = nAbsVal * 0.1d;
             nAbsVal = (int) y;
-            digits[filled++] = -(int) ((y - nAbsVal) * 10.0d - 0.5d);
+            digits [ filled++ ] = -(int) ((y - nAbsVal) * 10.0d - 0.5d);
         }
 
         if (isNeg) { sb.Append ('-'); }
@@ -1319,7 +1320,7 @@ public static class Utils
         vplaces = filled > vplaces ? filled : vplaces;
         for (int n = vplaces - 1; n > -1; --n)
         {
-            sb.Append (digits[n]);
+            sb.Append (digits [ n ]);
         }
 
         return sb.ToString ( );

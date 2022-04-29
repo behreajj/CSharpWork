@@ -79,6 +79,15 @@ public class Mesh2
     }
 
     /// <summary>
+    /// Gets a face from the mesh.
+    /// </summary>
+    /// <value>face</value>
+    public Face2 this [ int i ]
+    {
+        get { return this.GetFace (i); }
+    }
+
+    /// <summary>
     /// The default constructor.
     /// </summary>
     public Mesh2 ( )
@@ -456,6 +465,65 @@ public class Mesh2
     }
 
     /// <summary>
+    /// Gets a face from a mesh.
+    /// </summary>
+    /// <param name="faceIndex">face index</param>
+    /// <returns>face</returns>
+    public Face2 GetFace (in int faceIndex = -1)
+    {
+        Loop2 loop = this.loops [ Utils.RemFloor (faceIndex, this.loops.Length) ];
+        Index2 [ ] indices = loop.Indices;
+        int indicesLen = indices.Length;
+        Edge2 [ ] edges = new Edge2 [ indicesLen ];
+        for (int i = 0; i < indicesLen; ++i)
+        {
+            Index2 idxOrigin = indices [ i ];
+            Index2 idxDest = indices [ (i + 1) % indicesLen ];
+            edges [ i ] = new Edge2 (
+                new Vert2 (
+                    this.coords [ idxOrigin.v ],
+                    this.texCoords [ idxOrigin.vt ]),
+                new Vert2 (
+                    this.coords [ idxDest.v ],
+                    this.texCoords [ idxDest.vt ]));
+        }
+        return new Face2 (edges);
+    }
+
+    /// <summary>
+    /// Gets an array of faces from the mesh.
+    /// </summary>
+    /// <returns>faces array</returns>
+    public Face2 [ ] GetFaces ( )
+    {
+        int loopsLen = this.loops.Length;
+        Face2 [ ] faces = new Face2 [ loopsLen ];
+        for (int i = 0; i < loopsLen; ++i)
+        {
+            Loop2 loop = this.loops [ i ];
+            Index2 [ ] indices = loop.Indices;
+            int indicesLen = indices.Length;
+            Edge2 [ ] edges = new Edge2 [ indicesLen ];
+
+            for (int j = 0; j < indicesLen; ++j)
+            {
+                Index2 idxOrigin = indices [ j ];
+                Index2 idxDest = indices [ (j + 1) % indicesLen ];
+                edges [ j ] = new Edge2 (
+                    new Vert2 (
+                        this.coords [ idxOrigin.v ],
+                        this.texCoords [ idxOrigin.vt ]),
+                    new Vert2 (
+                        this.coords [ idxDest.v ],
+                        this.texCoords [ idxDest.vt ]));
+            }
+
+            faces [ i ] = new Face2 (edges);
+        }
+        return faces;
+    }
+
+    /// <summary>
     /// Gets a vertex from the mesh.
     /// </summary>
     /// <param name="faceIndex">face index</param>
@@ -506,10 +574,7 @@ public class Mesh2
         }
         if (fac >= 1.0f)
         {
-            var tup = this.SubdivFaceFan (faceIndex);
-            return (loopsNew: tup.loopsNew,
-                vsNew: new Vec2 [ ] { tup.vNew },
-                vtsNew: new Vec2 [ ] { tup.vtNew });
+            return this.SubdivFaceFan (faceIndex);
         }
 
         int loopsLen = this.loops.Length;
@@ -658,7 +723,7 @@ public class Mesh2
     /// </summary>
     /// <param name="faceIdx">the face index</param>
     /// <returns>new data</returns>
-    public (Loop2 [ ] loopsNew, Vec2 vNew, Vec2 vtNew) SubdivFaceFan (in int faceIdx)
+    public (Loop2 [ ] loopsNew, Vec2 [ ] vsNew, Vec2 [ ] vtsNew) SubdivFaceFan (in int faceIdx)
     {
         // TODO: Even though this creates only one center, maybe return arrays in tuple anyway?
 
@@ -708,8 +773,8 @@ public class Mesh2
         this.loops = Loop2.Splice (this.loops, i, 1, fsNew);
 
         return (loopsNew: fsNew,
-            vNew: vCenter,
-            vtNew: vtCenter);
+            vsNew: new Vec2 [ ] { vCenter },
+            vtsNew: new Vec2 [ ] { vtCenter });
     }
 
     /// <summary>

@@ -1019,7 +1019,7 @@ public readonly struct Mat3 : IEnumerable
                 (a._m00 * b.x + a._m01 * b.y + a._m02) * wInv,
                 (a._m10 * b.x + a._m11 * b.y + a._m12) * wInv);
         }
-        return new Vec2 ( );
+        return Vec2.Zero;
     }
 
     /// <summary>
@@ -1040,7 +1040,7 @@ public readonly struct Mat3 : IEnumerable
                 (a._m00 * b.x + a._m01 * b.y) * wInv,
                 (a._m10 * b.x + a._m11 * b.y) * wInv);
         }
-        return new Vec2 ( );
+        return Vec2.Zero;
     }
 
     /// <summary>

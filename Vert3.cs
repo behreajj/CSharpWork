@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
 using System.Text;
 
 /// <summary>
 /// Organizes the components of a 3D mesh into a group of coordinate, normal and
 /// texture coordinate such that they can be edited together. This is not used
-/// by a mesh internally; it is created upon retrieval from a mesh. All of its
-/// components should be treated as references to data within the mesh, not as
-/// independent values.
+/// by a mesh internally; it is created upon retrieval from a mesh.
 /// </summary>
 [Serializable]
 public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
@@ -33,12 +30,6 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// </summary>
     /// <value>coord</value>
     public Vec3 Coord { get { return this.coord; } }
-
-    /// <summary>
-    /// The number of values (dimensions) in this vertex.
-    /// </summary>
-    /// <value>the length</value>
-    public int Length { get { return 8; } }
 
     /// <summary>
     /// The direction in which light will bounce from the surface of the mesh at
@@ -103,8 +94,8 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     }
 
     /// <summary>
-    ///  Compares this vector to another in compliance with the IComparable
-    ///  interface.
+    /// Compares this vertex to another in compliance with the IComparable
+    /// interface.
     /// </summary>
     /// <param name="v">comparisand</param>
     /// <returns>evaluation</returns>
@@ -121,7 +112,7 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// <returns>equivalence</returns>
     public bool Equals (Vert3 v)
     {
-        return this.coord.Equals(v.coord);
+        return this.coord.Equals (v.coord);
     }
 
     /// <summary>

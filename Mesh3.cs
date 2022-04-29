@@ -49,6 +49,12 @@ public class Mesh3
     }
 
     /// <summary>
+    /// Gets the number of loops in the mesh.
+    /// </summary>
+    /// <value>length</value>
+    public int Length { get { return this.loops.Length; } }
+
+    /// <summary>
     /// Loops that describe the indices which reference the coordinates, texture
     /// coordinates and normals to compose a face.
     /// </summary>
@@ -100,6 +106,15 @@ public class Mesh3
         {
             this.texCoords = value;
         }
+    }
+
+    /// <summary>
+    /// Gets a face from the mesh.
+    /// </summary>
+    /// <value>face</value>
+    public Face3 this [ int i ]
+    {
+        get { return this.GetFace (i); }
     }
 
     /// <summary>
@@ -352,21 +367,21 @@ public class Mesh3
                 this.normals [ idxDest.vn ]));
     }
 
-    ///<summary>
-    ///Gets an array of edges from the mesh.
-    ///</summary>
-    ///<returns>edges array</returns>
+    /// <summary>
+    /// Gets an array of edges from the mesh.
+    /// </summary>
+    /// <returns>edges array</returns>
     public Edge3 [ ] GetEdges ( )
     {
         return this.GetEdgesUndirected ( );
     }
 
-    ///<summary>
-    ///Gets an array of edges from the mesh. Edges are treated as directed, so
-    ///(origin, destination) and (destination, edge) are considered to be
-    ///different.
-    ///</summary>
-    ///<returns>edges array</returns>
+    /// <summary>
+    /// Gets an array of edges from the mesh. Edges are treated as directed, so
+    /// (origin, destination) and (destination, edge) are considered to be
+    /// different.
+    /// </summary>
+    /// <returns>edges array</returns>
     public Edge3 [ ] GetEdgesDirected ( )
     {
         int loopsLen = this.loops.Length;
@@ -399,16 +414,16 @@ public class Mesh3
         }
 
         Edge3 [ ] arr = new Edge3 [ result.Count ];
-        result.CopyTo (arr);
+        result.CopyTo (arr, 0);
         return arr;
     }
 
-    ///<summary>
-    ///Gets an array of edges from the mesh. Edges are treated as undirected,
-    ///so (origin, destination) and (destination, edge) are considered to be
-    ///equal
-    ///</summary>
-    ///<returns>edges array</returns>
+    /// <summary>
+    /// Gets an array of edges from the mesh. Edges are treated as undirected,
+    /// so (origin, destination) and (destination, edge) are considered to be
+    /// equal
+    /// </summary>
+    /// <returns>edges array</returns>
     public Edge3 [ ] GetEdgesUndirected ( )
     {
         int loopsLen = this.loops.Length;
@@ -452,6 +467,69 @@ public class Mesh3
         Edge3 [ ] arr = new Edge3 [ result.Count ];
         result.Values.CopyTo (arr, 0);
         return arr;
+    }
+
+    /// <summary>
+    /// Gets a face from a mesh.
+    /// </summary>
+    /// <param name="faceIndex">face index</param>
+    /// <returns>face</returns>
+    public Face3 GetFace (in int faceIndex = -1)
+    {
+        Loop3 loop = this.loops [ Utils.RemFloor (faceIndex, this.loops.Length) ];
+        Index3 [ ] indices = loop.Indices;
+        int indicesLen = indices.Length;
+        Edge3 [ ] edges = new Edge3 [ indicesLen ];
+        for (int i = 0; i < indicesLen; ++i)
+        {
+            Index3 idxOrigin = indices [ i ];
+            Index3 idxDest = indices [ (i + 1) % indicesLen ];
+            edges [ i ] = new Edge3 (
+                new Vert3 (
+                    this.coords [ idxOrigin.v ],
+                    this.texCoords [ idxOrigin.vt ],
+                    this.normals [ idxOrigin.vn ]),
+                new Vert3 (
+                    this.coords [ idxDest.v ],
+                    this.texCoords [ idxDest.vt ],
+                    this.normals [ idxDest.vn ]));
+        }
+        return new Face3 (edges);
+    }
+
+    /// <summary>
+    /// Gets an array of faces from the mesh.
+    /// </summary>
+    /// <returns>faces array</returns>
+    public Face3 [ ] GetFaces ( )
+    {
+        int loopsLen = this.loops.Length;
+        Face3 [ ] faces = new Face3 [ loopsLen ];
+        for (int i = 0; i < loopsLen; ++i)
+        {
+            Loop3 loop = this.loops [ i ];
+            Index3 [ ] indices = loop.Indices;
+            int indicesLen = indices.Length;
+            Edge3 [ ] edges = new Edge3 [ indicesLen ];
+
+            for (int j = 0; j < indicesLen; ++j)
+            {
+                Index3 idxOrigin = indices [ j ];
+                Index3 idxDest = indices [ (j + 1) % indicesLen ];
+                edges [ j ] = new Edge3 (
+                    new Vert3 (
+                        this.coords [ idxOrigin.v ],
+                        this.texCoords [ idxOrigin.vt ],
+                        this.normals [ idxOrigin.vn ]),
+                    new Vert3 (
+                        this.coords [ idxDest.v ],
+                        this.texCoords [ idxDest.vt ],
+                        this.normals [ idxDest.vn ]));
+            }
+
+            faces [ i ] = new Face3 (edges);
+        }
+        return faces;
     }
 
     /// <summary>
@@ -769,10 +847,9 @@ public class Mesh3
     /// </summary>
     /// <param name="faceIdx">the face index</param>
     /// <returns>new data</returns>
-    public (Loop3 [ ] loopsNew, Vec3 vNew, Vec2 vtNew, Vec3 vnNew) SubdivFaceFan (in int faceIdx)
+    public (Loop3 [ ] loopsNew, Vec3 [ ] vsNew, Vec2 [ ] vtsNew, Vec3 [ ] vnsNew) SubdivFaceFan (in int faceIdx)
     {
         // TODO: Create SubdivFacesFan (plural).
-        // TODO: Even though this creates only one center, maybe return arrays in tuple anyway?
 
         int facesLen = this.loops.Length;
         int i = Utils.RemFloor (faceIdx, facesLen);
@@ -827,9 +904,9 @@ public class Mesh3
         this.loops = Loop3.Splice (this.loops, i, 1, fsNew);
 
         return (loopsNew: fsNew,
-            vNew: vCenter,
-            vtNew: vtCenter,
-            vnNew: vnCenter);
+            vsNew: new Vec3 [ ] { vCenter },
+            vtsNew: new Vec2 [ ] { vtCenter },
+            vnsNew: new Vec3 [ ] { vnCenter });
     }
 
     /// <summary>

@@ -43,20 +43,20 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// returns y; 0 or -2, x.
     /// </summary>
     /// <value>the component</value>
-    public float this [int i]
+    public float this [ int i ]
     {
         get
         {
             switch (i)
             {
-                case 0:
-                case -2:
-                    return this._x;
-                case 1:
-                case -1:
-                    return this._y;
-                default:
-                    return 0.0f;
+            case 0:
+            case -2:
+                return this._x;
+            case 1:
+            case -1:
+                return this._y;
+            default:
+                return 0.0f;
             }
         }
     }
@@ -166,9 +166,9 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Returns a float array of length 2 containing this vector's components.
     /// </summary>
     /// <returns>the array</returns>
-    public float[ ] ToArray ( )
+    public float [ ] ToArray ( )
     {
-        return this.ToArray (new float[this.Length], 0);
+        return this.ToArray (new float [ this.Length ], 0);
     }
 
     /// <summary>
@@ -177,10 +177,10 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="i">index</param>
     /// <returns>array</returns>
-    public float[ ] ToArray (in float[ ] arr, in int i = 0)
+    public float [ ] ToArray (in float [ ] arr, in int i = 0)
     {
-        arr[i] = this._x;
-        arr[i + 1] = this._y;
+        arr [ i ] = this._x;
+        arr [ i + 1 ] = this._y;
         return arr;
     }
 
@@ -611,14 +611,14 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="a">array</param>
     /// <param name="b">vector</param>
     /// <returns>the array</returns>
-    public static Vec2[ ] Append (in Vec2[ ] a, in Vec2 b)
+    public static Vec2 [ ] Append (in Vec2 [ ] a, in Vec2 b)
     {
         bool aNull = a == null;
-        if (aNull) { return new Vec2[ ] { b }; }
+        if (aNull) { return new Vec2 [ ] { b }; }
         int aLen = a.Length;
-        Vec2[ ] result = new Vec2[aLen + 1];
+        Vec2 [ ] result = new Vec2 [ aLen + 1 ];
         System.Array.Copy (a, 0, result, 0, aLen);
-        result[aLen] = b;
+        result [ aLen ] = b;
         return result;
     }
 
@@ -794,30 +794,30 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="a">left array</param>
     /// <param name="b">right array</param>
     /// <returns>the concatenation</returns>
-    public static Vec2[ ] Concat (in Vec2[ ] a, in Vec2[ ] b)
+    public static Vec2 [ ] Concat (in Vec2 [ ] a, in Vec2 [ ] b)
     {
         bool aNull = a == null;
         bool bNull = b == null;
 
-        if (aNull && bNull) { return new Vec2[ ] { }; }
+        if (aNull && bNull) { return new Vec2 [ ] { }; }
 
         if (aNull)
         {
-            Vec2[ ] result0 = new Vec2[b.Length];
+            Vec2 [ ] result0 = new Vec2 [ b.Length ];
             System.Array.Copy (b, 0, result0, 0, b.Length);
             return result0;
         }
 
         if (bNull)
         {
-            Vec2[ ] result1 = new Vec2[a.Length];
+            Vec2 [ ] result1 = new Vec2 [ a.Length ];
             System.Array.Copy (a, 0, result1, 0, a.Length);
             return result1;
         }
 
         int aLen = a.Length;
         int bLen = b.Length;
-        Vec2[ ] result2 = new Vec2[aLen + bLen];
+        Vec2 [ ] result2 = new Vec2 [ aLen + bLen ];
         System.Array.Copy (a, 0, result2, 0, aLen);
         System.Array.Copy (b, 0, result2, aLen, bLen);
         return result2;
@@ -1018,7 +1018,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Generates a 2D array of vectors.
     /// </summary>
     /// <returns>the array</returns>
-    public static Vec2[, ] Grid ( )
+    public static Vec2 [ , ] Grid ( )
     {
         return Vec2.GridCartesian (
             new Vec2 (-1.0f, -1.0f),
@@ -1034,7 +1034,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="cols">number of columns</param>
     /// <param name="rows">number of rows</param>
     /// <returns>the array</returns>
-    public static Vec2[, ] GridCartesian ( //
+    public static Vec2 [ , ] GridCartesian ( //
         in Vec2 lowerBound, //
         in Vec2 upperBound, //
         in int cols = 8, //
@@ -1046,14 +1046,14 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         float iToStep = 1.0f / (rval - 1.0f);
         float jToStep = 1.0f / (cval - 1.0f);
 
-        Vec2[, ] result = new Vec2[rval, cval];
+        Vec2 [ , ] result = new Vec2 [ rval, cval ];
 
         int len2 = cval * rval;
         for (int k = 0; k < len2; ++k)
         {
             int i = k / cval;
             int j = k % cval;
-            result[i, j] = Vec2.Mix (
+            result [ i, j ] = Vec2.Mix (
                 lowerBound,
                 upperBound,
                 new Vec2 (
@@ -1510,10 +1510,10 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="sz">new size</param>
     /// <returns>resized array</returns>
-    public static Vec2[ ] Resize (in Vec2[ ] arr, in int sz)
+    public static Vec2 [ ] Resize (in Vec2 [ ] arr, in int sz)
     {
-        if (sz < 1) { return new Vec2[ ] { }; }
-        Vec2[ ] result = new Vec2[sz];
+        if (sz < 1) { return new Vec2 [ ] { }; }
+        Vec2 [ ] result = new Vec2 [ sz ];
 
         if (arr != null)
         {
@@ -1669,7 +1669,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="places">print precision</param>
     /// <returns>string</returns>
-    public static string ToString (in Vec2[ ] arr, in int places = 4)
+    public static string ToString (in Vec2 [ ] arr, in int places = 4)
     {
         return Vec2.ToString (new StringBuilder (arr.Length * 64), arr, places).ToString ( );
     }
@@ -1681,7 +1681,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="places">print precision</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Vec2[ ] arr, in int places = 4)
+    public static StringBuilder ToString (in StringBuilder sb, in Vec2 [ ] arr, in int places = 4)
     {
         sb.Append ('[');
         sb.Append (' ');
@@ -1693,12 +1693,12 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
 
             for (int i = 0; i < last; ++i)
             {
-                Vec2.ToString (sb, arr[i], places);
+                Vec2.ToString (sb, arr [ i ], places);
                 sb.Append (',');
                 sb.Append (' ');
             }
 
-            Vec2.ToString (sb, arr[last], places);
+            Vec2.ToString (sb, arr [ last ], places);
             sb.Append (' ');
         }
 

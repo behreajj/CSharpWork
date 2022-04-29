@@ -57,7 +57,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// Returns the number of elements in this quaternion.
     /// </summary>
     /// <value>the length</value>
-    public int Length { get { return 4; } }
+    public int Length { get { return 1 + this.imag.Length; } }
 
     /// <summary>
     /// The real component.

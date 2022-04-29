@@ -50,23 +50,23 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// Retrieves a component by index.
     /// </summary>
     /// <value>the component</value>
-    public int this [int i]
+    public int this [ int i ]
     {
         get
         {
             switch (i)
             {
-                case 0:
-                case -3:
-                    return this._v;
-                case 1:
-                case -2:
-                    return this._vt;
-                case 2:
-                case -1:
-                    return this._vn;
-                default:
-                    return 0;
+            case 0:
+            case -3:
+                return this._v;
+            case 1:
+            case -2:
+                return this._vt;
+            case 2:
+            case -1:
+                return this._vn;
+            default:
+                return 0;
             }
         }
     }
@@ -154,9 +154,9 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// Returns an integer array of length 3 containing this index's components.
     /// </summary>
     /// <returns>the array</returns>
-    public int[ ] ToArray ( )
+    public int [ ] ToArray ( )
     {
-        return this.ToArray (new int[this.Length], 0);
+        return this.ToArray (new int [ this.Length ], 0);
     }
 
     /// <summary>
@@ -165,11 +165,11 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="i">index</param>
     /// <returns>array</returns>
-    public int[ ] ToArray (in int[ ] arr, in int i)
+    public int [ ] ToArray (in int [ ] arr, in int i)
     {
-        arr[i] = this._v;
-        arr[i + 1] = this._vt;
-        arr[i + 2] = this._vn;
+        arr [ i ] = this._v;
+        arr [ i + 1 ] = this._vt;
+        arr [ i + 2 ] = this._vn;
         return arr;
     }
 
@@ -209,10 +209,10 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="sz">new size</param>
     /// <returns>resized array</returns>
-    public static Index3[ ] Resize (in Index3[ ] arr, in int sz)
+    public static Index3 [ ] Resize (in Index3 [ ] arr, in int sz)
     {
-        if (sz < 1) { return new Index3[ ] { }; }
-        Index3[ ] result = new Index3[sz];
+        if (sz < 1) { return new Index3 [ ] { }; }
+        Index3 [ ] result = new Index3 [ sz ];
 
         if (arr != null)
         {
@@ -230,7 +230,9 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <param name="i">index</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string</returns>
-    public static string ToString (in Index3 i, in int padding = 3)
+    public static string ToString ( //
+        in Index3 i, //
+        in int padding = 3)
     {
         return Index3.ToString (new StringBuilder (96), i, padding).ToString ( );
     }
@@ -242,7 +244,10 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <param name="i">index</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Index3 i, in int padding = 3)
+    public static StringBuilder ToString ( //
+        in StringBuilder sb, //
+        in Index3 i, //
+        in int padding = 3)
     {
         sb.Append ("{ v: ");
         Utils.ToPadded (sb, i._v, padding);
@@ -260,7 +265,9 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string</returns>
-    public static string ToString (in Index3[ ] arr, in int padding = 3)
+    public static string ToString ( //
+        in Index3 [ ] arr, //
+        in int padding = 3)
     {
         return Index3.ToString (new StringBuilder (1024), arr, padding).ToString ( );
     }
@@ -272,7 +279,10 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <param name="i">index</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Index3[ ] arr, in int padding = 3)
+    public static StringBuilder ToString ( //
+        in StringBuilder sb, //
+        in Index3 [ ] arr, //
+        in int padding = 3)
     {
         sb.Append ('[');
         sb.Append (' ');
@@ -284,12 +294,12 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
 
             for (int i = 0; i < last; ++i)
             {
-                Index3.ToString (sb, arr[i], padding);
+                Index3.ToString (sb, arr [ i ], padding);
                 sb.Append (',');
                 sb.Append (' ');
             }
 
-            Index3.ToString (sb, arr[last], padding);
+            Index3.ToString (sb, arr [ last ], padding);
             sb.Append (' ');
         }
 

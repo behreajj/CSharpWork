@@ -75,26 +75,26 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// returns w; 2 or -2, z; 1 or -3, y; 0 or -4, x.
     /// </summary>
     /// <value>the component</value>
-    public float this [int i]
+    public float this [ int i ]
     {
         get
         {
             switch (i)
             {
-                case 0:
-                case -4:
-                    return this._x;
-                case 1:
-                case -3:
-                    return this._y;
-                case 2:
-                case -2:
-                    return this._z;
-                case 3:
-                case -1:
-                    return this._w;
-                default:
-                    return 0.0f;
+            case 0:
+            case -4:
+                return this._x;
+            case 1:
+            case -3:
+                return this._y;
+            case 2:
+            case -2:
+                return this._z;
+            case 3:
+            case -1:
+                return this._w;
+            default:
+                return 0.0f;
             }
         }
     }
@@ -222,9 +222,9 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Returns a float array of length 4 containing this vector's components.
     /// </summary>
     /// <returns>the array</returns>
-    public float[ ] ToArray ( )
+    public float [ ] ToArray ( )
     {
-        return this.ToArray (new float[this.Length], 0);
+        return this.ToArray (new float [ this.Length ], 0);
     }
 
     /// <summary>
@@ -233,12 +233,12 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="i">index</param>
     /// <returns>array</returns>
-    public float[ ] ToArray (in float[ ] arr, in int i = 0)
+    public float [ ] ToArray (in float [ ] arr, in int i = 0)
     {
-        arr[i] = this._x;
-        arr[i + 1] = this._y;
-        arr[i + 2] = this._z;
-        arr[i + 3] = this._w;
+        arr [ i ] = this._x;
+        arr [ i + 1 ] = this._y;
+        arr [ i + 2 ] = this._z;
+        arr [ i + 3 ] = this._w;
         return arr;
     }
 
@@ -973,7 +973,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Generates a 4D array of vectors.
     /// </summary>
     /// <returns>the array</returns>
-    public static Vec4[, , , ] Grid ( )
+    public static Vec4 [ , , , ] Grid ( )
     {
         return Vec4.GridCartesian (
             new Vec4 (-1.0f, -1.0f, -1.0f, -1.0f),
@@ -991,7 +991,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="layers">number of layers</param>
     /// <param name="steps">number of steps</param>
     /// <returns>the array</returns>
-    public static Vec4[, , , ] GridCartesian ( //
+    public static Vec4 [ , , , ] GridCartesian ( //
         in Vec4 lowerBound, //
         in Vec4 upperBound, //
         in int cols = 8, //
@@ -1009,7 +1009,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         float iToStep = 1.0f / (rval - 1.0f);
         float jToStep = 1.0f / (cval - 1.0f);
 
-        Vec4[, , , ] result = new Vec4[sval, lval, rval, cval];
+        Vec4 [ , , , ] result = new Vec4 [ sval, lval, rval, cval ];
 
         int rcval = rval * cval;
         int lrcval = lval * rcval;
@@ -1023,7 +1023,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
             int i = n / cval;
             int j = n % cval;
 
-            result[g, h, i, j] = Vec4.Mix (
+            result [ g, h, i, j ] = Vec4.Mix (
                 lowerBound,
                 upperBound,
                 new Vec4 (

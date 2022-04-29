@@ -10,13 +10,13 @@ public class Loop2
     /// <summary>
     /// Array of compound vertex indices.
     /// </summary>
-    protected Index2[ ] indices;
+    protected Index2 [ ] indices;
 
     /// <summary>
     /// Array of compound vertex indices.
     /// </summary>
     /// <value>the index</value>
-    public Index2[ ] Indices
+    public Index2 [ ] Indices
     {
         get
         {
@@ -30,26 +30,26 @@ public class Loop2
     }
 
     /// <summary>
-    /// The number of vertex indices in this loops.
+    /// The number of vertex indices in this loop.
     /// </summary>
     /// <value>the length</value>
     public int Length { get { return this.indices.Length; } }
 
     /// <summary>
-    /// Gets a mesh compound index element at i. Wraps around, so
+    /// Gets or sets a mesh compound index at i. Wraps around, so
     /// negative indices may be used.
     /// </summary>
     /// <value>the mesh index</value>
-    public Index2 this [int i]
+    public Index2 this [ int i ]
     {
         get
         {
-            return this.indices[Utils.RemFloor (i, this.indices.Length)];
+            return this.indices [ Utils.RemFloor (i, this.indices.Length) ];
         }
 
         set
         {
-            this.indices[Utils.RemFloor (i, this.indices.Length)] = value;
+            this.indices [ Utils.RemFloor (i, this.indices.Length) ] = value;
         }
     }
 
@@ -59,7 +59,8 @@ public class Loop2
     /// </summary>
     public Loop2 ( )
     {
-        this.indices = new Index2[3];
+        // TODO: Enumerable interface?
+        this.indices = new Index2 [ 3 ];
     }
 
     /// <summary>
@@ -69,14 +70,14 @@ public class Loop2
     /// <param name="length">index length</param>
     public Loop2 (in int length)
     {
-        this.indices = new Index2[length < 3 ? 3 : length];
+        this.indices = new Index2 [ length < 3 ? 3 : length ];
     }
 
     /// <summary>
     /// Constructs a loop from an index array.
     /// </summary>
     /// <param name="indices">indices</param>
-    public Loop2 (in Index2[ ] indices)
+    public Loop2 (in Index2 [ ] indices)
     {
         this.indices = indices;
     }
@@ -85,7 +86,7 @@ public class Loop2
     /// Constructs a loop from a list of indices.
     /// </summary>
     /// <param name="indices">indices</param>
-    public Loop2 (params Index2[ ] indices)
+    public Loop2 (params Index2 [ ] indices)
     {
         this.indices = indices;
     }
@@ -130,7 +131,7 @@ public class Loop2
         in Index2 f, //
         in Loop2 target)
     {
-        target.indices = new Index2[ ] { a, b, c, d, e, f };
+        target.indices = new Index2 [ ] { a, b, c, d, e, f };
         return target;
     }
 
@@ -151,7 +152,7 @@ public class Loop2
         in Index2 d, //
         in Loop2 target)
     {
-        target.indices = new Index2[ ] { a, b, c, d };
+        target.indices = new Index2 [ ] { a, b, c, d };
         return target;
     }
 
@@ -166,21 +167,21 @@ public class Loop2
     /// <param name="vertsPerLoop">vertices per loop</param>
     /// <param name="resizeExisting">change existing loop length</param>
     /// <returns>resized array</returns>
-    public static Loop2[ ] Resize ( //
-        in Loop2[ ] arr, // 
+    public static Loop2 [ ] Resize ( //
+        in Loop2 [ ] arr, // 
         in int sz, //
         in int vertsPerLoop = 3, //
         in bool resizeExisting = false)
     {
-        if (sz < 1) { return new Loop2[ ] { }; }
-        Loop2[ ] result = new Loop2[sz];
+        if (sz < 1) { return new Loop2 [ ] { }; }
+        Loop2 [ ] result = new Loop2 [ sz ];
 
         int vplVal = vertsPerLoop < 3 ? 3 : vertsPerLoop;
         if (arr == null)
         {
             for (int i = 0; i < sz; ++i)
             {
-                result[i] = new Loop2 (vplVal);
+                result [ i ] = new Loop2 (vplVal);
             }
             return result;
         }
@@ -188,16 +189,16 @@ public class Loop2
         int last = arr.Length - 1;
         for (int i = 0; i < sz; ++i)
         {
-            if (i > last || arr[i] == null)
+            if (i > last || arr [ i ] == null)
             {
-                result[i] = new Loop2 (vplVal);
+                result [ i ] = new Loop2 (vplVal);
             }
             else
             {
-                result[i] = arr[i];
+                result [ i ] = arr [ i ];
                 if (resizeExisting)
                 {
-                    result[i].indices = Index2.Resize (result[i].indices, vplVal);
+                    result [ i ].indices = Index2.Resize (result [ i ].indices, vplVal);
                 }
             }
         }
@@ -215,12 +216,12 @@ public class Loop2
     /// <param name="deletions">deletion count</param>
     /// <param name="insert">insert</param>
     /// <returns>the spliced array</returns>
-    public static Loop2[ ] Splice (in Loop2[ ] arr, in int index, in int deletions, in Loop2[ ] insert)
+    public static Loop2 [ ] Splice (in Loop2 [ ] arr, in int index, in int deletions, in Loop2 [ ] insert)
     {
         int aLen = arr.Length;
         if (deletions >= aLen)
         {
-            Loop2[ ] result0 = new Loop2[insert.Length];
+            Loop2 [ ] result0 = new Loop2 [ insert.Length ];
             System.Array.Copy (insert, 0, result0, 0, insert.Length);
             return result0;
         }
@@ -229,7 +230,7 @@ public class Loop2
         int valIdx = Utils.RemFloor (index, aLen + 1);
         if (deletions < 1)
         {
-            Loop2[ ] result1 = new Loop2[aLen + bLen];
+            Loop2 [ ] result1 = new Loop2 [ aLen + bLen ];
             System.Array.Copy (arr, 0, result1, 0, valIdx);
             System.Array.Copy (insert, 0, result1, valIdx, bLen);
             System.Array.Copy (arr, valIdx, result1, valIdx + bLen, aLen - valIdx);
@@ -237,7 +238,7 @@ public class Loop2
         }
 
         int idxOff = valIdx + deletions;
-        Loop2[ ] result = new Loop2[aLen + bLen - deletions];
+        Loop2 [ ] result = new Loop2 [ aLen + bLen - deletions ];
         System.Array.Copy (arr, 0, result, 0, valIdx);
         System.Array.Copy (insert, 0, result, valIdx, bLen);
         System.Array.Copy (arr, idxOff, result, valIdx + bLen, aLen - idxOff);
@@ -251,6 +252,7 @@ public class Loop2
 
     public static StringBuilder ToString (in StringBuilder sb, in Loop2 l, in int padding = 3)
     {
+        // TODO: Comment.
         sb.Append ("{ indices: ");
         Index2.ToString (sb, l.indices, padding);
         sb.Append (' ');
@@ -264,7 +266,7 @@ public class Loop2
     /// <param name="arr">array</param>
     /// <param name="padding">padding</param>
     /// <returns>string</returns>
-    public static string ToString (in Loop2[ ] arr, in int padding = 3)
+    public static string ToString (in Loop2 [ ] arr, in int padding = 3)
     {
         return Loop2.ToString (new StringBuilder (1024), arr, padding).ToString ( );
     }
@@ -277,7 +279,7 @@ public class Loop2
     /// <param name="arr">array</param>
     /// <param name="padding">padding</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Loop2[ ] arr, in int padding = 3)
+    public static StringBuilder ToString (in StringBuilder sb, in Loop2 [ ] arr, in int padding = 3)
     {
         sb.Append ('[');
         sb.Append (' ');
@@ -289,12 +291,12 @@ public class Loop2
 
             for (int i = 0; i < last; ++i)
             {
-                Loop2.ToString (sb, arr[i], padding);
+                Loop2.ToString (sb, arr [ i ], padding);
                 sb.Append (',');
                 sb.Append (' ');
             }
 
-            Loop2.ToString (sb, arr[last], padding);
+            Loop2.ToString (sb, arr [ last ], padding);
             sb.Append (' ');
         }
 
@@ -317,7 +319,7 @@ public class Loop2
         in Index2 c, //
         in Loop2 target)
     {
-        target.indices = new Index2[ ] { a, b, c };
+        target.indices = new Index2 [ ] { a, b, c };
         return target;
     }
 }
