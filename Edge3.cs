@@ -85,8 +85,9 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <returns>the evaluation</returns>
     public int CompareTo (Edge3 e)
     {
-        return Vec3.Mix (this.origin.Coord, this.dest.Coord)
-            .CompareTo (Vec3.Mix (e.origin.Coord, e.dest.Coord));
+        int a = this.origin.CompareTo (e.origin);
+        int b = this.dest.CompareTo (e.dest);
+        return a != 0 ? a : b;
     }
 
     /// <summary>

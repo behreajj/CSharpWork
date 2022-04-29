@@ -354,12 +354,11 @@ public class Mesh3
 
     ///<summary>
     ///Gets an array of edges from the mesh.
-    ///Defaults to directed edges.
     ///</summary>
     ///<returns>edges array</returns>
     public Edge3 [ ] GetEdges ( )
     {
-        return this.GetEdgesDirected ( );
+        return this.GetEdgesUndirected ( );
     }
 
     ///<summary>
@@ -401,6 +400,57 @@ public class Mesh3
 
         Edge3 [ ] arr = new Edge3 [ result.Count ];
         result.CopyTo (arr);
+        return arr;
+    }
+
+    ///<summary>
+    ///Gets an array of edges from the mesh. Edges are treated as undirected,
+    ///so (origin, destination) and (destination, edge) are considered to be
+    ///equal
+    ///</summary>
+    ///<returns>edges array</returns>
+    public Edge3 [ ] GetEdgesUndirected ( )
+    {
+        int loopsLen = this.loops.Length;
+        Dictionary<int, Edge3> result = new Dictionary<int, Edge3> ( );
+
+        for (int i = 0; i < loopsLen; ++i)
+        {
+            Loop3 loop = this.loops [ i ];
+            Index3 [ ] indices = loop.Indices;
+            int indicesLen = indices.Length;
+
+            for (int j = 0; j < indicesLen; ++j)
+            {
+                Index3 idxOrigin = indices [ j ];
+                Index3 idxDest = indices [ (j + 1) % indicesLen ];
+
+                int vIdxOrigin = idxOrigin.v;
+                int vIdxDest = idxDest.v;
+
+                int aHsh = (Utils.MulBase ^ vIdxOrigin) *
+                    Utils.HashMul ^ vIdxDest;
+                int bHsh = (Utils.MulBase ^ vIdxDest) *
+                    Utils.HashMul ^ vIdxOrigin;
+
+                if (!result.ContainsKey (aHsh) && !result.ContainsKey (bHsh))
+                {
+                    result [ vIdxOrigin < vIdxDest ? aHsh : bHsh ] = new Edge3 (
+                    new Vert3 (
+                        this.coords [ idxOrigin.v ],
+                        this.texCoords [ idxOrigin.vt ],
+                        this.normals [ idxOrigin.vn ]),
+
+                    new Vert3 (
+                        this.coords [ idxDest.v ],
+                        this.texCoords [ idxDest.vt ],
+                        this.normals [ idxDest.vn ]));
+                }
+            }
+        }
+
+        Edge3 [ ] arr = new Edge3 [ result.Count ];
+        result.Values.CopyTo (arr, 0);
         return arr;
     }
 
