@@ -231,7 +231,7 @@ public class ClrGradient : IEnumerable
     /// Constructs a color gradient from a list of color keys.
     /// </summary>
     /// <param name="keys">color keys</param>
-    public ClrGradient (params Key[ ] keys)
+    public ClrGradient (params Key [ ] keys)
     {
         this.InsertAll (keys);
     }
@@ -241,7 +241,7 @@ public class ClrGradient : IEnumerable
     /// evenly distributed across the gradient.
     /// </summary>
     /// <param name="keys">color keys</param>
-    public ClrGradient (params Clr[ ] colors)
+    public ClrGradient (params Clr [ ] colors)
     {
         this.AppendAll (colors);
     }
@@ -251,11 +251,11 @@ public class ClrGradient : IEnumerable
     /// keys.
     /// </summary>
     /// <value>the color key</value>
-    public Key this [int i]
+    public Key this [ int i ]
     {
         get
         {
-            return this.keys[Utils.RemFloor (i, this.keys.Count)];
+            return this.keys [ Utils.RemFloor (i, this.keys.Count) ];
         }
     }
 
@@ -263,7 +263,7 @@ public class ClrGradient : IEnumerable
     /// Retrieves a color given a step in the range [0.0, 1.0] .
     /// </summary>
     /// <value></value>
-    public Clr this [float step]
+    public Clr this [ float step ]
     {
         get
         {
@@ -308,7 +308,7 @@ public class ClrGradient : IEnumerable
     /// </summary>
     /// <param name="colors">colors</param>
     /// <returns>this gradient</returns>
-    public ClrGradient AppendAll (params Clr[ ] colors)
+    public ClrGradient AppendAll (params Clr [ ] colors)
     {
         int len = colors.Length;
         this.CompressKeysLeft (len);
@@ -318,7 +318,7 @@ public class ClrGradient : IEnumerable
         {
             this.keys.Add (new Key (
                 (oldLen + i) * denom,
-                colors[i]));
+                colors [ i ]));
         }
         return this;
     }
@@ -336,7 +336,7 @@ public class ClrGradient : IEnumerable
         {
             // The | 0 is floor div.
             int middle = (low + high) / 2 | 0;
-            if (step > this.keys[middle].Step)
+            if (step > this.keys [ middle ].Step)
             {
                 low = middle + 1;
             }
@@ -361,7 +361,7 @@ public class ClrGradient : IEnumerable
         {
             // The | 0 is floor div.
             int middle = (low + high) / 2 | 0;
-            if (step < this.keys[middle].Step)
+            if (step < this.keys [ middle ].Step)
             {
                 high = middle;
             }
@@ -385,8 +385,8 @@ public class ClrGradient : IEnumerable
         float scalar = 1.0f / (len + added - 1.0f);
         for (int i = 0; i < len; ++i)
         {
-            Key key = this.keys[i];
-            this.keys[i] = new Key (
+            Key key = this.keys [ i ];
+            this.keys [ i ] = new Key (
                 key.Step * i * scalar,
                 key.Color);
         }
@@ -406,8 +406,8 @@ public class ClrGradient : IEnumerable
         float coeff = 1.0f - scalar;
         for (int i = 0; i < len; ++i)
         {
-            Key key = this.keys[i];
-            this.keys[i] = new Key (
+            Key key = this.keys [ i ];
+            this.keys [ i ] = new Key (
                 scalar + coeff * key.Step,
                 key.Color);
         }
@@ -470,7 +470,7 @@ public class ClrGradient : IEnumerable
     /// <param name="origin">origin</param>
     /// <param name="dest">destination</param>
     /// <returns>the colors</returns>
-    public Clr[ ] EvalRange (in int count, in float origin = 0.0f, in float dest = 1.0f)
+    public Clr [ ] EvalRange (in int count, in float origin = 0.0f, in float dest = 1.0f)
     {
         return this.EvalRange (count, origin, dest, (x, y, z) => Clr.MixRgbaLinear (x, y, z));
     }
@@ -484,7 +484,7 @@ public class ClrGradient : IEnumerable
     /// <param name="dest">destination</param>
     /// <param name="easing">easing function</param>
     /// <returns>the colors</returns>
-    public Clr[ ] EvalRange ( //
+    public Clr [ ] EvalRange ( //
         in int count, //
         in float origin, //
         in float dest, //
@@ -494,12 +494,12 @@ public class ClrGradient : IEnumerable
         float vOrigin = Utils.Clamp (origin, 0.0f, 1.0f);
         float vDest = Utils.Clamp (dest, 0.0f, 1.0f);
 
-        Clr[ ] result = new Clr[vCount];
+        Clr [ ] result = new Clr [ vCount ];
         float toPercent = 1.0f / (vCount - 1.0f);
         for (int i = 0; i < vCount; ++i)
         {
             float prc = i * toPercent;
-            result[i] = this.Eval (
+            result [ i ] = this.Eval (
                 (1.0f - prc) * vOrigin +
                 prc * vDest, easing);
         }
@@ -514,8 +514,8 @@ public class ClrGradient : IEnumerable
     protected Key FindGe (in float query)
     {
         int i = this.BisectLeft (query);
-        if (i < this.keys.Count) { return this.keys[i]; }
-        return this.keys[this.keys.Count - 1];
+        if (i < this.keys.Count) { return this.keys [ i ]; }
+        return this.keys [ this.keys.Count - 1 ];
     }
 
     /// <summary>
@@ -526,8 +526,8 @@ public class ClrGradient : IEnumerable
     protected Key FindLe (in float query)
     {
         int i = this.BisectRight (query);
-        if (i > 0) { return this.keys[i - 1]; }
-        return this.keys[0];
+        if (i > 0) { return this.keys [ i - 1 ]; }
+        return this.keys [ 0 ];
     }
 
     /// <summary>
@@ -536,7 +536,7 @@ public class ClrGradient : IEnumerable
     /// <returns>the first key</returns>
     public Key GetFirst ( )
     {
-        return this.keys[0];
+        return this.keys [ 0 ];
     }
 
     /// <summary>
@@ -545,7 +545,7 @@ public class ClrGradient : IEnumerable
     /// <returns>the first key</returns>
     public Key GetLast ( )
     {
-        return this.keys[this.keys.Count - 1];
+        return this.keys [ this.keys.Count - 1 ];
     }
 
     /// <summary>
@@ -568,7 +568,7 @@ public class ClrGradient : IEnumerable
     /// </summary>
     /// <param name="keys"></param>
     /// <returns></returns>
-    public ClrGradient InsertAll (params Key[ ] keys)
+    public ClrGradient InsertAll (params Key [ ] keys)
     {
         foreach (Key key in keys) { this.Insert (key); }
         return this;
@@ -616,7 +616,7 @@ public class ClrGradient : IEnumerable
     /// </summary>
     /// <param name="colors">colors</param>
     /// <returns>this gradient</returns>
-    public ClrGradient PrependAll (params Clr[ ] colors)
+    public ClrGradient PrependAll (params Clr [ ] colors)
     {
         int len = colors.Length;
         this.CompressKeysRight (len);
@@ -626,7 +626,7 @@ public class ClrGradient : IEnumerable
         {
             this.keys.Insert (i, new Key (
                 i * denom,
-                colors[i]));
+                colors [ i ]));
         }
         return this;
     }
@@ -639,7 +639,7 @@ public class ClrGradient : IEnumerable
     public Key RemoveAt (in int i = -1)
     {
         int j = Utils.RemFloor (i, this.keys.Count);
-        Key key = this.keys[j];
+        Key key = this.keys [ j ];
         this.keys.RemoveAt (j);
         return key;
     }
@@ -686,8 +686,8 @@ public class ClrGradient : IEnumerable
         int len = this.keys.Count;
         for (int i = 0; i < len; ++i)
         {
-            Key key = this.keys[i];
-            this.keys[i] = new Key (1.0f - key.Step, key.Color);
+            Key key = this.keys [ i ];
+            this.keys [ i ] = new Key (1.0f - key.Step, key.Color);
         }
         return this;
     }
@@ -839,11 +839,11 @@ public class ClrGradient : IEnumerable
         sb.Append ("{ keys: [ ");
         for (int i = 0; i < last; ++i)
         {
-            Key.ToString (sb, keys[i], places);
+            Key.ToString (sb, keys [ i ], places);
             sb.Append (',');
             sb.Append (' ');
         }
-        Key.ToString (sb, keys[last], places);
+        Key.ToString (sb, keys [ last ], places);
         sb.Append (" ] }");
         return sb;
     }

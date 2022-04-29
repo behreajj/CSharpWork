@@ -244,66 +244,66 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Retrieves an element by index.
     /// </summary>
     /// <value>the element</value>
-    public float this [int i]
+    public float this [ int i ]
     {
         get
         {
             switch (i)
             {
-                case 0:
-                case -16:
-                    return this._m00;
-                case 1:
-                case -15:
-                    return this._m01;
-                case 2:
-                case -14:
-                    return this._m02;
-                case 3:
-                case -13:
-                    return this._m03;
+            case 0:
+            case -16:
+                return this._m00;
+            case 1:
+            case -15:
+                return this._m01;
+            case 2:
+            case -14:
+                return this._m02;
+            case 3:
+            case -13:
+                return this._m03;
 
-                case 4:
-                case -12:
-                    return this._m10;
-                case 5:
-                case -11:
-                    return this._m11;
-                case 6:
-                case -10:
-                    return this._m12;
-                case 7:
-                case -9:
-                    return this._m13;
+            case 4:
+            case -12:
+                return this._m10;
+            case 5:
+            case -11:
+                return this._m11;
+            case 6:
+            case -10:
+                return this._m12;
+            case 7:
+            case -9:
+                return this._m13;
 
-                case 8:
-                case -8:
-                    return this._m20;
-                case 9:
-                case -7:
-                    return this._m21;
-                case 10:
-                case -6:
-                    return this._m22;
-                case 11:
-                case -5:
-                    return this._m23;
+            case 8:
+            case -8:
+                return this._m20;
+            case 9:
+            case -7:
+                return this._m21;
+            case 10:
+            case -6:
+                return this._m22;
+            case 11:
+            case -5:
+                return this._m23;
 
-                case 12:
-                case -4:
-                    return this._m30;
-                case 13:
-                case -3:
-                    return this._m31;
-                case 14:
-                case -2:
-                    return this._m32;
-                case 15:
-                case -1:
-                    return this._m33;
+            case 12:
+            case -4:
+                return this._m30;
+            case 13:
+            case -3:
+                return this._m31;
+            case 14:
+            case -2:
+                return this._m32;
+            case 15:
+            case -1:
+                return this._m33;
 
-                default:
-                    return 0.0f;
+            default:
+                return 0.0f;
             }
         }
     }
@@ -312,90 +312,90 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Retrieves an element by indices.
     /// </summary>
     /// <value>the element</value>
-    public float this [int i, int j]
+    public float this [ int i, int j ]
     {
         get
         {
             switch (i)
             {
+            case 0:
+            case -4:
+                switch (j)
+                {
                 case 0:
                 case -4:
-                    switch (j)
-                    {
-                        case 0:
-                        case -4:
-                            return this._m00;
-                        case 1:
-                        case -3:
-                            return this._m01;
-                        case 2:
-                        case -2:
-                            return this._m02;
-                        case 3:
-                        case -1:
-                            return this._m03;
-                        default:
-                            return 0.0f;
-                    }
+                    return this._m00;
                 case 1:
                 case -3:
-                    switch (j)
-                    {
-                        case 0:
-                        case -4:
-                            return this._m10;
-                        case 1:
-                        case -3:
-                            return this._m11;
-                        case 2:
-                        case -2:
-                            return this._m12;
-                        case 3:
-                        case -1:
-                            return this._m13;
-                        default:
-                            return 0.0f;
-                    }
+                    return this._m01;
                 case 2:
                 case -2:
-                    switch (j)
-                    {
-                        case 0:
-                        case -4:
-                            return this._m20;
-                        case 1:
-                        case -3:
-                            return this._m21;
-                        case 2:
-                        case -2:
-                            return this._m22;
-                        case 3:
-                        case -1:
-                            return this._m23;
-                        default:
-                            return 0.0f;
-                    }
+                    return this._m02;
                 case 3:
                 case -1:
-                    switch (j)
-                    {
-                        case 0:
-                        case -4:
-                            return this._m30;
-                        case 1:
-                        case -3:
-                            return this._m31;
-                        case 2:
-                        case -2:
-                            return this._m32;
-                        case 3:
-                        case -1:
-                            return this._m33;
-                        default:
-                            return 0.0f;
-                    }
+                    return this._m03;
                 default:
                     return 0.0f;
+                }
+            case 1:
+            case -3:
+                switch (j)
+                {
+                case 0:
+                case -4:
+                    return this._m10;
+                case 1:
+                case -3:
+                    return this._m11;
+                case 2:
+                case -2:
+                    return this._m12;
+                case 3:
+                case -1:
+                    return this._m13;
+                default:
+                    return 0.0f;
+                }
+            case 2:
+            case -2:
+                switch (j)
+                {
+                case 0:
+                case -4:
+                    return this._m20;
+                case 1:
+                case -3:
+                    return this._m21;
+                case 2:
+                case -2:
+                    return this._m22;
+                case 3:
+                case -1:
+                    return this._m23;
+                default:
+                    return 0.0f;
+                }
+            case 3:
+            case -1:
+                switch (j)
+                {
+                case 0:
+                case -4:
+                    return this._m30;
+                case 1:
+                case -3:
+                    return this._m31;
+                case 2:
+                case -2:
+                    return this._m32;
+                case 3:
+                case -1:
+                    return this._m33;
+                default:
+                    return 0.0f;
+                }
+            default:
+                return 0.0f;
             }
         }
     }
@@ -606,9 +606,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Returns a float array of length 16 containing this matrix's components.
     /// </summary>
     /// <returns>the array</returns>
-    public float[ ] ToArray1 ( )
+    public float [ ] ToArray1 ( )
     {
-        return new float[ ]
+        return new float [ ]
         {
             this._m00, this._m01, this._m02, this._m03,
                 this._m10, this._m11, this._m12, this._m13,
@@ -621,9 +621,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Returns a 4 x 4 float array containing this matrix's components.
     /// </summary>
     /// <returns>the array</returns>
-    public float[, ] ToArray2 ( )
+    public float [ , ] ToArray2 ( )
     {
-        return new float[, ]
+        return new float [ , ]
         { { this._m00, this._m01, this._m02, this._m03 }, //
             { this._m10, this._m11, this._m12, this._m13 }, //
             { this._m20, this._m21, this._m22, this._m23 }, //
@@ -635,7 +635,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Returns a named value tuple containing this matrix's components.
     /// </summary>
     /// <returns>the tuple</returns>
-    public (float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33) ToTuple ( )
+    public (float m00, float m01, float m02, float m03,
+            float m10, float m11, float m12, float m13,
+            float m20, float m21, float m22, float m23,
+            float m30, float m31, float m32, float m33) ToTuple ( )
     {
         return (
             m00: this._m00, m01: this._m01, m02: this._m02, m03: this._m03,
@@ -1526,17 +1529,23 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
 
     /// <summary>
     /// Multiplies a normal with a matrix that has already
-    /// been inverted.
+    /// been inverted. Returns up if the input normal is zero.
     /// </summary>
     /// <param name="h">matrix inverse</param>
     /// <param name="n">normal</param>
     /// <returns>product</returns>
     public static Vec3 MulInverseNormal (in Mat4 h, in Vec3 n)
     {
-        return Vec3.Normalize (new Vec3 (
-            n.x * h._m00 + n.y * h._m10 + n.z * h._m20,
-            n.x * h._m01 + n.y * h._m11 + n.z * h._m21,
-            n.x * h._m02 + n.y * h._m12 + n.z * h._m22));
+        float x = n.x * h._m00 + n.y * h._m10 + n.z * h._m20;
+        float y = n.x * h._m01 + n.y * h._m11 + n.z * h._m21;
+        float z = n.x * h._m02 + n.y * h._m12 + n.z * h._m22;
+        float mSq = x * x + y * y + z * z;
+        if (mSq != 0.0f)
+        {
+            float mInv = Utils.InvSqrtUnchecked (mSq);
+            return new Vec3 (x * mInv, y * mInv, z * mInv);
+        }
+        return Vec3.Up;
     }
 
     /// <summary>

@@ -276,7 +276,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// </summary>
     /// <param name="points">points</param>
     /// <returns>bounds</returns>
-    public static Bounds2 FromPoints (params Vec2[ ] points)
+    public static Bounds2 FromPoints (params Vec2 [ ] points)
     {
         int len = points.Length;
         if (len < 1) { return new Bounds2 ( ); }
@@ -289,25 +289,13 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
 
         for (int i = 0; i < len; ++i)
         {
-            Vec2 p = points[i];
+            Vec2 p = points [ i ];
             float x = p.x;
             float y = p.y;
-            if (x < lbx)
-            {
-                lbx = x;
-            }
-            if (x > ubx)
-            {
-                ubx = x;
-            }
-            if (y < lby)
-            {
-                lby = y;
-            }
-            if (y > uby)
-            {
-                uby = y;
-            }
+            if (x < lbx) { lbx = x; }
+            if (x > ubx) { ubx = x; }
+            if (y < lby) { lby = y; }
+            if (y > uby) { uby = y; }
         }
 
         lbx -= Utils.Epsilon * 2.0f;
@@ -402,7 +390,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <param name="xFac">x factor</param>
     /// <param name="yFac">y factor</param>
     /// <returns>four children</returns>
-    public static Bounds2[ ] Split (in Bounds2 b, in float xFac = 0.5f, in float yFac = 0.5f)
+    public static Bounds2 [ ] Split (in Bounds2 b, in float xFac = 0.5f, in float yFac = 0.5f)
     {
         Vec2 bMin = b.min;
         Vec2 bMax = b.max;
@@ -413,7 +401,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         float x = (1.0f - tx) * bMin.x + tx * bMax.x;
         float y = (1.0f - ty) * bMin.y + ty * bMax.y;
 
-        return new Bounds2[ ]
+        return new Bounds2 [ ]
         {
             new Bounds2 (bMin.x, bMin.y, x, y),
                 new Bounds2 (x, bMin.y, bMax.x, y),

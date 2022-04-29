@@ -144,26 +144,26 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// first element.
     /// </summary>
     /// <value>the element</value>
-    public float this [int i]
+    public float this [ int i ]
     {
         get
         {
             switch (i)
             {
-                case 0:
-                case -4:
-                    return this.real;
-                case 1:
-                case -3:
-                    return this.imag.x;
-                case 2:
-                case -2:
-                    return this.imag.y;
-                case 3:
-                case -1:
-                    return this.imag.z;
-                default:
-                    return 0.0f;
+            case 0:
+            case -4:
+                return this.real;
+            case 1:
+            case -3:
+                return this.imag.x;
+            case 2:
+            case -2:
+                return this.imag.y;
+            case 3:
+            case -1:
+                return this.imag.z;
+            default:
+                return 0.0f;
             }
         }
     }
@@ -262,9 +262,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// components. The real component, w, is treated as the first element.
     /// </summary>
     /// <returns>the array</returns>
-    public float[ ] ToArray ( )
+    public float [ ] ToArray ( )
     {
-        return this.ToArray (new float[this.Length], 0);
+        return this.ToArray (new float [ this.Length ], 0);
     }
 
     /// <summary>
@@ -274,12 +274,12 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="i">index</param>
     /// <returns>array</returns>
-    public float[ ] ToArray (in float[ ] arr, in int i = 0)
+    public float [ ] ToArray (in float [ ] arr, in int i = 0)
     {
-        arr[i] = this.real;
-        arr[i + 1] = this.imag.x;
-        arr[i + 2] = this.imag.y;
-        arr[i + 3] = this.imag.z;
+        arr [ i ] = this.real;
+        arr [ i + 1 ] = this.imag.x;
+        arr [ i + 2 ] = this.imag.y;
+        arr [ i + 3 ] = this.imag.z;
         return arr;
     }
 
@@ -1234,11 +1234,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
                 1.0f - ysq2 - zsq2,
                 xy2 + wz2,
                 xz2 - wy2),
-            forward : new Vec3 (
+            forward: new Vec3 (
                 xy2 - wz2,
                 1.0f - xsq2 - zsq2,
                 yz2 + wx2),
-            up : new Vec3 (
+            up: new Vec3 (
                 xz2 + wy2,
                 yz2 - wx2,
                 1.0f - xsq2 - ysq2));

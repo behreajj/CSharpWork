@@ -155,44 +155,44 @@ public readonly struct Mat3 : IEnumerable
     /// Retrieves an element by index.
     /// </summary>
     /// <value>the element</value>
-    public float this [int i]
+    public float this [ int i ]
     {
         get
         {
             switch (i)
             {
-                case 0:
-                case -9:
-                    return this._m00;
-                case 1:
-                case -8:
-                    return this._m01;
-                case 2:
-                case -7:
-                    return this._m02;
+            case 0:
+            case -9:
+                return this._m00;
+            case 1:
+            case -8:
+                return this._m01;
+            case 2:
+            case -7:
+                return this._m02;
 
-                case 3:
-                case -6:
-                    return this._m10;
-                case 4:
-                case -5:
-                    return this._m11;
-                case 5:
-                case -4:
-                    return this._m12;
+            case 3:
+            case -6:
+                return this._m10;
+            case 4:
+            case -5:
+                return this._m11;
+            case 5:
+            case -4:
+                return this._m12;
 
-                case 6:
-                case -3:
-                    return this._m20;
-                case 7:
-                case -2:
-                    return this._m21;
-                case 8:
-                case -1:
-                    return this._m22;
+            case 6:
+            case -3:
+                return this._m20;
+            case 7:
+            case -2:
+                return this._m21;
+            case 8:
+            case -1:
+                return this._m22;
 
-                default:
-                    return 0.0f;
+            default:
+                return 0.0f;
             }
         }
     }
@@ -201,62 +201,62 @@ public readonly struct Mat3 : IEnumerable
     /// Retrieves an element by indices.
     /// </summary>
     /// <value>the element</value>
-    public float this [int i, int j]
+    public float this [ int i, int j ]
     {
         get
         {
             switch (i)
             {
+            case 0:
+            case -3:
+                switch (j)
+                {
                 case 0:
                 case -3:
-                    switch (j)
-                    {
-                        case 0:
-                        case -3:
-                            return this._m00;
-                        case 1:
-                        case -2:
-                            return this._m01;
-                        case 2:
-                        case -1:
-                            return this._m02;
-                        default:
-                            return 0.0f;
-                    }
+                    return this._m00;
                 case 1:
                 case -2:
-                    switch (j)
-                    {
-                        case 0:
-                        case -3:
-                            return this._m10;
-                        case 1:
-                        case -2:
-                            return this._m11;
-                        case 2:
-                        case -1:
-                            return this._m12;
-                        default:
-                            return 0.0f;
-                    }
+                    return this._m01;
                 case 2:
                 case -1:
-                    switch (j)
-                    {
-                        case 0:
-                        case -3:
-                            return this._m20;
-                        case 1:
-                        case -2:
-                            return this._m21;
-                        case 2:
-                        case -1:
-                            return this._m22;
-                        default:
-                            return 0.0f;
-                    }
+                    return this._m02;
                 default:
                     return 0.0f;
+                }
+            case 1:
+            case -2:
+                switch (j)
+                {
+                case 0:
+                case -3:
+                    return this._m10;
+                case 1:
+                case -2:
+                    return this._m11;
+                case 2:
+                case -1:
+                    return this._m12;
+                default:
+                    return 0.0f;
+                }
+            case 2:
+            case -1:
+                switch (j)
+                {
+                case 0:
+                case -3:
+                    return this._m20;
+                case 1:
+                case -2:
+                    return this._m21;
+                case 2:
+                case -1:
+                    return this._m22;
+                default:
+                    return 0.0f;
+                }
+            default:
+                return 0.0f;
             }
         }
     }
@@ -411,9 +411,9 @@ public readonly struct Mat3 : IEnumerable
     /// Returns a float array of length 9 containing this matrix's components.
     /// </summary>
     /// <returns>the array</returns>
-    public float[ ] ToArray1 ( )
+    public float [ ] ToArray1 ( )
     {
-        return new float[ ]
+        return new float [ ]
         {
             this._m00, this._m01, this._m02,
                 this._m10, this._m11, this._m12,
@@ -425,9 +425,9 @@ public readonly struct Mat3 : IEnumerable
     /// Returns a 3 x 3 float array containing this matrix's components.
     /// </summary>
     /// <returns>the array</returns>
-    public float[, ] ToArray2 ( )
+    public float [ , ] ToArray2 ( )
     {
-        return new float[, ]
+        return new float [ , ]
         { { this._m00, this._m01, this._m02 }, //
             { this._m10, this._m11, this._m12 }, //
             { this._m20, this._m21, this._m22 }
@@ -438,7 +438,9 @@ public readonly struct Mat3 : IEnumerable
     /// Returns a named value tuple containing this matrix's components.
     /// </summary>
     /// <returns>the tuple</returns>
-    public (float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) ToTuple ( )
+    public (float m00, float m01, float m02,
+            float m10, float m11, float m12,
+            float m20, float m21, float m22) ToTuple ( )
     {
         return (
             m00: this._m00, m01: this._m01, m02: this._m02,

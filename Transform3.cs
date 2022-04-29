@@ -488,7 +488,10 @@ public class Transform3
     /// <param name="tr">transform</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Transform3 tr, in int places = 4)
+    public static StringBuilder ToString ( // 
+        in StringBuilder sb, //
+        in Transform3 tr, //
+        in int places = 4)
     {
         sb.Append ("{ location: ");
         Vec3.ToString (sb, tr.location, places);

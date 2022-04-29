@@ -112,7 +112,7 @@ public readonly struct Edge2 : IEquatable<Edge2>
     /// Finds the heading of an edge based on its origin
     /// and destination coordinates.
     /// </summary>
-    /// <param name="e">edgge</param>
+    /// <param name="e">edge</param>
     /// <returns>heading</returns>
     public static float Heading (in Edge2 e)
     {
@@ -123,7 +123,7 @@ public readonly struct Edge2 : IEquatable<Edge2>
     /// Finds the magnitude of an edge based on its origin
     /// and destination coordinates.
     /// </summary>
-    /// <param name="e">edgge</param>
+    /// <param name="e">edge</param>
     /// <returns>magnitude</returns>
     public static float Mag (in Edge2 e)
     {
@@ -134,11 +134,29 @@ public readonly struct Edge2 : IEquatable<Edge2>
     /// Finds the square magnitude of an edge based on its origin
     /// and destination coordinates.
     /// </summary>
-    /// <param name="e">edgge</param>
+    /// <param name="e">edge</param>
     /// <returns>magnitude squared</returns>
     public static float MagSq (in Edge2 e)
     {
         return Vec2.DistSq (e.origin.Coord, e.dest.Coord);
+    }
+
+    ///<summary>
+    ///Projects a vector onto an edge. Returns a point.
+    ///The scalar projection is clamped to [0.0, 1.0], so
+    ///the extrema are limited to the edge's origin and
+    ///destination coordinate. 
+    ///</summary>
+    ///<param name="a">vector</param>
+    ///<param name="b">edge</param>
+    ///<returns>point</returns>
+    public static Vec2 Project (in Vec2 a, in Edge2 b)
+    {
+        Vec2 orig = b.origin.Coord;
+        Vec2 dest = b.dest.Coord;
+        return Vec2.Mix (orig, dest, Utils.Clamp (
+            Vec2.ProjectScalar (
+                a, dest - orig), 0.0f, 1.0f));
     }
 
     /// <summary>

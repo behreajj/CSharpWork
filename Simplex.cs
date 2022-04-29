@@ -287,6 +287,8 @@ public static class Simplex
         int index = (x0 > y0 ? 0x20 : 0) |
             (x0 > z0 ? 0x10 : 0) | (y0 > z0 ? 0x8 : 0) |
             (x0 > w0 ? 0x4 : 0) | (y0 > w0 ? 0x2 : 0) | (z0 > w0 ? 0x1 : 0);
+
+        // TODO: Convert this to a one-dimensional array.
         int sc0 = Simplex.Permute[index, 0];
         int sc1 = Simplex.Permute[index, 1];
         int sc2 = Simplex.Permute[index, 2];

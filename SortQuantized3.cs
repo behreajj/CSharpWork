@@ -14,6 +14,7 @@ public class SortQuantized3 : IComparer<Vec3>
 
     public SortQuantized3 (in int levels = (int) (1.0f / Utils.Epsilon))
     {
+        // TODO: Add comments.
         this.levels = levels < 2 ? 2 : levels;
     }
 

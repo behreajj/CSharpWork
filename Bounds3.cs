@@ -293,7 +293,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// </summary>
     /// <param name="points">points</param>
     /// <returns>bounds</returns>
-    public static Bounds3 FromPoints (params Vec3[ ] points)
+    public static Bounds3 FromPoints (params Vec3 [ ] points)
     {
         int len = points.Length;
         if (len < 1)
@@ -311,34 +311,16 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
 
         for (int i = 0; i < len; ++i)
         {
-            Vec3 p = points[i];
+            Vec3 p = points [ i ];
             float x = p.x;
             float y = p.y;
             float z = p.z;
-            if (x < lbx)
-            {
-                lbx = x;
-            }
-            if (x > ubx)
-            {
-                ubx = x;
-            }
-            if (y < lby)
-            {
-                lby = y;
-            }
-            if (y > uby)
-            {
-                uby = y;
-            }
-            if (z < lbz)
-            {
-                lbz = z;
-            }
-            if (z > ubz)
-            {
-                ubz = z;
-            }
+            if (x < lbx) { lbx = x; }
+            if (x > ubx) { ubx = x; }
+            if (y < lby) { lby = y; }
+            if (y > uby) { uby = y; }
+            if (z < lbz) { lbz = z; }
+            if (z > ubz) { ubz = z; }
         }
 
         lbx -= Utils.Epsilon * 2.0f;
@@ -461,7 +443,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// <param name="yFac">y factor</param>
     /// <param name="zFac">z factor</param>
     /// <returns>eight children</returns>
-    public static Bounds3[ ] Split ( //
+    public static Bounds3 [ ] Split ( //
         in Bounds3 b, //
         in float xFac = 0.5f, //
         in float yFac = 0.5f, //
@@ -478,7 +460,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
         float y = (1.0f - ty) * bMin.y + ty * bMax.y;
         float z = (1.0f - tz) * bMin.z + tz * bMax.z;
 
-        return new Bounds3[ ]
+        return new Bounds3 [ ]
         {
             new Bounds3 (bMin.x, bMin.y, bMin.z, x, y, z),
                 new Bounds3 (x, bMin.y, bMin.z, bMax.x, y, z),

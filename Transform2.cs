@@ -433,7 +433,10 @@ public class Transform2
     /// <param name="tr">transform</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Transform2 tr, in int places = 4)
+    public static StringBuilder ToString ( //
+        in StringBuilder sb, //
+        in Transform2 tr, //
+        in int places = 4)
     {
         sb.Append ("{ location: ");
         Vec2.ToString (sb, tr.location, places);

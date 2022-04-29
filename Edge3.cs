@@ -112,7 +112,7 @@ public readonly struct Edge3 : IEquatable<Edge3>
     /// Finds the azimuth of an edge based on its origin
     /// and destination coordinates.
     /// </summary>
-    /// <param name="e">edgge</param>
+    /// <param name="e">edge</param>
     /// <returns>inclination</returns>
     public static float Azimuth (in Edge3 e)
     {
@@ -123,7 +123,7 @@ public readonly struct Edge3 : IEquatable<Edge3>
     /// Finds the inclination of an edge based on its origin
     /// and destination coordinates.
     /// </summary>
-    /// <param name="e">edgge</param>
+    /// <param name="e">edge</param>
     /// <returns>inclination</returns>
     public static float Inclination (in Edge3 e)
     {
@@ -134,7 +134,7 @@ public readonly struct Edge3 : IEquatable<Edge3>
     /// Finds the magnitude of an edge based on its origin
     /// and destination coordinates.
     /// </summary>
-    /// <param name="e">edgge</param>
+    /// <param name="e">edge</param>
     /// <returns>magnitude</returns>
     public static float Mag (in Edge3 e)
     {
@@ -145,11 +145,29 @@ public readonly struct Edge3 : IEquatable<Edge3>
     /// Finds the square magnitude of an edge based on its origin
     /// and destination coordinates.
     /// </summary>
-    /// <param name="e">edgge</param>
+    /// <param name="e">edge</param>
     /// <returns>magnitude squared</returns>
     public static float MagSq (in Edge3 e)
     {
         return Vec3.DistSq (e.origin.Coord, e.dest.Coord);
+    }
+
+    ///<summary>
+    ///Projects a vector onto an edge. Returns a point.
+    ///The scalar projection is clamped to [0.0, 1.0], so
+    ///the extrema are limited to the edge's origin and
+    ///destination coordinate. 
+    ///</summary>
+    ///<param name="a">vector</param>
+    ///<param name="b">edge</param>
+    ///<returns>point</returns>
+    public static Vec3 Project (in Vec3 a, in Edge3 b)
+    {
+        Vec3 orig = b.origin.Coord;
+        Vec3 dest = b.dest.Coord;
+        return Vec3.Mix (orig, dest, Utils.Clamp (
+            Vec3.ProjectScalar (
+                a, dest - orig), 0.0f, 1.0f));
     }
 
     /// <summary>

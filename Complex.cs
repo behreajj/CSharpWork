@@ -42,20 +42,20 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// returns real; 1 or -1, imaginary.
     /// </summary>
     /// <value>the component</value>
-    public float this [int i]
+    public float this [ int i ]
     {
         get
         {
             switch (i)
             {
-                case 0:
-                case -2:
-                    return this.real;
-                case 1:
-                case -1:
-                    return this.imag;
-                default:
-                    return 0.0f;
+            case 0:
+            case -2:
+                return this.real;
+            case 1:
+            case -1:
+                return this.imag;
+            default:
+                return 0.0f;
             }
         }
     }
@@ -155,9 +155,9 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// components.
     /// </summary>
     /// <returns>the array</returns>
-    public float[ ] ToArray ( )
+    public float [ ] ToArray ( )
     {
-        return this.ToArray (new float[this.Length], 0);
+        return this.ToArray (new float [ this.Length ], 0);
     }
 
     /// <summary>
@@ -166,10 +166,10 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <param name="arr">array</param>
     /// <param name="i">index</param>
     /// <returns>array</returns>
-    public float[ ] ToArray (in float[ ] arr, in int i = 0)
+    public float [ ] ToArray (in float [ ] arr, in int i = 0)
     {
-        arr[i] = this.real;
-        arr[i + 1] = this.imag;
+        arr [ i ] = this.real;
+        arr [ i + 1 ] = this.imag;
         return arr;
     }
 
@@ -207,15 +207,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     public static implicit operator Complex (in Vec2 v)
     {
         return new Complex (v.x, v.y);
-    }
-
-    /// <summary>
-    /// Converts a complex number to a float by finding its absolute.
-    /// </summary>
-    /// <param name="z">complex number</param>
-    public static explicit operator float (in Complex z)
-    {
-        return Complex.Abs (z);
     }
 
     /// <summary>

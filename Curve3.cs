@@ -41,11 +41,11 @@ public class Curve3 : IEnumerable
     /// Gets the knots of this curve, copied to an array.
     /// </summary>
     /// <value>the knots</value>
-    public Knot3[ ] Knots
+    public Knot3 [ ] Knots
     {
         get
         {
-            Knot3[ ] result = new Knot3[this.knots.Count];
+            Knot3 [ ] result = new Knot3 [ this.knots.Count ];
             this.knots.CopyTo (result);
             return result;
         }
@@ -68,13 +68,13 @@ public class Curve3 : IEnumerable
     /// the index by the number of elements in the list of knots.
     /// </summary>
     /// <value>knot</value>
-    public Knot3 this [int i]
+    public Knot3 this [ int i ]
     {
         get
         {
             return this.closedLoop ?
-                this.knots[Utils.RemFloor (i, this.knots.Count)] :
-                this.knots[i];
+                this.knots [ Utils.RemFloor (i, this.knots.Count) ] :
+                this.knots [ i ];
         }
     }
 
@@ -85,7 +85,7 @@ public class Curve3 : IEnumerable
     /// Returns a named value tuple containing two vectors.
     /// </summary>
     /// <value>tuple</value>
-    public (Vec3 coord, Vec3 tangent) this [float i]
+    public (Vec3 coord, Vec3 tangent) this [ float i ]
     {
         get
         {
@@ -103,7 +103,7 @@ public class Curve3 : IEnumerable
     /// </summary>
     /// <param name="cl">closed loop</param>
     /// <param name="kn">knots</param>
-    public Curve3 (bool cl, params Knot3[ ] kn)
+    public Curve3 (bool cl, params Knot3 [ ] kn)
     {
         this.closedLoop = cl;
         this.AppendAll (kn);
@@ -149,10 +149,10 @@ public class Curve3 : IEnumerable
     /// </summary>
     /// <param name="kn">knots</param>
     /// <returns>this curve</returns>
-    public Curve3 AppendAll (params Knot2[ ] kn)
+    public Curve3 AppendAll (params Knot2 [ ] kn)
     {
         int len = kn.Length;
-        for (int i = 0; i < len; ++i) { this.knots.Add (kn[i]); }
+        for (int i = 0; i < len; ++i) { this.knots.Add (kn [ i ]); }
         return this;
     }
 
@@ -161,7 +161,7 @@ public class Curve3 : IEnumerable
     /// </summary>
     /// <param name="kn">knots</param>
     /// <returns>this curve</returns>
-    public Curve3 AppendAll (params Knot3[ ] kn)
+    public Curve3 AppendAll (params Knot3 [ ] kn)
     {
         this.knots.AddRange (kn);
         return this;
@@ -225,7 +225,7 @@ public class Curve3 : IEnumerable
     /// <returns>the knot</returns>
     public Knot3 GetFirst ( )
     {
-        return this.knots[0];
+        return this.knots [ 0 ];
     }
 
     /// <summary>
@@ -234,7 +234,7 @@ public class Curve3 : IEnumerable
     /// <returns>the knot</returns>
     public Knot3 GetLast ( )
     {
-        return this.knots[this.knots.Count - 1];
+        return this.knots [ this.knots.Count - 1 ];
     }
 
     public Curve3 Insert (in int i, Knot3 knot)
@@ -250,24 +250,24 @@ public class Curve3 : IEnumerable
         return this;
     }
 
-    public Curve3 PrependAll (params Knot2[ ] kn)
+    public Curve3 PrependAll (params Knot2 [ ] kn)
     {
         int len = kn.Length;
         for (int i = 0, j = 0; i < len; ++i)
         {
-            Knot3 knot = (Knot3) kn[i];
+            Knot3 knot = (Knot3) kn [ i ];
             this.knots.Insert (j, knot);
             ++j;
         }
         return this;
     }
 
-    public Curve3 PrependAll (params Knot3[ ] kn)
+    public Curve3 PrependAll (params Knot3 [ ] kn)
     {
         int len = kn.Length;
         for (int i = 0, j = 0; i < len; ++i)
         {
-            Knot3 knot = kn[i];
+            Knot3 knot = kn [ i ];
             this.knots.Insert (j, knot);
             ++j;
         }
@@ -277,7 +277,7 @@ public class Curve3 : IEnumerable
     public Knot3 RemoveAt (in int i)
     {
         int j = this.closedLoop ? Utils.RemFloor (i, this.knots.Count) : i;
-        Knot3 knot = this.knots[j];
+        Knot3 knot = this.knots [ j ];
         this.knots.RemoveAt (j);
         return knot;
     }
@@ -515,8 +515,8 @@ public class Curve3 : IEnumerable
         {
             tScaled = Utils.RemFloor (step, 1.0f) * knotLength;
             i = (int) tScaled;
-            a = knots[Utils.RemFloor (i, knotLength)];
-            b = knots[Utils.RemFloor (i + 1, knotLength)];
+            a = knots [ Utils.RemFloor (i, knotLength) ];
+            b = knots [ Utils.RemFloor (i + 1, knotLength) ];
         }
         else
         {
@@ -532,14 +532,14 @@ public class Curve3 : IEnumerable
 
             tScaled = step * (knotLength - 1);
             i = (int) tScaled;
-            a = knots[i];
-            b = knots[i + 1];
+            a = knots [ i ];
+            b = knots [ i + 1 ];
         }
 
         float t = tScaled - i;
         return (
             coord: Knot3.BezierPoint (a, b, t),
-            tangent : Knot3.BezierTanUnit (a, b, t));
+            tangent: Knot3.BezierTanUnit (a, b, t));
     }
 
     /// <summary>
@@ -552,7 +552,7 @@ public class Curve3 : IEnumerable
     /// <returns>the tuple</returns>
     public static (Vec3 coord, Vec3 tangent) EvalFirst (in Curve3 curve)
     {
-        Knot3 kn = curve.knots[0];
+        Knot3 kn = curve.knots [ 0 ];
         return (
             coord: kn.Coord,
             tangent: Vec3.Normalize (kn.ForeHandle - kn.Coord));
@@ -569,10 +569,79 @@ public class Curve3 : IEnumerable
     public static (Vec3 coord, Vec3 tangent) EvalLast (in Curve3 curve)
     {
         List<Knot3> kns = curve.knots;
-        Knot3 kn = kns[kns.Count - 1];
+        Knot3 kn = kns [ kns.Count - 1 ];
         return (
             coord: kn.Coord,
             tangent: Vec3.Normalize (kn.Coord - kn.RearHandle));
+    }
+
+    ///<summary>
+    ///Sets a curve to a series of points.
+    ///</summary>
+    ///<param name="target">target curve</param>
+    ///<param name="points">points array</param>
+    ///<param name="closedLoop">closed loop flag</param>
+    ///<returns>the curve</returns>
+    public static Curve3 FromLinear (
+        in Curve3 target,
+        in Vec3 [ ] points,
+        in bool closedLoop = false)
+    {
+        int len = points.Length;
+        if (len < 2) { return target; }
+
+        target.Resize (len);
+        target.closedLoop = closedLoop;
+
+        List<Knot3> knots = target.knots;
+        for (int i = 0; i < len; ++i)
+        {
+            Vec3 v = points [ i ];
+            Knot3 kn = knots [ i ];
+            kn.Coord = v;
+            kn.ForeHandle = v;
+            kn.RearHandle = v;
+        }
+
+        // TODO: Implement smooth handles and call that for len > 2
+        return Curve3.StraightHandles (target);
+    }
+
+    ///<summary>
+    ///Straightens the fore handles and rear handles of
+    ///a curve's knots so they are collinear with its
+    ///coordinates.
+    ///</summary>
+    ///<param name="target">target curve</param>
+    ///<returns>the curve</returns>
+    public static Curve3 StraightHandles (in Curve3 target)
+    {
+        List<Knot3> knots = target.knots;
+        int len = knots.Count;
+        if (len < 2) { return target; }
+
+        for (int i = 1; i < len; ++i)
+        {
+            Knot3 prev = knots [ i - 1 ];
+            Knot3 next = knots [ i ];
+            prev.ForeHandle = Vec3.Mix (prev.Coord, next.Coord, Utils.OneThird);
+            next.RearHandle = Vec3.Mix (next.Coord, prev.Coord, Utils.OneThird);
+        }
+
+        Knot3 first = knots [ 0 ];
+        Knot3 last = knots [ len - 1 ];
+        if (target.closedLoop)
+        {
+            first.RearHandle = Vec3.Mix (first.Coord, last.Coord, Utils.OneThird);
+            last.ForeHandle = Vec3.Mix (last.Coord, first.Coord, Utils.OneThird);
+        }
+        else
+        {
+            first.MirrorHandlesForward ( );
+            last.MirrorHandlesBackward ( );
+        }
+
+        return target;
     }
 
     /// <summary>
@@ -604,10 +673,10 @@ public class Curve3 : IEnumerable
         sb.Append (", knots: [ ");
         for (int i = 0; i < last; ++i)
         {
-            Knot3.ToString (sb, knots[i], places);
+            Knot3.ToString (sb, knots [ i ], places);
             sb.Append (", ");
         }
-        Knot3.ToString (sb, knots[last], places);
+        Knot3.ToString (sb, knots [ last ], places);
         sb.Append (" ] }");
         return sb;
     }

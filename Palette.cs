@@ -46,14 +46,7 @@ public class Palette
 
             set
             {
-                if (Clr.None (value))
-                {
-                    this.color = Clr.ClearBlack;
-                }
-                else
-                {
-                    this.color = value;
-                }
+                this.color = Clr.None (value) ? Clr.ClearBlack : value;
             }
         }
 
@@ -803,6 +796,19 @@ public class Palette
     public string GetTagName (in int i)
     {
         return this.tags[i].Name;
+    }
+
+    /// <summary>
+    /// Gets the index of a color in the palette, if the
+    /// palette contains it. Otherwise, returns a default.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <param name="df">default value</param>
+    /// <returns>index</returns>
+    public int IndexOf (in Clr c, in int df = -1)
+    {
+        int i = Array.IndexOf (this.entries, new Entry (c, ""));
+        return i > -1 ? i : df;
     }
 
     /// <summary>
