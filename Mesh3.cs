@@ -353,6 +353,16 @@ public class Mesh3
     }
 
     ///<summary>
+    ///Gets an array of edges from the mesh.
+    ///Defaults to directed edges.
+    ///</summary>
+    ///<returns>edges array</returns>
+    public Edge3 [ ] GetEdges ( )
+    {
+        return this.GetEdgesDirected ( );
+    }
+
+    ///<summary>
     ///Gets an array of edges from the mesh. Edges are treated as directed, so
     ///(origin, destination) and (destination, edge) are considered to be
     ///different.
@@ -360,10 +370,8 @@ public class Mesh3
     ///<returns>edges array</returns>
     public Edge3 [ ] GetEdgesDirected ( )
     {
-        // TODO: Test
-
         int loopsLen = this.loops.Length;
-        List<Edge3> result = new List<Edge3> (loopsLen * 4);
+        SortedSet<Edge3> result = new SortedSet<Edge3> ( );
 
         for (int i = 0; i < loopsLen; ++i)
         {
@@ -380,17 +388,20 @@ public class Mesh3
                     new Vert3 (
                         this.coords [ idxOrigin.v ],
                         this.texCoords [ idxOrigin.vt ],
-                        this.normals [ idxOrigin.v ]),
+                        this.normals [ idxOrigin.vn ]),
 
                     new Vert3 (
                         this.coords [ idxDest.v ],
                         this.texCoords [ idxDest.vt ],
                         this.normals [ idxDest.vn ]));
 
-                if (result.IndexOf (trial) < 0) { result.Add (trial); }
+                result.Add (trial);
             }
         }
-        return result.ToArray ( );
+
+        Edge3 [ ] arr = new Edge3 [ result.Count ];
+        result.CopyTo (arr);
+        return arr;
     }
 
     /// <summary>

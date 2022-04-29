@@ -7,7 +7,7 @@ using System.Text;
 /// retrieval from a mesh.
 /// </summary>
 [Serializable]
-public readonly struct Edge2 : IEquatable<Edge2>
+public readonly struct Edge2 : IComparable<Edge2>, IEquatable<Edge2>
 {
     /// <summary>
     /// The destination vertex.
@@ -78,6 +78,18 @@ public readonly struct Edge2 : IEquatable<Edge2>
     }
 
     /// <summary>
+    /// Compares this edge to another in compliance with the IComparable interface.
+    /// Compares edges according to their center point.
+    /// </summary>
+    /// <param name="e">the comparisand</param>
+    /// <returns>the evaluation</returns>
+    public int CompareTo (Edge2 e)
+    {
+        return Vec2.Mix (this.origin.Coord, this.dest.Coord)
+            .CompareTo (Vec2.Mix (e.origin.Coord, e.dest.Coord));
+    }
+
+    /// <summary>
     /// Tests this edge for equivalence with another in compliance with the
     /// IEquatable interface.
     /// </summary>
@@ -85,9 +97,8 @@ public readonly struct Edge2 : IEquatable<Edge2>
     /// <returns>equivalence</returns>
     public bool Equals (Edge2 e)
     {
-        if (this.origin.GetHashCode ( ) != e.origin.GetHashCode ( )) { return false; }
-        if (this.dest.GetHashCode ( ) != e.dest.GetHashCode ( )) { return false; }
-        return true;
+        return this.origin.Equals (e.origin) &&
+            this.dest.Equals (e.dest);
     }
 
     /// <summary>

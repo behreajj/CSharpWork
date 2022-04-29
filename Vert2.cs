@@ -94,9 +94,7 @@ public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>
     /// <returns>evaluation</returns>
     public int CompareTo (Vert2 v)
     {
-        int coComp = this.coord.CompareTo (v.coord);
-        int tcComp = this.texCoord.CompareTo (v.texCoord);
-        return coComp != 0 ? coComp : tcComp;
+        return this.coord.CompareTo (v.coord);
     }
 
     /// <summary>
@@ -107,9 +105,7 @@ public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>
     /// <returns>equivalence</returns>
     public bool Equals (Vert2 v)
     {
-        if (this.coord.GetHashCode ( ) != v.coord.GetHashCode ( )) { return false; }
-        if (this.texCoord.GetHashCode ( ) != v.texCoord.GetHashCode ( )) { return false; }
-        return true;
+        return this.coord.Equals(v.coord);
     }
 
     /// <summary>
@@ -133,9 +129,9 @@ public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>
     public static StringBuilder ToString (in StringBuilder sb, in Vert2 v, in int places = 4)
     {
         sb.Append ("{ coord: ");
-        Vec2.ToString (v.coord, places);
+        Vec2.ToString (sb, v.coord, places);
         sb.Append (", texCoord: ");
-        Vec2.ToString (v.texCoord, places);
+        Vec2.ToString (sb, v.texCoord, places);
         sb.Append (" }");
         return sb;
     }

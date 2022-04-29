@@ -110,10 +110,7 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// <returns>evaluation</returns>
     public int CompareTo (Vert3 v)
     {
-        int coComp = this.coord.CompareTo (v.coord);
-        int tcComp = this.texCoord.CompareTo (v.texCoord);
-        int nrComp = this.normal.CompareTo (v.normal);
-        return coComp != 0 ? coComp : nrComp != 0 ? nrComp : tcComp;
+        return this.coord.CompareTo (v.coord);
     }
 
     /// <summary>
@@ -124,10 +121,7 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// <returns>equivalence</returns>
     public bool Equals (Vert3 v)
     {
-        if (this.coord.GetHashCode ( ) != v.coord.GetHashCode ( )) { return false; }
-        if (this.texCoord.GetHashCode ( ) != v.texCoord.GetHashCode ( )) { return false; }
-        if (this.normal.GetHashCode ( ) != v.normal.GetHashCode ( )) { return false; }
-        return true;
+        return this.coord.Equals(v.coord);
     }
 
     /// <summary>
@@ -151,11 +145,11 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     public static StringBuilder ToString (in StringBuilder sb, in Vert3 v, in int places = 4)
     {
         sb.Append ("{ coord: ");
-        Vec3.ToString (v.coord, places);
+        Vec3.ToString (sb, v.coord, places);
         sb.Append (", texCoord: ");
-        Vec2.ToString (v.texCoord, places);
+        Vec2.ToString (sb, v.texCoord, places);
         sb.Append (", normal: ");
-        Vec3.ToString (v.normal, places);
+        Vec3.ToString (sb, v.normal, places);
         sb.Append (" }");
         return sb;
     }

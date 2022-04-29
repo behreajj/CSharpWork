@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -358,6 +357,16 @@ public class Mesh2
     }
 
     ///<summary>
+    ///Gets an array of edges from the mesh.
+    ///Defaults to directed edges.
+    ///</summary>
+    ///<returns>edges array</returns>
+    public Edge2 [ ] GetEdges ( )
+    {
+        return this.GetEdgesDirected ( );
+    }
+
+    ///<summary>
     ///Gets an array of edges from the mesh. Edges are treated as directed, so
     ///(origin, destination) and (destination, edge) are considered to be
     ///different.
@@ -365,10 +374,9 @@ public class Mesh2
     ///<returns>edges array</returns>
     public Edge2 [ ] GetEdgesDirected ( )
     {
-        // TODO: Test
 
         int loopsLen = this.loops.Length;
-        List<Edge2> result = new List<Edge2> (loopsLen * 4);
+        SortedSet<Edge2> result = new SortedSet<Edge2> ( );
 
         for (int i = 0; i < loopsLen; ++i)
         {
@@ -390,10 +398,13 @@ public class Mesh2
                         this.coords [ idxDest.v ],
                         this.texCoords [ idxDest.vt ]));
 
-                if (result.IndexOf (trial) < 0) { result.Add (trial); }
+                result.Add (trial);
             }
         }
-        return result.ToArray ( );
+
+        Edge2 [ ] arr = new Edge2 [ result.Count ];
+        result.CopyTo (arr);
+        return arr;
     }
 
     /// <summary>
