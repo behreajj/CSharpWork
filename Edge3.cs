@@ -79,7 +79,7 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
 
     /// <summary>
     /// Compares this edge to another in compliance with the IComparable interface.
-    /// Compares edges according to their center point.
+    /// Compares edges according to their origin, then destination.
     /// </summary>
     /// <param name="e">the comparisand</param>
     /// <returns>the evaluation</returns>
