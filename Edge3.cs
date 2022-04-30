@@ -141,15 +141,15 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
         return Vec3.Mix (e.origin.Coord, e.dest.Coord);
     }
 
-    ///<summary>
-    ///Finds a point on an edge according to a factor in
-    ///[0.0, 1.0]. Returns the origin when the factor
-    ///is less than zero; returns the destination when
-    ///the factor is greater then one.
-    ///</summary>
-    ///<param name="e">edge</param>
-    ///<param name="t">factor</param>
-    ///<returns>point</returns>
+    /// <summary>
+    /// Finds a point on an edge according to a factor in
+    /// [0.0, 1.0]. Returns the origin when the factor
+    /// is less than zero; returns the destination when
+    /// the factor is greater then one.
+    /// </summary>
+    /// <param name="e">edge</param>
+    /// <param name="t">factor</param>
+    /// <returns>point</returns>
     public static Vec3 Eval (in Edge3 e, in float t = 0.5f)
     {
         if (t <= 0.0f) { return e.origin.Coord; }
@@ -190,15 +190,15 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
         return Vec3.DistSq (e.origin.Coord, e.dest.Coord);
     }
 
-    ///<summary>
-    ///Projects a vector onto an edge. Returns a point.
-    ///The scalar projection is clamped to [0.0, 1.0], so
-    ///the extrema are limited to the edge's origin and
-    ///destination coordinate. 
-    ///</summary>
-    ///<param name="a">vector</param>
-    ///<param name="b">edge</param>
-    ///<returns>point</returns>
+    /// <summary>
+    /// Projects a vector onto an edge. Returns a point.
+    /// The scalar projection is clamped to [0.0, 1.0], so
+    /// the extrema are limited to the edge's origin and
+    /// destination coordinate. 
+    /// </summary>
+    /// <param name="a">vector</param>
+    /// <param name="b">edge</param>
+    /// <returns>point</returns>
     public static Vec3 Project (in Vec3 a, in Edge3 b)
     {
         return Edge3.Eval (b,
@@ -284,7 +284,7 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// coordinate.
     /// </summary>
     /// <param name="e">edge</param>
-    ///<returns>vector</returns>
+    /// <returns>vector</returns>
     public static Vec3 Vector (in Edge3 e)
     {
         return e.dest.Coord - e.origin.Coord;

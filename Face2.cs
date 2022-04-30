@@ -74,7 +74,7 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// Compares this face to another in compliance with the IComparable
     /// interface.
     /// </summary>
-    /// <param name="v">comparisand</param>
+    /// <param name="f">comparisand</param>
     /// <returns>evaluation</returns>
     public int CompareTo (Face2 f)
     {
@@ -125,8 +125,8 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// in [0.0, 1.0].
     /// </summary>
     /// <param name="f">face</param>
+    /// <param name="t">factor</param>
     /// <returns>point</returns>
-
     public static Vec2 Eval (in Face2 f, in float t)
     {
         float tScaled = f.Length * Utils.RemFloor (t, 1.0f);

@@ -764,7 +764,10 @@ public class Mesh3
     /// </summary>
     /// <param name="faceIdx">face index</param>
     /// <returns>the tuple</returns>
-    public (Loop3 [ ] loopsNew, Vec3 [ ] vsNew, Vec2 [ ] vtsNew, Vec3 [ ] vnsNew) SubdivFaceCenter (in int faceIdx)
+    public (Loop3 [ ] loopsNew,
+            Vec3 [ ] vsNew,
+            Vec2 [ ] vtsNew,
+            Vec3 [ ] vnsNew) SubdivFaceCenter (in int faceIdx)
     {
         int facesLen = this.loops.Length;
         int i = Utils.RemFloor (faceIdx, facesLen);
@@ -847,10 +850,11 @@ public class Mesh3
     /// </summary>
     /// <param name="faceIdx">the face index</param>
     /// <returns>new data</returns>
-    public (Loop3 [ ] loopsNew, Vec3 [ ] vsNew, Vec2 [ ] vtsNew, Vec3 [ ] vnsNew) SubdivFaceFan (in int faceIdx)
+    public (Loop3 [ ] loopsNew,
+            Vec3 [ ] vsNew,
+            Vec2 [ ] vtsNew,
+            Vec3 [ ] vnsNew) SubdivFaceFan (in int faceIdx)
     {
-        // TODO: Create SubdivFacesFan (plural).
-
         int facesLen = this.loops.Length;
         int i = Utils.RemFloor (faceIdx, facesLen);
         Index3 [ ] face = this.loops [ i ].Indices;
@@ -918,7 +922,10 @@ public class Mesh3
     /// </summary>
     /// <param name="faceIdx">face index</param>
     /// <returns>the tuple</returns>
-    public (Loop3 [ ] loopsNew, Vec3 [ ] vsNew, Vec2 [ ] vtsNew, Vec3 [ ] vnsNew) SubdivFaceInscribe (in int faceIdx)
+    public (Loop3 [ ] loopsNew,
+            Vec3 [ ] vsNew,
+            Vec2 [ ] vtsNew,
+            Vec3 [ ] vnsNew) SubdivFaceInscribe (in int faceIdx)
     {
         int facesLen = this.loops.Length;
         int i = Utils.RemFloor (faceIdx, facesLen);
@@ -987,8 +994,16 @@ public class Mesh3
     /// </summary>
     /// <param name="itr">iterations</param>
     /// <returns>this mesh</returns>
-    public Mesh3 SubdivFacesCenter (in int itr = 1)
+    public (Loop3 [ ] loopsNew,
+            Vec3 [ ] vsNew,
+            Vec2 [ ] vtsNew,
+            Vec3 [ ] vnsNew) SubdivFacesCenter (in int itr = 1)
     {
+        List<Loop3> loopsNew = new List<Loop3> ( );
+        List<Vec3> vsNew = new List<Vec3> ( );
+        List<Vec2> vtsNew = new List<Vec2> ( );
+        List<Vec3> vnsNew = new List<Vec3> ( );
+
         for (int i = 0; i < itr; ++i)
         {
             int k = 0;
@@ -996,11 +1011,61 @@ public class Mesh3
             for (int j = 0; j < len; ++j)
             {
                 int vertLen = this.loops [ k ].Length;
-                this.SubdivFaceCenter (k);
+                var result = this.SubdivFaceCenter (k);
+
+                loopsNew.AddRange (result.loopsNew);
+                vsNew.AddRange (result.vsNew);
+                vtsNew.AddRange (result.vtsNew);
+                vnsNew.AddRange (result.vnsNew);
+
                 k += vertLen;
             }
         }
-        return this;
+
+        return (loopsNew: loopsNew.ToArray ( ),
+            vsNew: vsNew.ToArray ( ),
+            vtsNew: vtsNew.ToArray ( ),
+            vnsNew: vnsNew.ToArray ( ));
+    }
+
+    /// <summary>
+    /// Subdivides all faces in the mesh by a number of iterations. Uses the
+    /// triangle fan method.
+    /// </summary>
+    /// <param name="itr">iterations</param>
+    /// <returns>this mesh</returns>
+    public (Loop3 [ ] loopsNew,
+            Vec3 [ ] vsNew,
+            Vec2 [ ] vtsNew,
+            Vec3 [ ] vnsNew) SubdivFacesFan (in int itr = 1)
+    {
+        List<Loop3> loopsNew = new List<Loop3> ( );
+        List<Vec3> vsNew = new List<Vec3> ( );
+        List<Vec2> vtsNew = new List<Vec2> ( );
+        List<Vec3> vnsNew = new List<Vec3> ( );
+
+        for (int i = 0; i < itr; ++i)
+        {
+            int k = 0;
+            int len = this.loops.Length;
+            for (int j = 0; j < len; ++j)
+            {
+                int vertLen = this.loops [ k ].Length;
+                var result = this.SubdivFaceFan (k);
+
+                loopsNew.AddRange (result.loopsNew);
+                vsNew.AddRange (result.vsNew);
+                vtsNew.AddRange (result.vtsNew);
+                vnsNew.AddRange (result.vnsNew);
+
+                k += vertLen;
+            }
+        }
+
+        return (loopsNew: loopsNew.ToArray ( ),
+            vsNew: vsNew.ToArray ( ),
+            vtsNew: vtsNew.ToArray ( ),
+            vnsNew: vnsNew.ToArray ( ));
     }
 
     /// <summary>
@@ -1009,8 +1074,16 @@ public class Mesh3
     /// </summary>
     /// <param name="itr">iterations</param>
     /// <returns>this mesh</returns>
-    public Mesh3 SubdivFacesInscribe (in int itr = 1)
+    public (Loop3 [ ] loopsNew,
+            Vec3 [ ] vsNew,
+            Vec2 [ ] vtsNew,
+            Vec3 [ ] vnsNew) SubdivFacesInscribe (in int itr = 1)
     {
+        List<Loop3> loopsNew = new List<Loop3> ( );
+        List<Vec3> vsNew = new List<Vec3> ( );
+        List<Vec2> vtsNew = new List<Vec2> ( );
+        List<Vec3> vnsNew = new List<Vec3> ( );
+
         for (int i = 0; i < itr; ++i)
         {
             int k = 0;
@@ -1018,11 +1091,21 @@ public class Mesh3
             for (int j = 0; j < len; ++j)
             {
                 int vertLen = this.loops [ k ].Length;
-                this.SubdivFaceInscribe (k);
+                var result = this.SubdivFaceInscribe (k);
+
+                loopsNew.AddRange (result.loopsNew);
+                vsNew.AddRange (result.vsNew);
+                vtsNew.AddRange (result.vtsNew);
+                vnsNew.AddRange (result.vnsNew);
+
                 k += vertLen + 1;
             }
         }
-        return this;
+
+        return (loopsNew: loopsNew.ToArray ( ),
+            vsNew: vsNew.ToArray ( ),
+            vtsNew: vtsNew.ToArray ( ),
+            vnsNew: vnsNew.ToArray ( ));
     }
 
     /// <summary>
@@ -2416,6 +2499,9 @@ public class Mesh3
     /// <returns>uniform mesh</returns>
     public static Mesh3 UniformData (in Mesh3 source, in Mesh3 target)
     {
+        // TODO: Account for cases where source == target
+        // vs. source != target.
+
         Loop3 [ ] fsSrc = source.loops;
         Vec3 [ ] vsSrc = source.coords;
         Vec2 [ ] vtsSrc = source.texCoords;

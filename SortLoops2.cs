@@ -6,15 +6,15 @@ using System.Collections.Generic;
 /// </summary>
 public class SortLoops2 : IComparer<Loop2>
 {
-    ///<summary>
-    ///Coordinates referenced by loop indices.
-    ///</summary>
+    /// <summary>
+    /// Coordinates referenced by loop indices.
+    /// </summary>
     protected readonly Vec2 [ ] coords;
 
-    ///<summary>
-    ///Constructs a loop sorting comparator from
-    ///an array to a mesh's coordinates.
-    ///</summary>
+    /// <summary>
+    /// Constructs a loop sorting comparator from
+    /// an array to a mesh's coordinates.
+    /// </summary>
     /// <param name="coords">mesh coordinates</param>
     public SortLoops2 (in Vec2 [ ] coords)
     {

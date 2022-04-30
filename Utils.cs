@@ -386,6 +386,23 @@ public static class Utils
     }
 
     /// <summary>
+    /// Finds the unsigned distance between two periodic values.
+    /// Example ranges are 360.0 for degrees, 1.0 for hues or
+    /// Tau for radians.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <param name="range">range</param>
+    /// <returns>unsigned distance</returns>
+    public static float DistAngleUnsigned (in float a, in float b, in float range)
+    {
+        float halfRange = range * 0.5f;
+        return halfRange - Utils.Abs (Utils.Abs (
+            Utils.RemFloor (b, range) -
+            Utils.RemFloor (a, range)) - halfRange);
+    }
+
+    /// <summary>
     /// Divides the left operand by the right, but returns zero when the
     /// denominator is zero.
     /// </summary>
@@ -1283,8 +1300,6 @@ public static class Utils
     /// <returns>string</returns>
     public static string ToPadded (in int v, in int padding = 3)
     {
-        // TODO: Replace all instances of this function with pbr string builder
-        // version below.
         return Utils.ToPadded (new StringBuilder (16), v, padding).ToString ( );
     }
 

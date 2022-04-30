@@ -59,7 +59,6 @@ public class Loop3
     /// </summary>
     public Loop3 ( )
     {
-        // TODO: Enumerable interface?
         this.indices = new Index3 [ 3 ];
     }
 
@@ -261,14 +260,27 @@ public class Loop3
         return result;
     }
 
+    /// <summary>
+    /// Returns a string representation of a loop.
+    /// </summary>
+    /// <param name="l">loop</param>
+    /// <param name="padding">padding</param>
+    /// <returns>string</returns>
     public static string ToString (in Loop3 l, in int padding = 3)
     {
         return Loop3.ToString (new StringBuilder (1024), l, padding).ToString ( );
     }
 
+    /// <summary>
+    /// Appends a string representation of a loop
+    /// to a string builder.
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="l">loop</param>
+    /// <param name="padding">padding</param>
+    /// <returns>string builder</returns>
     public static StringBuilder ToString (in StringBuilder sb, in Loop3 l, in int padding = 3)
     {
-        // TODO: Comment.
         sb.Append ("{ indices: ");
         Index3.ToString (sb, l.indices, padding);
         sb.Append (' ');
