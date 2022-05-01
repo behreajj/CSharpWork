@@ -2,7 +2,7 @@ using System;
 using System.Text;
 
 /// <summary>
-/// Organizes the vectors the shape a Bezier curve into a coordinate (or anchor
+/// Organizes the points that shape a Bezier curve into a coordinate (or anchor
 /// point), fore handle (the following control point) and rear handle (the
 /// preceding control point).
 /// </summary>
@@ -745,41 +745,6 @@ public class Knot2
         float rhy = coy - hmcosa;
 
         return new Knot2 (cox, coy, fhx, fhy, rhx, rhy);
-    }
-
-    /// <summary>
-    /// Sets a knot from line segment. Assumes that that the previous knot's
-    /// coordinate is set to the first anchor point. The previous knot's fore
-    /// handle, the next knot's rear handle and the next knot's coordinate are
-    /// set by this function.
-    /// </summary>
-    /// <param name="nextAnchor">next anchor</param>
-    /// <param name="prev">previous knot</param>
-    /// <param name="next">next knot</param>
-    /// <returns>the next knot</returns>
-    public static Knot2 FromSegLinear (in Vec2 nextAnchor, in Knot2 prev, in Knot2 next)
-    {
-        return Knot2.FromSegLinear (nextAnchor.x, nextAnchor.y, prev, next);
-    }
-
-    /// <summary>
-    /// Sets a knot from line segment. Assumes that that the previous knot's
-    /// coordinate is set to the first anchor point. The previous knot's fore
-    /// handle, the next knot's rear handle and the next knot's coordinate are
-    /// set by this function.
-    /// </summary>
-    /// <param name="xNextAnchor">next anchor x</param>
-    /// <param name="yNextAnchor">next anchor y</param>
-    /// <param name="prev">previous knot</param>
-    /// <param name="next">next knot</param>
-    /// <returns>the next knot</returns>
-    public static Knot2 FromSegLinear (in float xNextAnchor, in float yNextAnchor, in Knot2 prev, in Knot2 next)
-    {
-        next.Coord = new Vec2 (xNextAnchor, yNextAnchor);
-        prev.ForeHandle = Vec2.Mix (prev.Coord, next.Coord, Utils.OneThird);
-        next.RearHandle = Vec2.Mix (next.Coord, prev.Coord, Utils.OneThird);
-
-        return next;
     }
 
     /// <summary>

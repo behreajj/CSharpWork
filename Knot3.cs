@@ -2,7 +2,7 @@ using System;
 using System.Text;
 
 /// <summary>
-/// Organizes the vectors the shape a Bezier curve into a coordinate (or anchor
+/// Organizes the points that shape a Bezier curve into a coordinate (or anchor
 /// point), fore handle (the following control point) and rear handle (the
 /// preceding control point).
 /// </summary>
@@ -869,6 +869,9 @@ public class Knot3
         in Knot3 next, //
         in Vec3 carry)
     {
+        // TODO: Incorporate in curve smooth handles.
+        // TODO: Comment.
+
         Vec3 coCurr = curr.coord;
         Vec3 coPrev = prev.coord;
         Vec3 coNext = next.coord;

@@ -581,6 +581,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// The z component of the input vector is
     /// expected to hold the luminance, while x
     /// is expected to hold a and y, b.
+    ///
+    /// In the return vector, hue is assigned to
+    /// the x component; chroma, to y; luminance,
+    /// to z; alpha, to w.
     /// </summary>
     /// <param name="lab">lab color</param>
     /// <returns>lch color</returns>
@@ -608,12 +612,27 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     }
 
     /// <summary>
+    /// Converts from CIE LAB to standard RGB (SRGB).
+    /// The z component of the input vector is
+    /// expected to hold the luminance, while x
+    /// is expected to hold a and y, b.
+    /// </summary>
+    /// <param name="lab">lab color</param>
+    /// <returns>the color</returns>
+    public static Clr LabaToStandard (in Vec4 lab)
+    {
+        return Clr.LinearToStandard (
+            Clr.XyzaToLinear (
+                Clr.LabaToXyza (lab)));
+    }
+
+    /// <summary>
     /// Converts from CIE LAB to CIE XYZ.
     /// The z component of the input vector is
     /// expected to hold the luminance, while x
     /// is expected to hold a and y, b.
     /// </summary>
-    /// <param name="lab">the lab color</param>
+    /// <param name="lab">lab color</param>
     /// <returns>the xyz color</returns>
     public static Vec4 LabaToXyza (in Vec4 lab)
     {
@@ -646,9 +665,14 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
 
     /// <summary>
     /// Converts a color from CIE LCH to CIE LAB.
-    /// Lightness is expected to be in [0.0, 100.0].
+    ///
+    /// Luminance is expected to be in [0.0, 100.0].
     /// Chroma is expected to be in [0.0, 135.0].
     /// Hue is expected to be in [0.0, 1.0].
+    ///
+    /// The input vector is expected to store hue
+    /// in the x component; chroma, in the y;
+    /// luminance in the z; alpha in the w.
     /// </summary>
     /// <param name="lch">LCh color</param>
     /// <returns>Lab color</returns>
@@ -661,6 +685,28 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
             chroma * (float) Math.Sin (hRad),
             lch.z,
             lch.w);
+    }
+
+    /// <summary>
+    /// Converts a color from CIE LCH to standard
+    /// RGB (sRGB).
+    ///
+    /// Luminance is expected to be in [0.0, 100.0].
+    /// Chroma is expected to be in [0.0, 135.0].
+    /// Hue is expected to be in [0.0, 1.0].
+    ///
+    /// The input vector is expected to store hue
+    /// in the x component; chroma, in the y;
+    /// luminance in the z; alpha in the w.
+    /// </summary>
+    /// <param name="lch">LCh color</param>
+    /// <returns>Lab color</returns>
+    public static Clr LchaToStandard (in Vec4 lch)
+    {
+        return Clr.LinearToStandard (
+            Clr.XyzaToLinear (
+                Clr.LabaToXyza (
+                    Clr.LchaToLaba (lch))));
     }
 
     /// <summary>
@@ -1268,6 +1314,38 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     }
 
     /// <summary>
+    /// Converts a color from standard RGB (sRGB) to CIE LAB.
+    /// Stores alpha in the w component, luminance in the z
+    /// component, a in the x component and b in the y component.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>the lab color</returns>
+    public static Vec4 StandardToLaba (in Clr c)
+    {
+        return Clr.XyzaToLaba (
+            Clr.LinearToXyza (
+                Clr.StandardToLinear (c)));
+    }
+
+    /// <summary>
+    /// Converts a color from standard RGB (sRGB)
+    /// to CIE LCH.
+    ///
+    /// In the return vector, hue is assigned to
+    /// the x component; chroma, to y; luminance,
+    /// to z; alpha, to w.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>the lab color</returns>
+    public static Vec4 StandardToLcha (in Clr c)
+    {
+        return Clr.LabaToLcha (
+            Clr.XyzaToLaba (
+                Clr.LinearToXyza (
+                    Clr.StandardToLinear (c))));
+    }
+
+    /// <summary>
     /// Converts a color from standard RGB (sRGB) to linear RGB.
     /// </summary>
     /// <param name="c">the standard color</param>
@@ -1495,14 +1573,14 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// luminance in the z component,
     /// a in the x component and b in the y component.
     /// </summary>
-    /// <param name="xyz">the XYZ color</param>
+    /// <param name="v">the XYZ color</param>
     /// <returns>the lab color</returns>
-    public static Vec4 XyzaToLaba (in Vec4 xyz)
+    public static Vec4 XyzaToLaba (in Vec4 v)
     {
         double oneThird = 1.0d / 3.0d;
         double offset = 16.0d / 116.0d;
 
-        double a = xyz.x * 1.0521110608435826d;
+        double a = v.x * 1.0521110608435826d;
         if (a > 0.008856d)
         {
             a = Math.Pow (a, oneThird);
@@ -1512,7 +1590,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
             a = 7.787d * a + offset;
         }
 
-        double b = xyz.y;
+        double b = v.y;
         if (b > 0.008856d)
         {
             b = Math.Pow (b, oneThird);
@@ -1522,7 +1600,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
             b = 7.787d * b + offset;
         }
 
-        double c = xyz.z * 0.9184170164304805d;
+        double c = v.z * 0.9184170164304805d;
         if (c > 0.008856d)
         {
             c = Math.Pow (c, oneThird);
@@ -1536,7 +1614,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
             (float) (500.0d * (a - b)), // a
             (float) (200.0d * (b - c)), // b
             (float) (116.0d * b - 16.0d), // l
-            xyz.w);
+            v.w);
     }
 
     /// <summary>

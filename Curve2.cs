@@ -94,7 +94,10 @@ public class Curve2 : IEnumerable
     /// <summary>
     /// The default curve constructor.
     /// </summary>
-    public Curve2 ( ) { }
+    public Curve2 ( )
+    {
+        // TODO: Implement rounded rect.
+    }
 
     /// <summary>
     /// Creates a curve from a list of knots and a closed loop flag.
@@ -517,6 +520,63 @@ public class Curve2 : IEnumerable
             tangent: Vec2.Normalize (kn.Coord - kn.RearHandle));
     }
 
+    /// <summary>
+    /// Evaluates a range of points and tangents on a curve
+    /// at a resolution, or count.
+    /// </summary>
+    /// <param name="curve">curve</param>    
+    /// <param name="count">count</param>
+    /// <returns>the range</returns>
+    public static (Vec2 coord, Vec2 tangent) [ ] EvalRange (
+        in Curve2 curve, in int count)
+    {
+        return Curve2.EvalRange (curve, count, 0.0f,
+            curve.closedLoop ? 1.0f - 1.0f / Utils.Max (3, count) : 1.0f);
+    }
+
+    /// <summary>
+    /// Evaluates a range of points and tangents on a curve
+    /// for a given origin and destination factor at a
+    /// resolution, or count.
+    ///
+    /// For closed loops, an origin and destination of
+    /// 0.0 and 1.0 would yield a duplicate point, and so
+    /// should be calculated accordingly. I.e., 0.0 to
+    /// 1.0 - 1.0 / count would avoid the duplicate.
+    /// </summary>
+    /// <param name="curve">curve</param>    
+    /// <param name="count">count</param>
+    /// <param name="origin">origin</param>
+    /// <param name="dest">destination</param>
+    /// <returns>the range</returns>
+    public static (Vec2 coord, Vec2 tangent) [ ] EvalRange (
+        in Curve2 curve,
+        in int count,
+        in float origin,
+        in float dest)
+    {
+        int vCount = count < 3 ? 3 : count;
+        float vOrigin = origin;
+        float vDest = dest;
+        if (curve.closedLoop)
+        {
+            vOrigin = Utils.Clamp (vOrigin, 0.0f, 1.0f);
+            vDest = Utils.Clamp (vDest, 0.0f, 1.0f);
+        }
+
+        (Vec2 coord, Vec2 tangent) [ ] result = new (Vec2 coord, Vec2 tangent) [ vCount ];
+
+        float toPercent = 1.0f / (vCount - 1.0f);
+        for (int i = 0; i < vCount; ++i)
+        {
+            float fac = Utils.Mix (vOrigin, vDest,
+                i * toPercent);
+            result [ i ] = Curve2.Eval (curve, fac);
+        }
+
+        return result;
+    }
+
     ///<summary>
     ///Sets a curve to a series of points.
     ///</summary>
@@ -550,7 +610,112 @@ public class Curve2 : IEnumerable
     }
 
     /// <summary>
-    /// Creates a curve that approximates Bernoulli's lemniscate, which
+    /// Sets a curve to approximate a circle.
+    /// </summary>
+    /// <param name="target">output curve</param>
+    /// <param name="sectors">sectors</param>
+    /// <param name="offset angle">offset angle</param>
+    /// <returns>the circle</returns>
+    public static Curve2 Circle ( //
+        in Curve2 target, // 
+        in int sectors = 4, //
+        in float offsetAngle = Utils.HalfPi)
+    {
+        int vKnCt = sectors < 3 ? 3 : sectors;
+
+        float cx = 0.0f;
+        float cy = 0.0f;
+        float r = 0.5f;
+        float toTheta = Utils.Tau / vKnCt;
+
+        float invKnCt = 1.0f / vKnCt;
+        float hndlTan = 0.25f * invKnCt;
+        float magHandle = Utils.Tan (hndlTan * Utils.Tau)
+           * Utils.FourThirds * r;
+
+        target.Resize (vKnCt);
+        target.closedLoop = true;
+        List<Knot2> knots = target.knots;
+
+        for (int i = 0; i < vKnCt; ++i)
+        {
+            float angle = offsetAngle + i * toTheta;
+            float cosAngle = Utils.Cos (angle);
+            float sinAngle = Utils.Sin (angle);
+            float hmCosa = cosAngle * magHandle;
+            float hmSina = sinAngle * magHandle;
+            float cox = cx + r * cosAngle;
+            float coy = cy + r * sinAngle;
+
+            knots [ i ].Set (
+                cox, coy,
+                cox - hmSina, coy + hmCosa,
+                cox + hmSina, coy - hmCosa);
+        }
+
+        return target;
+    }
+
+    /// <summary>
+    /// Sets a curve to approximate an ellipse.
+    /// The horizontal radius is assumed to be 0.5,
+    /// while the vertical radius is the horizontal
+    /// divided by the aspect ratio.
+    /// The curve has four knots.
+    /// </summary>
+    /// <param name="target">output curve</param>
+    /// <param name="aspect">aspect ratio</param>
+    /// <returns>the ellipse</returns>
+    public static Curve2 Ellipse ( //
+        in Curve2 target, //
+        in float aspect = 1.0f)
+    {
+        float vAsp = aspect != 0.0f ? aspect : 1.0f;
+
+        float cx = 0.0f;
+        float cy = 0.0f;
+        float rx = 0.5f;
+        float ry = rx / vAsp;
+
+        float right = cx + rx;
+        float top = cy + ry;
+        float left = cx - rx;
+        float bottom = cy - ry;
+
+        float horizHandle = rx * Utils.Kappa;
+        float vertHandle = ry * Utils.Kappa;
+
+        float xHandlePos = cx + horizHandle;
+        float xHandleNeg = cx - horizHandle;
+        float yHandlePos = cy + vertHandle;
+        float yHandleNeg = cy - vertHandle;
+
+        target.Resize (4);
+        target.closedLoop = true;
+        List<Knot2> knots = target.knots;
+
+        knots [ 0 ].Set (
+            right, cy,
+            right, yHandlePos,
+            right, yHandleNeg);
+        knots [ 1 ].Set (
+            cx, top,
+            xHandleNeg, top,
+            xHandlePos, top);
+        knots [ 2 ].Set (
+            left, cy,
+            left, yHandleNeg,
+            left, yHandlePos);
+        knots [ 3 ].Set (
+            cx, bottom,
+            xHandlePos, bottom,
+            xHandleNeg, bottom);
+
+        return target;
+    }
+
+    /// <summary>
+    /// Sets a curve to approximate Bernoulli's lemniscate, which
     /// resembles an infinity loop (with equally proportioned lobes).
     /// </summary>
     /// <param name="target">output curve</param>
@@ -559,13 +724,76 @@ public class Curve2 : IEnumerable
     {
         target.Resize (6);
         target.closedLoop = true;
+        List<Knot2> knots = target.knots;
 
-        target [ 0 ].Set (0.5f, 0.0f, 0.5f, 0.1309615f, 0.5f, -0.1309615f);
-        target [ 1 ].Set (0.235709f, 0.166627f, 0.0505335f, 0.114256f, 0.361728f, 0.2022675f);
-        target [ 2 ].Set (-0.235709f, -0.166627f, -0.361728f, -0.2022675f, -0.0505335f, -0.114256f);
-        target [ 3 ].Set (-0.5f, 0.0f, -0.5f, 0.1309615f, -0.5f, -0.1309615f);
-        target [ 4 ].Set (-0.235709f, 0.166627f, -0.0505335f, 0.114256f, -0.361728f, 0.2022675f);
-        target [ 5 ].Set (0.235709f, -0.166627f, 0.361728f, -0.2022675f, 0.0505335f, -0.114256f);
+        knots [ 0 ].Set (0.5f, 0.0f, 0.5f, 0.1309615f, 0.5f, -0.1309615f);
+        knots [ 1 ].Set (0.235709f, 0.166627f, 0.0505335f, 0.114256f, 0.361728f, 0.2022675f);
+        knots [ 2 ].Set (-0.235709f, -0.166627f, -0.361728f, -0.2022675f, -0.0505335f, -0.114256f);
+        knots [ 3 ].Set (-0.5f, 0.0f, -0.5f, 0.1309615f, -0.5f, -0.1309615f);
+        knots [ 4 ].Set (-0.235709f, 0.166627f, -0.0505335f, 0.114256f, -0.361728f, 0.2022675f);
+        knots [ 5 ].Set (0.235709f, -0.166627f, 0.361728f, -0.2022675f, 0.0505335f, -0.114256f);
+
+        return target;
+    }
+
+    /// <summary>
+    /// Sets a curve to a regular convex polygon.
+    /// </summary>
+    /// <param name="target">output curve</param>
+    /// <param name="sectors">sectors</param>
+    /// <param name="offset angle">offset angle</param>
+    /// <returns>the polygon</returns>
+    public static Curve2 Polygon ( //
+        in Curve2 target, // 
+        in int sectors = 4, //
+        in float offsetAngle = Utils.HalfPi)
+    {
+        int vKnCt = sectors < 3 ? 3 : sectors;
+
+        float cx = 0.0f;
+        float cy = 0.0f;
+        float r = 0.5f;
+        float toTheta = Utils.Tau / vKnCt;
+
+        target.Resize (vKnCt);
+        target.closedLoop = true;
+        List<Knot2> knots = target.knots;
+
+        Knot2 first = knots [ 0 ];
+        first.Coord = new Vec2 (
+            cx + r * Utils.Cos (offsetAngle),
+            cy + r * Utils.Sin (offsetAngle));
+
+        Knot2 prev = first;
+        for (int i = 1; i < vKnCt; ++i)
+        {
+            Vec2 coPrev = prev.Coord;
+            float angle = offsetAngle + i * toTheta;
+            Vec2 coCurr = new Vec2 (
+                cx + r * Utils.Cos (angle),
+                cy + r * Utils.Sin (angle));
+
+            Knot2 curr = knots [ i ];
+            curr.Coord = coCurr;
+            curr.RearHandle = Vec2.Mix (
+                coCurr,
+                coPrev,
+                Utils.OneThird);
+            prev.ForeHandle = Vec2.Mix (
+                coPrev,
+                coCurr,
+                Utils.OneThird);
+            prev = curr;
+        }
+
+        first.RearHandle = Vec2.Mix (
+            first.Coord,
+            prev.Coord,
+            Utils.OneThird);
+        prev.ForeHandle = Vec2.Mix (
+            prev.Coord,
+            first.Coord,
+            Utils.OneThird);
 
         return target;
     }
@@ -632,7 +860,7 @@ public class Curve2 : IEnumerable
         int last = len - 1;
 
         sb.Append ("{ closedLoop: ");
-        sb.Append (c.closedLoop ? "false" : "true");
+        sb.Append (c.closedLoop ? "true" : "false");
         sb.Append (", knots: [ ");
         for (int i = 0; i < last; ++i)
         {

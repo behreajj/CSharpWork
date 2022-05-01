@@ -45,6 +45,13 @@ public static class Utils
     /// </summary>
     public const int HashMul = 16777619;
 
+
+    // Magnitude for orthogonal handles when four curve
+    // knots are used to approximate an ellipse or circle
+    // (90 degrees per knot), Derived from
+    // (Math.Sqrt(2.0) - 1.0) * 4.0 / 3.0.
+    public const float Kappa = 0.552285f;
+
     /// <summary>
     /// The hash base multiplied by the hash multiplier.
     /// </summary>

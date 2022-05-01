@@ -441,6 +441,7 @@ public class ClrGradient : IEnumerable
     /// <returns>color</returns>
     public Clr Eval (in float step)
     {
+        // TODO: For consistency with curves, make this static.
         return this.Eval (step, (x, y, z) => Clr.MixRgbaLinear (x, y, z));
     }
 
@@ -453,6 +454,7 @@ public class ClrGradient : IEnumerable
     /// <returns>color</returns>
     public Clr Eval (in float step, in Func<Clr, Clr, float, Clr> easing)
     {
+        // TODO: For consistency with curves, make this static.
         Key prevKey = this.FindLe (step);
         Key nextKey = this.FindGe (step);
         float prevStep = prevKey.Step;
@@ -472,6 +474,7 @@ public class ClrGradient : IEnumerable
     /// <returns>the colors</returns>
     public Clr [ ] EvalRange (in int count, in float origin = 0.0f, in float dest = 1.0f)
     {
+        // TODO: For consistency with curves, make this static.
         return this.EvalRange (count, origin, dest, (x, y, z) => Clr.MixRgbaLinear (x, y, z));
     }
 
@@ -490,6 +493,7 @@ public class ClrGradient : IEnumerable
         in float dest, //
         in Func<Clr, Clr, float, Clr> easing)
     {
+        // TODO: For consistency with curves, make this static.
         int vCount = count < 3 ? 3 : count;
         float vOrigin = Utils.Clamp (origin, 0.0f, 1.0f);
         float vDest = Utils.Clamp (dest, 0.0f, 1.0f);
