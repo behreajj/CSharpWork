@@ -575,13 +575,70 @@ public class Curve3 : IEnumerable
             tangent: Vec3.Normalize (kn.Coord - kn.RearHandle));
     }
 
-    ///<summary>
-    ///Sets a curve to a series of points.
-    ///</summary>
-    ///<param name="target">target curve</param>
-    ///<param name="points">points array</param>
-    ///<param name="closedLoop">closed loop flag</param>
-    ///<returns>the curve</returns>
+    /// <summary>
+    /// Evaluates a range of points and tangents on a curve
+    /// at a resolution, or count.
+    /// </summary>
+    /// <param name="curve">curve</param>    
+    /// <param name="count">count</param>
+    /// <returns>the range</returns>
+    public static (Vec3 coord, Vec3 tangent) [ ] EvalRange (
+        in Curve3 curve, in int count)
+    {
+        return Curve3.EvalRange (curve, count, 0.0f,
+            curve.closedLoop ? 1.0f - 1.0f / Utils.Max (3, count) : 1.0f);
+    }
+
+    /// <summary>
+    /// Evaluates a range of points and tangents on a curve
+    /// for a given origin and destination factor at a
+    /// resolution, or count.
+    ///
+    /// For closed loops, an origin and destination of
+    /// 0.0 and 1.0 would yield a duplicate point, and so
+    /// should be calculated accordingly. I.e., 0.0 to
+    /// 1.0 - 1.0 / count would avoid the duplicate.
+    /// </summary>
+    /// <param name="curve">curve</param>    
+    /// <param name="count">count</param>
+    /// <param name="origin">origin</param>
+    /// <param name="dest">destination</param>
+    /// <returns>the range</returns>
+    public static (Vec3 coord, Vec3 tangent) [ ] EvalRange (
+        in Curve3 curve,
+        in int count,
+        in float origin,
+        in float dest)
+    {
+        int vCount = count < 3 ? 3 : count;
+        float vOrigin = origin;
+        float vDest = dest;
+        if (curve.closedLoop)
+        {
+            vOrigin = Utils.Clamp (vOrigin, 0.0f, 1.0f);
+            vDest = Utils.Clamp (vDest, 0.0f, 1.0f);
+        }
+
+        (Vec3 coord, Vec3 tangent) [ ] result = new (Vec3 coord, Vec3 tangent) [ vCount ];
+
+        float toPercent = 1.0f / (vCount - 1.0f);
+        for (int i = 0; i < vCount; ++i)
+        {
+            float fac = Utils.Mix (vOrigin, vDest,
+                i * toPercent);
+            result [ i ] = Curve3.Eval (curve, fac);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Sets a curve to a series of points.
+    /// </summary>
+    /// <param name="target">target curve</param>
+    /// <param name="points">points array</param>
+    /// <param name="closedLoop">closed loop flag</param>
+    /// <returns>the curve</returns>
     public static Curve3 FromLinear (
         in Curve3 target,
         in Vec3 [ ] points,
@@ -669,7 +726,7 @@ public class Curve3 : IEnumerable
         int last = len - 1;
 
         sb.Append ("{ closedLoop: ");
-        sb.Append (c.closedLoop ? "false" : "true");
+        sb.Append (c.closedLoop ? "true" : "false");
         sb.Append (", knots: [ ");
         for (int i = 0; i < last; ++i)
         {
