@@ -16,7 +16,7 @@ public class Curve2 : IEnumerable
     /// <summary>
     ///  The list of knots contained by the curve.
     /// </summary>
-    protected List<Knot2> knots = new List<Knot2> ( );
+    protected List<Knot2> knots = new List<Knot2>();
 
     /// <summary>
     /// A flag for whether or not the curve is a closed loop.
@@ -39,12 +39,12 @@ public class Curve2 : IEnumerable
     /// Gets the knots of this curve, copied to an array.
     /// </summary>
     /// <value>the knots</value>
-    public Knot2 [ ] Knots
+    public Knot2[] Knots
     {
         get
         {
-            Knot2 [ ] result = new Knot2 [ this.knots.Count ];
-            this.knots.CopyTo (result);
+            Knot2[] result = new Knot2[this.knots.Count];
+            this.knots.CopyTo(result);
             return result;
         }
     }
@@ -66,13 +66,13 @@ public class Curve2 : IEnumerable
     /// the index by the number of elements in the list of knots.
     /// </summary>
     /// <value>knot</value>
-    public Knot2 this [ int i ]
+    public Knot2 this[int i]
     {
         get
         {
             return this.closedLoop ?
-                this.knots [ Utils.RemFloor (i, this.knots.Count) ] :
-                this.knots [ i ];
+                this.knots[Utils.RemFloor(i, this.knots.Count)] :
+                this.knots[i];
         }
     }
 
@@ -83,18 +83,18 @@ public class Curve2 : IEnumerable
     /// Returns a named value tuple containing two vectors.
     /// </summary>
     /// <value>tuple</value>
-    public (Vec2 coord, Vec2 tangent) this [ float i ]
+    public (Vec2 coord, Vec2 tangent) this[float i]
     {
         get
         {
-            return Curve2.Eval (this, i);
+            return Curve2.Eval(this, i);
         }
     }
 
     /// <summary>
     /// The default curve constructor.
     /// </summary>
-    public Curve2 ( )
+    public Curve2()
     {
         // TODO: Implement rounded rect.
     }
@@ -104,23 +104,23 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="cl">closed loop</param>
     /// <param name="kn">knots</param>
-    public Curve2 (bool cl, params Knot2 [ ] kn)
+    public Curve2(bool cl, params Knot2[] kn)
     {
         this.closedLoop = cl;
-        this.AppendAll (kn);
+        this.AppendAll(kn);
     }
 
     /// <summary>
     /// Returns a hash code representing this curve.
     /// </summary>
     /// <returns>the hash code</returns>
-    public override int GetHashCode ( )
+    public override int GetHashCode()
     {
         unchecked
         {
             int hash = Utils.HashBase;
-            hash = hash * Utils.HashMul ^ this.closedLoop.GetHashCode ( );
-            hash = hash * Utils.HashMul ^ this.knots.GetHashCode ( );
+            hash = hash * Utils.HashMul ^ this.closedLoop.GetHashCode();
+            hash = hash * Utils.HashMul ^ this.knots.GetHashCode();
             return hash;
         }
     }
@@ -129,9 +129,9 @@ public class Curve2 : IEnumerable
     /// Returns a string representation of this curve.
     /// </summary>
     /// <returns>string</returns>
-    public override string ToString ( )
+    public override string ToString()
     {
-        return Curve2.ToString (this);
+        return Curve2.ToString(this);
     }
 
     /// <summary>
@@ -139,9 +139,9 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="knot">knot</param>
     /// <returns>this curve</returns>
-    public Curve2 Append (Knot2 knot)
+    public Curve2 Append(Knot2 knot)
     {
-        this.knots.Add (knot);
+        this.knots.Add(knot);
         return this;
     }
 
@@ -150,9 +150,9 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="kn">knots</param>
     /// <returns>this curve</returns>
-    public Curve2 AppendAll (params Knot2 [ ] kn)
+    public Curve2 AppendAll(params Knot2[] kn)
     {
-        this.knots.AddRange (kn);
+        this.knots.AddRange(kn);
         return this;
     }
 
@@ -161,19 +161,19 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="knot">knot</param>
     /// <returns>the evaluation</returns>
-    public bool Contains (in Knot2 knot)
+    public bool Contains(in Knot2 knot)
     {
-        return this.knots.Contains (knot);
+        return this.knots.Contains(knot);
     }
 
     /// <summary>
     /// Flips this curve on the x axis, then reverses the curve.
     /// </summary>
     /// <returns>this curve</returns>
-    public Curve2 FlipX ( )
+    public Curve2 FlipX()
     {
-        this.knots.Reverse ( );
-        foreach (Knot2 kn in this.knots) { kn.FlipX ( ); kn.Reverse ( ); }
+        this.knots.Reverse();
+        foreach (Knot2 kn in this.knots) { kn.FlipX(); kn.Reverse(); }
         return this;
     }
 
@@ -181,10 +181,10 @@ public class Curve2 : IEnumerable
     /// Flips this curve on the y axis, then reverses the curve.
     /// </summary>
     /// <returns>this curve</returns>
-    public Curve2 FlipY ( )
+    public Curve2 FlipY()
     {
-        this.knots.Reverse ( );
-        foreach (Knot2 kn in this.knots) { kn.FlipY ( ); kn.Reverse ( ); }
+        this.knots.Reverse();
+        foreach (Knot2 kn in this.knots) { kn.FlipY(); kn.Reverse(); }
         return this;
     }
 
@@ -192,27 +192,27 @@ public class Curve2 : IEnumerable
     /// Gets the enumerator for this curve.
     /// </summary>
     /// <returns>the enumerator</returns>
-    public IEnumerator GetEnumerator ( )
+    public IEnumerator GetEnumerator()
     {
-        return this.knots.GetEnumerator ( );
+        return this.knots.GetEnumerator();
     }
 
     /// <summary>
     /// Gets the first knot in the curve.
     /// </summary>
     /// <returns>the knot</returns>
-    public Knot2 GetFirst ( )
+    public Knot2 GetFirst()
     {
-        return this.knots [ 0 ];
+        return this.knots[0];
     }
 
     /// <summary>
     /// Gets the last knot in the curve.
     /// </summary>
     /// <returns>the knot</returns>
-    public Knot2 GetLast ( )
+    public Knot2 GetLast()
     {
-        return this.knots [ this.knots.Count - 1 ];
+        return this.knots[this.knots.Count - 1];
     }
 
     /// <summary>
@@ -222,10 +222,10 @@ public class Curve2 : IEnumerable
     /// <param name="i">index</param>
     /// <param name="knot">knot</param>
     /// <returns>the curve</returns>
-    public Curve2 Insert (in int i, Knot2 knot)
+    public Curve2 Insert(in int i, Knot2 knot)
     {
-        int k = this.closedLoop ? Utils.RemFloor (i, this.knots.Count + 1) : i;
-        this.knots.Insert (k, knot);
+        int k = this.closedLoop ? Utils.RemFloor(i, this.knots.Count + 1) : i;
+        this.knots.Insert(k, knot);
         return this;
     }
 
@@ -234,9 +234,9 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="knot">knot</param>
     /// <returns>this curve</returns>
-    public Curve2 Prepend (Knot2 knot)
+    public Curve2 Prepend(Knot2 knot)
     {
-        this.knots.Insert (0, knot);
+        this.knots.Insert(0, knot);
         return this;
     }
 
@@ -245,13 +245,13 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="kn">array of knots</param>
     /// <returns>this curve</returns>
-    public Curve2 PrependAll (params Knot2 [ ] kn)
+    public Curve2 PrependAll(params Knot2[] kn)
     {
         int len = kn.Length;
         for (int i = 0, j = 0; i < len; ++i)
         {
-            Knot2 knot = kn [ i ];
-            this.knots.Insert (j, knot);
+            Knot2 knot = kn[i];
+            this.knots.Insert(j, knot);
             ++j;
         }
         return this;
@@ -262,11 +262,11 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="i">index</param>
     /// <returns>the knot</returns>
-    public Knot2 RemoveAt (in int i)
+    public Knot2 RemoveAt(in int i)
     {
-        int j = this.closedLoop ? Utils.RemFloor (i, this.knots.Count) : i;
-        Knot2 knot = this.knots [ j ];
-        this.knots.RemoveAt (j);
+        int j = this.closedLoop ? Utils.RemFloor(i, this.knots.Count) : i;
+        Knot2 knot = this.knots[j];
+        this.knots.RemoveAt(j);
         return knot;
     }
 
@@ -274,29 +274,29 @@ public class Curve2 : IEnumerable
     /// Removes and returns the first knot in the curve.
     /// </summary>
     /// <returns>the knot</returns>
-    public Knot2 RemoveFirst ( )
+    public Knot2 RemoveFirst()
     {
-        return this.RemoveAt (0);
+        return this.RemoveAt(0);
     }
 
     /// <summary>
     /// Removes and returns the last knot in the curve.
     /// </summary>
     /// <returns>the knot</returns>
-    public Knot2 RemoveLast ( )
+    public Knot2 RemoveLast()
     {
-        return this.RemoveAt (this.knots.Count - 1);
+        return this.RemoveAt(this.knots.Count - 1);
     }
 
     /// <summary>
     /// Resets the curve, leaving two default knots.
     /// </summary>
     /// <returns>this curve</returns>
-    public Curve2 Reset ( )
+    public Curve2 Reset()
     {
-        this.Resize (2);
-        this.knots [ 0 ].Set (-0.5f, 0.0f, -0.25f, 0.25f, -0.75f, -0.25f);
-        this.knots [ 1 ].Set (0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
+        this.Resize(2);
+        this.knots[0].Set(-0.5f, 0.0f, -0.25f, 0.25f, -0.75f, -0.25f);
+        this.knots[1].Set(0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
         this.closedLoop = false;
         return this;
     }
@@ -310,7 +310,7 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="len">length</param>
     /// <returns>this curve</returns>
-    protected Curve2 Resize (in int len)
+    protected Curve2 Resize(in int len)
     {
         int vlen = len < 2 ? 2 : len;
         int oldLen = this.knots.Count;
@@ -321,7 +321,7 @@ public class Curve2 : IEnumerable
             int last = oldLen - 1;
             for (int i = 0; i < -diff; ++i)
             {
-                this.knots.RemoveAt (last - i);
+                this.knots.RemoveAt(last - i);
             }
         }
         else if (diff > 0)
@@ -329,7 +329,7 @@ public class Curve2 : IEnumerable
             this.knots.Capacity = vlen;
             for (int i = 0; i < diff; ++i)
             {
-                this.knots.Add (new Knot2 ( ));
+                this.knots.Add(new Knot2());
             }
         }
 
@@ -341,10 +341,10 @@ public class Curve2 : IEnumerable
     /// swapping the fore- and rear-handle of each knot.
     /// </summary>
     /// <returns>this curve</returns>
-    public Curve2 Reverse ( )
+    public Curve2 Reverse()
     {
-        this.knots.Reverse ( );
-        foreach (Knot2 kn in this.knots) { kn.Reverse ( ); }
+        this.knots.Reverse();
+        foreach (Knot2 kn in this.knots) { kn.Reverse(); }
         return this;
     }
 
@@ -353,11 +353,11 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>this curve</returns>
-    public Curve2 RotateZ (in float radians)
+    public Curve2 RotateZ(in float radians)
     {
-        float cosa = Utils.Cos (radians);
-        float sina = Utils.Sin (radians);
-        foreach (Knot2 kn in this.knots) { kn.RotateZ (cosa, sina); }
+        float cosa = Utils.Cos(radians);
+        float sina = Utils.Sin(radians);
+        foreach (Knot2 kn in this.knots) { kn.RotateZ(cosa, sina); }
         return this;
     }
 
@@ -366,11 +366,11 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="scale">uniform scale</param>
     /// <returns>this curve</returns>
-    public Curve2 Scale (in float scale)
+    public Curve2 Scale(in float scale)
     {
         if (scale != 0.0f)
         {
-            foreach (Knot2 kn in this.knots) { kn.Scale (scale); }
+            foreach (Knot2 kn in this.knots) { kn.Scale(scale); }
         }
         return this;
     }
@@ -380,11 +380,11 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="scale">nonuniform scale</param>
     /// <returns>this curve</returns>
-    public Curve2 Scale (in Vec2 scale)
+    public Curve2 Scale(in Vec2 scale)
     {
-        if (Vec2.All (scale))
+        if (Vec2.All(scale))
         {
-            foreach (Knot2 kn in this.knots) { kn.Scale (scale); }
+            foreach (Knot2 kn in this.knots) { kn.Scale(scale); }
         }
         return this;
     }
@@ -393,7 +393,7 @@ public class Curve2 : IEnumerable
     /// Toggles whether or not the curve is a closed loop.
     /// </summary>
     /// <returns>the loop</returns>
-    public Curve2 ToggleLoop ( )
+    public Curve2 ToggleLoop()
     {
         this.closedLoop = !this.closedLoop;
         return this;
@@ -404,9 +404,9 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>this curve</returns>
-    public Curve2 Transform (in Mat3 m)
+    public Curve2 Transform(in Mat3 m)
     {
-        foreach (Knot2 kn in this.knots) { kn.Transform (m); }
+        foreach (Knot2 kn in this.knots) { kn.Transform(m); }
         return this;
     }
 
@@ -420,9 +420,9 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="tr"></param>
     /// <returns>this curve</returns>
-    public Curve2 Transform (in Transform2 tr)
+    public Curve2 Transform(in Transform2 tr)
     {
-        foreach (Knot2 kn in this.knots) { kn.Transform (tr); }
+        foreach (Knot2 kn in this.knots) { kn.Transform(tr); }
         return this;
     }
 
@@ -431,9 +431,9 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="v">vector</param>
     /// <returns>this curve</returns>
-    public Curve2 Translate (in Vec2 v)
+    public Curve2 Translate(in Vec2 v)
     {
-        foreach (Knot2 kn in this.knots) { kn.Translate (v); }
+        foreach (Knot2 kn in this.knots) { kn.Translate(v); }
         return this;
     }
 
@@ -446,7 +446,7 @@ public class Curve2 : IEnumerable
     /// <param name="curve">curve</param>
     /// <param name="step">step</param>
     /// <returns>the tuple</returns>
-    public static (Vec2 coord, Vec2 tangent) Eval (in Curve2 curve, in float step)
+    public static (Vec2 coord, Vec2 tangent) Eval(in Curve2 curve, in float step)
     {
         List<Knot2> knots = curve.knots;
         int knotLength = knots.Count;
@@ -458,33 +458,33 @@ public class Curve2 : IEnumerable
 
         if (curve.closedLoop)
         {
-            tScaled = Utils.RemFloor (step, 1.0f) * knotLength;
-            i = (int) tScaled;
-            a = knots [ Utils.RemFloor (i, knotLength) ];
-            b = knots [ Utils.RemFloor (i + 1, knotLength) ];
+            tScaled = Utils.RemFloor(step, 1.0f) * knotLength;
+            i = (int)tScaled;
+            a = knots[Utils.RemFloor(i, knotLength)];
+            b = knots[Utils.RemFloor(i + 1, knotLength)];
         }
         else
         {
             if (knotLength == 1 || step <= 0.0f)
             {
-                return Curve2.EvalFirst (curve);
+                return Curve2.EvalFirst(curve);
             }
 
             if (step >= 1.0f)
             {
-                return Curve2.EvalLast (curve);
+                return Curve2.EvalLast(curve);
             }
 
             tScaled = step * (knotLength - 1);
-            i = (int) tScaled;
-            a = knots [ i ];
-            b = knots [ i + 1 ];
+            i = (int)tScaled;
+            a = knots[i];
+            b = knots[i + 1];
         }
 
         float t = tScaled - i;
         return (
-            coord: Knot2.BezierPoint (a, b, t),
-            tangent: Knot2.BezierTanUnit (a, b, t));
+            coord: Knot2.BezierPoint(a, b, t),
+            tangent: Knot2.BezierTanUnit(a, b, t));
     }
 
     /// <summary>
@@ -495,12 +495,12 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="curve">curve</param>
     /// <returns>the tuple</returns>
-    public static (Vec2 coord, Vec2 tangent) EvalFirst (in Curve2 curve)
+    public static (Vec2 coord, Vec2 tangent) EvalFirst(in Curve2 curve)
     {
-        Knot2 kn = curve.knots [ 0 ];
+        Knot2 kn = curve.knots[0];
         return (
             coord: kn.Coord,
-            tangent: Vec2.Normalize (kn.ForeHandle - kn.Coord));
+            tangent: Vec2.Normalize(kn.ForeHandle - kn.Coord));
     }
 
     /// <summary>
@@ -511,13 +511,13 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="curve">curve</param>
     /// <returns>the tuple</returns>
-    public static (Vec2 coord, Vec2 tangent) EvalLast (in Curve2 curve)
+    public static (Vec2 coord, Vec2 tangent) EvalLast(in Curve2 curve)
     {
         List<Knot2> kns = curve.knots;
-        Knot2 kn = kns [ kns.Count - 1 ];
+        Knot2 kn = kns[kns.Count - 1];
         return (
             coord: kn.Coord,
-            tangent: Vec2.Normalize (kn.Coord - kn.RearHandle));
+            tangent: Vec2.Normalize(kn.Coord - kn.RearHandle));
     }
 
     /// <summary>
@@ -527,11 +527,11 @@ public class Curve2 : IEnumerable
     /// <param name="curve">curve</param>    
     /// <param name="count">count</param>
     /// <returns>the range</returns>
-    public static (Vec2 coord, Vec2 tangent) [ ] EvalRange (
+    public static (Vec2 coord, Vec2 tangent)[] EvalRange(
         in Curve2 curve, in int count)
     {
-        return Curve2.EvalRange (curve, count, 0.0f,
-            curve.closedLoop ? 1.0f - 1.0f / Utils.Max (3, count) : 1.0f);
+        return Curve2.EvalRange(curve, count, 0.0f,
+            curve.closedLoop ? 1.0f - 1.0f / Utils.Max(3, count) : 1.0f);
     }
 
     /// <summary>
@@ -549,7 +549,7 @@ public class Curve2 : IEnumerable
     /// <param name="origin">origin</param>
     /// <param name="dest">destination</param>
     /// <returns>the range</returns>
-    public static (Vec2 coord, Vec2 tangent) [ ] EvalRange (
+    public static (Vec2 coord, Vec2 tangent)[] EvalRange(
         in Curve2 curve,
         in int count,
         in float origin,
@@ -560,18 +560,18 @@ public class Curve2 : IEnumerable
         float vDest = dest;
         if (curve.closedLoop)
         {
-            vOrigin = Utils.Clamp (vOrigin, 0.0f, 1.0f);
-            vDest = Utils.Clamp (vDest, 0.0f, 1.0f);
+            vOrigin = Utils.Clamp(vOrigin, 0.0f, 1.0f);
+            vDest = Utils.Clamp(vDest, 0.0f, 1.0f);
         }
 
-        (Vec2 coord, Vec2 tangent) [ ] result = new (Vec2 coord, Vec2 tangent) [ vCount ];
+        (Vec2 coord, Vec2 tangent)[] result = new (Vec2 coord, Vec2 tangent)[vCount];
 
         float toPercent = 1.0f / (vCount - 1.0f);
         for (int i = 0; i < vCount; ++i)
         {
-            float fac = Utils.Mix (vOrigin, vDest,
+            float fac = Utils.Mix(vOrigin, vDest,
                 i * toPercent);
-            result [ i ] = Curve2.Eval (curve, fac);
+            result[i] = Curve2.Eval(curve, fac);
         }
 
         return result;
@@ -584,29 +584,29 @@ public class Curve2 : IEnumerable
     ///<param name="points">points array</param>
     ///<param name="closedLoop">closed loop flag</param>
     ///<returns>the curve</returns>
-    public static Curve2 FromLinear (
+    public static Curve2 FromLinear(
         in Curve2 target,
-        in Vec2 [ ] points,
+        in Vec2[] points,
         in bool closedLoop = false)
     {
         int len = points.Length;
         if (len < 2) { return target; }
 
-        target.Resize (len);
+        target.Resize(len);
         target.closedLoop = closedLoop;
 
         List<Knot2> knots = target.knots;
         for (int i = 0; i < len; ++i)
         {
-            Vec2 v = points [ i ];
-            Knot2 kn = knots [ i ];
+            Vec2 v = points[i];
+            Knot2 kn = knots[i];
             kn.Coord = v;
             kn.ForeHandle = v;
             kn.RearHandle = v;
         }
 
         // TODO: Implement smooth handles and call that for len > 2
-        return Curve2.StraightHandles (target);
+        return Curve2.StraightHandles(target);
     }
 
     /// <summary>
@@ -616,7 +616,7 @@ public class Curve2 : IEnumerable
     /// <param name="sectors">sectors</param>
     /// <param name="offset angle">offset angle</param>
     /// <returns>the circle</returns>
-    public static Curve2 Circle ( //
+    public static Curve2 Circle( //
         in Curve2 target, // 
         in int sectors = 4, //
         in float offsetAngle = Utils.HalfPi)
@@ -630,24 +630,24 @@ public class Curve2 : IEnumerable
 
         float invKnCt = 1.0f / vKnCt;
         float hndlTan = 0.25f * invKnCt;
-        float magHandle = Utils.Tan (hndlTan * Utils.Tau)
+        float magHandle = Utils.Tan(hndlTan * Utils.Tau)
            * Utils.FourThirds * r;
 
-        target.Resize (vKnCt);
+        target.Resize(vKnCt);
         target.closedLoop = true;
         List<Knot2> knots = target.knots;
 
         for (int i = 0; i < vKnCt; ++i)
         {
             float angle = offsetAngle + i * toTheta;
-            float cosAngle = Utils.Cos (angle);
-            float sinAngle = Utils.Sin (angle);
+            float cosAngle = Utils.Cos(angle);
+            float sinAngle = Utils.Sin(angle);
             float hmCosa = cosAngle * magHandle;
             float hmSina = sinAngle * magHandle;
             float cox = cx + r * cosAngle;
             float coy = cy + r * sinAngle;
 
-            knots [ i ].Set (
+            knots[i].Set(
                 cox, coy,
                 cox - hmSina, coy + hmCosa,
                 cox + hmSina, coy - hmCosa);
@@ -666,7 +666,7 @@ public class Curve2 : IEnumerable
     /// <param name="target">output curve</param>
     /// <param name="aspect">aspect ratio</param>
     /// <returns>the ellipse</returns>
-    public static Curve2 Ellipse ( //
+    public static Curve2 Ellipse( //
         in Curve2 target, //
         in float aspect = 1.0f)
     {
@@ -690,23 +690,23 @@ public class Curve2 : IEnumerable
         float yHandlePos = cy + vertHandle;
         float yHandleNeg = cy - vertHandle;
 
-        target.Resize (4);
+        target.Resize(4);
         target.closedLoop = true;
         List<Knot2> knots = target.knots;
 
-        knots [ 0 ].Set (
+        knots[0].Set(
             right, cy,
             right, yHandlePos,
             right, yHandleNeg);
-        knots [ 1 ].Set (
+        knots[1].Set(
             cx, top,
             xHandleNeg, top,
             xHandlePos, top);
-        knots [ 2 ].Set (
+        knots[2].Set(
             left, cy,
             left, yHandleNeg,
             left, yHandlePos);
-        knots [ 3 ].Set (
+        knots[3].Set(
             cx, bottom,
             xHandlePos, bottom,
             xHandleNeg, bottom);
@@ -720,18 +720,18 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="target">output curve</param>
     /// <returns>lemniscate</returns>
-    public static Curve2 Infinity (in Curve2 target)
+    public static Curve2 Infinity(in Curve2 target)
     {
-        target.Resize (6);
+        target.Resize(6);
         target.closedLoop = true;
         List<Knot2> knots = target.knots;
 
-        knots [ 0 ].Set (0.5f, 0.0f, 0.5f, 0.1309615f, 0.5f, -0.1309615f);
-        knots [ 1 ].Set (0.235709f, 0.166627f, 0.0505335f, 0.114256f, 0.361728f, 0.2022675f);
-        knots [ 2 ].Set (-0.235709f, -0.166627f, -0.361728f, -0.2022675f, -0.0505335f, -0.114256f);
-        knots [ 3 ].Set (-0.5f, 0.0f, -0.5f, 0.1309615f, -0.5f, -0.1309615f);
-        knots [ 4 ].Set (-0.235709f, 0.166627f, -0.0505335f, 0.114256f, -0.361728f, 0.2022675f);
-        knots [ 5 ].Set (0.235709f, -0.166627f, 0.361728f, -0.2022675f, 0.0505335f, -0.114256f);
+        knots[0].Set(0.5f, 0.0f, 0.5f, 0.1309615f, 0.5f, -0.1309615f);
+        knots[1].Set(0.235709f, 0.166627f, 0.0505335f, 0.114256f, 0.361728f, 0.2022675f);
+        knots[2].Set(-0.235709f, -0.166627f, -0.361728f, -0.2022675f, -0.0505335f, -0.114256f);
+        knots[3].Set(-0.5f, 0.0f, -0.5f, 0.1309615f, -0.5f, -0.1309615f);
+        knots[4].Set(-0.235709f, 0.166627f, -0.0505335f, 0.114256f, -0.361728f, 0.2022675f);
+        knots[5].Set(0.235709f, -0.166627f, 0.361728f, -0.2022675f, 0.0505335f, -0.114256f);
 
         return target;
     }
@@ -743,9 +743,9 @@ public class Curve2 : IEnumerable
     /// <param name="sectors">sectors</param>
     /// <param name="offset angle">offset angle</param>
     /// <returns>the polygon</returns>
-    public static Curve2 Polygon ( //
+    public static Curve2 Polygon( //
         in Curve2 target, // 
-        in int sectors = 4, //
+        in int sectors = 3, //
         in float offsetAngle = Utils.HalfPi)
     {
         int vKnCt = sectors < 3 ? 3 : sectors;
@@ -755,42 +755,42 @@ public class Curve2 : IEnumerable
         float r = 0.5f;
         float toTheta = Utils.Tau / vKnCt;
 
-        target.Resize (vKnCt);
+        target.Resize(vKnCt);
         target.closedLoop = true;
         List<Knot2> knots = target.knots;
 
-        Knot2 first = knots [ 0 ];
-        first.Coord = new Vec2 (
-            cx + r * Utils.Cos (offsetAngle),
-            cy + r * Utils.Sin (offsetAngle));
+        Knot2 first = knots[0];
+        first.Coord = new Vec2(
+            cx + r * Utils.Cos(offsetAngle),
+            cy + r * Utils.Sin(offsetAngle));
 
         Knot2 prev = first;
         for (int i = 1; i < vKnCt; ++i)
         {
             Vec2 coPrev = prev.Coord;
             float angle = offsetAngle + i * toTheta;
-            Vec2 coCurr = new Vec2 (
-                cx + r * Utils.Cos (angle),
-                cy + r * Utils.Sin (angle));
+            Vec2 coCurr = new Vec2(
+                cx + r * Utils.Cos(angle),
+                cy + r * Utils.Sin(angle));
 
-            Knot2 curr = knots [ i ];
+            Knot2 curr = knots[i];
             curr.Coord = coCurr;
-            curr.RearHandle = Vec2.Mix (
+            curr.RearHandle = Vec2.Mix(
                 coCurr,
                 coPrev,
                 Utils.OneThird);
-            prev.ForeHandle = Vec2.Mix (
+            prev.ForeHandle = Vec2.Mix(
                 coPrev,
                 coCurr,
                 Utils.OneThird);
             prev = curr;
         }
 
-        first.RearHandle = Vec2.Mix (
+        first.RearHandle = Vec2.Mix(
             first.Coord,
             prev.Coord,
             Utils.OneThird);
-        prev.ForeHandle = Vec2.Mix (
+        prev.ForeHandle = Vec2.Mix(
             prev.Coord,
             first.Coord,
             Utils.OneThird);
@@ -805,7 +805,7 @@ public class Curve2 : IEnumerable
     ///</summary>
     ///<param name="target">target curve</param>
     ///<returns>the curve</returns>
-    public static Curve2 StraightHandles (in Curve2 target)
+    public static Curve2 StraightHandles(in Curve2 target)
     {
         List<Knot2> knots = target.knots;
         int len = knots.Count;
@@ -813,23 +813,23 @@ public class Curve2 : IEnumerable
 
         for (int i = 1; i < len; ++i)
         {
-            Knot2 prev = knots [ i - 1 ];
-            Knot2 next = knots [ i ];
-            prev.ForeHandle = Vec2.Mix (prev.Coord, next.Coord, Utils.OneThird);
-            next.RearHandle = Vec2.Mix (next.Coord, prev.Coord, Utils.OneThird);
+            Knot2 prev = knots[i - 1];
+            Knot2 next = knots[i];
+            prev.ForeHandle = Vec2.Mix(prev.Coord, next.Coord, Utils.OneThird);
+            next.RearHandle = Vec2.Mix(next.Coord, prev.Coord, Utils.OneThird);
         }
 
-        Knot2 first = knots [ 0 ];
-        Knot2 last = knots [ len - 1 ];
+        Knot2 first = knots[0];
+        Knot2 last = knots[len - 1];
         if (target.closedLoop)
         {
-            first.RearHandle = Vec2.Mix (first.Coord, last.Coord, Utils.OneThird);
-            last.ForeHandle = Vec2.Mix (last.Coord, first.Coord, Utils.OneThird);
+            first.RearHandle = Vec2.Mix(first.Coord, last.Coord, Utils.OneThird);
+            last.ForeHandle = Vec2.Mix(last.Coord, first.Coord, Utils.OneThird);
         }
         else
         {
-            first.MirrorHandlesForward ( );
-            last.MirrorHandlesBackward ( );
+            first.MirrorHandlesForward();
+            last.MirrorHandlesBackward();
         }
 
         return target;
@@ -841,9 +841,9 @@ public class Curve2 : IEnumerable
     /// <param name="c">curve</param>
     /// <param name="places">number of places</param>
     /// <returns>the string</returns>
-    public static string ToString (in Curve2 c, in int places = 4)
+    public static string ToString(in Curve2 c, in int places = 4)
     {
-        return Curve2.ToString (new StringBuilder (1024), c, places).ToString ( );
+        return Curve2.ToString(new StringBuilder(1024), c, places).ToString();
     }
 
     /// <summary>
@@ -853,22 +853,22 @@ public class Curve2 : IEnumerable
     /// <param name="c">curve</param>
     /// <param name="places">number of places</param>
     /// <returns>the string</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Curve2 c, in int places = 4)
+    public static StringBuilder ToString(in StringBuilder sb, in Curve2 c, in int places = 4)
     {
         List<Knot2> knots = c.knots;
         int len = knots.Count;
         int last = len - 1;
 
-        sb.Append ("{ closedLoop: ");
-        sb.Append (c.closedLoop ? "true" : "false");
-        sb.Append (", knots: [ ");
+        sb.Append("{ closedLoop: ");
+        sb.Append(c.closedLoop ? "true" : "false");
+        sb.Append(", knots: [ ");
         for (int i = 0; i < last; ++i)
         {
-            Knot2.ToString (sb, knots [ i ], places);
-            sb.Append (", ");
+            Knot2.ToString(sb, knots[i], places);
+            sb.Append(", ");
         }
-        Knot2.ToString (sb, knots [ last ], places);
-        sb.Append (" ] }");
+        Knot2.ToString(sb, knots[last], places);
+        sb.Append(" ] }");
         return sb;
     }
 }

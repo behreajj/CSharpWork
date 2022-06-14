@@ -39,7 +39,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// Retrieves a component by index.
     /// </summary>
     /// <value>the component</value>
-    public int this [ int i ]
+    public int this[int i]
     {
         get
         {
@@ -47,12 +47,12 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
             {
             case 0:
             case -2:
-                return this._v;
+            return this._v;
             case 1:
             case -1:
-                return this._vt;
+            return this._vt;
             default:
-                return 0;
+            return 0;
             }
         }
     }
@@ -65,7 +65,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// </summary>
     /// <param name="v">coordinate index</param>
     /// <param name="vt">texture coordinate index</param>
-    public Index2 (in int v, in int vt)
+    public Index2(in int v, in int vt)
     {
         this._v = v < 0 ? 0 : v;
         this._vt = vt < 0 ? 0 : vt;
@@ -76,11 +76,11 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// </summary>
     /// <param name="value">the object</param>
     /// <returns>the equivalence</returns>
-    public override bool Equals (object value)
+    public override bool Equals(object value)
     {
-        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Index2) { return this.Equals ((Index2) value); }
+        if (value is Index2) { return this.Equals((Index2)value); }
         return false;
     }
 
@@ -88,12 +88,12 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// Returns a hash code representing this index.
     /// </summary>
     /// <returns>the hash code</returns>
-    public override int GetHashCode ( )
+    public override int GetHashCode()
     {
         unchecked
         {
-            return (Utils.MulBase ^ this._v.GetHashCode ( )) *
-                Utils.HashMul ^ this._vt.GetHashCode ( );
+            return (Utils.MulBase ^ this._v.GetHashCode()) *
+                Utils.HashMul ^ this._vt.GetHashCode();
         }
     }
 
@@ -101,9 +101,9 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// Returns a string representation of this index.
     /// </summary>
     /// <returns>the string</returns>
-    public override string ToString ( )
+    public override string ToString()
     {
-        return Index2.ToString (this);
+        return Index2.ToString(this);
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// </summary>
     /// <param name="i">index</param>
     /// <returns>the equivalence</returns>
-    public bool Equals (Index2 i)
+    public bool Equals(Index2 i)
     {
         if (this._v != i._v) { return false; }
         if (this._vt != i._vt) { return false; }
@@ -124,7 +124,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// components to be accessed in a foreach loop.
     /// </summary>
     /// <returns>the enumerator</returns>
-    public IEnumerator GetEnumerator ( )
+    public IEnumerator GetEnumerator()
     {
         yield return this._v;
         yield return this._vt;
@@ -134,9 +134,9 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// Returns an integer array of length 2 containing this index's components.
     /// </summary>
     /// <returns>the array</returns>
-    public int [ ] ToArray ( )
+    public int[] ToArray()
     {
-        return this.ToArray (new int [ this.Length ], 0);
+        return this.ToArray(new int[this.Length], 0);
     }
 
     /// <summary>
@@ -145,10 +145,10 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="i">index</param>
     /// <returns>array</returns>
-    public int [ ] ToArray (in int [ ] arr, in int i)
+    public int[] ToArray(in int[] arr, in int i)
     {
-        arr [ i ] = this._v;
-        arr [ i + 1 ] = this._vt;
+        arr[i] = this._v;
+        arr[i + 1] = this._vt;
         return arr;
     }
 
@@ -156,7 +156,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// Returns a named value tuple containing this index's components.
     /// </summary>
     /// <returns>the tuple</returns>
-    public (int v, int vt) ToTuple ( )
+    public (int v, int vt) ToTuple()
     {
         return (v: this._v, vt: this._vt);
     }
@@ -166,9 +166,9 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// </summary>
     /// <param name="i">simple index</param>
     /// <returns>the index</returns>
-    public static implicit operator Index2 (in int i)
+    public static implicit operator Index2(in int i)
     {
-        return new Index2 (i, i);
+        return new Index2(i, i);
     }
 
     /// <summary>
@@ -177,16 +177,16 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="sz">new size</param>
     /// <returns>resized array</returns>
-    public static Index2 [ ] Resize (in Index2 [ ] arr, in int sz)
+    public static Index2[] Resize(in Index2[] arr, in int sz)
     {
-        if (sz < 1) { return new Index2 [ ] { }; }
-        Index2 [ ] result = new Index2 [ sz ];
+        if (sz < 1) { return new Index2[] { }; }
+        Index2[] result = new Index2[sz];
 
         if (arr != null)
         {
             int len = arr.Length;
             int end = sz > len ? len : sz;
-            System.Array.Copy (arr, result, end);
+            System.Array.Copy(arr, result, end);
         }
 
         return result;
@@ -198,11 +198,11 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <param name="i">index</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string</returns>
-    public static string ToString ( //
+    public static string ToString( //
         in Index2 i, //
         in int padding = 3)
     {
-        return Index2.ToString (new StringBuilder (48), i, padding).ToString ( );
+        return Index2.ToString(new StringBuilder(48), i, padding).ToString();
     }
 
     /// <summary>
@@ -212,16 +212,16 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <param name="i">index</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString ( //
+    public static StringBuilder ToString( //
         in StringBuilder sb, //
         in Index2 i, //
         in int padding = 3)
     {
-        sb.Append ("{ v: ");
-        Utils.ToPadded (sb, i._v, padding);
-        sb.Append (", vt: ");
-        Utils.ToPadded (sb, i._vt, padding);
-        sb.Append (" }");
+        sb.Append("{ v: ");
+        Utils.ToPadded(sb, i._v, padding);
+        sb.Append(", vt: ");
+        Utils.ToPadded(sb, i._vt, padding);
+        sb.Append(" }");
         return sb;
     }
 
@@ -231,11 +231,11 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string</returns>
-    public static string ToString ( //
-        in Index2 [ ] arr, //
+    public static string ToString( //
+        in Index2[] arr, //
         in int padding = 3)
     {
-        return Index2.ToString (new StringBuilder (64), arr, padding).ToString ( );
+        return Index2.ToString(new StringBuilder(64), arr, padding).ToString();
     }
 
     /// <summary>
@@ -245,13 +245,13 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <param name="i">index</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString ( //
+    public static StringBuilder ToString( //
         in StringBuilder sb, //
-        in Index2 [ ] arr, //
+        in Index2[] arr, //
         in int padding = 3)
     {
-        sb.Append ('[');
-        sb.Append (' ');
+        sb.Append('[');
+        sb.Append(' ');
 
         if (arr != null)
         {
@@ -260,16 +260,16 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
 
             for (int i = 0; i < last; ++i)
             {
-                Index2.ToString (sb, arr [ i ], padding);
-                sb.Append (',');
-                sb.Append (' ');
+                Index2.ToString(sb, arr[i], padding);
+                sb.Append(',');
+                sb.Append(' ');
             }
 
-            Index2.ToString (sb, arr [ last ], padding);
-            sb.Append (' ');
+            Index2.ToString(sb, arr[last], padding);
+            sb.Append(' ');
         }
 
-        sb.Append (']');
+        sb.Append(']');
         return sb;
     }
 }

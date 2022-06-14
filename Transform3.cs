@@ -64,7 +64,7 @@ public class Transform3
 
         set
         {
-            if (Quat.Any (value)) { this.rotation = value; }
+            if (Quat.Any(value)) { this.rotation = value; }
         }
     }
 
@@ -81,7 +81,7 @@ public class Transform3
 
         set
         {
-            if (Vec3.All (value)) { this.scale = value; }
+            if (Vec3.All(value)) { this.scale = value; }
         }
     }
 
@@ -94,7 +94,7 @@ public class Transform3
     /// <summary>
     /// The default constructor.
     /// </summary>
-    public Transform3 ( ) { }
+    public Transform3() { }
 
     /// <summary>
     /// Creates a transform from a location, rotation and scale.
@@ -102,7 +102,7 @@ public class Transform3
     /// <param name="location">location</param>
     /// <param name="rotation">rotation</param>
     /// <param name="scale">scale</param>
-    public Transform3 (in Vec3 location, in Quat rotation, in Vec3 scale)
+    public Transform3(in Vec3 location, in Quat rotation, in Vec3 scale)
     {
         this.Location = location;
         this.Rotation = rotation;
@@ -122,28 +122,28 @@ public class Transform3
     /// <param name="width">x scale</param>
     /// <param name="height">y scale</param>
     /// <param name="depth">z scale</param>
-    public Transform3 ( //
+    public Transform3( //
         in float x, in float y, in float z, //
         in float real, in float i, in float j, in float k, //
         in float width, in float height, in float depth)
     {
-        this.Location = new Vec3 (x, y, z);
-        this.Rotation = new Quat (real, new Vec3 (i, j, k));
-        this.Scale = new Vec3 (width, height, depth);
+        this.Location = new Vec3(x, y, z);
+        this.Rotation = new Quat(real, new Vec3(i, j, k));
+        this.Scale = new Vec3(width, height, depth);
     }
 
     /// <summary>
     /// Returns a hash code representing this transform.
     /// </summary>
     /// <returns>the hash code</returns>
-    public override int GetHashCode ( )
+    public override int GetHashCode()
     {
         unchecked
         {
             int hash = Utils.HashBase;
-            hash = hash * Utils.HashMul ^ this.location.GetHashCode ( );
-            hash = hash * Utils.HashMul ^ this.rotation.GetHashCode ( );
-            hash = hash * Utils.HashMul ^ this.scale.GetHashCode ( );
+            hash = hash * Utils.HashMul ^ this.location.GetHashCode();
+            hash = hash * Utils.HashMul ^ this.rotation.GetHashCode();
+            hash = hash * Utils.HashMul ^ this.scale.GetHashCode();
             return hash;
         }
     }
@@ -152,9 +152,9 @@ public class Transform3
     /// Returns a string representation of this transform.
     /// </summary>
     /// <returns>the string</returns>
-    public override string ToString ( )
+    public override string ToString()
     {
-        return Transform3.ToString (this);
+        return Transform3.ToString(this);
     }
 
     /// <summary>
@@ -163,7 +163,7 @@ public class Transform3
     /// </summary>
     /// <param name="v">direction</param>
     /// <returns>this transform</returns>
-    public Transform3 MoveByGlobal (in Vec3 v)
+    public Transform3 MoveByGlobal(in Vec3 v)
     {
         this.Location += v;
         return this;
@@ -175,9 +175,9 @@ public class Transform3
     /// </summary>
     /// <param name="v">direction</param>
     /// <returns>transform</returns>
-    public Transform3 MoveByLocal (in Vec3 v)
+    public Transform3 MoveByLocal(in Vec3 v)
     {
-        this.Location += Transform3.MulDir (this, v);
+        this.Location += Transform3.MulDir(this, v);
         return this;
     }
 
@@ -187,9 +187,9 @@ public class Transform3
     /// <param name="v">direction</param>
     /// <param name="step">step</param>
     /// <returns>this transform</returns>
-    public Transform3 MoveTo (in Vec3 v, in Vec3 step)
+    public Transform3 MoveTo(in Vec3 v, in Vec3 step)
     {
-        this.Location = Vec3.Mix (this.location, v, step);
+        this.Location = Vec3.Mix(this.location, v, step);
         return this;
     }
 
@@ -201,10 +201,10 @@ public class Transform3
     /// <param name="step">step</param>
     /// <param name="easing">easing function</param>
     /// <returns>this transform</returns>
-    public Transform3 MoveTo (in Vec3 v, in Vec3 step, in Func<Vec3, Vec3, Vec3, Vec3> easing)
+    public Transform3 MoveTo(in Vec3 v, in Vec3 step, in Func<Vec3, Vec3, Vec3, Vec3> easing)
     {
-        Vec3 t = easing (this.location, v, step);
-        this.Location = Vec3.Mix (this.location, v, t);
+        Vec3 t = easing(this.location, v, step);
+        this.Location = Vec3.Mix(this.location, v, t);
         return this;
     }
 
@@ -214,7 +214,7 @@ public class Transform3
     /// </summary>
     /// <param name="q">orientation</param>
     /// <returns>this transform</returns>
-    public Transform3 RotateTo (in Quat q)
+    public Transform3 RotateTo(in Quat q)
     {
         this.Rotation = q;
         return this;
@@ -226,9 +226,9 @@ public class Transform3
     /// <param name="q">orientation</param>
     /// <param name="step">step</param>
     /// <returns>this transform</returns>
-    public Transform3 RotateTo (in Quat q, in float step)
+    public Transform3 RotateTo(in Quat q, in float step)
     {
-        this.Rotation = Quat.Mix (this.rotation, q, step);
+        this.Rotation = Quat.Mix(this.rotation, q, step);
         return this;
     }
 
@@ -240,9 +240,9 @@ public class Transform3
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>this transform</returns>
-    public Transform3 RotateX (in float radians)
+    public Transform3 RotateX(in float radians)
     {
-        this.rotation = Quat.RotateX (this.rotation, radians);
+        this.rotation = Quat.RotateX(this.rotation, radians);
         return this;
     }
 
@@ -254,9 +254,9 @@ public class Transform3
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>this transform</returns>
-    public Transform3 RotateY (in float radians)
+    public Transform3 RotateY(in float radians)
     {
-        this.rotation = Quat.RotateY (this.rotation, radians);
+        this.rotation = Quat.RotateY(this.rotation, radians);
         return this;
     }
 
@@ -268,9 +268,9 @@ public class Transform3
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>this transform</returns>
-    public Transform3 RotateZ (in float radians)
+    public Transform3 RotateZ(in float radians)
     {
-        this.rotation = Quat.RotateZ (this.rotation, radians);
+        this.rotation = Quat.RotateZ(this.rotation, radians);
         return this;
     }
 
@@ -280,7 +280,7 @@ public class Transform3
     /// </summary>
     /// <param name="v">uniform scalar</param>
     /// <returns>this transform</returns>    
-    public Transform3 ScaleBy (in float v)
+    public Transform3 ScaleBy(in float v)
     {
         this.Scale *= v;
         return this;
@@ -292,7 +292,7 @@ public class Transform3
     /// </summary>
     /// <param name="v">nonuniform scalar</param>
     /// <returns>this transform</returns>
-    public Transform3 ScaleBy (in Vec3 v)
+    public Transform3 ScaleBy(in Vec3 v)
     {
         this.Scale *= v;
         return this;
@@ -304,9 +304,9 @@ public class Transform3
     /// <param name="v">nonuniform scale</param>
     /// <param name="step">step</param>
     /// <returns>this transform</returns>
-    public Transform3 ScaleTo (in Vec3 v, in Vec3 step)
+    public Transform3 ScaleTo(in Vec3 v, in Vec3 step)
     {
-        this.Scale = Vec3.Mix (this.scale, Vec3.CopySign (v, this.scale), step);
+        this.Scale = Vec3.Mix(this.scale, Vec3.CopySign(v, this.scale), step);
         return this;
     }
 
@@ -317,11 +317,11 @@ public class Transform3
     /// <param name="step">step</param>
     /// <param name="easing">easing function</param>
     /// <returns>this transform</returns>
-    public Transform3 ScaleTo (in Vec3 v, in Vec3 step, in Func<Vec3, Vec3, Vec3, Vec3> easing)
+    public Transform3 ScaleTo(in Vec3 v, in Vec3 step, in Func<Vec3, Vec3, Vec3, Vec3> easing)
     {
-        Vec3 s = Vec3.CopySign (v, this.scale);
-        Vec3 t = easing (this.scale, s, step);
-        this.Scale = Vec3.Mix (this.scale, s, t);
+        Vec3 s = Vec3.CopySign(v, this.scale);
+        Vec3 t = easing(this.scale, s, step);
+        this.Scale = Vec3.Mix(this.scale, s, t);
         return this;
     }
 
@@ -329,12 +329,12 @@ public class Transform3
     /// Converts a 2D transform to a 3D transform.
     /// </summary>
     /// <param name="t">transform</param>
-    public static implicit operator Transform3 (in Transform2 t)
+    public static implicit operator Transform3(in Transform2 t)
     {
-        return new Transform3 (
+        return new Transform3(
             t.Location,
-            Quat.FromAngle (t.Rotation),
-            Vec3.Promote (t.Scale, 1.0f));
+            Quat.FromAngle(t.Rotation),
+            Vec3.Promote(t.Scale, 1.0f));
     }
 
     /// <summary>
@@ -344,9 +344,9 @@ public class Transform3
     /// <param name="transform">transform</param>
     /// <param name="dir">direction</param>
     /// <returns>direction</returns>
-    public static Vec3 InvMulDir (in Transform3 transform, in Vec3 dir)
+    public static Vec3 InvMulDir(in Transform3 transform, in Vec3 dir)
     {
-        return Quat.InvMulVector (transform.rotation, dir);
+        return Quat.InvMulVector(transform.rotation, dir);
     }
 
     /// <summary>
@@ -356,9 +356,9 @@ public class Transform3
     /// <param name="transform">transform</param>
     /// <param name="normal">normal</param>
     /// <returns>normal</returns>
-    public static Vec3 InvMulNormal (in Transform3 transform, in Vec3 normal)
+    public static Vec3 InvMulNormal(in Transform3 transform, in Vec3 normal)
     {
-        return Vec3.Normalize (transform.scale * Quat.InvMulVector (transform.rotation, normal));
+        return Vec3.Normalize(transform.scale * Quat.InvMulVector(transform.rotation, normal));
     }
 
     /// <summary>
@@ -369,9 +369,9 @@ public class Transform3
     /// <param name="transform">transform</param>
     /// <param name="point">point</param>
     /// <returns>point</returns>
-    public static Vec3 InvMulPoint (in Transform3 transform, in Vec3 point)
+    public static Vec3 InvMulPoint(in Transform3 transform, in Vec3 point)
     {
-        return Quat.InvMulVector (transform.rotation, (point - transform.location) / transform.scale);
+        return Quat.InvMulVector(transform.rotation, (point - transform.location) / transform.scale);
     }
 
     /// <summary>
@@ -381,9 +381,9 @@ public class Transform3
     /// <param name="transform">transform</param>
     /// <param name="vec">vector</param>
     /// <returns>vector</returns>
-    public static Vec3 InvMulVector (in Transform3 transform, in Vec3 vec)
+    public static Vec3 InvMulVector(in Transform3 transform, in Vec3 vec)
     {
-        return Quat.InvMulVector (transform.rotation, vec / transform.scale);
+        return Quat.InvMulVector(transform.rotation, vec / transform.scale);
     }
 
     /// <summary>
@@ -391,10 +391,10 @@ public class Transform3
     /// </summary>
     /// <param name="t">transform</param>
     /// <returns>maximum</returns>
-    public static float MaxDimension (in Transform3 t)
+    public static float MaxDimension(in Transform3 t)
     {
-        Vec3 scl = Vec3.Abs (t.scale);
-        return Utils.Max (scl.x, scl.y, scl.z);
+        Vec3 scl = Vec3.Abs(t.scale);
+        return Utils.Max(scl.x, scl.y, scl.z);
     }
 
     /// <summary>
@@ -402,10 +402,10 @@ public class Transform3
     /// </summary>
     /// <param name="t">transform</param>
     /// <returns>minimum</returns>
-    public static float MinDimension (in Transform3 t)
+    public static float MinDimension(in Transform3 t)
     {
-        Vec3 scl = Vec3.Abs (t.scale);
-        return Utils.Min (scl.x, scl.y, scl.z);
+        Vec3 scl = Vec3.Abs(t.scale);
+        return Utils.Min(scl.x, scl.y, scl.z);
     }
 
     /// <summary>
@@ -415,9 +415,9 @@ public class Transform3
     /// <param name="transform">transform</param>
     /// <param name="dir">direction</param>
     /// <returns>direction</returns>
-    public static Vec3 MulDir (in Transform3 transform, in Vec3 dir)
+    public static Vec3 MulDir(in Transform3 transform, in Vec3 dir)
     {
-        return Quat.MulVector (transform.rotation, dir);
+        return Quat.MulVector(transform.rotation, dir);
     }
 
     /// <summary>
@@ -428,9 +428,9 @@ public class Transform3
     /// <param name="transform">transform</param>
     /// <param name="normal">normal</param>
     /// <returns>normal</returns>
-    public static Vec3 MulNormal (in Transform3 transform, in Vec3 normal)
+    public static Vec3 MulNormal(in Transform3 transform, in Vec3 normal)
     {
-        return Vec3.Normalize (Quat.MulVector (transform.rotation, normal / transform.scale));
+        return Vec3.Normalize(Quat.MulVector(transform.rotation, normal / transform.scale));
     }
 
     /// <summary>
@@ -440,9 +440,9 @@ public class Transform3
     /// <param name="transform">transform</param>
     /// <param name="point">point</param>
     /// <returns>point</returns>
-    public static Vec3 MulPoint (in Transform3 transform, in Vec3 point)
+    public static Vec3 MulPoint(in Transform3 transform, in Vec3 point)
     {
-        return transform.location + transform.scale * Quat.MulVector (transform.rotation, point);
+        return transform.location + transform.scale * Quat.MulVector(transform.rotation, point);
     }
 
     /// <summary>
@@ -452,9 +452,9 @@ public class Transform3
     /// <param name="transform">transform</param>
     /// <param name="vec">vector</param>
     /// <returns>vector</returns>
-    public static Vec3 MulVector (in Transform3 transform, in Vec3 vec)
+    public static Vec3 MulVector(in Transform3 transform, in Vec3 vec)
     {
-        return transform.scale * Quat.MulVector (transform.rotation, vec);
+        return transform.scale * Quat.MulVector(transform.rotation, vec);
     }
 
     /// <summary>
@@ -465,9 +465,9 @@ public class Transform3
     /// </summary>
     /// <param name="tr">transform</param>
     /// <returns>tuple</returns>
-    public static (Vec3 right, Vec3 forward, Vec3 up) ToAxes (in Transform3 tr)
+    public static (Vec3 right, Vec3 forward, Vec3 up) ToAxes(in Transform3 tr)
     {
-        return Quat.ToAxes (tr.rotation);
+        return Quat.ToAxes(tr.rotation);
     }
 
     /// <summary>
@@ -476,9 +476,9 @@ public class Transform3
     /// <param name="tr">transform</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
-    public static string ToString (in Transform3 tr, in int places = 4)
+    public static string ToString(in Transform3 tr, in int places = 4)
     {
-        return Transform3.ToString (new StringBuilder (354), tr, places).ToString ( );
+        return Transform3.ToString(new StringBuilder(354), tr, places).ToString();
     }
 
     /// <summary>
@@ -488,19 +488,19 @@ public class Transform3
     /// <param name="tr">transform</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString ( // 
+    public static StringBuilder ToString( // 
         in StringBuilder sb, //
         in Transform3 tr, //
         in int places = 4)
     {
-        sb.Append ("{ location: ");
-        Vec3.ToString (sb, tr.location, places);
-        sb.Append (", rotation: ");
-        Quat.ToString (sb, tr.rotation, places);
-        sb.Append (", scale: ");
-        Vec3.ToString (sb, tr.scale, places);
-        sb.Append (' ');
-        sb.Append ('}');
+        sb.Append("{ location: ");
+        Vec3.ToString(sb, tr.location, places);
+        sb.Append(", rotation: ");
+        Quat.ToString(sb, tr.rotation, places);
+        sb.Append(", scale: ");
+        Vec3.ToString(sb, tr.scale, places);
+        sb.Append(' ');
+        sb.Append('}');
         return sb;
     }
 
@@ -512,7 +512,7 @@ public class Transform3
     {
         get
         {
-            return new Transform3 (Vec3.Zero, Quat.Identity, Vec3.One);
+            return new Transform3(Vec3.Zero, Quat.Identity, Vec3.One);
         }
     }
 }

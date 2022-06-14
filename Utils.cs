@@ -153,7 +153,7 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>absolute value</returns>
-    public static float Abs (in float v)
+    public static float Abs(in float v)
     {
         return v < 0.0f ? -v : v;
     }
@@ -172,7 +172,7 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>angle in radians</returns>
-    public static float Acos (in float v)
+    public static float Acos(in float v)
     {
         if (v <= -1.0f) { return Utils.Pi; }
         if (v >= 1.0f) { return 0.0f; }
@@ -186,7 +186,7 @@ public static class Utils
         ret -= 0.2121144f;
         ret *= x;
         ret += Utils.HalfPi;
-        ret *= (float) Math.Sqrt (1.0d - (double) x);
+        ret *= (float)Math.Sqrt(1.0d - (double)x);
         return ltZero ? Utils.Pi - ret : ret;
     }
 
@@ -196,7 +196,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>evaluation</returns>
-    public static int And (in float a, in float b)
+    public static int And(in float a, in float b)
     {
         return ((a != 0.0f) & (b != 0.0f)) ? 1 : 0;
     }
@@ -210,9 +210,9 @@ public static class Utils
     /// <param name="b">right comparisand</param>
     /// <param name="tolerance">the tolerance</param>
     /// <returns>evaluation</returns>
-    public static bool Approx (in float a, in float b, in float tolerance = Utils.Epsilon)
+    public static bool Approx(in float a, in float b, in float tolerance = Utils.Epsilon)
     {
-        return Utils.Diff (a, b) <= tolerance;
+        return Utils.Diff(a, b) <= tolerance;
     }
 
     /// <summary>
@@ -229,7 +229,7 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>angle in radians</returns>
-    public static float Asin (in float v)
+    public static float Asin(in float v)
     {
         if (v <= -1.0f) { return -Utils.HalfPi; }
         if (v >= 1.0f) { return Utils.HalfPi; }
@@ -243,7 +243,7 @@ public static class Utils
         ret -= 0.2121144f;
         ret *= x;
         ret += Utils.HalfPi;
-        ret = Utils.HalfPi - ret * (float) Math.Sqrt (1.0d - (double) x);
+        ret = Utils.HalfPi - ret * (float)Math.Sqrt(1.0d - (double)x);
         return ltZero ? -ret : ret;
     }
 
@@ -258,7 +258,7 @@ public static class Utils
     /// <param name="y">the y coordinate (the ordinate)</param>
     /// <param name="x">the x coordinate (the abscissa)</param>
     /// <returns>angle in radians</returns>
-    public static float Atan2 (in float y, in float x)
+    public static float Atan2(in float y, in float x)
     {
         bool yLtZero = y < 0.0f;
         bool xLtZero = x < 0.0f;
@@ -288,9 +288,9 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>raised value</returns>
-    public static int Ceil (in float v)
+    public static int Ceil(in float v)
     {
-        return (v > 0.0f) ? (int) v + 1 : (int) v;
+        return (v > 0.0f) ? (int)v + 1 : (int)v;
     }
 
     /// <summary>
@@ -300,7 +300,7 @@ public static class Utils
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>clamped value</returns>
-    public static float Clamp (in float v, in float lb = 0.0f, in float ub = 1.0f)
+    public static float Clamp(in float v, in float lb = 0.0f, in float ub = 1.0f)
     {
         return (v < lb) ? lb : (v > ub) ? ub : v;
     }
@@ -312,7 +312,7 @@ public static class Utils
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>clamped value</returns>
-    public static int Clamp (in int v, in int lb = int.MinValue, in int ub = int.MaxValue)
+    public static int Clamp(in int v, in int lb = int.MinValue, in int ub = int.MaxValue)
     {
         return (v < lb) ? lb : (v > ub) ? ub : v;
     }
@@ -324,14 +324,14 @@ public static class Utils
     /// <param name="mag">the magnitude</param>
     /// <param name="sign">the sign</param>
     /// <returns>magnified sign</returns>
-    public static float CopySign (in float mag, in float sign)
+    public static float CopySign(in float mag, in float sign)
     {
         // Don't use abs*sign, as the latter has more
         // flexibility in terms of how you deal with zero sign.
         // return Utils.Abs (mag) * Utils.Sign (sign);
-        return (sign < -0.0f) ? -Utils.Abs (mag) :
-            (sign > 0.0f) ? Utils.Abs (mag) :
-            0.0f;
+        return (sign < -0.0f) ? -Utils.Abs(mag) :
+               (sign > 0.0f) ? Utils.Abs(mag) :
+               0.0f;
     }
 
     /// <summary>
@@ -340,9 +340,9 @@ public static class Utils
     /// </summary>
     /// <param name="radians">the angle in radians</param>
     /// <returns>cosine of the angle</returns>
-    public static float Cos (in float radians)
+    public static float Cos(in float radians)
     {
-        return (float) Math.Cos ((double) radians);
+        return (float)Math.Cos((double)radians);
     }
 
     /// <summary>
@@ -350,9 +350,9 @@ public static class Utils
     /// </summary>
     /// <param name="radians">the angle in radians</param>
     /// <returns>cosine of the angle</returns>
-    public static float Cosh (in float radians)
+    public static float Cosh(in float radians)
     {
-        return (float) Math.Cosh ((double) radians);
+        return (float)Math.Cosh((double)radians);
     }
 
     /// <summary>
@@ -361,11 +361,11 @@ public static class Utils
     /// </summary>
     /// <param name="radians">the angle in radians</param>
     /// <returns>cotangent</returns>
-    public static float Cot (in float radians)
+    public static float Cot(in float radians)
     {
-        double rd = (double) radians;
-        double sint = Math.Sin (rd);
-        return (sint != 0.0d) ? (float) (Math.Cos (rd) / sint) : 0.0f;
+        double rd = (double)radians;
+        double sint = Math.Sin(rd);
+        return (sint != 0.0d) ? (float)(Math.Cos(rd) / sint) : 0.0f;
     }
 
     /// <summary>
@@ -374,9 +374,9 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>difference</returns>
-    public static float Diff (in float a, in float b)
+    public static float Diff(in float a, in float b)
     {
-        return Utils.Abs (b - a);
+        return Utils.Abs(b - a);
     }
 
     /// <summary>
@@ -386,10 +386,10 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>unsigned distance</returns>
-    public static float DistAngleUnsigned (in float a, in float b)
+    public static float DistAngleUnsigned(in float a, in float b)
     {
-        return Utils.Pi - Utils.Abs (Utils.Abs (Utils.WrapRadians (b) -
-            Utils.WrapRadians (a)) - Utils.Pi);
+        return Utils.Pi - Utils.Abs(Utils.Abs(Utils.WrapRadians(b) -
+            Utils.WrapRadians(a)) - Utils.Pi);
     }
 
     /// <summary>
@@ -401,12 +401,12 @@ public static class Utils
     /// <param name="b">right operand</param>
     /// <param name="range">range</param>
     /// <returns>unsigned distance</returns>
-    public static float DistAngleUnsigned (in float a, in float b, in float range)
+    public static float DistAngleUnsigned(in float a, in float b, in float range)
     {
         float halfRange = range * 0.5f;
-        return halfRange - Utils.Abs (Utils.Abs (
-            Utils.RemFloor (b, range) -
-            Utils.RemFloor (a, range)) - halfRange);
+        return halfRange - Utils.Abs(Utils.Abs(
+            Utils.RemFloor(b, range) -
+            Utils.RemFloor(a, range)) - halfRange);
     }
 
     /// <summary>
@@ -416,7 +416,7 @@ public static class Utils
     /// <param name="a">numerator</param>
     /// <param name="b">denominator</param>
     /// <returns>quotient</returns>
-    public static int Div (in int a, in int b)
+    public static int Div(in int a, in int b)
     {
         return b != 0 ? a / b : 0;
     }
@@ -428,7 +428,7 @@ public static class Utils
     /// <param name="a">numerator</param>
     /// <param name="b">denominator</param>
     /// <returns>quotient</returns>
-    public static float Div (in float a, in float b)
+    public static float Div(in float a, in float b)
     {
         return b != 0.0f ? a / b : 0.0f;
     }
@@ -438,9 +438,9 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>result</returns>
-    public static float Exp (in float v)
+    public static float Exp(in float v)
     {
-        return (float) Math.Exp ((double) v);
+        return (float)Math.Exp((double)v);
     }
 
     /// <summary>
@@ -448,9 +448,9 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>floored value</returns>
-    public static int Floor (in float v)
+    public static int Floor(in float v)
     {
-        return (v > 0.0f) ? (int) v : (int) v - 1;
+        return (v > 0.0f) ? (int)v : (int)v - 1;
     }
 
     /// <summary>
@@ -459,9 +459,9 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>fractional portion</returns>
-    public static float Fract (in float v)
+    public static float Fract(in float v)
     {
-        return v - Utils.Trunc (v);
+        return v - Utils.Trunc(v);
     }
 
     /// <summary>
@@ -470,9 +470,9 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>inverse square root</returns>
-    public static float InvSqrt (in float v)
+    public static float InvSqrt(in float v)
     {
-        return (v > 0.0f) ? Utils.InvSqrtUnchecked (v) : 0.0f;
+        return (v > 0.0f) ? Utils.InvSqrtUnchecked(v) : 0.0f;
     }
 
     /// <summary>
@@ -481,9 +481,9 @@ public static class Utils
     /// </summary>
     /// <param name="a">input value</param>
     /// <returns>inverse square root</returns>
-    public static float InvSqrtUnchecked (in float a)
+    public static float InvSqrtUnchecked(in float a)
     {
-        return (float) (1.0d / Math.Sqrt (a));
+        return (float)(1.0d / Math.Sqrt(a));
     }
 
     /// <summary>
@@ -494,12 +494,12 @@ public static class Utils
     /// <param name="dest">destination angle</param>
     /// <param name="t">factor</param>
     /// <returns>angle</returns>
-    public static float LerpAngle ( //
+    public static float LerpAngle( //
         in float origin, //
         in float dest, //
         in float t = 0.5f)
     {
-        return Utils.LerpAngleNear (origin, dest, t);
+        return Utils.LerpAngleNear(origin, dest, t);
     }
 
     /// <summary>
@@ -511,14 +511,14 @@ public static class Utils
     /// <param name="dest">destination angle</param>
     /// <param name="t">factor</param>
     /// <returns>angle</returns>
-    public static float LerpAngleNear ( //
+    public static float LerpAngleNear( //
         in float origin, //
         in float dest, //
         in float t = 0.5f, //
         in float range = Utils.Tau)
     {
-        float o = Utils.RemFloor (origin, range);
-        float d = Utils.RemFloor (dest, range);
+        float o = Utils.RemFloor(origin, range);
+        float d = Utils.RemFloor(dest, range);
         float diff = d - o;
         float halfRange = range * 0.5f;
 
@@ -526,7 +526,7 @@ public static class Utils
 
         if (o < d && diff > halfRange)
         {
-            return Utils.RemFloor (
+            return Utils.RemFloor(
                 (1.0f - t) * (o + range) +
                 t * d,
                 range);
@@ -534,7 +534,7 @@ public static class Utils
 
         if (o > d && diff < -halfRange)
         {
-            return Utils.RemFloor (
+            return Utils.RemFloor(
                 (1.0f - t) * o +
                 t * (d + range),
                 range);
@@ -552,27 +552,27 @@ public static class Utils
     /// <param name="dest">destination angle</param>
     /// <param name="t">factor</param>
     /// <returns>angle</returns>
-    public static float LerpAngleFar ( //
+    public static float LerpAngleFar( //
         in float origin, //
         in float dest, //
         in float t = 0.5f, //
         in float range = Utils.Tau)
     {
-        float o = Utils.RemFloor (origin, range);
-        float d = Utils.RemFloor (dest, range);
+        float o = Utils.RemFloor(origin, range);
+        float d = Utils.RemFloor(dest, range);
         float diff = d - o;
         float halfRange = range * 0.5f;
 
         if (diff == 0.0f || (o < diff && diff < -halfRange))
         {
-            return Utils.RemFloor (
+            return Utils.RemFloor(
                 (1.0f - t) * (o + range) + t * d,
                 range);
         }
 
         if (o > d && diff > -halfRange)
         {
-            return Utils.RemFloor (
+            return Utils.RemFloor(
                 (1.0f - t) * o + t * (d + range),
                 range);
         }
@@ -589,21 +589,21 @@ public static class Utils
     /// <param name="dest">destination angle</param>
     /// <param name="t">factor</param>
     /// <returns>angle</returns>
-    public static float LerpAngleCCW ( //
+    public static float LerpAngleCCW( //
         in float origin, //
         in float dest, //
         in float t = 0.5f, //
         in float range = Utils.Tau)
     {
-        float o = Utils.RemFloor (origin, range);
-        float d = Utils.RemFloor (dest, range);
+        float o = Utils.RemFloor(origin, range);
+        float d = Utils.RemFloor(dest, range);
         float diff = d - o;
 
         if (diff == 0.0f) { return o; }
 
         if (o > d)
         {
-            return Utils.RemFloor (
+            return Utils.RemFloor(
                 (1.0f - t) * o +
                 t * (d + range),
                 range);
@@ -621,21 +621,21 @@ public static class Utils
     /// <param name="dest">destination angle</param>
     /// <param name="t">factor</param>
     /// <returns>angle</returns>
-    public static float LerpAngleCW ( //
+    public static float LerpAngleCW( //
         in float origin, //
         in float dest, //
         in float t = 0.5f, //
         in float range = Utils.Tau)
     {
-        float o = Utils.RemFloor (origin, range);
-        float d = Utils.RemFloor (dest, range);
+        float o = Utils.RemFloor(origin, range);
+        float d = Utils.RemFloor(dest, range);
         float diff = d - o;
 
         if (diff == 0.0f) { return d; }
 
         if (o < d)
         {
-            return Utils.RemFloor (
+            return Utils.RemFloor(
                 (1.0f - t) * (o + range) +
                 t * d,
                 range);
@@ -652,13 +652,13 @@ public static class Utils
     /// <param name="edge1">right edge</param>
     /// <param name="x">factor</param>
     /// <returns>linear step</returns>
-    public static float LinearStep ( //
+    public static float LinearStep( //
         in float edge0 = 0.0f, //
         in float edge1 = 1.0f, //
         in float x = 0.5f)
     {
         float denom = edge1 - edge0;
-        if (denom != 0.0f) { return Utils.Clamp ((x - edge0) / denom, 0.0f, 1.0f); }
+        if (denom != 0.0f) { return Utils.Clamp((x - edge0) / denom, 0.0f, 1.0f); }
         return 0.0f;
     }
 
@@ -668,9 +668,9 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>natural logarithm</returns>
-    public static float Log (in float v)
+    public static float Log(in float v)
     {
-        return (v > 0.0f) ? (float) Math.Log ((double) v) : 0.0f;
+        return (v > 0.0f) ? (float)Math.Log((double)v) : 0.0f;
     }
 
     /// <summary>
@@ -684,7 +684,7 @@ public static class Utils
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
     /// <returns>mapped value</returns>
-    public static float Map ( //
+    public static float Map( //
         in float v, //
         in float lbOrigin = -1.0f, //
         in float ubOrigin = 1.0f, //
@@ -703,7 +703,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>maximum value</returns>
-    public static int Max (in int a, in int b)
+    public static int Max(in int a, in int b)
     {
         return (a > b) ? a : b;
     }
@@ -715,9 +715,9 @@ public static class Utils
     /// <param name="b">second operand</param>
     /// <param name="c">third operand</param>
     /// <returns>maximum value</returns>
-    public static int Max (in int a, in int b, in int c)
+    public static int Max(in int a, in int b, in int c)
     {
-        return Utils.Max (Utils.Max (a, b), c);
+        return Utils.Max(Utils.Max(a, b), c);
     }
 
     /// <summary>
@@ -726,7 +726,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>maximum value</returns>
-    public static float Max (in float a, in float b)
+    public static float Max(in float a, in float b)
     {
         return (a >= b) ? a : (a < b) ? b : 0.0f;
     }
@@ -738,9 +738,9 @@ public static class Utils
     /// <param name="b">second operand</param>
     /// <param name="c">third operand</param>
     /// <returns>maximum value</returns>
-    public static float Max (in float a, in float b, in float c)
+    public static float Max(in float a, in float b, in float c)
     {
-        return Utils.Max (Utils.Max (a, b), c);
+        return Utils.Max(Utils.Max(a, b), c);
     }
 
     /// <summary>
@@ -748,13 +748,13 @@ public static class Utils
     /// </summary>
     /// <param name="values">the list of values</param>
     /// <returns>maximum value</returns>
-    public static float Max (params float [ ] values)
+    public static float Max(params float[] values)
     {
         int len = values.Length;
         float result = float.MinValue;
         for (int i = 0; i < len; ++i)
         {
-            float v = values [ i ];
+            float v = values[i];
             if (v > result) { result = v; }
         }
         return result;
@@ -766,7 +766,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>minimum value</returns>
-    public static int Min (in int a, in int b)
+    public static int Min(in int a, in int b)
     {
         return (a < b) ? a : b;
     }
@@ -778,9 +778,9 @@ public static class Utils
     /// <param name="b">second operand</param>
     /// <param name="c">third operand</param>
     /// <returns>maximum value</returns>
-    public static int Min (in int a, in int b, in int c)
+    public static int Min(in int a, in int b, in int c)
     {
-        return Utils.Min (Utils.Min (a, b), c);
+        return Utils.Min(Utils.Min(a, b), c);
     }
 
     /// <summary>
@@ -789,7 +789,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>minimum value</returns>
-    public static float Min (in float a, in float b)
+    public static float Min(in float a, in float b)
     {
         return (a <= b) ? a : (a > b) ? b : 0.0f;
     }
@@ -801,9 +801,9 @@ public static class Utils
     /// <param name="b">second operand</param>
     /// <param name="c">third operand</param>
     /// <returns>minimum value</returns>
-    public static float Min (in float a, in float b, in float c)
+    public static float Min(in float a, in float b, in float c)
     {
-        return Utils.Min (Utils.Min (a, b), c);
+        return Utils.Min(Utils.Min(a, b), c);
     }
 
     /// <summary>
@@ -811,13 +811,13 @@ public static class Utils
     /// </summary>
     /// <param name="values">the list of values</param>
     /// <returns>minimum value</returns>
-    public static float Min (params float [ ] values)
+    public static float Min(params float[] values)
     {
         int len = values.Length;
         float result = float.MaxValue;
         for (int i = 0; i < len; ++i)
         {
-            float v = values [ i ];
+            float v = values[i];
             if (v < result) { result = v; }
         }
         return result;
@@ -830,7 +830,7 @@ public static class Utils
     /// <param name="b">right operand</param>
     /// <param name="t">factor</param>
     /// <returns>mix</returns>
-    public static float Mix (in float a, in float b, in float t = 0.5f)
+    public static float Mix(in float a, in float b, in float t = 0.5f)
     {
         return (1.0f - t) * a + t * b;
     }
@@ -840,7 +840,7 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>negation</returns>
-    public static int Not (in float v)
+    public static int Not(in float v)
     {
         return (v != 0.0f) ? 0 : 1;
     }
@@ -852,7 +852,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>evaluation</returns>
-    public static int Or (in float a, in float b)
+    public static int Or(in float a, in float b)
     {
         return ((a != 0.0f) | (b != 0.0f)) ? 1 : 0;
     }
@@ -863,9 +863,9 @@ public static class Utils
     /// <param name="t">factor</param>
     /// <param name="pause">pause</param>
     /// <returns>oscillation</returns>
-    public static float PingPong (in float t, in float pause = 1.0f)
+    public static float PingPong(in float t, in float pause = 1.0f)
     {
-        return Utils.PingPong (0.0f, 1.0f, t, pause);
+        return Utils.PingPong(0.0f, 1.0f, t, pause);
     }
 
     /// <summary>
@@ -875,9 +875,9 @@ public static class Utils
     /// <param name="b">upper bound</param>
     /// <param name="t">factor</param>
     /// <returns>oscillation</returns>
-    public static int PingPong (in int a, in int b, in float t)
+    public static int PingPong(in int a, in int b, in float t)
     {
-        return (int) Utils.PingPong ((float) a, (float) b, t, 1.0f);
+        return (int)Utils.PingPong((float)a, (float)b, t, 1.0f);
     }
 
     /// <summary>
@@ -888,9 +888,9 @@ public static class Utils
     /// <param name="t">factor</param>
     /// <param name="pause">pause</param>
     /// <returns>oscillation</returns>
-    public static float PingPong (in float a, in float b, in float t, in float pause = 1.0f)
+    public static float PingPong(in float a, in float b, in float t, in float pause = 1.0f)
     {
-        float x = 0.5f + 0.5f * pause * Utils.SinCosEval (t - 0.5f);
+        float x = 0.5f + 0.5f * pause * Utils.SinCosEval(t - 0.5f);
         if (t <= 0.0f) { return a; }
         if (t >= 1.0f) { return b; }
         return (1.0f - x) * a + x * b;
@@ -902,9 +902,9 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>power</returns>
-    public static float Pow (in float a, in float b)
+    public static float Pow(in float a, in float b)
     {
-        return (float) Math.Pow ((double) a, (double) b);
+        return (float)Math.Pow((double)a, (double)b);
     }
 
     /// <summary>
@@ -913,9 +913,9 @@ public static class Utils
     /// <param name="v">input value</param>
     /// <param name="levels">levels</param>
     /// <returns>quantized value</returns>
-    public static float Quantize (in float v, in int levels)
+    public static float Quantize(in float v, in int levels)
     {
-        return Utils.QuantizeSigned (v, levels);
+        return Utils.QuantizeSigned(v, levels);
     }
 
     /// <summary>
@@ -925,12 +925,12 @@ public static class Utils
     /// <param name="v">input value</param>
     /// <param name="levels">levels</param>
     /// <returns>quantized value</returns>
-    public static float QuantizeSigned (in float v, in int levels)
+    public static float QuantizeSigned(in float v, in int levels)
     {
         if (levels > 0)
         {
-            float lf = (float) levels;
-            return Utils.Floor (0.5f + v * lf) / lf;
+            float lf = (float)levels;
+            return Utils.Floor(0.5f + v * lf) / lf;
         }
         return v;
     }
@@ -942,15 +942,15 @@ public static class Utils
     /// <param name="v"></param>
     /// <param name="levels"></param>
     /// <returns></returns>
-    public static float QuantizeUnsigned (in float v, in int levels)
+    public static float QuantizeUnsigned(in float v, in int levels)
     {
         if (levels > 1)
         {
-            float lf = (float) levels;
-            return Utils.Max (0.0f,
-                (Utils.Ceil (v * lf) - 1.0f) / (lf - 1.0f));
+            float lf = (float)levels;
+            return Utils.Max(0.0f,
+                (Utils.Ceil(v * lf) - 1.0f) / (lf - 1.0f));
         }
-        return Utils.Max (0.0f, v);
+        return Utils.Max(0.0f, v);
     }
 
     /// <summary>
@@ -960,7 +960,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>result</returns>
-    public static int RemFloor (in int a, in int b)
+    public static int RemFloor(in int a, in int b)
     {
         return b != 0 ? (a % b + b) % b : a;
     }
@@ -972,9 +972,9 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>result</returns>
-    public static float RemFloor (in float a, in float b)
+    public static float RemFloor(in float a, in float b)
     {
-        return b != 0.0f ? a - b * Utils.Floor (a / b) : a;
+        return b != 0.0f ? a - b * Utils.Floor(a / b) : a;
     }
 
     /// <summary>
@@ -983,7 +983,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>result</returns>
-    public static int RemTrunc (in int a, in int b)
+    public static int RemTrunc(in int a, in int b)
     {
         return (b != 0) ? a % b : a;
     }
@@ -1002,7 +1002,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>result</returns>
-    public static float RemTrunc (in float a, in float b)
+    public static float RemTrunc(in float a, in float b)
     {
         return (b != 0.0f) ? a % b : a;
     }
@@ -1013,10 +1013,10 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>rounded value</returns>
-    public static int Round (in float v)
+    public static int Round(in float v)
     {
-        return (v < -0.0f) ? (int) (v - 0.5f) :
-            (v > 0.0f) ? (int) (v + 0.5f) : 0;
+        return (v < -0.0f) ? (int)(v - 0.5f) :
+            (v > 0.0f) ? (int)(v + 0.5f) : 0;
     }
 
     /// <summary>
@@ -1026,9 +1026,9 @@ public static class Utils
     /// <param name="v">input value</param>
     /// <param name="places">number of places</param>
     /// <returns>rounded value</returns>
-    public static float Round (in float v, in int places)
+    public static float Round(in float v, in int places)
     {
-        return (float) Math.Round ((double) v, places);
+        return (float)Math.Round((double)v, places);
     }
 
     /// <summary>
@@ -1037,7 +1037,7 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>sign</returns>
-    public static int Sign (in float v)
+    public static int Sign(in float v)
     {
         return (v < -0.0f) ? -1 : (v > 0.0f) ? 1 : 0;
     }
@@ -1048,9 +1048,9 @@ public static class Utils
     /// </summary>
     /// <param name="radians">angle in radians</param>
     /// <returns>sine of the angle</returns>
-    public static float Sin (in float radians)
+    public static float Sin(in float radians)
     {
-        return (float) Math.Sin ((double) radians);
+        return (float)Math.Sin((double)radians);
     }
 
     /// <summary>
@@ -1060,11 +1060,11 @@ public static class Utils
     /// <param name="radians">angle in radians</param>
     /// <param name="sina">sine</param>
     /// <param name="cosa">cosine</param>
-    public static void SinCos (in float radians, out float sina, out float cosa)
+    public static void SinCos(in float radians, out float sina, out float cosa)
     {
         float nrm = Utils.OneTau * radians;
-        sina = Utils.SinCosEval (nrm - 0.25f);
-        cosa = Utils.SinCosEval (nrm);
+        sina = Utils.SinCosEval(nrm - 0.25f);
+        cosa = Utils.SinCosEval(nrm);
     }
 
     /// <summary>
@@ -1072,12 +1072,12 @@ public static class Utils
     /// </summary>
     /// <param name="radians">angle in radians</param>
     /// <returns>tuple</returns>
-    public static (float sin, float cos) SinCos (in float radians)
+    public static (float sin, float cos) SinCos(in float radians)
     {
         float nrm = Utils.OneTau * radians;
         return (
-            sin: Utils.SinCosEval (nrm - 0.25f),
-            cos: Utils.SinCosEval (nrm));
+            sin: Utils.SinCosEval(nrm - 0.25f),
+            cos: Utils.SinCosEval(nrm));
     }
 
     /// <summary>
@@ -1092,9 +1092,9 @@ public static class Utils
     /// </summary>
     /// <param name="normRad">the normalized radians</param>
     /// <returns>approximate value</returns>
-    private static float SinCosEval (in float normRad)
+    private static float SinCosEval(in float normRad)
     {
-        float r1y = normRad - Utils.Floor (normRad);
+        float r1y = normRad - Utils.Floor(normRad);
 
         bool r2x = r1y < 0.25f;
         float r1x = 0.0f;
@@ -1142,9 +1142,9 @@ public static class Utils
     /// </summary>
     /// <param name="radians">the angle</param>
     /// <returns>hyperbolic sine</returns>
-    public static float Sinh (in float radians)
+    public static float Sinh(in float radians)
     {
-        return (float) Math.Sinh ((double) radians);
+        return (float)Math.Sinh((double)radians);
     }
 
     /// <summary>
@@ -1155,12 +1155,12 @@ public static class Utils
     /// <param name="edge1">right edge</param>
     /// <param name="x">factor</param>
     /// <returns>smooth step</returns>
-    public static float SmoothStep ( //
+    public static float SmoothStep( //
         in float edge0 = 0.0f, //
         in float edge1 = 1.0f, //
         in float x = 0.5f)
     {
-        float t = Utils.LinearStep (edge0, edge1, x);
+        float t = Utils.LinearStep(edge0, edge1, x);
         return t * t * (3.0f - (t + t));
     }
 
@@ -1170,9 +1170,9 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>square root</returns>
-    public static float Sqrt (in float v)
+    public static float Sqrt(in float v)
     {
-        return v > 0.0f ? Utils.SqrtUnchecked (v) : 0.0f;
+        return v > 0.0f ? Utils.SqrtUnchecked(v) : 0.0f;
     }
 
     /// <summary>
@@ -1181,9 +1181,9 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>square root</returns>
-    public static float SqrtUnchecked (in float v)
+    public static float SqrtUnchecked(in float v)
     {
-        return (float) Math.Sqrt ((double) v);
+        return (float)Math.Sqrt((double)v);
     }
 
     /// <summary>
@@ -1192,7 +1192,7 @@ public static class Utils
     /// <param name="edge">the edge</param>
     /// <param name="x">the factor</param>
     /// <returns>step</returns>
-    public static float Step (in float edge, in float x = 0.5f)
+    public static float Step(in float edge, in float x = 0.5f)
     {
         return x < edge ? 0.0f : 1.0f;
     }
@@ -1203,11 +1203,11 @@ public static class Utils
     /// </summary>
     /// <param name="radians">the angle</param>
     /// <returns>tangent</returns>
-    public static float Tan (in float radians)
+    public static float Tan(in float radians)
     {
-        double rd = (double) radians;
-        double cost = Math.Cos (rd);
-        return cost != 0.0d ? (float) (Math.Sin (rd) / cost) : 0.0f;
+        double rd = (double)radians;
+        double cost = Math.Cos(rd);
+        return cost != 0.0d ? (float)(Math.Sin(rd) / cost) : 0.0f;
     }
 
     /// <summary>
@@ -1217,9 +1217,9 @@ public static class Utils
     /// <param name="v">input value</param>
     /// <param name="places">number of places</param>
     /// <returns>string</returns>
-    public static string ToFixed (in float v, in int places = 7)
+    public static string ToFixed(in float v, in int places = 7)
     {
-        return Utils.ToFixed (new StringBuilder (16), v, places).ToString ( );
+        return Utils.ToFixed(new StringBuilder(16), v, places).ToString();
     }
 
     /// <summary>
@@ -1230,17 +1230,17 @@ public static class Utils
     /// <param name="v">input value</param>
     /// <param name="places">number of places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToFixed (in StringBuilder sb, in float v, in int places = 7)
+    public static StringBuilder ToFixed(in StringBuilder sb, in float v, in int places = 7)
     {
         /*
          * Dispense with v and places edge cases.
          */
-        if (float.IsNaN (v)) { return sb.Append ("0.0"); }
-        if (places < 0) { return sb.Append ((int) v); }
-        if (places < 1) { return sb.Append ((float) ((int) v)); }
+        if (float.IsNaN(v)) { return sb.Append("0.0"); }
+        if (places < 0) { return sb.Append((int)v); }
+        if (places < 1) { return sb.Append((float)((int)v)); }
         if (v <= float.MinValue || v >= float.MaxValue)
         {
-            return sb.Append (v);
+            return sb.Append(v);
         }
 
         /*
@@ -1250,7 +1250,7 @@ public static class Utils
         bool ltZero = v < 0.0f;
         int sign = ltZero ? -1 : (v > 0.0f) ? 1 : 0;
         float abs = ltZero ? -v : v;
-        int trunc = (int) abs;
+        int trunc = (int)abs;
         int oldLen = sb.Length;
         int len;
 
@@ -1260,15 +1260,15 @@ public static class Utils
          */
         if (sign < 0)
         {
-            sb.Append ('-').Append (trunc);
+            sb.Append('-').Append(trunc);
             len = sb.Length - oldLen - 1;
         }
         else
         {
-            sb.Append (trunc);
+            sb.Append(trunc);
             len = sb.Length - oldLen;
         }
-        sb.Append ('.');
+        sb.Append('.');
 
         /*
          * Find the number of places left to work with after the
@@ -1280,7 +1280,7 @@ public static class Utils
          * number of places will be used.
          */
         int maxPlaces = 9 - len;
-        if (maxPlaces < 1) { return sb.Append (v); }
+        if (maxPlaces < 1) { return sb.Append(v); }
         int vetPlaces = places < maxPlaces ? places : maxPlaces;
 
         /* 
@@ -1292,9 +1292,9 @@ public static class Utils
         for (int i = 0; i < vetPlaces; ++i)
         {
             frac *= 10.0f;
-            int tr = (int) frac;
-            frac -= (float) tr;
-            sb.Append (tr);
+            int tr = (int)frac;
+            frac -= (float)tr;
+            sb.Append(tr);
         }
         return sb;
     }
@@ -1305,9 +1305,9 @@ public static class Utils
     /// <param name="v">integer</param>
     /// <param name="padding">leading zeroes</param>
     /// <returns>string</returns>
-    public static string ToPadded (in int v, in int padding = 3)
+    public static string ToPadded(in int v, in int padding = 3)
     {
-        return Utils.ToPadded (new StringBuilder (16), v, padding).ToString ( );
+        return Utils.ToPadded(new StringBuilder(16), v, padding).ToString();
     }
 
     /// <summary>
@@ -1318,7 +1318,7 @@ public static class Utils
     /// <param name="v">input value</param>
     /// <param name="padding">leading zeroes</param>
     /// <returns>string builder</returns>
-    public static String ToPadded (in StringBuilder sb, in int v, in int padding = 3)
+    public static String ToPadded(in StringBuilder sb, in int v, in int padding = 3)
     {
         /*
          * Double precision is needed to preserve accuracy. The max integer value
@@ -1328,24 +1328,24 @@ public static class Utils
          */
         bool isNeg = v < 0;
         int nAbsVal = isNeg ? v : -v;
-        int [ ] digits = new int [ 10 ];
+        int[] digits = new int[10];
         int filled = 0;
         while (nAbsVal < 0)
         {
             double y = nAbsVal * 0.1d;
-            nAbsVal = (int) y;
-            digits [ filled++ ] = -(int) ((y - nAbsVal) * 10.0d - 0.5d);
+            nAbsVal = (int)y;
+            digits[filled++] = -(int)((y - nAbsVal) * 10.0d - 0.5d);
         }
 
-        if (isNeg) { sb.Append ('-'); }
+        if (isNeg) { sb.Append('-'); }
         int vplaces = padding < 1 ? 1 : padding;
         vplaces = filled > vplaces ? filled : vplaces;
         for (int n = vplaces - 1; n > -1; --n)
         {
-            sb.Append (digits [ n ]);
+            sb.Append(digits[n]);
         }
 
-        return sb.ToString ( );
+        return sb.ToString();
     }
 
     /// <summary>
@@ -1354,9 +1354,9 @@ public static class Utils
     /// </summary>
     /// <param name="v">input value</param>
     /// <returns>truncation</returns>
-    public static float Trunc (in float v)
+    public static float Trunc(in float v)
     {
-        return (float) ((int) v);
+        return (float)((int)v);
     }
 
     /// <summary>
@@ -1370,10 +1370,10 @@ public static class Utils
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>wrapped value</returns>
-    public static float Wrap (in float v, in float lb = -1.0f, in float ub = 1.0f)
+    public static float Wrap(in float v, in float lb = -1.0f, in float ub = 1.0f)
     {
         float range = ub - lb;
-        return (range != 0.0f) ? v - range * Utils.Floor ((v - lb) / range) : v;
+        return (range != 0.0f) ? v - range * Utils.Floor((v - lb) / range) : v;
     }
 
     /// <summary>
@@ -1382,9 +1382,9 @@ public static class Utils
     /// </summary>
     /// <param name="deg">angle in degrees</param>
     /// <returns>output angle</returns>
-    public static float WrapDegrees (in float deg)
+    public static float WrapDegrees(in float deg)
     {
-        return deg - 360.0f * Utils.Floor (deg * Utils.One360);
+        return deg - 360.0f * Utils.Floor(deg * Utils.One360);
     }
 
     /// <summary>
@@ -1393,9 +1393,9 @@ public static class Utils
     /// </summary>
     /// <param name="rad">angle in radians</param>
     /// <returns>output angle</returns>
-    public static float WrapRadians (in float rad)
+    public static float WrapRadians(in float rad)
     {
-        return rad - Utils.Tau * Utils.Floor (rad * Utils.OneTau);
+        return rad - Utils.Tau * Utils.Floor(rad * Utils.OneTau);
     }
 
     /// <summary>
@@ -1404,7 +1404,7 @@ public static class Utils
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>evaluation</returns>
-    public static int Xor (in float a, in float b)
+    public static int Xor(in float a, in float b)
     {
         return ((a != 0.0f) ^ (b != 0.0f)) ? 1 : 0;
     }

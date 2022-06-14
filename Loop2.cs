@@ -10,13 +10,13 @@ public class Loop2
     /// <summary>
     /// Array of compound vertex indices.
     /// </summary>
-    protected Index2 [ ] indices;
+    protected Index2[] indices;
 
     /// <summary>
     /// Array of compound vertex indices.
-    /// </summary>
+    /// </summary> 
     /// <value>the index</value>
-    public Index2 [ ] Indices
+    public Index2[] Indices
     {
         get
         {
@@ -40,16 +40,16 @@ public class Loop2
     /// negative indices may be used.
     /// </summary>
     /// <value>the mesh index</value>
-    public Index2 this [ int i ]
+    public Index2 this[int i]
     {
         get
         {
-            return this.indices [ Utils.RemFloor (i, this.indices.Length) ];
+            return this.indices[Utils.RemFloor(i, this.indices.Length)];
         }
 
         set
         {
-            this.indices [ Utils.RemFloor (i, this.indices.Length) ] = value;
+            this.indices[Utils.RemFloor(i, this.indices.Length)] = value;
         }
     }
 
@@ -57,9 +57,9 @@ public class Loop2
     /// Constructs a new loop with three indices, the minimum
     /// number to form an enclosed face.
     /// </summary>
-    public Loop2 ( )
+    public Loop2()
     {
-        this.indices = new Index2 [ 3 ];
+        this.indices = new Index2[3];
     }
 
     /// <summary>
@@ -67,16 +67,16 @@ public class Loop2
     /// a minimum of three.
     /// </summary>
     /// <param name="length">index length</param>
-    public Loop2 (in int length)
+    public Loop2(in int length)
     {
-        this.indices = new Index2 [ length < 3 ? 3 : length ];
+        this.indices = new Index2[length < 3 ? 3 : length];
     }
 
     /// <summary>
     /// Constructs a loop from an index array.
     /// </summary>
     /// <param name="indices">indices</param>
-    public Loop2 (in Index2 [ ] indices)
+    public Loop2(in Index2[] indices)
     {
         this.indices = indices;
     }
@@ -85,7 +85,7 @@ public class Loop2
     /// Constructs a loop from a list of indices.
     /// </summary>
     /// <param name="indices">indices</param>
-    public Loop2 (params Index2 [ ] indices)
+    public Loop2(params Index2[] indices)
     {
         this.indices = indices;
     }
@@ -94,18 +94,18 @@ public class Loop2
     /// Returns a string representation of this loop.
     /// </summary>
     /// <returns>the string</returns>
-    public override string ToString ( )
+    public override string ToString()
     {
-        return Loop2.ToString (this);
+        return Loop2.ToString(this);
     }
 
     /// <summary>
     /// Reverses the indices in this loop.
     /// </summary>
     /// <returns>this loop</returns>
-    public Loop2 Reverse ( )
+    public Loop2 Reverse()
     {
-        Array.Reverse (this.indices);
+        Array.Reverse(this.indices);
         return this;
     }
 
@@ -121,7 +121,7 @@ public class Loop2
     /// <param name="f">sixth vertex</param>
     /// <param name="target">target loop</param>
     /// <returns>hexagon loop</returns>
-    public static Loop2 Hex ( //
+    public static Loop2 Hex( //
         in Index2 a, //
         in Index2 b, //
         in Index2 c, //
@@ -130,7 +130,7 @@ public class Loop2
         in Index2 f, //
         in Loop2 target)
     {
-        target.indices = new Index2 [ ] { a, b, c, d, e, f };
+        target.indices = new Index2[] { a, b, c, d, e, f };
         return target;
     }
 
@@ -144,14 +144,14 @@ public class Loop2
     /// <param name="d">fourth vertex</param>
     /// <param name="target">target loop</param>
     /// <returns>quadrilateral loop</returns>
-    public static Loop2 Quad ( //
+    public static Loop2 Quad( //
         in Index2 a, //
         in Index2 b, //
         in Index2 c, //
         in Index2 d, //
         in Loop2 target)
     {
-        target.indices = new Index2 [ ] { a, b, c, d };
+        target.indices = new Index2[] { a, b, c, d };
         return target;
     }
 
@@ -166,21 +166,21 @@ public class Loop2
     /// <param name="vertsPerLoop">vertices per loop</param>
     /// <param name="resizeExisting">change existing loop length</param>
     /// <returns>resized array</returns>
-    public static Loop2 [ ] Resize ( //
-        in Loop2 [ ] arr, // 
+    public static Loop2[] Resize( //
+        in Loop2[] arr, // 
         in int sz, //
         in int vertsPerLoop = 3, //
         in bool resizeExisting = false)
     {
-        if (sz < 1) { return new Loop2 [ ] { }; }
-        Loop2 [ ] result = new Loop2 [ sz ];
+        if (sz < 1) { return new Loop2[] { }; }
+        Loop2[] result = new Loop2[sz];
 
         int vplVal = vertsPerLoop < 3 ? 3 : vertsPerLoop;
         if (arr == null)
         {
             for (int i = 0; i < sz; ++i)
             {
-                result [ i ] = new Loop2 (vplVal);
+                result[i] = new Loop2(vplVal);
             }
             return result;
         }
@@ -188,16 +188,16 @@ public class Loop2
         int last = arr.Length - 1;
         for (int i = 0; i < sz; ++i)
         {
-            if (i > last || arr [ i ] == null)
+            if (i > last || arr[i] == null)
             {
-                result [ i ] = new Loop2 (vplVal);
+                result[i] = new Loop2(vplVal);
             }
             else
             {
-                result [ i ] = arr [ i ];
+                result[i] = arr[i];
                 if (resizeExisting)
                 {
-                    result [ i ].indices = Index2.Resize (result [ i ].indices, vplVal);
+                    result[i].indices = Index2.Resize(result[i].indices, vplVal);
                 }
             }
         }
@@ -215,32 +215,32 @@ public class Loop2
     /// <param name="deletions">deletion count</param>
     /// <param name="insert">insert</param>
     /// <returns>the spliced array</returns>
-    public static Loop2 [ ] Splice (in Loop2 [ ] arr, in int index, in int deletions, in Loop2 [ ] insert)
+    public static Loop2[] Splice(in Loop2[] arr, in int index, in int deletions, in Loop2[] insert)
     {
         int aLen = arr.Length;
         if (deletions >= aLen)
         {
-            Loop2 [ ] result0 = new Loop2 [ insert.Length ];
-            System.Array.Copy (insert, 0, result0, 0, insert.Length);
+            Loop2[] result0 = new Loop2[insert.Length];
+            System.Array.Copy(insert, 0, result0, 0, insert.Length);
             return result0;
         }
 
         int bLen = insert.Length;
-        int valIdx = Utils.RemFloor (index, aLen + 1);
+        int valIdx = Utils.RemFloor(index, aLen + 1);
         if (deletions < 1)
         {
-            Loop2 [ ] result1 = new Loop2 [ aLen + bLen ];
-            System.Array.Copy (arr, 0, result1, 0, valIdx);
-            System.Array.Copy (insert, 0, result1, valIdx, bLen);
-            System.Array.Copy (arr, valIdx, result1, valIdx + bLen, aLen - valIdx);
+            Loop2[] result1 = new Loop2[aLen + bLen];
+            System.Array.Copy(arr, 0, result1, 0, valIdx);
+            System.Array.Copy(insert, 0, result1, valIdx, bLen);
+            System.Array.Copy(arr, valIdx, result1, valIdx + bLen, aLen - valIdx);
             return result1;
         }
 
         int idxOff = valIdx + deletions;
-        Loop2 [ ] result = new Loop2 [ aLen + bLen - deletions ];
-        System.Array.Copy (arr, 0, result, 0, valIdx);
-        System.Array.Copy (insert, 0, result, valIdx, bLen);
-        System.Array.Copy (arr, idxOff, result, valIdx + bLen, aLen - idxOff);
+        Loop2[] result = new Loop2[aLen + bLen - deletions];
+        System.Array.Copy(arr, 0, result, 0, valIdx);
+        System.Array.Copy(insert, 0, result, valIdx, bLen);
+        System.Array.Copy(arr, idxOff, result, valIdx + bLen, aLen - idxOff);
         return result;
     }
 
@@ -250,9 +250,9 @@ public class Loop2
     /// <param name="l">loop</param>
     /// <param name="padding">padding</param>
     /// <returns>string</returns>
-    public static string ToString (in Loop2 l, in int padding = 3)
+    public static string ToString(in Loop2 l, in int padding = 3)
     {
-        return Loop2.ToString (new StringBuilder (1024), l, padding).ToString ( );
+        return Loop2.ToString(new StringBuilder(1024), l, padding).ToString();
     }
 
     /// <summary>
@@ -263,12 +263,12 @@ public class Loop2
     /// <param name="l">loop</param>
     /// <param name="padding">padding</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Loop2 l, in int padding = 3)
+    public static StringBuilder ToString(in StringBuilder sb, in Loop2 l, in int padding = 3)
     {
-        sb.Append ("{ indices: ");
-        Index2.ToString (sb, l.indices, padding);
-        sb.Append (' ');
-        sb.Append ('}');
+        sb.Append("{ indices: ");
+        Index2.ToString(sb, l.indices, padding);
+        sb.Append(' ');
+        sb.Append('}');
         return sb;
     }
 
@@ -278,9 +278,9 @@ public class Loop2
     /// <param name="arr">array</param>
     /// <param name="padding">padding</param>
     /// <returns>string</returns>
-    public static string ToString (in Loop2 [ ] arr, in int padding = 3)
+    public static string ToString(in Loop2[] arr, in int padding = 3)
     {
-        return Loop2.ToString (new StringBuilder (1024), arr, padding).ToString ( );
+        return Loop2.ToString(new StringBuilder(1024), arr, padding).ToString();
     }
 
     /// <summary>
@@ -291,10 +291,10 @@ public class Loop2
     /// <param name="arr">array</param>
     /// <param name="padding">padding</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Loop2 [ ] arr, in int padding = 3)
+    public static StringBuilder ToString(in StringBuilder sb, in Loop2[] arr, in int padding = 3)
     {
-        sb.Append ('[');
-        sb.Append (' ');
+        sb.Append('[');
+        sb.Append(' ');
 
         if (arr != null)
         {
@@ -303,16 +303,16 @@ public class Loop2
 
             for (int i = 0; i < last; ++i)
             {
-                Loop2.ToString (sb, arr [ i ], padding);
-                sb.Append (',');
-                sb.Append (' ');
+                Loop2.ToString(sb, arr[i], padding);
+                sb.Append(',');
+                sb.Append(' ');
             }
 
-            Loop2.ToString (sb, arr [ last ], padding);
-            sb.Append (' ');
+            Loop2.ToString(sb, arr[last], padding);
+            sb.Append(' ');
         }
 
-        sb.Append (']');
+        sb.Append(']');
         return sb;
     }
 
@@ -325,13 +325,13 @@ public class Loop2
     /// <param name="c">third vertex</param>
     /// <param name="target">target loop</param>
     /// <returns>triangle loop</returns>
-    public static Loop2 Tri ( //
+    public static Loop2 Tri( //
         in Index2 a, //
         in Index2 b, //
         in Index2 c, //
         in Loop2 target)
     {
-        target.indices = new Index2 [ ] { a, b, c };
+        target.indices = new Index2[] { a, b, c };
         return target;
     }
 }

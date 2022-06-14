@@ -200,7 +200,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     {
         get
         {
-            return new Vec4 (this._m00, this._m10, this._m20, this._m30);
+            return new Vec4(this._m00, this._m10, this._m20, this._m30);
         }
     }
 
@@ -212,7 +212,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     {
         get
         {
-            return new Vec4 (this._m01, this._m11, this._m21, this._m31);
+            return new Vec4(this._m01, this._m11, this._m21, this._m31);
         }
     }
 
@@ -224,7 +224,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     {
         get
         {
-            return new Vec4 (this._m02, this._m12, this._m22, this._m32);
+            return new Vec4(this._m02, this._m12, this._m22, this._m32);
         }
     }
 
@@ -236,7 +236,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     {
         get
         {
-            return new Vec4 (this._m03, this._m13, this._m23, this._m33);
+            return new Vec4(this._m03, this._m13, this._m23, this._m33);
         }
     }
 
@@ -244,7 +244,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Retrieves an element by index.
     /// </summary>
     /// <value>the element</value>
-    public float this [ int i ]
+    public float this[int i]
     {
         get
         {
@@ -252,58 +252,58 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
             {
             case 0:
             case -16:
-                return this._m00;
+            return this._m00;
             case 1:
             case -15:
-                return this._m01;
+            return this._m01;
             case 2:
             case -14:
-                return this._m02;
+            return this._m02;
             case 3:
             case -13:
-                return this._m03;
+            return this._m03;
 
             case 4:
             case -12:
-                return this._m10;
+            return this._m10;
             case 5:
             case -11:
-                return this._m11;
+            return this._m11;
             case 6:
             case -10:
-                return this._m12;
+            return this._m12;
             case 7:
             case -9:
-                return this._m13;
+            return this._m13;
 
             case 8:
             case -8:
-                return this._m20;
+            return this._m20;
             case 9:
             case -7:
-                return this._m21;
+            return this._m21;
             case 10:
             case -6:
-                return this._m22;
+            return this._m22;
             case 11:
             case -5:
-                return this._m23;
+            return this._m23;
 
             case 12:
             case -4:
-                return this._m30;
+            return this._m30;
             case 13:
             case -3:
-                return this._m31;
+            return this._m31;
             case 14:
             case -2:
-                return this._m32;
+            return this._m32;
             case 15:
             case -1:
-                return this._m33;
+            return this._m33;
 
             default:
-                return 0.0f;
+            return 0.0f;
             }
         }
     }
@@ -312,7 +312,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Retrieves an element by indices.
     /// </summary>
     /// <value>the element</value>
-    public float this [ int i, int j ]
+    public float this[int i, int j]
     {
         get
         {
@@ -320,82 +320,82 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
             {
             case 0:
             case -4:
-                switch (j)
-                {
-                case 0:
-                case -4:
-                    return this._m00;
-                case 1:
-                case -3:
-                    return this._m01;
-                case 2:
-                case -2:
-                    return this._m02;
-                case 3:
-                case -1:
-                    return this._m03;
-                default:
-                    return 0.0f;
-                }
+            switch (j)
+            {
+            case 0:
+            case -4:
+            return this._m00;
             case 1:
             case -3:
-                switch (j)
-                {
-                case 0:
-                case -4:
-                    return this._m10;
-                case 1:
-                case -3:
-                    return this._m11;
-                case 2:
-                case -2:
-                    return this._m12;
-                case 3:
-                case -1:
-                    return this._m13;
-                default:
-                    return 0.0f;
-                }
+            return this._m01;
             case 2:
             case -2:
-                switch (j)
-                {
-                case 0:
-                case -4:
-                    return this._m20;
-                case 1:
-                case -3:
-                    return this._m21;
-                case 2:
-                case -2:
-                    return this._m22;
-                case 3:
-                case -1:
-                    return this._m23;
-                default:
-                    return 0.0f;
-                }
+            return this._m02;
             case 3:
             case -1:
-                switch (j)
-                {
-                case 0:
-                case -4:
-                    return this._m30;
-                case 1:
-                case -3:
-                    return this._m31;
-                case 2:
-                case -2:
-                    return this._m32;
-                case 3:
-                case -1:
-                    return this._m33;
-                default:
-                    return 0.0f;
-                }
+            return this._m03;
             default:
-                return 0.0f;
+            return 0.0f;
+            }
+            case 1:
+            case -3:
+            switch (j)
+            {
+            case 0:
+            case -4:
+            return this._m10;
+            case 1:
+            case -3:
+            return this._m11;
+            case 2:
+            case -2:
+            return this._m12;
+            case 3:
+            case -1:
+            return this._m13;
+            default:
+            return 0.0f;
+            }
+            case 2:
+            case -2:
+            switch (j)
+            {
+            case 0:
+            case -4:
+            return this._m20;
+            case 1:
+            case -3:
+            return this._m21;
+            case 2:
+            case -2:
+            return this._m22;
+            case 3:
+            case -1:
+            return this._m23;
+            default:
+            return 0.0f;
+            }
+            case 3:
+            case -1:
+            switch (j)
+            {
+            case 0:
+            case -4:
+            return this._m30;
+            case 1:
+            case -3:
+            return this._m31;
+            case 2:
+            case -2:
+            return this._m32;
+            case 3:
+            case -1:
+            return this._m33;
+            default:
+            return 0.0f;
+            }
+            default:
+            return 0.0f;
             }
         }
     }
@@ -419,7 +419,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="m31">row 3, column 1</param>
     /// <param name="m32">row 3, column 2</param>
     /// <param name="m33">row 3, column 3</param>
-    public Mat4 ( //
+    public Mat4( //
         in float m00 = 1.0f, in float m01 = 0.0f, in float m02 = 0.0f, in float m03 = 0.0f, //
         in float m10 = 0.0f, in float m11 = 1.0f, in float m12 = 0.0f, in float m13 = 0.0f, // 
         in float m20 = 0.0f, in float m21 = 0.0f, in float m22 = 1.0f, in float m23 = 0.0f, // 
@@ -465,7 +465,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="m31">row 3, column 1</param>
     /// <param name="m32">row 3, column 2</param>
     /// <param name="m33">row 3, column 3</param>
-    public Mat4 ( // 
+    public Mat4( // 
         in bool m00 = true, in bool m01 = false, in bool m02 = false, in bool m03 = false, //
         in bool m10 = false, in bool m11 = true, in bool m12 = false, in bool m13 = false, // 
         in bool m20 = false, in bool m21 = false, in bool m22 = true, in bool m23 = false, // 
@@ -497,11 +497,11 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="value">the object</param>
     /// <returns>the equivalence</returns>
-    public override bool Equals (object value)
+    public override bool Equals(object value)
     {
-        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Mat4) { return this.Equals ((Mat4) value); }
+        if (value is Mat4) { return this.Equals((Mat4)value); }
         return false;
     }
 
@@ -509,27 +509,27 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Returns a hash code representing this matrix.
     /// </summary>
     /// <returns>the hash code</returns>
-    public override int GetHashCode ( )
+    public override int GetHashCode()
     {
-        int hash = Utils.MulBase ^ this._m00.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m01.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m02.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m03.GetHashCode ( );
+        int hash = Utils.MulBase ^ this._m00.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m01.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m02.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m03.GetHashCode();
 
-        hash = hash * Utils.HashMul ^ this._m10.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m11.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m12.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m13.GetHashCode ( );
+        hash = hash * Utils.HashMul ^ this._m10.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m11.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m12.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m13.GetHashCode();
 
-        hash = hash * Utils.HashMul ^ this._m20.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m21.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m22.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m23.GetHashCode ( );
+        hash = hash * Utils.HashMul ^ this._m20.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m21.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m22.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m23.GetHashCode();
 
-        hash = hash * Utils.HashMul ^ this._m30.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m31.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m32.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m33.GetHashCode ( );
+        hash = hash * Utils.HashMul ^ this._m30.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m31.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m32.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m33.GetHashCode();
 
         return hash;
     }
@@ -538,9 +538,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Returns a string representation of this matrix.
     /// </summary>
     /// <returns>the string</returns>
-    public override string ToString ( )
+    public override string ToString()
     {
-        return Mat4.ToString (this);
+        return Mat4.ToString(this);
     }
 
     /// <summary>
@@ -549,27 +549,27 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>the equivalence</returns>
-    public bool Equals (Mat4 m)
+    public bool Equals(Mat4 m)
     {
-        if (this._m00.GetHashCode ( ) != m._m00.GetHashCode ( )) { return false; }
-        if (this._m01.GetHashCode ( ) != m._m01.GetHashCode ( )) { return false; }
-        if (this._m02.GetHashCode ( ) != m._m02.GetHashCode ( )) { return false; }
-        if (this._m03.GetHashCode ( ) != m._m03.GetHashCode ( )) { return false; }
+        if (this._m00.GetHashCode() != m._m00.GetHashCode()) { return false; }
+        if (this._m01.GetHashCode() != m._m01.GetHashCode()) { return false; }
+        if (this._m02.GetHashCode() != m._m02.GetHashCode()) { return false; }
+        if (this._m03.GetHashCode() != m._m03.GetHashCode()) { return false; }
 
-        if (this._m10.GetHashCode ( ) != m._m10.GetHashCode ( )) { return false; }
-        if (this._m11.GetHashCode ( ) != m._m11.GetHashCode ( )) { return false; }
-        if (this._m12.GetHashCode ( ) != m._m12.GetHashCode ( )) { return false; }
-        if (this._m13.GetHashCode ( ) != m._m13.GetHashCode ( )) { return false; }
+        if (this._m10.GetHashCode() != m._m10.GetHashCode()) { return false; }
+        if (this._m11.GetHashCode() != m._m11.GetHashCode()) { return false; }
+        if (this._m12.GetHashCode() != m._m12.GetHashCode()) { return false; }
+        if (this._m13.GetHashCode() != m._m13.GetHashCode()) { return false; }
 
-        if (this._m20.GetHashCode ( ) != m._m20.GetHashCode ( )) { return false; }
-        if (this._m21.GetHashCode ( ) != m._m21.GetHashCode ( )) { return false; }
-        if (this._m22.GetHashCode ( ) != m._m22.GetHashCode ( )) { return false; }
-        if (this._m23.GetHashCode ( ) != m._m23.GetHashCode ( )) { return false; }
+        if (this._m20.GetHashCode() != m._m20.GetHashCode()) { return false; }
+        if (this._m21.GetHashCode() != m._m21.GetHashCode()) { return false; }
+        if (this._m22.GetHashCode() != m._m22.GetHashCode()) { return false; }
+        if (this._m23.GetHashCode() != m._m23.GetHashCode()) { return false; }
 
-        if (this._m30.GetHashCode ( ) != m._m30.GetHashCode ( )) { return false; }
-        if (this._m31.GetHashCode ( ) != m._m31.GetHashCode ( )) { return false; }
-        if (this._m32.GetHashCode ( ) != m._m32.GetHashCode ( )) { return false; }
-        if (this._m33.GetHashCode ( ) != m._m33.GetHashCode ( )) { return false; }
+        if (this._m30.GetHashCode() != m._m30.GetHashCode()) { return false; }
+        if (this._m31.GetHashCode() != m._m31.GetHashCode()) { return false; }
+        if (this._m32.GetHashCode() != m._m32.GetHashCode()) { return false; }
+        if (this._m33.GetHashCode() != m._m33.GetHashCode()) { return false; }
 
         return true;
     }
@@ -579,7 +579,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// components to be accessed in a foreach loop.
     /// </summary>
     /// <returns>the enumerator</returns>
-    public IEnumerator GetEnumerator ( )
+    public IEnumerator GetEnumerator()
     {
         yield return this._m00;
         yield return this._m01;
@@ -606,9 +606,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Returns a float array of length 16 containing this matrix's components.
     /// </summary>
     /// <returns>the array</returns>
-    public float [ ] ToArray1 ( )
+    public float[] ToArray1()
     {
-        return new float [ ]
+        return new float[]
         {
             this._m00, this._m01, this._m02, this._m03,
                 this._m10, this._m11, this._m12, this._m13,
@@ -621,9 +621,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Returns a 4 x 4 float array containing this matrix's components.
     /// </summary>
     /// <returns>the array</returns>
-    public float [ , ] ToArray2 ( )
+    public float[,] ToArray2()
     {
-        return new float [ , ]
+        return new float[,]
         { { this._m00, this._m01, this._m02, this._m03 }, //
             { this._m10, this._m11, this._m12, this._m13 }, //
             { this._m20, this._m21, this._m22, this._m23 }, //
@@ -638,7 +638,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     public (float m00, float m01, float m02, float m03,
             float m10, float m11, float m12, float m13,
             float m20, float m21, float m22, float m23,
-            float m30, float m31, float m32, float m33) ToTuple ( )
+            float m30, float m31, float m32, float m33) ToTuple()
     {
         return (
             m00: this._m00, m01: this._m01, m02: this._m02, m03: this._m03,
@@ -653,10 +653,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="b">the boolean</param>
     /// <returns>the vector</returns>
-    public static implicit operator Mat4 (in bool b)
+    public static implicit operator Mat4(in bool b)
     {
         float eval = b ? 1.0f : 0.0f;
-        return new Mat4 (
+        return new Mat4(
             eval, eval, eval, eval,
             eval, eval, eval, eval,
             eval, eval, eval, eval,
@@ -667,9 +667,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Converts a rotation from quaternion to matrix representation.
     /// </summary>
     /// <param name="q">quaternion</param>
-    public static implicit operator Mat4 (in Quat q)
+    public static implicit operator Mat4(in Quat q)
     {
-        return Mat4.FromRotation (q);
+        return Mat4.FromRotation(q);
     }
 
     /// <summary>
@@ -678,9 +678,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">the input matrix</param>
     /// <returns>the evaluation</returns>
-    public static bool operator true (in Mat4 m)
+    public static bool operator true(in Mat4 m)
     {
-        return Mat4.All (m);
+        return Mat4.All(m);
     }
 
     /// <summary>
@@ -688,9 +688,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">the input matrix</param>
     /// <returns>the evaluation</returns>
-    public static bool operator false (in Mat4 m)
+    public static bool operator false(in Mat4 m)
     {
-        return Mat4.None (m);
+        return Mat4.None(m);
     }
 
     /// <summary>
@@ -699,17 +699,17 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     ///   <param name="a">left operand</param>
     ///   <param name="b">right operand</param>
     ///   <returns>the evaluation</returns>
-    public static Mat4 operator & (in Mat4 a, in Mat4 b)
+    public static Mat4 operator &(in Mat4 a, in Mat4 b)
     {
-        return new Mat4 (
-            Utils.And (a._m00, b._m00), Utils.And (a._m01, b._m01),
-            Utils.And (a._m02, b._m02), Utils.And (a._m03, b._m03),
-            Utils.And (a._m10, b._m10), Utils.And (a._m11, b._m11),
-            Utils.And (a._m12, b._m12), Utils.And (a._m13, b._m13),
-            Utils.And (a._m20, b._m20), Utils.And (a._m21, b._m21),
-            Utils.And (a._m22, b._m22), Utils.And (a._m23, b._m23),
-            Utils.And (a._m30, b._m30), Utils.And (a._m31, b._m31),
-            Utils.And (a._m32, b._m32), Utils.And (a._m33, b._m33));
+        return new Mat4(
+            Utils.And(a._m00, b._m00), Utils.And(a._m01, b._m01),
+            Utils.And(a._m02, b._m02), Utils.And(a._m03, b._m03),
+            Utils.And(a._m10, b._m10), Utils.And(a._m11, b._m11),
+            Utils.And(a._m12, b._m12), Utils.And(a._m13, b._m13),
+            Utils.And(a._m20, b._m20), Utils.And(a._m21, b._m21),
+            Utils.And(a._m22, b._m22), Utils.And(a._m23, b._m23),
+            Utils.And(a._m30, b._m30), Utils.And(a._m31, b._m31),
+            Utils.And(a._m32, b._m32), Utils.And(a._m33, b._m33));
     }
 
     /// <summary>
@@ -719,17 +719,17 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     ///   <param name="a">left operand</param>
     ///   <param name="b">right operand</param>
     ///   <returns>the evaluation</returns>
-    public static Mat4 operator | (in Mat4 a, in Mat4 b)
+    public static Mat4 operator |(in Mat4 a, in Mat4 b)
     {
-        return new Mat4 (
-            Utils.Or (a._m00, b._m00), Utils.Or (a._m01, b._m01),
-            Utils.Or (a._m02, b._m02), Utils.Or (a._m03, b._m03),
-            Utils.Or (a._m10, b._m10), Utils.Or (a._m11, b._m11),
-            Utils.Or (a._m12, b._m12), Utils.Or (a._m13, b._m13),
-            Utils.Or (a._m20, b._m20), Utils.Or (a._m21, b._m21),
-            Utils.Or (a._m22, b._m22), Utils.Or (a._m23, b._m23),
-            Utils.Or (a._m30, b._m30), Utils.Or (a._m31, b._m31),
-            Utils.Or (a._m32, b._m32), Utils.Or (a._m33, b._m33));
+        return new Mat4(
+            Utils.Or(a._m00, b._m00), Utils.Or(a._m01, b._m01),
+            Utils.Or(a._m02, b._m02), Utils.Or(a._m03, b._m03),
+            Utils.Or(a._m10, b._m10), Utils.Or(a._m11, b._m11),
+            Utils.Or(a._m12, b._m12), Utils.Or(a._m13, b._m13),
+            Utils.Or(a._m20, b._m20), Utils.Or(a._m21, b._m21),
+            Utils.Or(a._m22, b._m22), Utils.Or(a._m23, b._m23),
+            Utils.Or(a._m30, b._m30), Utils.Or(a._m31, b._m31),
+            Utils.Or(a._m32, b._m32), Utils.Or(a._m33, b._m33));
     }
 
     /// <summary>
@@ -739,17 +739,17 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     ///   <param name="a">left operand</param>
     ///   <param name="b">right operand</param>
     ///   <returns>the evaluation</returns>
-    public static Mat4 operator ^ (in Mat4 a, in Mat4 b)
+    public static Mat4 operator ^(in Mat4 a, in Mat4 b)
     {
-        return new Mat4 (
-            Utils.Xor (a._m00, b._m00), Utils.Xor (a._m01, b._m01),
-            Utils.Xor (a._m02, b._m02), Utils.Xor (a._m03, b._m03),
-            Utils.Xor (a._m10, b._m10), Utils.Xor (a._m11, b._m11),
-            Utils.Xor (a._m12, b._m12), Utils.Xor (a._m13, b._m13),
-            Utils.Xor (a._m20, b._m20), Utils.Xor (a._m21, b._m21),
-            Utils.Xor (a._m22, b._m22), Utils.Xor (a._m23, b._m23),
-            Utils.Xor (a._m30, b._m30), Utils.Xor (a._m31, b._m31),
-            Utils.Xor (a._m32, b._m32), Utils.Xor (a._m33, b._m33));
+        return new Mat4(
+            Utils.Xor(a._m00, b._m00), Utils.Xor(a._m01, b._m01),
+            Utils.Xor(a._m02, b._m02), Utils.Xor(a._m03, b._m03),
+            Utils.Xor(a._m10, b._m10), Utils.Xor(a._m11, b._m11),
+            Utils.Xor(a._m12, b._m12), Utils.Xor(a._m13, b._m13),
+            Utils.Xor(a._m20, b._m20), Utils.Xor(a._m21, b._m21),
+            Utils.Xor(a._m22, b._m22), Utils.Xor(a._m23, b._m23),
+            Utils.Xor(a._m30, b._m30), Utils.Xor(a._m31, b._m31),
+            Utils.Xor(a._m32, b._m32), Utils.Xor(a._m33, b._m33));
     }
 
     /// <summary>
@@ -757,9 +757,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>negation</returns>
-    public static Mat4 operator - (in Mat4 m)
+    public static Mat4 operator -(in Mat4 m)
     {
-        return new Mat4 ( //
+        return new Mat4( //
             -m._m00, -m._m01, -m._m02, -m._m03, //
             -m._m10, -m._m11, -m._m12, -m._m13, //
             -m._m20, -m._m21, -m._m22, -m._m23, //
@@ -772,9 +772,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>product</returns>
-    public static Mat4 operator * (in Mat4 a, in Mat4 b)
+    public static Mat4 operator *(in Mat4 a, in Mat4 b)
     {
-        return new Mat4 (
+        return new Mat4(
             a._m00 * b._m00 + a._m01 * b._m10 + a._m02 * b._m20 + a._m03 * b._m30,
             a._m00 * b._m01 + a._m01 * b._m11 + a._m02 * b._m21 + a._m03 * b._m31,
             a._m00 * b._m02 + a._m01 * b._m12 + a._m02 * b._m22 + a._m03 * b._m32,
@@ -802,9 +802,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>product</returns>
-    public static Mat4 operator * (in Mat4 a, in float b)
+    public static Mat4 operator *(in Mat4 a, in float b)
     {
-        return new Mat4 (
+        return new Mat4(
             a._m00 * b, a._m01 * b, a._m02 * b, a._m03 * b,
             a._m10 * b, a._m11 * b, a._m12 * b, a._m13 * b,
             a._m20 * b, a._m21 * b, a._m22 * b, a._m23 * b,
@@ -817,9 +817,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>product</returns>
-    public static Mat4 operator * (in float a, in Mat4 b)
+    public static Mat4 operator *(in float a, in Mat4 b)
     {
-        return new Mat4 (
+        return new Mat4(
             a * b._m00, a * b._m01, a * b._m02, a * b._m03,
             a * b._m10, a * b._m11, a * b._m12, a * b._m13,
             a * b._m20, a * b._m21, a * b._m22, a * b._m23,
@@ -832,9 +832,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">matrix</param>
     /// <param name="b">vector</param>
     /// <returns>product</returns>
-    public static Vec4 operator * (in Mat4 a, in Vec4 b)
+    public static Vec4 operator *(in Mat4 a, in Vec4 b)
     {
-        return new Vec4 (
+        return new Vec4(
             a._m00 * b.x + a._m01 * b.y + a._m02 * b.z + a._m03 * b.w,
             a._m10 * b.x + a._m11 * b.y + a._m12 * b.z + a._m13 * b.w,
             a._m20 * b.x + a._m21 * b.y + a._m22 * b.z + a._m23 * b.w,
@@ -848,9 +848,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">vector</param>
     /// <param name="b">matrix</param>
     /// <returns>product</returns>
-    public static Vec4 operator * (in Vec4 a, in Mat4 b)
+    public static Vec4 operator *(in Vec4 a, in Mat4 b)
     {
-        return new Vec4 (
+        return new Vec4(
             b._m00 * a.x + b._m10 * a.y + b._m20 * a.z + b._m30 * a.w,
             b._m01 * a.x + b._m11 * a.y + b._m21 * a.z + b._m31 * a.w,
             b._m02 * a.x + b._m12 * a.y + b._m22 * a.z + b._m32 * a.w,
@@ -863,9 +863,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>sum</returns>
-    public static Mat4 operator + (in Mat4 a, in Mat4 b)
+    public static Mat4 operator +(in Mat4 a, in Mat4 b)
     {
-        return new Mat4 (
+        return new Mat4(
             a._m00 + b._m00, a._m01 + b._m01, a._m02 + b._m02, a._m03 + b._m03,
             a._m10 + b._m10, a._m11 + b._m11, a._m12 + b._m12, a._m13 + b._m13,
             a._m20 + b._m20, a._m21 + b._m21, a._m22 + b._m22, a._m23 + b._m23,
@@ -878,9 +878,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>result</returns>
-    public static Mat4 operator - (in Mat4 a, in Mat4 b)
+    public static Mat4 operator -(in Mat4 a, in Mat4 b)
     {
-        return new Mat4 (
+        return new Mat4(
             a._m00 - b._m00, a._m01 - b._m01, a._m02 - b._m02, a._m03 - b._m03,
             a._m10 - b._m10, a._m11 - b._m11, a._m12 - b._m12, a._m13 - b._m13,
             a._m20 - b._m20, a._m21 - b._m21, a._m22 - b._m22, a._m23 - b._m23,
@@ -896,9 +896,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static Mat4 operator < (in Mat4 a, in Mat4 b)
+    public static Mat4 operator <(in Mat4 a, in Mat4 b)
     {
-        return new Mat4 (
+        return new Mat4(
             a._m00 < b._m00, a._m01 < b._m01, a._m02 < b._m02, a._m03 < b._m03,
             a._m10 < b._m10, a._m11 < b._m11, a._m12 < b._m12, a._m13 < b._m13,
             a._m20 < b._m20, a._m21 < b._m21, a._m22 < b._m22, a._m23 < b._m23,
@@ -914,9 +914,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static Mat4 operator > (in Mat4 a, in Mat4 b)
+    public static Mat4 operator >(in Mat4 a, in Mat4 b)
     {
-        return new Mat4 (
+        return new Mat4(
             a._m00 > b._m00, a._m01 > b._m01, a._m02 > b._m02, a._m03 > b._m03,
             a._m10 > b._m10, a._m11 > b._m11, a._m12 > b._m12, a._m13 > b._m13,
             a._m20 > b._m20, a._m21 > b._m21, a._m22 > b._m22, a._m23 > b._m23,
@@ -933,9 +933,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static Mat4 operator <= (in Mat4 a, in Mat4 b)
+    public static Mat4 operator <=(in Mat4 a, in Mat4 b)
     {
-        return new Mat4 (
+        return new Mat4(
             a._m00 <= b._m00, a._m01 <= b._m01, a._m02 <= b._m02, a._m03 <= b._m03,
             a._m10 <= b._m10, a._m11 <= b._m11, a._m12 <= b._m12, a._m13 <= b._m13,
             a._m20 <= b._m20, a._m21 <= b._m21, a._m22 <= b._m22, a._m23 <= b._m23,
@@ -952,9 +952,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static Mat4 operator >= (in Mat4 a, in Mat4 b)
+    public static Mat4 operator >=(in Mat4 a, in Mat4 b)
     {
-        return new Mat4 (
+        return new Mat4(
             a._m00 >= b._m00, a._m01 >= b._m01, a._m02 >= b._m02, a._m03 >= b._m03,
             a._m10 >= b._m10, a._m11 >= b._m11, a._m12 >= b._m12, a._m13 >= b._m13,
             a._m20 >= b._m20, a._m21 >= b._m21, a._m22 >= b._m22, a._m23 >= b._m23,
@@ -970,9 +970,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static Mat4 operator != (in Mat4 a, in Mat4 b)
+    public static Mat4 operator !=(in Mat4 a, in Mat4 b)
     {
-        return new Mat4 (
+        return new Mat4(
             a._m00 != b._m00, a._m01 != b._m01, a._m02 != b._m02, a._m03 != b._m03,
             a._m10 != b._m10, a._m11 != b._m11, a._m12 != b._m12, a._m13 != b._m13,
             a._m20 != b._m20, a._m21 != b._m21, a._m22 != b._m22, a._m23 != b._m23,
@@ -988,9 +988,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static Mat4 operator == (in Mat4 a, in Mat4 b)
+    public static Mat4 operator ==(in Mat4 a, in Mat4 b)
     {
-        return new Mat4 (
+        return new Mat4(
             a._m00 == b._m00, a._m01 == b._m01, a._m02 == b._m02, a._m03 == b._m03,
             a._m10 == b._m10, a._m11 == b._m11, a._m12 == b._m12, a._m13 == b._m13,
             a._m20 == b._m20, a._m21 == b._m21, a._m22 == b._m22, a._m23 == b._m23,
@@ -1002,7 +1002,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>the evaluation</returns>
-    public static bool All (in Mat4 m)
+    public static bool All(in Mat4 m)
     {
         return (m._m00 != 0.0f) && (m._m01 != 0.0f) && (m._m02 != 0.0f) && (m._m03 != 0.0f) &&
             (m._m10 != 0.0f) && (m._m11 != 0.0f) && (m._m12 != 0.0f) && (m._m13 != 0.0f) &&
@@ -1015,7 +1015,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>the evaluation</returns>
-    public static bool Any (in Mat4 m)
+    public static bool Any(in Mat4 m)
     {
         return (m._m00 != 0.0f) || (m._m01 != 0.0f) || (m._m02 != 0.0f) || (m._m03 != 0.0f) ||
             (m._m10 != 0.0f) || (m._m11 != 0.0f) || (m._m12 != 0.0f) || (m._m13 != 0.0f) ||
@@ -1028,7 +1028,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>determinant</returns>
-    public static float Determinant (in Mat4 m)
+    public static float Determinant(in Mat4 m)
     {
         return m._m00 * (m._m11 * m._m22 * m._m33 +
                 m._m12 * m._m23 * m._m31 +
@@ -1064,11 +1064,11 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes ( //
+    public static Mat4 FromAxes( //
         in Vec2 right, //
         in Vec2 forward)
     {
-        return new Mat4 (
+        return new Mat4(
             right.x, forward.x, 0.0f, 0.0f,
             right.y, forward.y, 0.0f, 0.0f,
             0.0f, 0.0f, 1.0f, 0.0f,
@@ -1084,12 +1084,12 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes ( //
+    public static Mat4 FromAxes( //
         in Vec2 right, // 
         in Vec2 forward, // 
         in Vec2 translation)
     {
-        return new Mat4 (
+        return new Mat4(
             right.x, forward.x, 0.0f, translation.x,
             right.y, forward.y, 0.0f, translation.y,
             0.0f, 0.0f, 1.0f, 0.0f,
@@ -1104,12 +1104,12 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="up">up axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes ( // 
+    public static Mat4 FromAxes( // 
         in Vec3 right, // 
         in Vec3 forward, // 
         in Vec3 up)
     {
-        return new Mat4 (
+        return new Mat4(
             right.x, forward.x, up.x, 0.0f,
             right.y, forward.y, up.y, 0.0f,
             right.z, forward.z, up.z, 0.0f,
@@ -1125,13 +1125,13 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="up">up axis</param>
     /// <param name="translation">translation axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes ( // 
+    public static Mat4 FromAxes( // 
         in Vec3 right, // 
         in Vec3 forward, // 
         in Vec3 up, // 
         in Vec3 translation)
     {
-        return new Mat4 (
+        return new Mat4(
             right.x, forward.x, up.x, translation.x,
             right.y, forward.y, up.y, translation.y,
             right.z, forward.z, up.z, translation.z,
@@ -1146,12 +1146,12 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="up">up axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes ( // 
+    public static Mat4 FromAxes( // 
         in Vec4 right, // 
         in Vec4 forward, // 
         in Vec4 up)
     {
-        return new Mat4 (
+        return new Mat4(
             right.x, forward.x, up.x, 0.0f,
             right.y, forward.y, up.y, 0.0f,
             right.z, forward.z, up.z, 0.0f,
@@ -1166,13 +1166,13 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="up">up axis</param>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes ( // 
+    public static Mat4 FromAxes( // 
         in Vec4 right, //
         in Vec4 forward, //
         in Vec4 up, //
         in Vec4 translation)
     {
-        return new Mat4 (
+        return new Mat4(
             right.x, forward.x, up.x, translation.x,
             right.y, forward.y, up.y, translation.y,
             right.z, forward.z, up.z, translation.z,
@@ -1184,7 +1184,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="source">quaternion</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromRotation (in Quat source)
+    public static Mat4 FromRotation(in Quat source)
     {
         float w = source.Real;
         Vec3 i = source.Imag;
@@ -1208,7 +1208,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         float wy2 = w * y2;
         float wz2 = w * z2;
 
-        return new Mat4 (
+        return new Mat4(
             1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f,
             xy2 + wz2, 1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f,
             xz2 - wy2, yz2 + wx2, 1.0f - xsq2 - ysq2, 0.0f,
@@ -1222,10 +1222,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="radians">angle</param>
     /// <param name="axis">axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromRotation (in float radians, in Vec3 axis)
+    public static Mat4 FromRotation(in float radians, in Vec3 axis)
     {
-        Utils.SinCos (radians, out float sina, out float cosa);
-        return Mat4.FromRotation (cosa, sina, axis);
+        Utils.SinCos(radians, out float sina, out float cosa);
+        return Mat4.FromRotation(cosa, sina, axis);
     }
 
     /// <summary>
@@ -1236,12 +1236,12 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="sina">sine of an angle</param>
     /// <param name="axis">axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromRotation (in float cosa, in float sina, in Vec3 axis)
+    public static Mat4 FromRotation(in float cosa, in float sina, in Vec3 axis)
     {
-        float mSq = Vec3.MagSq (axis);
+        float mSq = Vec3.MagSq(axis);
         if (mSq != 0.0f)
         {
-            float mInv = Utils.InvSqrtUnchecked (mSq);
+            float mInv = Utils.InvSqrtUnchecked(mSq);
             float ax = axis.x * mInv;
             float ay = axis.y * mInv;
             float az = axis.z * mInv;
@@ -1255,7 +1255,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
             float axaz = x * az;
             float ayaz = y * az;
 
-            return new Mat4 (
+            return new Mat4(
                 cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
                 axay + sina * az, cosa + y * ay, ayaz - sina * ax, 0.0f,
                 axaz - sina * ay, ayaz + sina * ax, cosa + z * az, 0.0f,
@@ -1269,10 +1269,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromRotX (in float radians)
+    public static Mat4 FromRotX(in float radians)
     {
-        Utils.SinCos (radians, out float sina, out float cosa);
-        return Mat4.FromRotX (cosa, sina);
+        Utils.SinCos(radians, out float sina, out float cosa);
+        return Mat4.FromRotX(cosa, sina);
     }
 
     /// <summary>
@@ -1281,9 +1281,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="cosa">cosine of an angle</param>
     /// <param name="sina">sine of an angle</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromRotX (in float cosa, in float sina)
+    public static Mat4 FromRotX(in float cosa, in float sina)
     {
-        return new Mat4 (
+        return new Mat4(
             1.0f, 0.0f, 0.0f, 0.0f,
             0.0f, cosa, -sina, 0.0f,
             0.0f, sina, cosa, 0.0f,
@@ -1295,10 +1295,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromRotY (in float radians)
+    public static Mat4 FromRotY(in float radians)
     {
-        Utils.SinCos (radians, out float sina, out float cosa);
-        return Mat4.FromRotY (cosa, sina);
+        Utils.SinCos(radians, out float sina, out float cosa);
+        return Mat4.FromRotY(cosa, sina);
     }
 
     /// <summary>
@@ -1307,9 +1307,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="cosa">cosine of an angle</param>
     /// <param name="sina">sine of an angle</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromRotY (in float cosa, in float sina)
+    public static Mat4 FromRotY(in float cosa, in float sina)
     {
-        return new Mat4 (
+        return new Mat4(
             cosa, 0.0f, sina, 0.0f,
             0.0f, 1.0f, 0.0f, 0.0f, //
             -sina, 0.0f, cosa, 0.0f,
@@ -1321,10 +1321,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromRotZ (in float radians)
+    public static Mat4 FromRotZ(in float radians)
     {
-        Utils.SinCos (radians, out float sina, out float cosa);
-        return Mat4.FromRotZ (cosa, sina);
+        Utils.SinCos(radians, out float sina, out float cosa);
+        return Mat4.FromRotZ(cosa, sina);
     }
 
     /// <summary>
@@ -1333,9 +1333,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="cosa">cosine of an angle</param>
     /// <param name="sina">sine of an angle</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromRotZ (in float cosa, in float sina)
+    public static Mat4 FromRotZ(in float cosa, in float sina)
     {
-        return new Mat4 (
+        return new Mat4(
             cosa, -sina, 0.0f, 0.0f,
             sina, cosa, 0.0f, 0.0f,
             0.0f, 0.0f, 1.0f, 0.0f,
@@ -1348,11 +1348,11 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="scalar">scalar</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromScale (in float scalar)
+    public static Mat4 FromScale(in float scalar)
     {
         if (scalar != 0.0f)
         {
-            return new Mat4 (
+            return new Mat4(
                 scalar, 0.0f, 0.0f, 0.0f,
                 0.0f, scalar, 0.0f, 0.0f,
                 0.0f, 0.0f, scalar, 0.0f,
@@ -1366,11 +1366,11 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="scalar">nonuniform scalar</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromScale (in Vec2 scalar)
+    public static Mat4 FromScale(in Vec2 scalar)
     {
-        if (Vec2.All (scalar))
+        if (Vec2.All(scalar))
         {
-            return new Mat4 (
+            return new Mat4(
                 scalar.x, 0.0f, 0.0f, 0.0f,
                 0.0f, scalar.y, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f, 0.0f,
@@ -1384,11 +1384,11 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="scalar">nonuniform scalar</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromScale (in Vec3 scalar)
+    public static Mat4 FromScale(in Vec3 scalar)
     {
-        if (Vec3.All (scalar))
+        if (Vec3.All(scalar))
         {
-            return new Mat4 (
+            return new Mat4(
                 scalar.x, 0.0f, 0.0f, 0.0f,
                 0.0f, scalar.y, 0.0f, 0.0f,
                 0.0f, 0.0f, scalar.z, 0.0f,
@@ -1405,14 +1405,14 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">skew axis</param>
     /// <param name="b">orthonormal axis</param>
     /// <returns>skew matrix</returns>
-    public static Mat4 FromSkew (in float radians, in Vec3 a, in Vec3 b)
+    public static Mat4 FromSkew(in float radians, in Vec3 a, in Vec3 b)
     {
-        float t = Utils.Tan (radians);
+        float t = Utils.Tan(radians);
         float tax = a.x * t;
         float tay = a.y * t;
         float taz = a.z * t;
 
-        return new Mat4 (
+        return new Mat4(
             tax * b.x + 1.0f, tax * b.y, tax * b.z, 0.0f,
             tay * b.x, tay * b.y + 1.0f, tay * b.z, 0.0f,
             taz * b.x, taz * b.y, taz * b.z + 1.0f, 0.0f,
@@ -1424,9 +1424,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromTranslation (in Vec2 translation)
+    public static Mat4 FromTranslation(in Vec2 translation)
     {
-        return new Mat4 (
+        return new Mat4(
             1.0f, 0.0f, 0.0f, translation.x,
             0.0f, 1.0f, 0.0f, translation.y,
             0.0f, 0.0f, 1.0f, 0.0f,
@@ -1438,9 +1438,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromTranslation (in Vec3 translation)
+    public static Mat4 FromTranslation(in Vec3 translation)
     {
-        return new Mat4 (
+        return new Mat4(
             1.0f, 0.0f, 0.0f, translation.x,
             0.0f, 1.0f, 0.0f, translation.y,
             0.0f, 0.0f, 1.0f, translation.z,
@@ -1457,7 +1457,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="near">near clip plane</param>
     /// <param name="far">far clip plane</param>
     /// <returns>orthographic projection</returns>
-    public static Mat4 Frustum ( //
+    public static Mat4 Frustum( //
         in float left, in float right, // 
         in float bottom, in float top, // 
         in float near, in float far)
@@ -1472,7 +1472,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         h = (h != 0.0f) ? 1.0f / h : 1.0f;
         d = (d != 0.0f) ? 1.0f / d : 1.0f;
 
-        return new Mat4 (
+        return new Mat4(
             n2 * w, 0.0f, (right + left) * w, 0.0f,
             0.0f, n2 * h, (top + bottom) * h, 0.0f,
             0.0f, 0.0f, (far + near) * -d, n2 * far * -d,
@@ -1484,7 +1484,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>inverse</returns>
-    public static Mat4 Inverse (in Mat4 m)
+    public static Mat4 Inverse(in Mat4 m)
     {
         float b00 = m._m00 * m._m11 - m._m01 * m._m10;
         float b01 = m._m00 * m._m12 - m._m02 * m._m10;
@@ -1505,7 +1505,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         if (det != 0.0f)
         {
             float detInv = 1.0f / det;
-            return new Mat4 (
+            return new Mat4(
                 (m._m11 * b11 - m._m12 * b10 + m._m13 * b09) * detInv,
                 (m._m02 * b10 - m._m01 * b11 - m._m03 * b09) * detInv,
                 (m._m31 * b05 - m._m32 * b04 + m._m33 * b03) * detInv,
@@ -1534,7 +1534,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="h">matrix inverse</param>
     /// <param name="n">normal</param>
     /// <returns>product</returns>
-    public static Vec3 MulInverseNormal (in Mat4 h, in Vec3 n)
+    public static Vec3 MulInverseNormal(in Mat4 h, in Vec3 n)
     {
         float x = n.x * h._m00 + n.y * h._m10 + n.z * h._m20;
         float y = n.x * h._m01 + n.y * h._m11 + n.z * h._m21;
@@ -1542,8 +1542,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         float mSq = x * x + y * y + z * z;
         if (mSq != 0.0f)
         {
-            float mInv = Utils.InvSqrtUnchecked (mSq);
-            return new Vec3 (x * mInv, y * mInv, z * mInv);
+            float mInv = Utils.InvSqrtUnchecked(mSq);
+            return new Vec3(x * mInv, y * mInv, z * mInv);
         }
         return Vec3.Zero;
     }
@@ -1555,9 +1555,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">matrix</param>
     /// <param name="n">normal</param>
     /// <returns>product</returns>
-    public static Vec3 MulNormal (in Mat4 a, in Vec3 b)
+    public static Vec3 MulNormal(in Mat4 a, in Vec3 b)
     {
-        return Mat4.MulInverseNormal (Mat4.Inverse (a), b);
+        return Mat4.MulInverseNormal(Mat4.Inverse(a), b);
     }
 
     /// <summary>
@@ -1568,13 +1568,13 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">matrix</param>
     /// <param name="b">vector</param>
     /// <returns>product</returns>
-    public static Vec3 MulPoint (in Mat4 a, in Vec2 b)
+    public static Vec3 MulPoint(in Mat4 a, in Vec2 b)
     {
         float w = a._m30 * b.x + a._m31 * b.y + a._m33;
         if (w != 0.0f)
         {
             float wInv = 1.0f / w;
-            return new Vec3 (
+            return new Vec3(
                 (a._m00 * b.x + a._m01 * b.y + a._m03) * wInv,
                 (a._m10 * b.x + a._m11 * b.y + a._m13) * wInv,
                 (a._m20 * b.x + a._m21 * b.y + a._m23) * wInv);
@@ -1589,13 +1589,13 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">matrix</param>
     /// <param name="b">vector</param>
     /// <returns>product</returns>
-    public static Vec3 MulPoint (in Mat4 a, in Vec3 b)
+    public static Vec3 MulPoint(in Mat4 a, in Vec3 b)
     {
         float w = a._m30 * b.x + a._m31 * b.y + a._m32 * b.z + a._m33;
         if (w != 0.0f)
         {
             float wInv = 1.0f / w;
-            return new Vec3 (
+            return new Vec3(
                 (a._m00 * b.x + a._m01 * b.y + a._m02 * b.z + a._m03) * wInv,
                 (a._m10 * b.x + a._m11 * b.y + a._m12 * b.z + a._m13) * wInv,
                 (a._m20 * b.x + a._m21 * b.y + a._m22 * b.z + a._m23) * wInv);
@@ -1611,13 +1611,13 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">matrix</param>
     /// <param name="b">vector</param>
     /// <returns>product</returns>
-    public static Vec3 MulVector (in Mat4 a, in Vec2 b)
+    public static Vec3 MulVector(in Mat4 a, in Vec2 b)
     {
         float w = a._m30 * b.x + a._m31 * b.y + a._m33;
         if (w != 0.0f)
         {
             float wInv = 1.0f / w;
-            return new Vec3 (
+            return new Vec3(
                 (a._m00 * b.x + a._m01 * b.y) * wInv,
                 (a._m10 * b.x + a._m11 * b.y) * wInv,
                 (a._m20 * b.x + a._m21 * b.y) * wInv);
@@ -1633,13 +1633,13 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="a">matrix</param>
     /// <param name="b">vector</param>
     /// <returns>product</returns>
-    public static Vec3 MulVector (in Mat4 a, in Vec3 b)
+    public static Vec3 MulVector(in Mat4 a, in Vec3 b)
     {
         float w = a._m30 * b.x + a._m31 * b.y + a._m32 * b.z + a._m33;
         if (w != 0.0f)
         {
             float wInv = 1.0f / w;
-            return new Vec3 (
+            return new Vec3(
                 (a._m00 * b.x + a._m01 * b.y + a._m02 * b.z) * wInv,
                 (a._m10 * b.x + a._m11 * b.y + a._m12 * b.z) * wInv,
                 (a._m20 * b.x + a._m21 * b.y + a._m22 * b.z) * wInv);
@@ -1652,7 +1652,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>the evaluation</returns>
-    public static bool None (in Mat4 m)
+    public static bool None(in Mat4 m)
     {
         return (m._m00 == 0.0f) && (m._m01 == 0.0f) && (m._m02 == 0.0f) && (m._m03 == 0.0f) &&
             (m._m10 == 0.0f) && (m._m11 == 0.0f) && (m._m12 == 0.0f) && (m._m13 == 0.0f) &&
@@ -1671,7 +1671,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="near">near clip plane</param>
     /// <param name="far">far clip plane</param>
     /// <returns>orthographic projection</returns>
-    public static Mat4 Orthographic ( //
+    public static Mat4 Orthographic( //
         in float left, in float right, // 
         in float bottom, in float top, // 
         in float near, in float far)
@@ -1684,7 +1684,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         h = (h != 0.0f) ? 1.0f / h : 1.0f;
         d = (d != 0.0f) ? 1.0f / d : 1.0f;
 
-        return new Mat4 (
+        return new Mat4(
             w + w, 0.0f, 0.0f, w * (left + right),
             0.0f, h + h, 0.0f, h * (top + bottom),
             0.0f, 0.0f, -(d + d), -d * (far + near),
@@ -1700,12 +1700,12 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="near">near clip plane</param>
     /// <param name="far">far clip plane</param>
     /// <returns>the perspective projection</returns>
-    public static Mat4 Perspective (in float fov, in float aspect, in float near, in float far)
+    public static Mat4 Perspective(in float fov, in float aspect, in float near, in float far)
     {
-        float cotfov = Utils.Cot (fov * 0.5f);
-        float d = Utils.Div (1.0f, far - near);
-        return new Mat4 (
-            Utils.Div (cotfov, aspect), 0.0f, 0.0f, 0.0f,
+        float cotfov = Utils.Cot(fov * 0.5f);
+        float d = Utils.Div(1.0f, far - near);
+        return new Mat4(
+            Utils.Div(cotfov, aspect), 0.0f, 0.0f, 0.0f,
             0.0f, cotfov, 0.0f, 0.0f,
             0.0f, 0.0f, (far + near) * -d, (near + near) * far * -d,
             0.0f, 0.0f, -1.0f, 0.0f);
@@ -1716,9 +1716,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">input matrix</param>
     /// <returns>rotated matrix</returns>
-    public static Mat4 RotateElmsCCW (in Mat4 m)
+    public static Mat4 RotateElmsCCW(in Mat4 m)
     {
-        return new Mat4 (
+        return new Mat4(
             m._m03, m._m13, m._m23, m._m33,
             m._m02, m._m12, m._m22, m._m32,
             m._m01, m._m11, m._m21, m._m31,
@@ -1730,9 +1730,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">input matrix</param>
     /// <returns>rotated matrix</returns>
-    public static Mat4 RotateElmsCW (in Mat4 m)
+    public static Mat4 RotateElmsCW(in Mat4 m)
     {
-        return new Mat4 (
+        return new Mat4(
             m._m30, m._m20, m._m10, m._m00,
             m._m31, m._m21, m._m11, m._m01,
             m._m32, m._m22, m._m12, m._m02,
@@ -1745,9 +1745,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="m">matrix</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
-    public static string ToString (in Mat4 m, in int places = 4)
+    public static string ToString(in Mat4 m, in int places = 4)
     {
-        return Mat4.ToString (new StringBuilder (512), m, places).ToString ( );
+        return Mat4.ToString(new StringBuilder(512), m, places).ToString();
     }
 
     /// <summary>
@@ -1757,45 +1757,45 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="m">matrix</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Mat4 m, in int places = 4)
+    public static StringBuilder ToString(in StringBuilder sb, in Mat4 m, in int places = 4)
     {
-        sb.Append ("{ m00: ");
-        Utils.ToFixed (sb, m._m00, places);
-        sb.Append (", m01: ");
-        Utils.ToFixed (sb, m._m01, places);
-        sb.Append (", m02: ");
-        Utils.ToFixed (sb, m._m02, places);
-        sb.Append (", m03: ");
-        Utils.ToFixed (sb, m._m03, places);
+        sb.Append("{ m00: ");
+        Utils.ToFixed(sb, m._m00, places);
+        sb.Append(", m01: ");
+        Utils.ToFixed(sb, m._m01, places);
+        sb.Append(", m02: ");
+        Utils.ToFixed(sb, m._m02, places);
+        sb.Append(", m03: ");
+        Utils.ToFixed(sb, m._m03, places);
 
-        sb.Append (", m10: ");
-        Utils.ToFixed (sb, m._m10, places);
-        sb.Append (", m11: ");
-        Utils.ToFixed (sb, m._m11, places);
-        sb.Append (", m12: ");
-        Utils.ToFixed (sb, m._m12, places);
-        sb.Append (", m13: ");
-        Utils.ToFixed (sb, m._m13, places);
+        sb.Append(", m10: ");
+        Utils.ToFixed(sb, m._m10, places);
+        sb.Append(", m11: ");
+        Utils.ToFixed(sb, m._m11, places);
+        sb.Append(", m12: ");
+        Utils.ToFixed(sb, m._m12, places);
+        sb.Append(", m13: ");
+        Utils.ToFixed(sb, m._m13, places);
 
-        sb.Append (", m20: ");
-        Utils.ToFixed (sb, m._m20, places);
-        sb.Append (", m21: ");
-        Utils.ToFixed (sb, m._m21, places);
-        sb.Append (", m22: ");
-        Utils.ToFixed (sb, m._m22, places);
-        sb.Append (", m23: ");
-        Utils.ToFixed (sb, m._m23, places);
+        sb.Append(", m20: ");
+        Utils.ToFixed(sb, m._m20, places);
+        sb.Append(", m21: ");
+        Utils.ToFixed(sb, m._m21, places);
+        sb.Append(", m22: ");
+        Utils.ToFixed(sb, m._m22, places);
+        sb.Append(", m23: ");
+        Utils.ToFixed(sb, m._m23, places);
 
-        sb.Append (", m30: ");
-        Utils.ToFixed (sb, m._m30, places);
-        sb.Append (", m31: ");
-        Utils.ToFixed (sb, m._m31, places);
-        sb.Append (", m32: ");
-        Utils.ToFixed (sb, m._m32, places);
-        sb.Append (", m33: ");
-        Utils.ToFixed (sb, m._m33, places);
+        sb.Append(", m30: ");
+        Utils.ToFixed(sb, m._m30, places);
+        sb.Append(", m31: ");
+        Utils.ToFixed(sb, m._m31, places);
+        sb.Append(", m32: ");
+        Utils.ToFixed(sb, m._m32, places);
+        sb.Append(", m33: ");
+        Utils.ToFixed(sb, m._m33, places);
 
-        sb.Append (" }");
+        sb.Append(" }");
         return sb;
     }
 
@@ -1804,9 +1804,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>transposition</returns>
-    public static Mat4 Transpose (in Mat4 m)
+    public static Mat4 Transpose(in Mat4 m)
     {
-        return new Mat4 (
+        return new Mat4(
             m._m00, m._m10, m._m20, m._m30,
             m._m01, m._m11, m._m21, m._m31,
             m._m02, m._m12, m._m22, m._m32,
@@ -1822,7 +1822,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     {
         get
         {
-            return new Mat4 ( //
+            return new Mat4( //
                 -1.0f, 3.0f, -3.0f, 1.0f,
                 3.0f, -6.0f, 3.0f, 0.0f, //
                 -3.0f, 3.0f, 0.0f, 0.0f,
@@ -1840,7 +1840,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     {
         get
         {
-            return new Mat4 (
+            return new Mat4(
                 0.0f, 0.0f, 0.0f, 1.0f,
                 0.0f, 0.0f, Utils.OneThird, 1.0f,
                 0.0f, Utils.OneThird, Utils.TwoThirds, 1.0f,
@@ -1857,7 +1857,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     {
         get
         {
-            return new Mat4 (
+            return new Mat4(
                 1.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 1.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f, 0.0f,

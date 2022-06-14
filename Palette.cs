@@ -23,7 +23,7 @@ public class Palette
         /// <summary>
         /// List of entries under the tag.
         /// </summary>
-        protected List<PalEntry> entries = new List<PalEntry> ( );
+        protected List<PalEntry> entries = new List<PalEntry>();
 
         /// <summary>
         /// The tag's name.
@@ -56,20 +56,20 @@ public class Palette
 
             set
             {
-                string trval = value.Trim ( );
+                string trval = value.Trim();
                 if (trval.Length > 0)
                 {
-                    this.name = trval.Substring (0,
-                        Utils.Min (trval.Length, Tag.NameCharLimit));
+                    this.name = trval.Substring(0,
+                        Utils.Min(trval.Length, Tag.NameCharLimit));
                 }
             }
         }
 
         // Constructs an empty tag object.
-        public Tag ( ) { }
+        public Tag() { }
 
         // Constructs a tag from a name.
-        public Tag (in string name)
+        public Tag(in string name)
         {
             this.Name = name;
         }
@@ -79,11 +79,11 @@ public class Palette
         /// </summary>
         /// <param name="value">the object</param>
         /// <returns>the equivalence</returns>
-        public override bool Equals (object value)
+        public override bool Equals(object value)
         {
-            if (Object.ReferenceEquals (this, value)) { return true; }
+            if (Object.ReferenceEquals(this, value)) { return true; }
             if (value is null) { return false; }
-            if (value is Palette.Tag) { return this.Equals ((Palette.Tag) value); }
+            if (value is Palette.Tag) { return this.Equals((Palette.Tag)value); }
             return false;
         }
 
@@ -91,18 +91,18 @@ public class Palette
         /// Returns a hash code for this tag based on its name.
         /// </summary>
         /// <returns>the hash code</returns>
-        public override int GetHashCode ( )
+        public override int GetHashCode()
         {
-            return this.Name.ToLower ( ).GetHashCode ( );
+            return this.Name.ToLower().GetHashCode();
         }
 
         /// <summary>
         /// Returns a string representation of this tag.
         /// </summary>
         /// <returns>the string</returns>
-        public override string ToString ( )
+        public override string ToString()
         {
-            return this.Name.ToString ( );
+            return this.Name.ToString();
         }
 
         /// <summary>
@@ -110,10 +110,10 @@ public class Palette
         /// </summary>
         /// <param name="pe">entry</param>
         /// <returns>the comparison</returns>
-        public int CompareTo (Tag tag)
+        public int CompareTo(Tag tag)
         {
             if (tag is null) { return 1; }
-            return this.Name.ToLower ( ).CompareTo (tag.Name.ToLower ( ));
+            return this.Name.ToLower().CompareTo(tag.Name.ToLower());
         }
 
         /// <summary>
@@ -122,10 +122,10 @@ public class Palette
         /// </summary>
         /// <param name="k">key</param>
         /// <returns>the evaluation</returns>
-        public bool Equals (Tag tag)
+        public bool Equals(Tag tag)
         {
             if (tag is null) { return false; }
-            return this.GetHashCode ( ) == tag.GetHashCode ( );
+            return this.GetHashCode() == tag.GetHashCode();
         }
     }
 
@@ -147,7 +147,7 @@ public class Palette
     /// <summary>
     /// The array of entries in the palette.
     /// </summary>
-    protected PalEntry [ ] entries = new PalEntry [ 0 ];
+    protected PalEntry[] entries = new PalEntry[0];
 
     /// <summary>
     /// The palette's name.
@@ -157,7 +157,7 @@ public class Palette
     /// <summary>
     /// A list of tags.
     /// </summary>
-    protected List<Tag> tags = new List<Tag> ( );
+    protected List<Tag> tags = new List<Tag>();
 
     /// <summary>
     /// The palette's author.
@@ -172,11 +172,11 @@ public class Palette
 
         set
         {
-            string trval = value.Trim ( );
+            string trval = value.Trim();
             if (trval.Length > 0)
             {
-                this.author = trval.Substring (0,
-                    Utils.Min (trval.Length, Palette.AuthorCharLimit));
+                this.author = trval.Substring(0,
+                    Utils.Min(trval.Length, Palette.AuthorCharLimit));
             }
         }
     }
@@ -200,11 +200,11 @@ public class Palette
 
         set
         {
-            string trval = value.Trim ( );
+            string trval = value.Trim();
             if (trval.Length > 0)
             {
-                this.name = trval.Substring (0,
-                    Utils.Min (trval.Length, Palette.NameCharLimit));
+                this.name = trval.Substring(0,
+                    Utils.Min(trval.Length, Palette.NameCharLimit));
             }
         }
     }
@@ -212,7 +212,7 @@ public class Palette
     /// <summary>
     /// Constructs an empty palette.
     /// </summary>
-    public Palette ( )
+    public Palette()
     {
         // TODO: Reorganize this to represent a node graph?
     }
@@ -223,16 +223,16 @@ public class Palette
     /// <param name="name">name</param>
     /// <param name="author">author</param>
     /// <param name="len">palette length</param>
-    public Palette (in string name = "Palette", in string author = "Anonymous", in int len = 1)
+    public Palette(in string name = "Palette", in string author = "Anonymous", in int len = 1)
     {
         this.Name = name;
         this.Author = author;
 
-        int valLen = Utils.Max (1, len);
-        this.entries = new PalEntry [ valLen ];
+        int valLen = Utils.Max(1, len);
+        this.entries = new PalEntry[valLen];
         for (int i = 0; i < valLen; ++i)
         {
-            this.entries [ i ] = new PalEntry ( );
+            this.entries[i] = new PalEntry();
         }
     }
 
@@ -242,16 +242,16 @@ public class Palette
     /// <param name="name">name</param>
     /// <param name="author">author</param>
     /// <param name="colors">colors</param>
-    public Palette (in string name, in string author, params Clr [ ] colors)
+    public Palette(in string name, in string author, params Clr[] colors)
     {
         this.Name = name;
         this.Author = author;
 
         int len = colors.Length;
-        this.entries = new PalEntry [ len ];
+        this.entries = new PalEntry[len];
         for (int i = 0; i < len; ++i)
         {
-            this.entries [ i ] = new PalEntry (colors [ i ], "");
+            this.entries[i] = new PalEntry(colors[i], "");
         }
     }
 
@@ -259,9 +259,9 @@ public class Palette
     /// Returns a string representation of this palette.
     /// </summary>
     /// <returns>the string</returns>
-    public override string ToString ( )
+    public override string ToString()
     {
-        return Palette.ToString (this);
+        return Palette.ToString(this);
     }
 
     /// <summary>
@@ -271,10 +271,10 @@ public class Palette
     /// <param name="color">color</param>
     /// <param name="name">name</param>
     /// <returns>this palette</returns>
-    public Palette AppendColor (in Clr color, in String name = "")
+    public Palette AppendColor(in Clr color, in String name = "")
     {
-        this.entries = PalEntry.Append (this.entries,
-            new PalEntry (color, name));
+        this.entries = PalEntry.Append(this.entries,
+            new PalEntry(color, name));
         return this;
     }
 
@@ -284,48 +284,48 @@ public class Palette
     /// </summary>
     /// <param name="name">tag name</param>
     /// <param name="indices">tag indices</param>
-    public void AppendTag (in string name, params int [ ] indices)
+    public void AppendTag(in string name, params int[] indices)
     {
-        this.InsertTag (this.tags.Count, name, indices);
+        this.InsertTag(this.tags.Count, name, indices);
     }
 
     /// <summary>
     /// Contracts this palette's size by the amount.
     /// </summary>
     /// <param name="v">amount</param>
-    public void ContractBy (in int v)
+    public void ContractBy(in int v)
     {
-        this.Resize (this.entries.Length - v);
+        this.Resize(this.entries.Length - v);
     }
 
     /// <summary>
     /// Expands this palette's size by the amount.
     /// </summary>
     /// <param name="v">amount</param>
-    public void ExpandBy (in int v)
+    public void ExpandBy(in int v)
     {
-        this.Resize (this.entries.Length + v);
+        this.Resize(this.entries.Length + v);
     }
 
     /// <summary>
     /// Clears the palette's tags.
     /// </summary>
-    public void ClearTags ( )
+    public void ClearTags()
     {
-        this.tags.Clear ( );
+        this.tags.Clear();
     }
 
     /// <summary>
     /// Gets all the colors in the palette.
     /// </summary>
     /// <returns>colors</returns>
-    public Clr [ ] GetColors ( )
+    public Clr[] GetColors()
     {
         int len = this.entries.Length;
-        Clr [ ] result = new Clr [ len ];
+        Clr[] result = new Clr[len];
         for (int i = 0; i < len; ++i)
         {
-            result [ i ] = this.entries [ i ].Color;
+            result[i] = this.entries[i].Color;
         }
         return result;
     }
@@ -335,9 +335,9 @@ public class Palette
     /// </summary>
     /// <param name="i">index</param>
     /// <returns>color</returns>
-    public Clr GetPalEntryColor (in int i)
+    public Clr GetPalEntryColor(in int i)
     {
-        return this.entries [ i ].Color;
+        return this.entries[i].Color;
     }
 
     /// <summary>
@@ -345,9 +345,9 @@ public class Palette
     /// </summary>
     /// <param name="i">index</param>
     /// <returns>name</returns>
-    public string GetPalEntryName (in int i)
+    public string GetPalEntryName(in int i)
     {
-        return this.entries [ i ].Name;
+        return this.entries[i].Name;
     }
 
     /// <summary>
@@ -355,15 +355,15 @@ public class Palette
     /// </summary>
     /// <param name="i">index</param>
     /// <returns>colors</returns>
-    public Clr [ ] GetTagColors (in int i)
+    public Clr[] GetTagColors(in int i)
     {
-        Tag tag = this.tags [ i ];
+        Tag tag = this.tags[i];
         List<PalEntry> tagEntries = tag.Entries;
         int len = tagEntries.Count;
-        Clr [ ] result = new Clr [ len ];
+        Clr[] result = new Clr[len];
         for (int j = 0; j < len; ++j)
         {
-            result [ j ] = tagEntries [ j ].Color;
+            result[j] = tagEntries[j].Color;
         }
         return result;
     }
@@ -373,24 +373,24 @@ public class Palette
     /// </summary>
     /// <param name="i">tag index</param>
     /// <returns>indices</returns>
-    public int [ ] GetTagIndices (in int i)
+    public int[] GetTagIndices(in int i)
     {
         // TODO: Test
-        Tag tag = this.tags [ i ];
+        Tag tag = this.tags[i];
         List<PalEntry> tagEntries = tag.Entries;
         int len = tagEntries.Count;
-        List<int> resultList = new List<int> ( );
+        List<int> resultList = new List<int>();
         for (int j = 0; j < len; ++j)
         {
-            PalEntry tagPalEntry = tagEntries [ j ];
-            int index = Array.IndexOf (this.entries, tagPalEntry);
+            PalEntry tagPalEntry = tagEntries[j];
+            int index = Array.IndexOf(this.entries, tagPalEntry);
             if (index > -1)
             {
-                resultList.Add (index);
+                resultList.Add(index);
             }
         }
-        resultList.Sort ( );
-        return resultList.ToArray ( );
+        resultList.Sort();
+        return resultList.ToArray();
     }
 
     /// <summary>
@@ -398,9 +398,9 @@ public class Palette
     /// </summary>
     /// <param name="i">index</param>
     /// <returns>name</returns>
-    public string GetTagName (in int i)
+    public string GetTagName(in int i)
     {
-        return this.tags [ i ].Name;
+        return this.tags[i].Name;
     }
 
     /// <summary>
@@ -410,9 +410,9 @@ public class Palette
     /// <param name="c">color</param>
     /// <param name="df">default value</param>
     /// <returns>index</returns>
-    public int IndexOf (in Clr c, in int df = -1)
+    public int IndexOf(in Clr c, in int df = -1)
     {
-        int i = Array.IndexOf (this.entries, new PalEntry (c, ""));
+        int i = Array.IndexOf(this.entries, new PalEntry(c, ""));
         return i > -1 ? i : df;
     }
 
@@ -423,10 +423,10 @@ public class Palette
     /// <param name="color">color</param>
     /// <param name="name">name</param>
     /// <returns>this palette</returns>
-    public Palette InsertColor (in int index, in Clr color, in String name = "")
+    public Palette InsertColor(in int index, in Clr color, in String name = "")
     {
-        this.entries = PalEntry.Insert (this.entries, index,
-            new PalEntry (color, name));
+        this.entries = PalEntry.Insert(this.entries, index,
+            new PalEntry(color, name));
         return this;
     }
 
@@ -437,12 +437,12 @@ public class Palette
     /// <param name="i">insertion index</param>
     /// <param name="name">tag name</param>
     /// <param name="indices">tag indices</param>
-    public void InsertTag (in int i, in string name, params int [ ] indices)
+    public void InsertTag(in int i, in string name, params int[] indices)
     {
-        Tag tag = new Tag (name);
-        int j = Utils.RemFloor (i, this.tags.Count + 1);
-        this.tags.Insert (j, tag);
-        this.SetTagIndices (j, indices);
+        Tag tag = new Tag(name);
+        int j = Utils.RemFloor(i, this.tags.Count + 1);
+        this.tags.Insert(j, tag);
+        this.SetTagIndices(j, indices);
     }
 
     /// <summary>
@@ -452,10 +452,10 @@ public class Palette
     /// <param name="color">color</param>
     /// <param name="name">name</param>
     /// <returns>this palette</returns>
-    public Palette PrependColor (in Clr color, in String name = "")
+    public Palette PrependColor(in Clr color, in String name = "")
     {
-        this.entries = PalEntry.Prepend (this.entries,
-            new PalEntry (color, name));
+        this.entries = PalEntry.Prepend(this.entries,
+            new PalEntry(color, name));
         return this;
     }
 
@@ -465,9 +465,9 @@ public class Palette
     /// </summary>
     /// <param name="name">tag name</param>
     /// <param name="indices">tag indices</param>
-    public void PrependTag (in string name, params int [ ] indices)
+    public void PrependTag(in string name, params int[] indices)
     {
-        this.InsertTag (0, name, indices);
+        this.InsertTag(0, name, indices);
     }
 
     /// <summary>
@@ -478,11 +478,11 @@ public class Palette
     /// </summary>
     /// <param name="index">index</param>
     /// <returns>removed entry</returns>
-    public Clr RemoveColorAt (in int index)
+    public Clr RemoveColorAt(in int index)
     {
-        (PalEntry [ ], PalEntry) result = PalEntry.RemoveAt (this.entries, index);
+        (PalEntry[], PalEntry) result = PalEntry.RemoveAt(this.entries, index);
         this.entries = result.Item1;
-        this.TrimTagEntries ( );
+        this.TrimTagEntries();
 
         if (result.Item2 != null)
         {
@@ -498,11 +498,11 @@ public class Palette
     /// Removes a tag at an index.
     /// </summary>
     /// <param name="index">index</param>
-    public void RemoveTagAt (in int index)
+    public void RemoveTagAt(in int index)
     {
         if (index > -1 && index < tags.Count)
         {
-            this.tags.RemoveAt (index);
+            this.tags.RemoveAt(index);
         }
     }
 
@@ -510,10 +510,10 @@ public class Palette
     /// Resizes the palette to the specified length.
     /// </summary>
     /// <param name="len">length</param>
-    public void Resize (in int len)
+    public void Resize(in int len)
     {
-        this.entries = PalEntry.Resize (this.entries, len);
-        this.TrimTagEntries ( );
+        this.entries = PalEntry.Resize(this.entries, len);
+        this.TrimTagEntries();
     }
 
     /// <summary>
@@ -521,9 +521,9 @@ public class Palette
     /// </summary>
     /// <param name="i">index</param>
     /// <param name="color">color</param>
-    public void SetPalEntryColor (in int i, in Clr color)
+    public void SetPalEntryColor(in int i, in Clr color)
     {
-        this.entries [ i ].Color = color;
+        this.entries[i].Color = color;
     }
 
     /// <summary>
@@ -531,9 +531,9 @@ public class Palette
     /// </summary>
     /// <param name="i">index</param>
     /// <param name="name">name</param>
-    public void SetPalEntryName (in int i, in string name)
+    public void SetPalEntryName(in int i, in string name)
     {
-        this.entries [ i ].Name = name;
+        this.entries[i].Name = name;
     }
 
     /// <summary>
@@ -543,23 +543,23 @@ public class Palette
     /// </summary>
     /// <param name="i">tag index</param>
     /// <param name="indices">indices</param>
-    public void SetTagIndices (in int i, params int [ ] indices)
+    public void SetTagIndices(in int i, params int[] indices)
     {
-        Tag tag = this.tags [ i ];
+        Tag tag = this.tags[i];
         List<PalEntry> tagEntries = tag.Entries;
-        tagEntries.Clear ( );
+        tagEntries.Clear();
         int indicesLen = indices.Length;
         int palEntriesLen = this.entries.Length;
         for (int j = 0; j < indicesLen; ++j)
         {
-            int index = indices [ j ];
+            int index = indices[j];
             if (index > -1 && index < palEntriesLen)
             {
-                PalEntry entry = this.entries [ index ];
-                tagEntries.Add (entry);
+                PalEntry entry = this.entries[index];
+                tagEntries.Add(entry);
             }
         }
-        tagEntries.Sort ( );
+        tagEntries.Sort();
     }
 
     /// <summary>
@@ -567,9 +567,9 @@ public class Palette
     /// </summary>
     /// <param name="i">index</param>
     /// <param name="name">name</param>
-    public void SetTagName (in int i, in string name)
+    public void SetTagName(in int i, in string name)
     {
-        this.tags [ i ].Name = name;
+        this.tags[i].Name = name;
     }
 
     /// <summary>
@@ -577,20 +577,20 @@ public class Palette
     /// entries from each tag that is no longer present
     /// in the palette.
     /// </summary>
-    public void TrimTagEntries ( )
+    public void TrimTagEntries()
     {
         int tagsLen = this.tags.Count;
         for (int i = 0; i < tagsLen; ++i)
         {
-            Tag tag = this.tags [ i ];
+            Tag tag = this.tags[i];
             List<PalEntry> tagEntries = tag.Entries;
             int tagEntriesLen = tagEntries.Count;
             for (int j = tagEntriesLen - 1; j > -1; --j)
             {
-                PalEntry tagPalEntry = tagEntries [ j ];
-                if (Array.IndexOf (this.entries, tagPalEntry) < 0)
+                PalEntry tagPalEntry = tagEntries[j];
+                if (Array.IndexOf(this.entries, tagPalEntry) < 0)
                 {
-                    tagEntries.Remove (tagPalEntry);
+                    tagEntries.Remove(tagPalEntry);
                 }
             }
         }
@@ -603,56 +603,56 @@ public class Palette
     /// <param name="b">right palette</param>
     /// <param name="target">target palette</param>
     /// <returns>concatenation</returns>
-    public static Palette Concat (in Palette a, in Palette b, in Palette target)
+    public static Palette Concat(in Palette a, in Palette b, in Palette target)
     {
-        PalEntry [ ] aEntries = a.entries;
-        PalEntry [ ] bEntries = b.entries;
+        PalEntry[] aEntries = a.entries;
+        PalEntry[] bEntries = b.entries;
         int aLen = aEntries.Length;
         int bLen = bEntries.Length;
         int cLen = aLen + bLen;
-        target.entries = PalEntry.Resize (target.entries, cLen);
-        PalEntry [ ] cEntries = target.entries;
+        target.entries = PalEntry.Resize(target.entries, cLen);
+        PalEntry[] cEntries = target.entries;
 
-        if (Object.ReferenceEquals (a, target))
+        if (Object.ReferenceEquals(a, target))
         {
             for (int j = 0, k = aLen; j < bLen; ++j, ++k)
             {
-                PalEntry bPalEntry = bEntries [ j ];
-                cEntries [ k ].Set (bPalEntry.Color, bPalEntry.Name);
+                PalEntry bPalEntry = bEntries[j];
+                cEntries[k].Set(bPalEntry.Color, bPalEntry.Name);
             }
         }
-        else if (Object.ReferenceEquals (b, target))
+        else if (Object.ReferenceEquals(b, target))
         {
             // Shift right hand entries forward.
             for (int j = 0, k = aLen; j < bLen; ++j, ++k)
             {
-                PalEntry temp = cEntries [ j ];
-                cEntries [ j ] = cEntries [ k ];
-                cEntries [ k ] = temp;
+                PalEntry temp = cEntries[j];
+                cEntries[j] = cEntries[k];
+                cEntries[k] = temp;
             }
 
             for (int i = 0; i < aLen; ++i)
             {
-                PalEntry aPalEntry = aEntries [ i ];
-                cEntries [ i ].Set (aPalEntry.Color, aPalEntry.Name);
+                PalEntry aPalEntry = aEntries[i];
+                cEntries[i].Set(aPalEntry.Color, aPalEntry.Name);
             }
         }
         else
         {
             for (int i = 0; i < aLen; ++i)
             {
-                PalEntry aPalEntry = aEntries [ i ];
-                cEntries [ i ].Set (aPalEntry.Color, aPalEntry.Name);
+                PalEntry aPalEntry = aEntries[i];
+                cEntries[i].Set(aPalEntry.Color, aPalEntry.Name);
             }
 
             for (int j = 0, k = aLen; j < bLen; ++j, ++k)
             {
-                PalEntry bPalEntry = bEntries [ j ];
-                cEntries [ k ].Set (bPalEntry.Color, bPalEntry.Name);
+                PalEntry bPalEntry = bEntries[j];
+                cEntries[k].Set(bPalEntry.Color, bPalEntry.Name);
             }
         }
 
-        target.TrimTagEntries ( );
+        target.TrimTagEntries();
         return target;
     }
 
@@ -662,9 +662,9 @@ public class Palette
     /// <param name="source">source palette</param>
     /// <param name="target">target palette</param>
     /// <returns>reversed palette</returns>
-    public static Palette Reverse (in Palette source, in Palette target)
+    public static Palette Reverse(in Palette source, in Palette target)
     {
-        return Palette.Reverse (source, 0, source.entries.Length, target);
+        return Palette.Reverse(source, 0, source.entries.Length, target);
     }
 
     /// <summary>
@@ -675,33 +675,33 @@ public class Palette
     /// <param name="length">sample length</param>
     /// <param name="target">target palette</param>
     /// <returns>reversed palette</returns>
-    public static Palette Reverse (in Palette source, in int index, in int length, in Palette target)
+    public static Palette Reverse(in Palette source, in int index, in int length, in Palette target)
     {
-        PalEntry [ ] sourceEntries = source.entries;
+        PalEntry[] sourceEntries = source.entries;
         int sourceLen = sourceEntries.Length;
 
-        PalEntry [ ] reversedEntries = new PalEntry [ sourceLen ];
-        System.Array.Copy (sourceEntries, 0, reversedEntries, 0, sourceLen);
+        PalEntry[] reversedEntries = new PalEntry[sourceLen];
+        System.Array.Copy(sourceEntries, 0, reversedEntries, 0, sourceLen);
 
-        int valIdx = Utils.RemFloor (index, sourceLen);
-        int valLen = Utils.Clamp (length, 1, sourceLen - valIdx);
-        System.Array.Reverse (reversedEntries, valIdx, valLen);
+        int valIdx = Utils.RemFloor(index, sourceLen);
+        int valLen = Utils.Clamp(length, 1, sourceLen - valIdx);
+        System.Array.Reverse(reversedEntries, valIdx, valLen);
 
-        if (Object.ReferenceEquals (source, target))
+        if (Object.ReferenceEquals(source, target))
         {
             target.entries = reversedEntries;
         }
         else
         {
-            target.entries = PalEntry.Resize (target.entries, sourceLen);
+            target.entries = PalEntry.Resize(target.entries, sourceLen);
             for (int i = 0; i < sourceLen; ++i)
             {
-                PalEntry reversed = reversedEntries [ i ];
-                target.entries [ i ].Set (reversed.Color, reversed.Name);
+                PalEntry reversed = reversedEntries[i];
+                target.entries[i].Set(reversed.Color, reversed.Name);
             }
         }
 
-        target.TrimTagEntries ( );
+        target.TrimTagEntries();
         return target;
     }
 
@@ -712,20 +712,20 @@ public class Palette
     /// </summary>
     /// <param name="target">palette</param>
     /// <returns>palette</returns>
-    public static Palette Rgb (in Palette target)
+    public static Palette Rgb(in Palette target)
     {
-        target.entries = PalEntry.Resize (target.entries, 6);
-        PalEntry [ ] entries = target.entries;
-        entries [ 0 ].Set (Clr.Red, "Red");
-        entries [ 1 ].Set (Clr.Yellow, "Yellow");
-        entries [ 2 ].Set (Clr.Green, "Green");
-        entries [ 3 ].Set (Clr.Cyan, "Cyan");
-        entries [ 4 ].Set (Clr.Blue, "Blue");
-        entries [ 5 ].Set (Clr.Magenta, "Magenta");
+        target.entries = PalEntry.Resize(target.entries, 6);
+        PalEntry[] entries = target.entries;
+        entries[0].Set(Clr.Red, "Red");
+        entries[1].Set(Clr.Yellow, "Yellow");
+        entries[2].Set(Clr.Green, "Green");
+        entries[3].Set(Clr.Cyan, "Cyan");
+        entries[4].Set(Clr.Blue, "Blue");
+        entries[5].Set(Clr.Magenta, "Magenta");
 
         target.Name = "Rgb";
         target.Author = "Anonymous";
-        target.ClearTags ( );
+        target.ClearTags();
         return target;
     }
 
@@ -737,33 +737,33 @@ public class Palette
     /// <param name="length">sample length</param>
     /// <param name="target">target palette</param>
     /// <returns>subset</returns>
-    public static Palette Subset (in Palette source, in int index, in int length, in Palette target)
+    public static Palette Subset(in Palette source, in int index, in int length, in Palette target)
     {
-        PalEntry [ ] sourceEntries = source.entries;
+        PalEntry[] sourceEntries = source.entries;
         int sourceLen = sourceEntries.Length;
-        int valLen = Utils.Clamp (length, 1, sourceLen);
-        PalEntry [ ] subsetEntries = new PalEntry [ valLen ];
+        int valLen = Utils.Clamp(length, 1, sourceLen);
+        PalEntry[] subsetEntries = new PalEntry[valLen];
         for (int i = 0; i < valLen; ++i)
         {
-            int k = Utils.RemFloor (index + i, sourceLen);
-            subsetEntries [ i ] = sourceEntries [ k ];
+            int k = Utils.RemFloor(index + i, sourceLen);
+            subsetEntries[i] = sourceEntries[k];
         }
 
-        if (Object.ReferenceEquals (source, target))
+        if (Object.ReferenceEquals(source, target))
         {
             target.entries = subsetEntries;
         }
         else
         {
-            target.entries = PalEntry.Resize (target.entries, valLen);
+            target.entries = PalEntry.Resize(target.entries, valLen);
             for (int i = 0; i < valLen; ++i)
             {
-                PalEntry subsetPalEntry = subsetEntries [ i ];
-                target.entries [ i ].Set (subsetPalEntry.Color, subsetPalEntry.Name);
+                PalEntry subsetPalEntry = subsetEntries[i];
+                target.entries[i].Set(subsetPalEntry.Color, subsetPalEntry.Name);
             }
         }
 
-        target.TrimTagEntries ( );
+        target.TrimTagEntries();
         return target;
     }
 
@@ -773,9 +773,9 @@ public class Palette
     /// </summary>
     /// <param name="pal">palette</param>
     /// <returns>string</returns>
-    public static string ToGplString (in Palette pal)
+    public static string ToGplString(in Palette pal)
     {
-        return Palette.ToGplString (new StringBuilder (1024), pal).ToString ( );
+        return Palette.ToGplString(new StringBuilder(1024), pal).ToString();
     }
 
     /// <summary>
@@ -786,28 +786,28 @@ public class Palette
     /// <param name="pal">palette</param>
     /// <param name="columns">display columns</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToGplString (in StringBuilder sb, in Palette pal, in int columns = 0)
+    public static StringBuilder ToGplString(in StringBuilder sb, in Palette pal, in int columns = 0)
     {
-        PalEntry [ ] entries = pal.entries;
+        PalEntry[] entries = pal.entries;
         int len = entries.Length;
-        int valCols = Utils.Clamp (columns, 0, len);
+        int valCols = Utils.Clamp(columns, 0, len);
 
-        sb.Append ("GIMP Palette\nName: ");
-        sb.Append (pal.Name);
-        sb.Append ("\nColumns: ");
-        sb.Append (valCols);
-        sb.Append ("\n# Author: ");
-        sb.Append (pal.Author);
-        sb.Append ("\n# Colors: ");
-        sb.Append (len);
+        sb.Append("GIMP Palette\nName: ");
+        sb.Append(pal.Name);
+        sb.Append("\nColumns: ");
+        sb.Append(valCols);
+        sb.Append("\n# Author: ");
+        sb.Append(pal.Author);
+        sb.Append("\n# Colors: ");
+        sb.Append(len);
 
         for (int i = 0; i < len; ++i)
         {
-            PalEntry entry = entries [ i ];
+            PalEntry entry = entries[i];
             if (entry != null)
             {
-                sb.Append ('\n');
-                PalEntry.ToGplString (sb, entry);
+                sb.Append('\n');
+                PalEntry.ToGplString(sb, entry);
             }
         }
         return sb;
@@ -819,9 +819,9 @@ public class Palette
     /// </summary>
     /// <param name="pal">palette</param>
     /// <returns>string</returns>
-    public static string ToPalString (in Palette pal)
+    public static string ToPalString(in Palette pal)
     {
-        return Palette.ToPalString (new StringBuilder (1024), pal).ToString ( );
+        return Palette.ToPalString(new StringBuilder(1024), pal).ToString();
     }
 
     /// <summary>
@@ -831,20 +831,20 @@ public class Palette
     /// <param name="sb">string builder</param>
     /// <param name="pal">palette</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToPalString (in StringBuilder sb, in Palette pal)
+    public static StringBuilder ToPalString(in StringBuilder sb, in Palette pal)
     {
-        PalEntry [ ] entries = pal.entries;
+        PalEntry[] entries = pal.entries;
         int len = entries.Length;
 
-        sb.Append ("JASC-PAL\n0100\n");
-        sb.Append (len);
+        sb.Append("JASC-PAL\n0100\n");
+        sb.Append(len);
         for (int i = 0; i < len; ++i)
         {
-            PalEntry entry = entries [ i ];
+            PalEntry entry = entries[i];
             if (entry != null)
             {
-                sb.Append ('\n');
-                PalEntry.ToPalString (sb, entry);
+                sb.Append('\n');
+                PalEntry.ToPalString(sb, entry);
             }
         }
         return sb;
@@ -856,9 +856,9 @@ public class Palette
     /// <param name="pal">palette</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
-    public static string ToString (in Palette pal, in int places = 4)
+    public static string ToString(in Palette pal, in int places = 4)
     {
-        return Palette.ToString (new StringBuilder (1024), pal, places).ToString ( );
+        return Palette.ToString(new StringBuilder(1024), pal, places).ToString();
     }
 
     /// <summary>
@@ -868,67 +868,67 @@ public class Palette
     /// <param name="pal">palette</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Palette pal, in int places = 4)
+    public static StringBuilder ToString(in StringBuilder sb, in Palette pal, in int places = 4)
     {
-        sb.Append ("{ name: \"");
-        sb.Append (pal.Name);
-        sb.Append ("\", author: \"");
-        sb.Append (pal.Author);
+        sb.Append("{ name: \"");
+        sb.Append(pal.Name);
+        sb.Append("\", author: \"");
+        sb.Append(pal.Author);
 
-        sb.Append ("\", entries: [ ");
-        PalEntry [ ] palEntries = pal.entries;
+        sb.Append("\", entries: [ ");
+        PalEntry[] palEntries = pal.entries;
         int entriesLen = palEntries.Length;
         int entriesLast = entriesLen - 1;
         for (int i = 0; i < entriesLen; ++i)
         {
-            PalEntry entry = palEntries [ i ];
+            PalEntry entry = palEntries[i];
             if (entry != null)
             {
-                PalEntry.ToString (sb, entry, places);
+                PalEntry.ToString(sb, entry, places);
                 if (i < entriesLast)
                 {
-                    sb.Append (',').Append (' ');
+                    sb.Append(',').Append(' ');
                 }
             }
         }
 
-        sb.Append (" ], tags: [ ");
+        sb.Append(" ], tags: [ ");
         List<Tag> tags = pal.tags;
         int tagsLen = tags.Count;
         int tagsLast = tagsLen - 1;
         for (int j = 0; j < tagsLen; ++j)
         {
-            Tag tag = tags [ j ];
+            Tag tag = tags[j];
             if (tag != null)
             {
-                sb.Append ("{ name: \"");
-                sb.Append (tag.Name);
-                sb.Append ("\", indices: [ ");
+                sb.Append("{ name: \"");
+                sb.Append(tag.Name);
+                sb.Append("\", indices: [ ");
                 List<PalEntry> tagEntries = tag.Entries;
                 int tagEntriesLen = tagEntries.Count;
                 int tagEntriesLast = tagEntriesLen - 1;
                 for (int k = 0; k < tagEntriesLen; ++k)
                 {
-                    PalEntry tagPalEntry = tagEntries [ k ];
+                    PalEntry tagPalEntry = tagEntries[k];
                     if (tagPalEntry != null)
                     {
-                        sb.Append (Array.IndexOf (palEntries, tagPalEntry));
+                        sb.Append(Array.IndexOf(palEntries, tagPalEntry));
                         if (k < tagEntriesLast)
                         {
-                            sb.Append (',').Append (' ');
+                            sb.Append(',').Append(' ');
                         }
                     }
                 }
 
-                sb.Append (" ] }");
+                sb.Append(" ] }");
                 if (j < tagsLast)
                 {
-                    sb.Append (',').Append (' ');
+                    sb.Append(',').Append(' ');
                 }
             }
         }
 
-        sb.Append (" ] }");
+        sb.Append(" ] }");
         return sb;
     }
 
@@ -939,31 +939,31 @@ public class Palette
     /// <param name="source">source palette</param>
     /// <param name="target">target palette</param>
     /// <returns>target palette</returns>
-    public static Palette Uniques (in Palette source, in Palette target)
+    public static Palette Uniques(in Palette source, in Palette target)
     {
         // Create a dictionary where the original array index is
         // the value; the entry is the key.
-        PalEntry [ ] sourceEntries = source.entries;
+        PalEntry[] sourceEntries = source.entries;
         int len = sourceEntries.Length;
         int index = 0;
-        Dictionary<PalEntry, int> clrDict = new Dictionary<PalEntry, int> (len);
+        Dictionary<PalEntry, int> clrDict = new Dictionary<PalEntry, int>(len);
         for (int i = 0; i < len; ++i)
         {
-            PalEntry sourcePalEntry = sourceEntries [ i ];
-            if (!clrDict.ContainsKey (sourcePalEntry))
+            PalEntry sourcePalEntry = sourceEntries[i];
+            if (!clrDict.ContainsKey(sourcePalEntry))
             {
-                clrDict.Add (sourcePalEntry, index);
+                clrDict.Add(sourcePalEntry, index);
                 ++index;
             }
         }
 
         // Convert from dictionary to a new array.
-        PalEntry [ ] uniqueEntries = new PalEntry [ clrDict.Count ];
-        if (Object.ReferenceEquals (source, target))
+        PalEntry[] uniqueEntries = new PalEntry[clrDict.Count];
+        if (Object.ReferenceEquals(source, target))
         {
             foreach (KeyValuePair<PalEntry, int> kvp in clrDict)
             {
-                uniqueEntries [ kvp.Value ] = kvp.Key;
+                uniqueEntries[kvp.Value] = kvp.Key;
             }
         }
         else
@@ -971,14 +971,14 @@ public class Palette
             foreach (KeyValuePair<PalEntry, int> kvp in clrDict)
             {
                 PalEntry uniquePalEntry = kvp.Key;
-                uniqueEntries [ kvp.Value ] = new PalEntry (
+                uniqueEntries[kvp.Value] = new PalEntry(
                     uniquePalEntry.Color,
                     uniquePalEntry.Name);
             }
         }
 
         target.entries = uniqueEntries;
-        target.TrimTagEntries ( );
+        target.TrimTagEntries();
         return target;
     }
 }

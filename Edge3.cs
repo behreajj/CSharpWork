@@ -36,7 +36,7 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// </summary>
     /// <param name="origin">origin</param>
     /// <param name="dest">destination</param>
-    public Edge3 (in Vert3 origin, in Vert3 dest)
+    public Edge3(in Vert3 origin, in Vert3 dest)
     {
         this.origin = origin;
         this.dest = dest;
@@ -47,11 +47,11 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// </summary>
     /// <param name="value">the object</param>
     /// <returns>the equivalence</returns>
-    public override bool Equals (object value)
+    public override bool Equals(object value)
     {
-        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Edge3) { return this.Equals ((Edge3) value); }
+        if (value is Edge3) { return this.Equals((Edge3)value); }
         return false;
     }
 
@@ -59,12 +59,12 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// Returns a hash code representing this edge.
     /// </summary>
     /// <returns>the hash code</returns>
-    public override int GetHashCode ( )
+    public override int GetHashCode()
     {
         unchecked
         {
-            return (Utils.MulBase ^ this.origin.GetHashCode ( )) *
-                Utils.HashMul ^ this.dest.GetHashCode ( );
+            return (Utils.MulBase ^ this.origin.GetHashCode()) *
+                Utils.HashMul ^ this.dest.GetHashCode();
         }
     }
 
@@ -72,9 +72,9 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// Returns a string representation of this vertex.
     /// </summary>
     /// <returns>the string</returns>
-    public override string ToString ( )
+    public override string ToString()
     {
-        return Edge3.ToString (this);
+        return Edge3.ToString(this);
     }
 
     /// <summary>
@@ -83,10 +83,10 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// </summary>
     /// <param name="e">the comparisand</param>
     /// <returns>the evaluation</returns>
-    public int CompareTo (Edge3 e)
+    public int CompareTo(Edge3 e)
     {
-        int a = this.origin.CompareTo (e.origin);
-        int b = this.dest.CompareTo (e.dest);
+        int a = this.origin.CompareTo(e.origin);
+        int b = this.dest.CompareTo(e.dest);
         return a != 0 ? a : b;
     }
 
@@ -96,10 +96,10 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// </summary>
     /// <param name="e">edge</param>
     /// <returns>equivalence</returns>
-    public bool Equals (Edge3 e)
+    public bool Equals(Edge3 e)
     {
-        return this.origin.Equals (e.origin) &&
-            this.dest.Equals (e.dest);
+        return this.origin.Equals(e.origin) &&
+            this.dest.Equals(e.dest);
     }
 
     /// <summary>
@@ -111,13 +111,13 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <param name="b">right comparisand</param>
     /// <param name="tolerance">tolerance</param>
     /// <returns>the evaluation</returns>
-    public static bool AreNeighbors ( //
+    public static bool AreNeighbors( //
         in Edge3 a, //
         in Edge3 b, //
         in float tolerance = Utils.Epsilon)
     {
-        return Vec3.Approx (a.origin.Coord, b.dest.Coord, tolerance) &&
-            Vec3.Approx (a.dest.Coord, b.origin.Coord, tolerance);
+        return Vec3.Approx(a.origin.Coord, b.dest.Coord, tolerance) &&
+            Vec3.Approx(a.dest.Coord, b.origin.Coord, tolerance);
     }
 
     /// <summary>
@@ -126,9 +126,9 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// </summary>
     /// <param name="e">edge</param>
     /// <returns>inclination</returns>
-    public static float Azimuth (in Edge3 e)
+    public static float Azimuth(in Edge3 e)
     {
-        return Vec3.AzimuthSigned (e.dest.Coord - e.origin.Coord);
+        return Vec3.AzimuthSigned(e.dest.Coord - e.origin.Coord);
     }
 
     ///<summary>
@@ -136,9 +136,9 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     ///</summary>
     ///<param name="e">edge</param>
     ///<returns>center</returns>
-    public static Vec3 Center (in Edge3 e)
+    public static Vec3 Center(in Edge3 e)
     {
-        return Vec3.Mix (e.origin.Coord, e.dest.Coord);
+        return Vec3.Mix(e.origin.Coord, e.dest.Coord);
     }
 
     /// <summary>
@@ -150,11 +150,11 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <param name="e">edge</param>
     /// <param name="t">factor</param>
     /// <returns>point</returns>
-    public static Vec3 Eval (in Edge3 e, in float t = 0.5f)
+    public static Vec3 Eval(in Edge3 e, in float t = 0.5f)
     {
         if (t <= 0.0f) { return e.origin.Coord; }
         if (t >= 1.0f) { return e.dest.Coord; }
-        return Vec3.Mix (e.origin.Coord, e.dest.Coord, t);
+        return Vec3.Mix(e.origin.Coord, e.dest.Coord, t);
     }
 
     /// <summary>
@@ -163,9 +163,9 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// </summary>
     /// <param name="e">edge</param>
     /// <returns>inclination</returns>
-    public static float Inclination (in Edge3 e)
+    public static float Inclination(in Edge3 e)
     {
-        return Vec3.InclinationSigned (e.dest.Coord - e.origin.Coord);
+        return Vec3.InclinationSigned(e.dest.Coord - e.origin.Coord);
     }
 
     /// <summary>
@@ -174,9 +174,9 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// </summary>
     /// <param name="e">edge</param>
     /// <returns>magnitude</returns>
-    public static float Mag (in Edge3 e)
+    public static float Mag(in Edge3 e)
     {
-        return Vec3.DistEuclidean (e.origin.Coord, e.dest.Coord);
+        return Vec3.DistEuclidean(e.origin.Coord, e.dest.Coord);
     }
 
     /// <summary>
@@ -185,9 +185,9 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// </summary>
     /// <param name="e">edge</param>
     /// <returns>magnitude squared</returns>
-    public static float MagSq (in Edge3 e)
+    public static float MagSq(in Edge3 e)
     {
-        return Vec3.DistSq (e.origin.Coord, e.dest.Coord);
+        return Vec3.DistSq(e.origin.Coord, e.dest.Coord);
     }
 
     /// <summary>
@@ -199,10 +199,10 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <param name="a">vector</param>
     /// <param name="b">edge</param>
     /// <returns>point</returns>
-    public static Vec3 Project (in Vec3 a, in Edge3 b)
+    public static Vec3 Project(in Vec3 a, in Edge3 b)
     {
-        return Edge3.Eval (b,
-            Vec3.ProjectScalar (
+        return Edge3.Eval(b,
+            Vec3.ProjectScalar(
                 a, b.dest.Coord - b.origin.Coord));
     }
 
@@ -212,9 +212,9 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <param name="e">edge</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
-    public static string ToString (in Edge3 e, in int places = 4)
+    public static string ToString(in Edge3 e, in int places = 4)
     {
-        return Edge3.ToString (new StringBuilder (256), e, places).ToString ( );
+        return Edge3.ToString(new StringBuilder(256), e, places).ToString();
     }
 
     /// <summary>
@@ -224,13 +224,13 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <param name="e">edge</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Edge3 e, in int places = 4)
+    public static StringBuilder ToString(in StringBuilder sb, in Edge3 e, in int places = 4)
     {
-        sb.Append ("{ origin: ");
-        Vert3.ToString (sb, e.origin, places);
-        sb.Append (", dest: ");
-        Vert3.ToString (sb, e.dest, places);
-        sb.Append (" }");
+        sb.Append("{ origin: ");
+        Vert3.ToString(sb, e.origin, places);
+        sb.Append(", dest: ");
+        Vert3.ToString(sb, e.dest, places);
+        sb.Append(" }");
         return sb;
     }
 
@@ -240,9 +240,9 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <param name="arr">array</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
-    public static string ToString (in Edge3 [ ] arr, in int places = 4)
+    public static string ToString(in Edge3[] arr, in int places = 4)
     {
-        return Edge3.ToString (new StringBuilder (1024), arr, places).ToString ( );
+        return Edge3.ToString(new StringBuilder(1024), arr, places).ToString();
     }
 
     /// <summary>
@@ -253,10 +253,10 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <param name="arr">array</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Edge3 [ ] arr, in int places = 4)
+    public static StringBuilder ToString(in StringBuilder sb, in Edge3[] arr, in int places = 4)
     {
-        sb.Append ('[');
-        sb.Append (' ');
+        sb.Append('[');
+        sb.Append(' ');
 
         if (arr != null)
         {
@@ -265,16 +265,16 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
 
             for (int i = 0; i < last; ++i)
             {
-                Edge3.ToString (sb, arr [ i ], places);
-                sb.Append (',');
-                sb.Append (' ');
+                Edge3.ToString(sb, arr[i], places);
+                sb.Append(',');
+                sb.Append(' ');
             }
 
-            Edge3.ToString (sb, arr [ last ], places);
-            sb.Append (' ');
+            Edge3.ToString(sb, arr[last], places);
+            sb.Append(' ');
         }
 
-        sb.Append (']');
+        sb.Append(']');
         return sb;
     }
 
@@ -285,7 +285,7 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// </summary>
     /// <param name="e">edge</param>
     /// <returns>vector</returns>
-    public static Vec3 Vector (in Edge3 e)
+    public static Vec3 Vector(in Edge3 e)
     {
         return e.dest.Coord - e.origin.Coord;
     }

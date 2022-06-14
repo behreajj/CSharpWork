@@ -50,7 +50,7 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// <param name="coord">coordinate</param>
     /// <param name="texCoord">texture coordinate</param>
     /// <param name="normal">normal</param>
-    public Vert3 (in Vec3 coord, in Vec2 texCoord, in Vec3 normal)
+    public Vert3(in Vec3 coord, in Vec2 texCoord, in Vec3 normal)
     {
         this.coord = coord;
         this.texCoord = texCoord;
@@ -62,11 +62,11 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// </summary>
     /// <param name="value">the object</param>
     /// <returns>the equivalence</returns>
-    public override bool Equals (object value)
+    public override bool Equals(object value)
     {
-        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Vert3) { return this.Equals ((Vert3) value); }
+        if (value is Vert3) { return this.Equals((Vert3)value); }
         return false;
     }
 
@@ -74,13 +74,13 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// Returns a hash code representing this vertex.
     /// </summary>
     /// <returns>the hash code</returns>
-    public override int GetHashCode ( )
+    public override int GetHashCode()
     {
         unchecked
         {
-            return ((Utils.MulBase ^ this.coord.GetHashCode ( )) *
-                    Utils.HashMul ^ this.texCoord.GetHashCode ( )) *
-                Utils.HashMul ^ this.normal.GetHashCode ( );
+            return ((Utils.MulBase ^ this.coord.GetHashCode()) *
+                    Utils.HashMul ^ this.texCoord.GetHashCode()) *
+                Utils.HashMul ^ this.normal.GetHashCode();
         }
     }
 
@@ -88,9 +88,9 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// Returns a string representation of this vertex.
     /// </summary>
     /// <returns>the string</returns>
-    public override string ToString ( )
+    public override string ToString()
     {
-        return Vert3.ToString (this);
+        return Vert3.ToString(this);
     }
 
     /// <summary>
@@ -99,9 +99,9 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// </summary>
     /// <param name="v">comparisand</param>
     /// <returns>evaluation</returns>
-    public int CompareTo (Vert3 v)
+    public int CompareTo(Vert3 v)
     {
-        return this.coord.CompareTo (v.coord);
+        return this.coord.CompareTo(v.coord);
     }
 
     /// <summary>
@@ -110,9 +110,9 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// </summary>
     /// <param name="v">vertex</param>
     /// <returns>equivalence</returns>
-    public bool Equals (Vert3 v)
+    public bool Equals(Vert3 v)
     {
-        return this.coord.Equals (v.coord);
+        return this.coord.Equals(v.coord);
     }
 
     /// <summary>
@@ -121,9 +121,9 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// <param name="v">vertex</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
-    public static string ToString (in Vert3 v, in int places = 4)
+    public static string ToString(in Vert3 v, in int places = 4)
     {
-        return Vert3.ToString (new StringBuilder (256), v, places).ToString ( );
+        return Vert3.ToString(new StringBuilder(256), v, places).ToString();
     }
 
     /// <summary>
@@ -133,15 +133,15 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// <param name="v">vertex</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Vert3 v, in int places = 4)
+    public static StringBuilder ToString(in StringBuilder sb, in Vert3 v, in int places = 4)
     {
-        sb.Append ("{ coord: ");
-        Vec3.ToString (sb, v.coord, places);
-        sb.Append (", texCoord: ");
-        Vec2.ToString (sb, v.texCoord, places);
-        sb.Append (", normal: ");
-        Vec3.ToString (sb, v.normal, places);
-        sb.Append (" }");
+        sb.Append("{ coord: ");
+        Vec3.ToString(sb, v.coord, places);
+        sb.Append(", texCoord: ");
+        Vec2.ToString(sb, v.texCoord, places);
+        sb.Append(", normal: ");
+        Vec3.ToString(sb, v.normal, places);
+        sb.Append(" }");
         return sb;
     }
 }

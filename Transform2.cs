@@ -30,7 +30,7 @@ public class Transform2
     {
         get
         {
-            return Vec2.FromPolar (this.rotation + Utils.HalfPi);
+            return Vec2.FromPolar(this.rotation + Utils.HalfPi);
         }
     }
 
@@ -59,7 +59,7 @@ public class Transform2
     {
         get
         {
-            return Vec2.FromPolar (this.rotation);
+            return Vec2.FromPolar(this.rotation);
         }
     }
 
@@ -93,14 +93,14 @@ public class Transform2
 
         set
         {
-            if (Vec2.All (value)) { this.scale = value; }
+            if (Vec2.All(value)) { this.scale = value; }
         }
     }
 
     /// <summary>
     /// The default constructor.
     /// </summary>
-    public Transform2 ( ) { }
+    public Transform2() { }
 
     /// <summary>
     /// Creates a transform from a location, rotation and scale.
@@ -108,7 +108,7 @@ public class Transform2
     /// <param name="location">location</param>
     /// <param name="rotation">rotation</param>
     /// <param name="scale">scale</param>
-    public Transform2 (in Vec2 location, in float rotation, in Vec2 scale)
+    public Transform2(in Vec2 location, in float rotation, in Vec2 scale)
     {
         this.Location = location;
         this.Rotation = rotation;
@@ -123,28 +123,28 @@ public class Transform2
     /// <param name="rotation">rotation</param>
     /// <param name="width">x scale</param>
     /// <param name="height">y scale</param>
-    public Transform2 ( //
+    public Transform2( //
         in float x, in float y, //
         in float rotation, //
         in float width, in float height)
     {
-        this.Location = new Vec2 (x, y);
+        this.Location = new Vec2(x, y);
         this.Rotation = rotation;
-        this.Scale = new Vec2 (width, height);
+        this.Scale = new Vec2(width, height);
     }
 
     /// <summary>
     /// Returns a hash code representing this transform.
     /// </summary>
     /// <returns>the hash code</returns>
-    public override int GetHashCode ( )
+    public override int GetHashCode()
     {
         unchecked
         {
             int hash = Utils.HashBase;
-            hash = hash * Utils.HashMul ^ this.location.GetHashCode ( );
-            hash = hash * Utils.HashMul ^ this.rotation.GetHashCode ( );
-            hash = hash * Utils.HashMul ^ this.scale.GetHashCode ( );
+            hash = hash * Utils.HashMul ^ this.location.GetHashCode();
+            hash = hash * Utils.HashMul ^ this.rotation.GetHashCode();
+            hash = hash * Utils.HashMul ^ this.scale.GetHashCode();
             return hash;
         }
     }
@@ -153,9 +153,9 @@ public class Transform2
     /// Returns a string representation of this transform.
     /// </summary>
     /// <returns>the string</returns>
-    public override string ToString ( )
+    public override string ToString()
     {
-        return Transform2.ToString (this);
+        return Transform2.ToString(this);
     }
 
     /// <summary>
@@ -163,9 +163,9 @@ public class Transform2
     /// scale's x component.
     /// </summary>
     /// <returns>this transform</returns>
-    public Transform2 FlipX ( )
+    public Transform2 FlipX()
     {
-        this.Scale = new Vec2 (-this.scale.x, this.scale.y);
+        this.Scale = new Vec2(-this.scale.x, this.scale.y);
         return this;
     }
 
@@ -174,9 +174,9 @@ public class Transform2
     /// scale's y component.
     /// </summary>
     /// <returns>this transform</returns>
-    public Transform2 FlipY ( )
+    public Transform2 FlipY()
     {
-        this.Scale = new Vec2 (this.scale.x, -this.scale.y);
+        this.Scale = new Vec2(this.scale.x, -this.scale.y);
         return this;
     }
 
@@ -186,7 +186,7 @@ public class Transform2
     /// </summary>
     /// <param name="v">direction</param>
     /// <returns>this transform</returns>
-    public Transform2 MoveByGlobal (in Vec2 v)
+    public Transform2 MoveByGlobal(in Vec2 v)
     {
         this.Location += v;
         return this;
@@ -198,9 +198,9 @@ public class Transform2
     /// </summary>
     /// <param name="v">direction</param>
     /// <returns>transform</returns>
-    public Transform2 MoveByLocal (in Vec2 v)
+    public Transform2 MoveByLocal(in Vec2 v)
     {
-        this.Location += Transform2.MulDir (this, v);
+        this.Location += Transform2.MulDir(this, v);
         return this;
     }
 
@@ -210,9 +210,9 @@ public class Transform2
     /// <param name="v">direction</param>
     /// <param name="step">step</param>
     /// <returns>this transform</returns>
-    public Transform2 MoveTo (in Vec2 v, in Vec2 step)
+    public Transform2 MoveTo(in Vec2 v, in Vec2 step)
     {
-        this.Location = Vec2.Mix (this.location, v, step);
+        this.Location = Vec2.Mix(this.location, v, step);
         return this;
     }
 
@@ -224,10 +224,10 @@ public class Transform2
     /// <param name="step">step</param>
     /// <param name="easing">easing function</param>
     /// <returns>this transform</returns>
-    public Transform2 MoveTo (in Vec2 v, in Vec2 step, in Func<Vec2, Vec2, Vec2, Vec2> easing)
+    public Transform2 MoveTo(in Vec2 v, in Vec2 step, in Func<Vec2, Vec2, Vec2, Vec2> easing)
     {
-        Vec2 t = easing (this.location, v, step);
-        this.Location = Vec2.Mix (this.location, v, t);
+        Vec2 t = easing(this.location, v, step);
+        this.Location = Vec2.Mix(this.location, v, t);
         return this;
     }
 
@@ -237,9 +237,9 @@ public class Transform2
     /// <param name="radians">angle</param>
     /// <param name="step">step</param>
     /// <returns>this transform</returns>
-    public Transform2 RotateTo (in float radians, in float step = 1.0f)
+    public Transform2 RotateTo(in float radians, in float step = 1.0f)
     {
-        this.Rotation = Utils.LerpAngleNear (this.rotation, radians, step);
+        this.Rotation = Utils.LerpAngleNear(this.rotation, radians, step);
         return this;
     }
 
@@ -248,7 +248,7 @@ public class Transform2
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>this transform</returns>
-    public Transform2 RotateZ (in float radians)
+    public Transform2 RotateZ(in float radians)
     {
         this.Rotation += radians;
         return this;
@@ -260,7 +260,7 @@ public class Transform2
     /// </summary>
     /// <param name="v">uniform scalar</param>
     /// <returns>this transform</returns>    
-    public Transform2 ScaleBy (in float v)
+    public Transform2 ScaleBy(in float v)
     {
         this.Scale *= v;
         return this;
@@ -272,7 +272,7 @@ public class Transform2
     /// </summary>
     /// <param name="v">nonuniform scalar</param>
     /// <returns>this transform</returns>
-    public Transform2 ScaleBy (in Vec2 v)
+    public Transform2 ScaleBy(in Vec2 v)
     {
         this.Scale *= v;
         return this;
@@ -284,9 +284,9 @@ public class Transform2
     /// <param name="v">nonuniform scale</param>
     /// <param name="step">step</param>
     /// <returns>this transform</returns>
-    public Transform2 ScaleTo (in Vec2 v, in Vec2 step)
+    public Transform2 ScaleTo(in Vec2 v, in Vec2 step)
     {
-        this.Scale = Vec2.Mix (this.scale, Vec2.CopySign (v, this.scale), step);
+        this.Scale = Vec2.Mix(this.scale, Vec2.CopySign(v, this.scale), step);
         return this;
     }
 
@@ -298,11 +298,11 @@ public class Transform2
     /// <param name="step">step</param>
     /// <param name="easing">easing function</param>
     /// <returns>this transform</returns>
-    public Transform2 ScaleTo (in Vec2 v, in Vec2 step, in Func<Vec2, Vec2, Vec2, Vec2> easing)
+    public Transform2 ScaleTo(in Vec2 v, in Vec2 step, in Func<Vec2, Vec2, Vec2, Vec2> easing)
     {
-        Vec2 s = Vec2.CopySign (v, this.scale);
-        Vec2 t = easing (this.scale, s, step);
-        this.Scale = Vec2.Mix (this.scale, s, t);
+        Vec2 s = Vec2.CopySign(v, this.scale);
+        Vec2 t = easing(this.scale, s, step);
+        this.Scale = Vec2.Mix(this.scale, s, t);
         return this;
     }
 
@@ -313,9 +313,9 @@ public class Transform2
     /// <param name="transform">transform</param>
     /// <param name="dir">direction</param>
     /// <returns>direction</returns>
-    public static Vec2 InvMulDir (in Transform2 transform, in Vec2 dir)
+    public static Vec2 InvMulDir(in Transform2 transform, in Vec2 dir)
     {
-        return Vec2.RotateZ (dir, -transform.rotation);
+        return Vec2.RotateZ(dir, -transform.rotation);
     }
 
     /// <summary>
@@ -326,9 +326,9 @@ public class Transform2
     /// <param name="transform">transform</param>
     /// <param name="point">point</param>
     /// <returns>point</returns>
-    public static Vec2 InvMulPoint (in Transform2 transform, in Vec2 point)
+    public static Vec2 InvMulPoint(in Transform2 transform, in Vec2 point)
     {
-        return Vec2.RotateZ ((point - transform.location) / transform.scale, -transform.rotation);
+        return Vec2.RotateZ((point - transform.location) / transform.scale, -transform.rotation);
     }
 
     /// <summary>
@@ -338,9 +338,9 @@ public class Transform2
     /// <param name="transform">transform</param>
     /// <param name="vec">vector</param>
     /// <returns>vector</returns>
-    public static Vec2 InvMulVector (in Transform2 transform, in Vec2 vec)
+    public static Vec2 InvMulVector(in Transform2 transform, in Vec2 vec)
     {
-        return Vec2.RotateZ (vec / transform.scale, -transform.rotation);
+        return Vec2.RotateZ(vec / transform.scale, -transform.rotation);
     }
 
     /// <summary>
@@ -348,10 +348,10 @@ public class Transform2
     /// </summary>
     /// <param name="t">transform</param>
     /// <returns>maximum</returns>
-    public static float MaxDimension (in Transform2 t)
+    public static float MaxDimension(in Transform2 t)
     {
-        Vec2 scl = Vec2.Abs (t.scale);
-        return Utils.Max (scl.x, scl.y);
+        Vec2 scl = Vec2.Abs(t.scale);
+        return Utils.Max(scl.x, scl.y);
     }
 
     /// <summary>
@@ -359,10 +359,10 @@ public class Transform2
     /// </summary>
     /// <param name="t">transform</param>
     /// <returns>minimum</returns>
-    public static float MinDimension (in Transform2 t)
+    public static float MinDimension(in Transform2 t)
     {
-        Vec2 scl = Vec2.Abs (t.scale);
-        return Utils.Min (scl.x, scl.y);
+        Vec2 scl = Vec2.Abs(t.scale);
+        return Utils.Min(scl.x, scl.y);
     }
 
     /// <summary>
@@ -372,9 +372,9 @@ public class Transform2
     /// <param name="transform">transform</param>
     /// <param name="dir">direction</param>
     /// <returns>direction</returns>
-    public static Vec2 MulDir (in Transform2 transform, in Vec2 dir)
+    public static Vec2 MulDir(in Transform2 transform, in Vec2 dir)
     {
-        return Vec2.RotateZ (dir, transform.rotation);
+        return Vec2.RotateZ(dir, transform.rotation);
     }
 
     /// <summary>
@@ -384,9 +384,9 @@ public class Transform2
     /// <param name="transform">transform</param>
     /// <param name="point">point</param>
     /// <returns>point</returns>
-    public static Vec2 MulPoint (in Transform2 transform, in Vec2 point)
+    public static Vec2 MulPoint(in Transform2 transform, in Vec2 point)
     {
-        return transform.location + transform.scale * Vec2.RotateZ (point, transform.rotation);
+        return transform.location + transform.scale * Vec2.RotateZ(point, transform.rotation);
     }
 
     /// <summary>
@@ -396,9 +396,9 @@ public class Transform2
     /// <param name="transform">transform</param>
     /// <param name="vec">vector</param>
     /// <returns>vector</returns>
-    public static Vec2 MulVector (in Transform2 transform, in Vec2 vec)
+    public static Vec2 MulVector(in Transform2 transform, in Vec2 vec)
     {
-        return transform.scale * Vec2.RotateZ (vec, transform.rotation);
+        return transform.scale * Vec2.RotateZ(vec, transform.rotation);
     }
 
     /// <summary>
@@ -409,10 +409,10 @@ public class Transform2
     /// </summary>
     /// <param name="tr">transform</param>
     /// <returns>tuple</returns>
-    public static (Vec2 right, Vec2 forward) ToAxes (in Transform2 tr)
+    public static (Vec2 right, Vec2 forward) ToAxes(in Transform2 tr)
     {
-        Vec2 r = Vec2.FromPolar (tr.rotation);
-        return (right: r, forward: Vec2.PerpendicularCCW (r));
+        Vec2 r = Vec2.FromPolar(tr.rotation);
+        return (right: r, forward: Vec2.PerpendicularCCW(r));
     }
 
     /// <summary>
@@ -421,9 +421,9 @@ public class Transform2
     /// <param name="tr">transform</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
-    public static string ToString (in Transform2 tr, in int places = 4)
+    public static string ToString(in Transform2 tr, in int places = 4)
     {
-        return Transform2.ToString (new StringBuilder (160), tr, places).ToString ( );
+        return Transform2.ToString(new StringBuilder(160), tr, places).ToString();
     }
 
     /// <summary>
@@ -433,19 +433,19 @@ public class Transform2
     /// <param name="tr">transform</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString ( //
+    public static StringBuilder ToString( //
         in StringBuilder sb, //
         in Transform2 tr, //
         in int places = 4)
     {
-        sb.Append ("{ location: ");
-        Vec2.ToString (sb, tr.location, places);
-        sb.Append (", rotation: ");
-        Utils.ToFixed (sb, tr.rotation, places);
-        sb.Append (", scale: ");
-        Vec2.ToString (sb, tr.scale, places);
-        sb.Append (' ');
-        sb.Append ('}');
+        sb.Append("{ location: ");
+        Vec2.ToString(sb, tr.location, places);
+        sb.Append(", rotation: ");
+        Utils.ToFixed(sb, tr.rotation, places);
+        sb.Append(", scale: ");
+        Vec2.ToString(sb, tr.scale, places);
+        sb.Append(' ');
+        sb.Append('}');
         return sb;
     }
 
@@ -457,7 +457,7 @@ public class Transform2
     {
         get
         {
-            return new Transform2 (Vec2.Zero, 0.0f, Vec2.One);
+            return new Transform2(Vec2.Zero, 0.0f, Vec2.One);
         }
     }
 }

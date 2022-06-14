@@ -8,7 +8,7 @@ using System.Text;
 /// transform matrix, where the last row is (0.0, 0.0, 1.0) .
 /// </summary>
 [Serializable]
-public readonly struct Mat3 : IEnumerable
+public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
 {
     /// <summary>
     /// Component in row 0, column 0. The right axis x component.
@@ -123,7 +123,7 @@ public readonly struct Mat3 : IEnumerable
     {
         get
         {
-            return new Vec3 (this._m00, this._m10, this._m20);
+            return new Vec3(this._m00, this._m10, this._m20);
         }
     }
 
@@ -135,7 +135,7 @@ public readonly struct Mat3 : IEnumerable
     {
         get
         {
-            return new Vec3 (this._m01, this._m11, this._m21);
+            return new Vec3(this._m01, this._m11, this._m21);
         }
     }
 
@@ -147,7 +147,7 @@ public readonly struct Mat3 : IEnumerable
     {
         get
         {
-            return new Vec3 (this._m02, this._m12, this._m22);
+            return new Vec3(this._m02, this._m12, this._m22);
         }
     }
 
@@ -155,7 +155,7 @@ public readonly struct Mat3 : IEnumerable
     /// Retrieves an element by index.
     /// </summary>
     /// <value>the element</value>
-    public float this [ int i ]
+    public float this[int i]
     {
         get
         {
@@ -163,36 +163,36 @@ public readonly struct Mat3 : IEnumerable
             {
             case 0:
             case -9:
-                return this._m00;
+            return this._m00;
             case 1:
             case -8:
-                return this._m01;
+            return this._m01;
             case 2:
             case -7:
-                return this._m02;
+            return this._m02;
 
             case 3:
             case -6:
-                return this._m10;
+            return this._m10;
             case 4:
             case -5:
-                return this._m11;
+            return this._m11;
             case 5:
             case -4:
-                return this._m12;
+            return this._m12;
 
             case 6:
             case -3:
-                return this._m20;
+            return this._m20;
             case 7:
             case -2:
-                return this._m21;
+            return this._m21;
             case 8:
             case -1:
-                return this._m22;
+            return this._m22;
 
             default:
-                return 0.0f;
+            return 0.0f;
             }
         }
     }
@@ -201,7 +201,7 @@ public readonly struct Mat3 : IEnumerable
     /// Retrieves an element by indices.
     /// </summary>
     /// <value>the element</value>
-    public float this [ int i, int j ]
+    public float this[int i, int j]
     {
         get
         {
@@ -209,54 +209,54 @@ public readonly struct Mat3 : IEnumerable
             {
             case 0:
             case -3:
-                switch (j)
-                {
-                case 0:
-                case -3:
-                    return this._m00;
-                case 1:
-                case -2:
-                    return this._m01;
-                case 2:
-                case -1:
-                    return this._m02;
-                default:
-                    return 0.0f;
-                }
+            switch (j)
+            {
+            case 0:
+            case -3:
+            return this._m00;
             case 1:
             case -2:
-                switch (j)
-                {
-                case 0:
-                case -3:
-                    return this._m10;
-                case 1:
-                case -2:
-                    return this._m11;
-                case 2:
-                case -1:
-                    return this._m12;
-                default:
-                    return 0.0f;
-                }
+            return this._m01;
             case 2:
             case -1:
-                switch (j)
-                {
-                case 0:
-                case -3:
-                    return this._m20;
-                case 1:
-                case -2:
-                    return this._m21;
-                case 2:
-                case -1:
-                    return this._m22;
-                default:
-                    return 0.0f;
-                }
+            return this._m02;
             default:
-                return 0.0f;
+            return 0.0f;
+            }
+            case 1:
+            case -2:
+            switch (j)
+            {
+            case 0:
+            case -3:
+            return this._m10;
+            case 1:
+            case -2:
+            return this._m11;
+            case 2:
+            case -1:
+            return this._m12;
+            default:
+            return 0.0f;
+            }
+            case 2:
+            case -1:
+            switch (j)
+            {
+            case 0:
+            case -3:
+            return this._m20;
+            case 1:
+            case -2:
+            return this._m21;
+            case 2:
+            case -1:
+            return this._m22;
+            default:
+            return 0.0f;
+            }
+            default:
+            return 0.0f;
             }
         }
     }
@@ -273,7 +273,7 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="m20">row 2, column 0</param>
     /// <param name="m21">row 2, column 1</param>
     /// <param name="m22">row 2, column 2</param>
-    public Mat3 ( //
+    public Mat3( //
         in float m00 = 1.0f, in float m01 = 0.0f, in float m02 = 0.0f, //
         in float m10 = 0.0f, in float m11 = 1.0f, in float m12 = 0.0f, //
         in float m20 = 0.0f, in float m21 = 0.0f, in float m22 = 1.0f)
@@ -303,7 +303,7 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="m20">row 2, column 0</param>
     /// <param name="m21">row 2, column 1</param>
     /// <param name="m22">row 2, column 2</param>
-    public Mat3 ( //
+    public Mat3( //
         in bool m00 = true, in bool m01 = false, in bool m02 = false, //
         in bool m10 = false, in bool m11 = true, in bool m12 = false, //
         in bool m20 = false, in bool m21 = false, in bool m22 = true)
@@ -326,11 +326,11 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="value">the object</param>
     /// <returns>the equivalence</returns>
-    public override bool Equals (object value)
+    public override bool Equals(object value)
     {
-        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Mat3) { return this.Equals ((Mat3) value); }
+        if (value is Mat3) { return this.Equals((Mat3)value); }
         return false;
     }
 
@@ -338,19 +338,19 @@ public readonly struct Mat3 : IEnumerable
     /// Returns a hash code representing this matrix.
     /// </summary>
     /// <returns>the hash code</returns>
-    public override int GetHashCode ( )
+    public override int GetHashCode()
     {
-        int hash = Utils.MulBase ^ this._m00.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m01.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m02.GetHashCode ( );
+        int hash = Utils.MulBase ^ this._m00.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m01.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m02.GetHashCode();
 
-        hash = hash * Utils.HashMul ^ this._m10.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m11.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m12.GetHashCode ( );
+        hash = hash * Utils.HashMul ^ this._m10.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m11.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m12.GetHashCode();
 
-        hash = hash * Utils.HashMul ^ this._m20.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m21.GetHashCode ( );
-        hash = hash * Utils.HashMul ^ this._m22.GetHashCode ( );
+        hash = hash * Utils.HashMul ^ this._m20.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m21.GetHashCode();
+        hash = hash * Utils.HashMul ^ this._m22.GetHashCode();
 
         return hash;
     }
@@ -359,9 +359,9 @@ public readonly struct Mat3 : IEnumerable
     /// Returns a string representation of this matrix.
     /// </summary>
     /// <returns>the string</returns>
-    public override string ToString ( )
+    public override string ToString()
     {
-        return Mat3.ToString (this);
+        return Mat3.ToString(this);
     }
 
     /// <summary>
@@ -370,19 +370,19 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>the equivalence</returns>
-    public bool Equals (Mat3 m)
+    public bool Equals(Mat3 m)
     {
-        if (this._m00.GetHashCode ( ) != m._m00.GetHashCode ( )) { return false; }
-        if (this._m01.GetHashCode ( ) != m._m01.GetHashCode ( )) { return false; }
-        if (this._m02.GetHashCode ( ) != m._m02.GetHashCode ( )) { return false; }
+        if (this._m00.GetHashCode() != m._m00.GetHashCode()) { return false; }
+        if (this._m01.GetHashCode() != m._m01.GetHashCode()) { return false; }
+        if (this._m02.GetHashCode() != m._m02.GetHashCode()) { return false; }
 
-        if (this._m10.GetHashCode ( ) != m._m10.GetHashCode ( )) { return false; }
-        if (this._m11.GetHashCode ( ) != m._m11.GetHashCode ( )) { return false; }
-        if (this._m12.GetHashCode ( ) != m._m12.GetHashCode ( )) { return false; }
+        if (this._m10.GetHashCode() != m._m10.GetHashCode()) { return false; }
+        if (this._m11.GetHashCode() != m._m11.GetHashCode()) { return false; }
+        if (this._m12.GetHashCode() != m._m12.GetHashCode()) { return false; }
 
-        if (this._m20.GetHashCode ( ) != m._m20.GetHashCode ( )) { return false; }
-        if (this._m21.GetHashCode ( ) != m._m21.GetHashCode ( )) { return false; }
-        if (this._m22.GetHashCode ( ) != m._m22.GetHashCode ( )) { return false; }
+        if (this._m20.GetHashCode() != m._m20.GetHashCode()) { return false; }
+        if (this._m21.GetHashCode() != m._m21.GetHashCode()) { return false; }
+        if (this._m22.GetHashCode() != m._m22.GetHashCode()) { return false; }
 
         return true;
     }
@@ -392,7 +392,7 @@ public readonly struct Mat3 : IEnumerable
     /// components to be accessed in a foreach loop.
     /// </summary>
     /// <returns>the enumerator</returns>
-    public IEnumerator GetEnumerator ( )
+    public IEnumerator GetEnumerator()
     {
         yield return this._m00;
         yield return this._m01;
@@ -411,9 +411,9 @@ public readonly struct Mat3 : IEnumerable
     /// Returns a float array of length 9 containing this matrix's components.
     /// </summary>
     /// <returns>the array</returns>
-    public float [ ] ToArray1 ( )
+    public float[] ToArray1()
     {
-        return new float [ ]
+        return new float[]
         {
             this._m00, this._m01, this._m02,
                 this._m10, this._m11, this._m12,
@@ -425,9 +425,9 @@ public readonly struct Mat3 : IEnumerable
     /// Returns a 3 x 3 float array containing this matrix's components.
     /// </summary>
     /// <returns>the array</returns>
-    public float [ , ] ToArray2 ( )
+    public float[,] ToArray2()
     {
-        return new float [ , ]
+        return new float[,]
         { { this._m00, this._m01, this._m02 }, //
             { this._m10, this._m11, this._m12 }, //
             { this._m20, this._m21, this._m22 }
@@ -440,7 +440,7 @@ public readonly struct Mat3 : IEnumerable
     /// <returns>the tuple</returns>
     public (float m00, float m01, float m02,
             float m10, float m11, float m12,
-            float m20, float m21, float m22) ToTuple ( )
+            float m20, float m21, float m22) ToTuple()
     {
         return (
             m00: this._m00, m01: this._m01, m02: this._m02,
@@ -454,10 +454,10 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="b">the boolean</param>
     /// <returns>the vector</returns>
-    public static implicit operator Mat3 (in bool b)
+    public static implicit operator Mat3(in bool b)
     {
         float eval = b ? 1.0f : 0.0f;
-        return new Mat3 (
+        return new Mat3(
             eval, eval, eval,
             eval, eval, eval,
             eval, eval, eval);
@@ -469,9 +469,9 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">the input matrix</param>
     /// <returns>the evaluation</returns>
-    public static bool operator true (in Mat3 m)
+    public static bool operator true(in Mat3 m)
     {
-        return Mat3.All (m);
+        return Mat3.All(m);
     }
 
     /// <summary>
@@ -479,9 +479,9 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">the input matrix</param>
     /// <returns>the evaluation</returns>
-    public static bool operator false (in Mat3 m)
+    public static bool operator false(in Mat3 m)
     {
-        return Mat3.None (m);
+        return Mat3.None(m);
     }
 
     /// <summary>
@@ -490,18 +490,18 @@ public readonly struct Mat3 : IEnumerable
     ///   <param name="a">left operand</param>
     ///   <param name="b">right operand</param>
     ///   <returns>the evaluation</returns>
-    public static Mat3 operator & (in Mat3 a, in Mat3 b)
+    public static Mat3 operator &(in Mat3 a, in Mat3 b)
     {
-        return new Mat3 (
-            Utils.And (a._m00, b._m00),
-            Utils.And (a._m01, b._m01),
-            Utils.And (a._m02, b._m02),
-            Utils.And (a._m10, b._m10),
-            Utils.And (a._m11, b._m11),
-            Utils.And (a._m12, b._m12),
-            Utils.And (a._m20, b._m20),
-            Utils.And (a._m21, b._m21),
-            Utils.And (a._m22, b._m22));
+        return new Mat3(
+            Utils.And(a._m00, b._m00),
+            Utils.And(a._m01, b._m01),
+            Utils.And(a._m02, b._m02),
+            Utils.And(a._m10, b._m10),
+            Utils.And(a._m11, b._m11),
+            Utils.And(a._m12, b._m12),
+            Utils.And(a._m20, b._m20),
+            Utils.And(a._m21, b._m21),
+            Utils.And(a._m22, b._m22));
     }
 
     /// <summary>
@@ -511,18 +511,18 @@ public readonly struct Mat3 : IEnumerable
     ///   <param name="a">left operand</param>
     ///   <param name="b">right operand</param>
     ///   <returns>the evaluation</returns>
-    public static Mat3 operator | (in Mat3 a, in Mat3 b)
+    public static Mat3 operator |(in Mat3 a, in Mat3 b)
     {
-        return new Mat3 (
-            Utils.Or (a._m00, b._m00),
-            Utils.Or (a._m01, b._m01),
-            Utils.Or (a._m02, b._m02),
-            Utils.Or (a._m10, b._m10),
-            Utils.Or (a._m11, b._m11),
-            Utils.Or (a._m12, b._m12),
-            Utils.Or (a._m20, b._m20),
-            Utils.Or (a._m21, b._m21),
-            Utils.Or (a._m22, b._m22));
+        return new Mat3(
+            Utils.Or(a._m00, b._m00),
+            Utils.Or(a._m01, b._m01),
+            Utils.Or(a._m02, b._m02),
+            Utils.Or(a._m10, b._m10),
+            Utils.Or(a._m11, b._m11),
+            Utils.Or(a._m12, b._m12),
+            Utils.Or(a._m20, b._m20),
+            Utils.Or(a._m21, b._m21),
+            Utils.Or(a._m22, b._m22));
     }
 
     /// <summary>
@@ -532,18 +532,18 @@ public readonly struct Mat3 : IEnumerable
     ///   <param name="a">left operand</param>
     ///   <param name="b">right operand</param>
     ///   <returns>the evaluation</returns>
-    public static Mat3 operator ^ (in Mat3 a, in Mat3 b)
+    public static Mat3 operator ^(in Mat3 a, in Mat3 b)
     {
-        return new Mat3 (
-            Utils.Xor (a._m00, b._m00),
-            Utils.Xor (a._m01, b._m01),
-            Utils.Xor (a._m02, b._m02),
-            Utils.Xor (a._m10, b._m10),
-            Utils.Xor (a._m11, b._m11),
-            Utils.Xor (a._m12, b._m12),
-            Utils.Xor (a._m20, b._m20),
-            Utils.Xor (a._m21, b._m21),
-            Utils.Xor (a._m22, b._m22));
+        return new Mat3(
+            Utils.Xor(a._m00, b._m00),
+            Utils.Xor(a._m01, b._m01),
+            Utils.Xor(a._m02, b._m02),
+            Utils.Xor(a._m10, b._m10),
+            Utils.Xor(a._m11, b._m11),
+            Utils.Xor(a._m12, b._m12),
+            Utils.Xor(a._m20, b._m20),
+            Utils.Xor(a._m21, b._m21),
+            Utils.Xor(a._m22, b._m22));
     }
 
     /// <summary>
@@ -551,9 +551,9 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>negation</returns>
-    public static Mat3 operator - (in Mat3 m)
+    public static Mat3 operator -(in Mat3 m)
     {
-        return new Mat3 ( //
+        return new Mat3( //
             -m._m00, -m._m01, -m._m02, //
             -m._m10, -m._m11, -m._m12, //
             -m._m20, -m._m21, -m._m22);
@@ -565,9 +565,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>product</returns>
-    public static Mat3 operator * (in Mat3 a, in Mat3 b)
+    public static Mat3 operator *(in Mat3 a, in Mat3 b)
     {
-        return new Mat3 (
+        return new Mat3(
             a._m00 * b._m00 + a._m01 * b._m10 + a._m02 * b._m20,
             a._m00 * b._m01 + a._m01 * b._m11 + a._m02 * b._m21,
             a._m00 * b._m02 + a._m01 * b._m12 + a._m02 * b._m22,
@@ -587,9 +587,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>product</returns>
-    public static Mat3 operator * (in Mat3 a, in float b)
+    public static Mat3 operator *(in Mat3 a, in float b)
     {
-        return new Mat3 (
+        return new Mat3(
             a._m00 * b, a._m01 * b, a._m02 * b,
             a._m10 * b, a._m11 * b, a._m12 * b,
             a._m20 * b, a._m21 * b, a._m22 * b);
@@ -601,9 +601,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>product</returns>
-    public static Mat3 operator * (in float a, in Mat3 b)
+    public static Mat3 operator *(in float a, in Mat3 b)
     {
-        return new Mat3 (
+        return new Mat3(
             a * b._m00, a * b._m01, a * b._m02,
             a * b._m10, a * b._m11, a * b._m12,
             a * b._m20, a * b._m21, a * b._m22);
@@ -615,9 +615,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">matrix</param>
     /// <param name="b">vector</param>
     /// <returns>product</returns>
-    public static Vec3 operator * (in Mat3 a, in Vec3 b)
+    public static Vec3 operator *(in Mat3 a, in Vec3 b)
     {
-        return new Vec3 (
+        return new Vec3(
             a._m00 * b.x + a._m01 * b.y + a._m02 * b.z,
             a._m10 * b.x + a._m11 * b.y + a._m12 * b.z,
             a._m20 * b.x + a._m21 * b.y + a._m22 * b.z);
@@ -630,9 +630,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">vector</param>
     /// <param name="b">matrix</param>
     /// <returns>product</returns>
-    public static Vec3 operator * (in Vec3 a, in Mat3 b)
+    public static Vec3 operator *(in Vec3 a, in Mat3 b)
     {
-        return new Vec3 (
+        return new Vec3(
             b._m00 * a.x + b._m10 * a.y + b._m20 * a.z,
             b._m01 * a.x + b._m11 * a.y + b._m21 * a.z,
             b._m02 * a.x + b._m12 * a.y + b._m22 * a.z);
@@ -644,9 +644,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>sum</returns>
-    public static Mat3 operator + (in Mat3 a, in Mat3 b)
+    public static Mat3 operator +(in Mat3 a, in Mat3 b)
     {
-        return new Mat3 (
+        return new Mat3(
             a._m00 + b._m00, a._m01 + b._m01, a._m02 + b._m02,
             a._m10 + b._m10, a._m11 + b._m11, a._m12 + b._m12,
             a._m20 + b._m20, a._m21 + b._m21, a._m22 + b._m22);
@@ -658,9 +658,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>result</returns>
-    public static Mat3 operator - (in Mat3 a, in Mat3 b)
+    public static Mat3 operator -(in Mat3 a, in Mat3 b)
     {
-        return new Mat3 (
+        return new Mat3(
             a._m00 - b._m00, a._m01 - b._m01, a._m02 - b._m02,
             a._m10 - b._m10, a._m11 - b._m11, a._m12 - b._m12,
             a._m20 - b._m20, a._m21 - b._m21, a._m22 - b._m22);
@@ -675,9 +675,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static Mat3 operator < (in Mat3 a, in Mat3 b)
+    public static Mat3 operator <(in Mat3 a, in Mat3 b)
     {
-        return new Mat3 (
+        return new Mat3(
             a._m00 < b._m00, a._m01 < b._m01, a._m02 < b._m02,
             a._m10 < b._m10, a._m11 < b._m11, a._m12 < b._m12,
             a._m20 < b._m20, a._m21 < b._m21, a._m22 < b._m22);
@@ -692,9 +692,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static Mat3 operator > (in Mat3 a, in Mat3 b)
+    public static Mat3 operator >(in Mat3 a, in Mat3 b)
     {
-        return new Mat3 (
+        return new Mat3(
             a._m00 > b._m00, a._m01 > b._m01, a._m02 > b._m02,
             a._m10 > b._m10, a._m11 > b._m11, a._m12 > b._m12,
             a._m20 > b._m20, a._m21 > b._m21, a._m22 > b._m22);
@@ -710,9 +710,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static Mat3 operator <= (in Mat3 a, in Mat3 b)
+    public static Mat3 operator <=(in Mat3 a, in Mat3 b)
     {
-        return new Mat3 (
+        return new Mat3(
             a._m00 <= b._m00, a._m01 <= b._m01, a._m02 <= b._m02,
             a._m10 <= b._m10, a._m11 <= b._m11, a._m12 <= b._m12,
             a._m20 <= b._m20, a._m21 <= b._m21, a._m22 <= b._m22);
@@ -728,9 +728,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static Mat3 operator >= (in Mat3 a, in Mat3 b)
+    public static Mat3 operator >=(in Mat3 a, in Mat3 b)
     {
-        return new Mat3 (
+        return new Mat3(
             a._m00 >= b._m00, a._m01 >= b._m01, a._m02 >= b._m02,
             a._m10 >= b._m10, a._m11 >= b._m11, a._m12 >= b._m12,
             a._m20 >= b._m20, a._m21 >= b._m21, a._m22 >= b._m22);
@@ -745,9 +745,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static Mat3 operator != (in Mat3 a, in Mat3 b)
+    public static Mat3 operator !=(in Mat3 a, in Mat3 b)
     {
-        return new Mat3 (
+        return new Mat3(
             a._m00 != b._m00, a._m01 != b._m01, a._m02 != b._m02,
             a._m10 != b._m10, a._m11 != b._m11, a._m12 != b._m12,
             a._m20 != b._m20, a._m21 != b._m21, a._m22 != b._m22);
@@ -762,9 +762,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static Mat3 operator == (in Mat3 a, in Mat3 b)
+    public static Mat3 operator ==(in Mat3 a, in Mat3 b)
     {
-        return new Mat3 (
+        return new Mat3(
             a._m00 == b._m00, a._m01 == b._m01, a._m02 == b._m02,
             a._m10 == b._m10, a._m11 == b._m11, a._m12 == b._m12,
             a._m20 == b._m20, a._m21 == b._m21, a._m22 == b._m22);
@@ -775,7 +775,7 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>the evaluation</returns>
-    public static bool All (in Mat3 m)
+    public static bool All(in Mat3 m)
     {
         return (m._m00 != 0.0f) && (m._m01 != 0.0f) && (m._m02 != 0.0f) &&
             (m._m10 != 0.0f) && (m._m11 != 0.0f) && (m._m12 != 0.0f) &&
@@ -787,7 +787,7 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>the evaluation</returns>
-    public static bool Any (in Mat3 m)
+    public static bool Any(in Mat3 m)
     {
         return (m._m00 != 0.0f) || (m._m01 != 0.0f) || (m._m02 != 0.0f) ||
             (m._m10 != 0.0f) || (m._m11 != 0.0f) || (m._m12 != 0.0f) ||
@@ -799,7 +799,7 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>determinant</returns>
-    public static float Determinant (in Mat3 m)
+    public static float Determinant(in Mat3 m)
     {
         return m._m00 * (m._m22 * m._m11 - m._m12 * m._m21) +
             m._m01 * (m._m12 * m._m20 - m._m22 * m._m10) +
@@ -813,11 +813,11 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromAxes ( //
+    public static Mat3 FromAxes( //
         in Vec2 right, //
         in Vec2 forward)
     {
-        return new Mat3 (
+        return new Mat3(
             right.x, forward.x, 0.0f,
             right.y, forward.y, 0.0f,
             0.0f, 0.0f, 1.0f);
@@ -831,12 +831,12 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromAxes ( //
+    public static Mat3 FromAxes( //
         in Vec2 right, //
         in Vec2 forward, //
         in Vec2 translation)
     {
-        return new Mat3 (
+        return new Mat3(
             right.x, forward.x, translation.x,
             right.y, forward.y, translation.y,
             0.0f, 0.0f, 1.0f);
@@ -849,11 +849,11 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromAxes ( //
+    public static Mat3 FromAxes( //
         in Vec3 right, //
         in Vec3 forward)
     {
-        return new Mat3 (
+        return new Mat3(
             right.x, forward.x, 0.0f,
             right.y, forward.y, 0.0f,
             right.z, forward.z, 1.0f);
@@ -866,12 +866,12 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromAxes ( //
+    public static Mat3 FromAxes( //
         in Vec3 right, //
         in Vec3 forward, //
         in Vec3 translation)
     {
-        return new Mat3 (
+        return new Mat3(
             right.x, forward.x, translation.x,
             right.y, forward.y, translation.y,
             right.z, forward.z, translation.z);
@@ -882,10 +882,10 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromRotZ (in float radians)
+    public static Mat3 FromRotZ(in float radians)
     {
-        Utils.SinCos (radians, out float sina, out float cosa);
-        return Mat3.FromRotZ (cosa, sina);
+        Utils.SinCos(radians, out float sina, out float cosa);
+        return Mat3.FromRotZ(cosa, sina);
     }
 
     /// <summary>
@@ -894,9 +894,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="cosa">cosine of an angle</param>
     /// <param name="sina">sine of an angle</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromRotZ (in float cosa, in float sina)
+    public static Mat3 FromRotZ(in float cosa, in float sina)
     {
-        return new Mat3 (
+        return new Mat3(
             cosa, -sina, 0.0f,
             sina, cosa, 0.0f,
             0.0f, 0.0f, 1.0f);
@@ -908,11 +908,11 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="scalar">scalar</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromScale (in float scalar)
+    public static Mat3 FromScale(in float scalar)
     {
         if (scalar != 0.0f)
         {
-            return new Mat3 (
+            return new Mat3(
                 scalar, 0.0f, 0.0f,
                 0.0f, scalar, 0.0f,
                 0.0f, 0.0f, 1.0f);
@@ -925,11 +925,11 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="scalar">nonuniform scalar</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromScale (in Vec2 scalar)
+    public static Mat3 FromScale(in Vec2 scalar)
     {
-        if (Vec2.All (scalar))
+        if (Vec2.All(scalar))
         {
-            return new Mat3 (
+            return new Mat3(
                 scalar.x, 0.0f, 0.0f,
                 0.0f, scalar.y, 0.0f,
                 0.0f, 0.0f, 1.0f);
@@ -945,13 +945,13 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">skew axis</param>
     /// <param name="b">orthonormal axis</param>
     /// <returns>skew matrix</returns>
-    public static Mat3 FromSkew (in float radians, in Vec2 a, in Vec2 b)
+    public static Mat3 FromSkew(in float radians, in Vec2 a, in Vec2 b)
     {
-        float t = Utils.Tan (radians);
+        float t = Utils.Tan(radians);
         float tax = a.x * t;
         float tay = a.y * t;
 
-        return new Mat3 (
+        return new Mat3(
             tax * b.x + 1.0f, tax * b.y, 0.0f,
             tay * b.x, tay * b.y + 1.0f, 0.0f,
             0.0f, 0.0f, 1.0f);
@@ -962,9 +962,9 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="tr">translation</param>
     /// <returns>the matrix</returns>
-    public static Mat3 FromTranslation (in Vec2 tr)
+    public static Mat3 FromTranslation(in Vec2 tr)
     {
-        return new Mat3 (
+        return new Mat3(
             1.0f, 0.0f, tr.x,
             0.0f, 1.0f, tr.y,
             0.0f, 0.0f, 1.0f);
@@ -975,7 +975,7 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>the inverse</returns>
-    public static Mat3 Inverse (in Mat3 m)
+    public static Mat3 Inverse(in Mat3 m)
     {
         float b01 = m._m22 * m._m11 - m._m12 * m._m21;
         float b11 = m._m12 * m._m20 - m._m22 * m._m10;
@@ -985,7 +985,7 @@ public readonly struct Mat3 : IEnumerable
         if (det != 0.0f)
         {
             float detInv = 1.0f / det;
-            return new Mat3 (
+            return new Mat3(
                 b01 * detInv,
                 (m._m02 * m._m21 - m._m22 * m._m01) * detInv,
                 (m._m12 * m._m01 - m._m02 * m._m11) * detInv,
@@ -1009,13 +1009,13 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">matrix</param>
     /// <param name="b">point</param>
     /// <returns>product</returns>
-    public static Vec2 MulPoint (in Mat3 a, in Vec2 b)
+    public static Vec2 MulPoint(in Mat3 a, in Vec2 b)
     {
         float w = a._m20 * b.x + a._m21 * b.y + a._m22;
         if (w != 0.0f)
         {
             float wInv = 1.0f / w;
-            return new Vec2 (
+            return new Vec2(
                 (a._m00 * b.x + a._m01 * b.y + a._m02) * wInv,
                 (a._m10 * b.x + a._m11 * b.y + a._m12) * wInv);
         }
@@ -1030,13 +1030,13 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="a">matrix</param>
     /// <param name="b">vector</param>
     /// <returns>product</returns>
-    public static Vec2 MulVector (in Mat3 a, in Vec2 b)
+    public static Vec2 MulVector(in Mat3 a, in Vec2 b)
     {
         float w = a._m20 * b.x + a._m21 * b.y + a._m22;
         if (w != 0.0f)
         {
             float wInv = 1.0f / w;
-            return new Vec2 (
+            return new Vec2(
                 (a._m00 * b.x + a._m01 * b.y) * wInv,
                 (a._m10 * b.x + a._m11 * b.y) * wInv);
         }
@@ -1048,7 +1048,7 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>the evaluation</returns>
-    public static bool None (in Mat3 m)
+    public static bool None(in Mat3 m)
     {
         return (m._m00 == 0.0f) && (m._m01 == 0.0f) && (m._m02 == 0.0f) &&
             (m._m10 == 0.0f) && (m._m11 == 0.0f) && (m._m12 == 0.0f) &&
@@ -1060,9 +1060,9 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">input matrix</param>
     /// <returns>rotated matrix</returns>
-    public static Mat3 RotateElmsCCW (in Mat3 m)
+    public static Mat3 RotateElmsCCW(in Mat3 m)
     {
-        return new Mat3 (
+        return new Mat3(
             m._m02, m._m12, m._m22,
             m._m01, m._m11, m._m21,
             m._m00, m._m10, m._m20);
@@ -1073,9 +1073,9 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">input matrix</param>
     /// <returns>rotated matrix</returns>
-    public static Mat3 RotateElmsCW (in Mat3 m)
+    public static Mat3 RotateElmsCW(in Mat3 m)
     {
-        return new Mat3 (
+        return new Mat3(
             m._m20, m._m10, m._m00,
             m._m21, m._m11, m._m01,
             m._m22, m._m12, m._m02);
@@ -1087,9 +1087,9 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="m">matrix</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
-    public static string ToString (in Mat3 m, in int places = 4)
+    public static string ToString(in Mat3 m, in int places = 4)
     {
-        return Mat3.ToString (new StringBuilder (256), m, places).ToString ( );
+        return Mat3.ToString(new StringBuilder(256), m, places).ToString();
     }
 
     /// <summary>
@@ -1099,30 +1099,30 @@ public readonly struct Mat3 : IEnumerable
     /// <param name="m">matrix</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Mat3 m, in int places = 4)
+    public static StringBuilder ToString(in StringBuilder sb, in Mat3 m, in int places = 4)
     {
-        sb.Append ("{ m00: ");
-        Utils.ToFixed (sb, m._m00, places);
-        sb.Append (", m01: ");
-        Utils.ToFixed (sb, m._m01, places);
-        sb.Append (", m02: ");
-        Utils.ToFixed (sb, m._m02, places);
+        sb.Append("{ m00: ");
+        Utils.ToFixed(sb, m._m00, places);
+        sb.Append(", m01: ");
+        Utils.ToFixed(sb, m._m01, places);
+        sb.Append(", m02: ");
+        Utils.ToFixed(sb, m._m02, places);
 
-        sb.Append (", m10: ");
-        Utils.ToFixed (sb, m._m10, places);
-        sb.Append (", m11: ");
-        Utils.ToFixed (sb, m._m11, places);
-        sb.Append (", m12: ");
-        Utils.ToFixed (sb, m._m12, places);
+        sb.Append(", m10: ");
+        Utils.ToFixed(sb, m._m10, places);
+        sb.Append(", m11: ");
+        Utils.ToFixed(sb, m._m11, places);
+        sb.Append(", m12: ");
+        Utils.ToFixed(sb, m._m12, places);
 
-        sb.Append (", m20: ");
-        Utils.ToFixed (sb, m._m20, places);
-        sb.Append (", m21: ");
-        Utils.ToFixed (sb, m._m21, places);
-        sb.Append (", m22: ");
-        Utils.ToFixed (sb, m._m22, places);
+        sb.Append(", m20: ");
+        Utils.ToFixed(sb, m._m20, places);
+        sb.Append(", m21: ");
+        Utils.ToFixed(sb, m._m21, places);
+        sb.Append(", m22: ");
+        Utils.ToFixed(sb, m._m22, places);
 
-        sb.Append (" }");
+        sb.Append(" }");
         return sb;
     }
 
@@ -1131,9 +1131,9 @@ public readonly struct Mat3 : IEnumerable
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>transposition</returns>
-    public static Mat3 Transpose (in Mat3 m)
+    public static Mat3 Transpose(in Mat3 m)
     {
-        return new Mat3 (
+        return new Mat3(
             m._m00, m._m10, m._m20,
             m._m01, m._m11, m._m21,
             m._m02, m._m12, m._m22);
@@ -1148,7 +1148,7 @@ public readonly struct Mat3 : IEnumerable
     {
         get
         {
-            return new Mat3 (
+            return new Mat3(
                 1.0f, 0.0f, 0.0f,
                 0.0f, 1.0f, 0.0f,
                 0.0f, 0.0f, 1.0f);

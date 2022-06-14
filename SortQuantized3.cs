@@ -12,14 +12,14 @@ public class SortQuantized3 : IComparer<Vec3>
         }
     }
 
-    public SortQuantized3 (in int levels = (int) (1.0f / Utils.Epsilon))
+    public SortQuantized3(in int levels = (int)(1.0f / Utils.Epsilon))
     {
         // TODO: Add comments.
         this.levels = levels < 2 ? 2 : levels;
     }
 
-    public int Compare (Vec3 a, Vec3 b)
+    public int Compare(Vec3 a, Vec3 b)
     {
-        return Vec3.Quantize (a, levels).CompareTo (Vec3.Quantize (b, levels));
+        return Vec3.Quantize(a, levels).CompareTo(Vec3.Quantize(b, levels));
     }
 }

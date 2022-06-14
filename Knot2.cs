@@ -82,8 +82,14 @@ public class Knot2
     /// <summary>
     /// The default constructor.
     /// </summary>
-    public Knot2 ( )
+    public Knot2()
     {
+        /// Knots do not implement Equatable because, as classes, they are
+        /// nullable and passed by reference. It is better to defer to 
+        /// reference equality. They do not implement Comparable because
+        /// it is ambiguous whether two knots with the same coordinate but
+        /// different handles are equal or unequal.
+
         this.coord = Vec2.Zero;
         this.foreHandle = Vec2.Zero;
         this.rearHandle = Vec2.Zero;
@@ -94,10 +100,10 @@ public class Knot2
     /// offset by a small amount.
     /// </summary>
     /// <param name="coord">coordinate</param>
-    public Knot2 (in Vec2 coord)
+    public Knot2(in Vec2 coord)
     {
         this.coord = coord;
-        Vec2 eps = Vec2.CopySign (Utils.Epsilon, this.coord);
+        Vec2 eps = Vec2.CopySign(Utils.Epsilon, this.coord);
         this.foreHandle = this.coord + eps;
         this.rearHandle = this.coord - eps;
     }
@@ -108,7 +114,7 @@ public class Knot2
     /// <param name="coord">coordinate</param>
     /// <param name="foreHandle">fore handle</param>
     /// <param name="rearHandle">rear handle</param>
-    public Knot2 (in Vec2 coord, in Vec2 foreHandle, in Vec2 rearHandle)
+    public Knot2(in Vec2 coord, in Vec2 foreHandle, in Vec2 rearHandle)
     {
         this.coord = coord;
         this.foreHandle = foreHandle;
@@ -121,12 +127,12 @@ public class Knot2
     /// </summary>
     /// <param name="xCo">x coordinate</param>
     /// <param name="yCo">y coordinate</param>
-    public Knot2 (in float xCo, in float yCo)
+    public Knot2(in float xCo, in float yCo)
     {
-        float xEps = Utils.CopySign (Utils.Epsilon, xCo);
-        float yEps = Utils.CopySign (Utils.Epsilon, yCo);
+        float xEps = Utils.CopySign(Utils.Epsilon, xCo);
+        float yEps = Utils.CopySign(Utils.Epsilon, yCo);
 
-        this.Set (
+        this.Set(
             xCo, yCo,
 
             xCo + xEps,
@@ -145,12 +151,12 @@ public class Knot2
     /// <param name="yFh">fore handle y</param>
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
-    public Knot2 ( //
+    public Knot2( //
         in float xCo, in float yCo, //
         in float xFh, in float yFh, //
         in float xRh, in float yRh)
     {
-        this.Set (
+        this.Set(
             xCo, yCo,
             xFh, yFh,
             xRh, yRh);
@@ -161,14 +167,14 @@ public class Knot2
     /// vectors.
     /// </summary>
     /// <returns>the hash code</returns>
-    public override int GetHashCode ( )
+    public override int GetHashCode()
     {
         unchecked
         {
             int hash = Utils.HashBase;
-            hash = hash * Utils.HashMul ^ this.coord.GetHashCode ( );
-            hash = hash * Utils.HashMul ^ this.foreHandle.GetHashCode ( );
-            hash = hash * Utils.HashMul ^ this.rearHandle.GetHashCode ( );
+            hash = hash * Utils.HashMul ^ this.coord.GetHashCode();
+            hash = hash * Utils.HashMul ^ this.foreHandle.GetHashCode();
+            hash = hash * Utils.HashMul ^ this.rearHandle.GetHashCode();
             return hash;
         }
     }
@@ -177,9 +183,9 @@ public class Knot2
     /// Returns a string representation of this knot.
     /// </summary>
     /// <returns>the string</returns>
-    public override string ToString ( )
+    public override string ToString()
     {
-        return Knot2.ToString (this);
+        return Knot2.ToString(this);
     }
 
     /// <summary>
@@ -187,7 +193,7 @@ public class Knot2
     /// </summary>
     /// <param name="source">source knot</param>
     /// <returns>this knot</returns>
-    public Knot2 AdoptForeHandle (in Knot2 source)
+    public Knot2 AdoptForeHandle(in Knot2 source)
     {
         this.foreHandle = this.coord + (source.foreHandle - source.coord);
         return this;
@@ -198,10 +204,10 @@ public class Knot2
     /// </summary>
     /// <param name="source">source knot</param>
     /// <returns>this knot</returns>
-    public Knot2 AdoptHandles (in Knot2 source)
+    public Knot2 AdoptHandles(in Knot2 source)
     {
-        this.AdoptForeHandle (source);
-        this.AdoptRearHandle (source);
+        this.AdoptForeHandle(source);
+        this.AdoptRearHandle(source);
         return this;
     }
 
@@ -210,7 +216,7 @@ public class Knot2
     /// </summary>
     /// <param name="source">source knot</param>
     /// <returns>this knot</returns>
-    public Knot2 AdoptRearHandle (in Knot2 source)
+    public Knot2 AdoptRearHandle(in Knot2 source)
     {
         this.rearHandle = this.coord + (source.rearHandle - source.coord);
         return this;
@@ -221,13 +227,13 @@ public class Knot2
     /// magnitude.
     /// </summary>
     /// <returns>this knot</returns>
-    public Knot2 AlignHandlesBackward ( )
+    public Knot2 AlignHandlesBackward()
     {
         Vec2 rDir = this.rearHandle - this.coord;
-        float rMagSq = Vec2.MagSq (rDir);
+        float rMagSq = Vec2.MagSq(rDir);
         if (rMagSq > 0.0f)
         {
-            float flipRescale = -Vec2.DistEuclidean (this.foreHandle, this.coord) / Utils.SqrtUnchecked (rMagSq);
+            float flipRescale = -Vec2.DistEuclidean(this.foreHandle, this.coord) / Utils.SqrtUnchecked(rMagSq);
             this.foreHandle = this.coord + (flipRescale * rDir);
         }
 
@@ -239,13 +245,13 @@ public class Knot2
     /// magnitude.
     /// </summary>
     /// <returns>this knot</returns>
-    public Knot2 AlignHandlesForward ( )
+    public Knot2 AlignHandlesForward()
     {
         Vec2 fDir = this.foreHandle - this.coord;
-        float fMagSq = Vec2.MagSq (fDir);
+        float fMagSq = Vec2.MagSq(fDir);
         if (fMagSq > 0.0f)
         {
-            float flipRescale = -Vec2.DistEuclidean (this.rearHandle, this.coord) / Utils.SqrtUnchecked (fMagSq);
+            float flipRescale = -Vec2.DistEuclidean(this.rearHandle, this.coord) / Utils.SqrtUnchecked(fMagSq);
             this.rearHandle = this.coord + (flipRescale * fDir);
         }
 
@@ -258,15 +264,15 @@ public class Knot2
     /// about the x axis.
     /// </summary>
     /// <returns>this knot</returns>
-    public Knot2 FlipX ( )
+    public Knot2 FlipX()
     {
-        this.coord = new Vec2 ( //
+        this.coord = new Vec2( //
             -this.coord.x,
             this.coord.y);
-        this.foreHandle = new Vec2 ( //
+        this.foreHandle = new Vec2( //
             -this.foreHandle.x,
             this.foreHandle.y);
-        this.rearHandle = new Vec2 ( //
+        this.rearHandle = new Vec2( //
             -this.rearHandle.x,
             this.rearHandle.y);
         return this;
@@ -278,15 +284,15 @@ public class Knot2
     /// about the y axis.
     /// </summary>
     /// <returns>this knot</returns>
-    public Knot2 FlipY ( )
+    public Knot2 FlipY()
     {
-        this.coord = new Vec2 (
+        this.coord = new Vec2(
             this.coord.x, //
             -this.coord.y);
-        this.foreHandle = new Vec2 (
+        this.foreHandle = new Vec2(
             this.foreHandle.x, //
             -this.foreHandle.y);
-        this.rearHandle = new Vec2 (
+        this.rearHandle = new Vec2(
             this.rearHandle.x, //
             -this.rearHandle.y);
         return this;
@@ -297,7 +303,7 @@ public class Knot2
     /// fore will have the same magnitude and negated direction of the rear.
     /// </summary>
     /// <returns>this knot</returns>
-    public Knot2 MirrorHandlesBackward ( )
+    public Knot2 MirrorHandlesBackward()
     {
         this.foreHandle = this.coord - (this.rearHandle - this.coord);
         return this;
@@ -308,7 +314,7 @@ public class Knot2
     /// rear will have the same magnitude and negated direction of the fore.
     /// </summary>
     /// <returns>this knot</returns>
-    public Knot2 MirrorHandlesForward ( )
+    public Knot2 MirrorHandlesForward()
     {
         this.rearHandle = this.coord - (this.foreHandle - this.coord);
         return this;
@@ -320,7 +326,7 @@ public class Knot2
     /// </summary>
     /// <param name="v">coordinate</param>
     /// <returns>this knot</returns>
-    public Knot2 Relocate (Vec2 v)
+    public Knot2 Relocate(Vec2 v)
     {
         this.foreHandle -= this.coord;
         this.rearHandle -= this.coord;
@@ -337,7 +343,7 @@ public class Knot2
     /// Reverses the knot's direction by swapping the fore and rear handles.
     /// </summary>
     /// <returns>this knot</returns>
-    public Knot2 Reverse ( )
+    public Knot2 Reverse()
     {
         Vec2 temp = this.foreHandle;
         this.foreHandle = this.rearHandle;
@@ -351,10 +357,10 @@ public class Knot2
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>this knot</returns>
-    public Knot2 RotateForeHandle (in float radians)
+    public Knot2 RotateForeHandle(in float radians)
     {
-        Utils.SinCos (radians, out float sina, out float cosa);
-        return this.RotateForeHandle (cosa, sina);
+        Utils.SinCos(radians, out float sina, out float cosa);
+        return this.RotateForeHandle(cosa, sina);
     }
 
     /// <summary>
@@ -363,10 +369,10 @@ public class Knot2
     /// <param name="cosa">cosine</param>
     /// <param name="sina">sine</param>
     /// <returns>this knot</returns>
-    public Knot2 RotateForeHandle (in float cosa, in float sina)
+    public Knot2 RotateForeHandle(in float cosa, in float sina)
     {
         this.foreHandle -= this.coord;
-        this.foreHandle = Vec2.RotateZ (this.foreHandle, cosa, sina);
+        this.foreHandle = Vec2.RotateZ(this.foreHandle, cosa, sina);
         this.foreHandle += this.coord;
 
         return this;
@@ -377,10 +383,10 @@ public class Knot2
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>this knot</returns>
-    public Knot2 RotateHandles (in float radians)
+    public Knot2 RotateHandles(in float radians)
     {
-        Utils.SinCos (radians, out float sina, out float cosa);
-        return this.RotateHandles (cosa, sina);
+        Utils.SinCos(radians, out float sina, out float cosa);
+        return this.RotateHandles(cosa, sina);
     }
 
     /// <summary>
@@ -390,10 +396,10 @@ public class Knot2
     /// <param name="cosa">cosine</param>
     /// <param name="sina">sine</param>
     /// <returns>this knot</returns>
-    public Knot2 RotateHandles (in float cosa, in float sina)
+    public Knot2 RotateHandles(in float cosa, in float sina)
     {
-        this.RotateForeHandle (cosa, sina);
-        this.RotateRearHandle (cosa, sina);
+        this.RotateForeHandle(cosa, sina);
+        this.RotateRearHandle(cosa, sina);
 
         return this;
     }
@@ -403,10 +409,10 @@ public class Knot2
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>this knot</returns>
-    public Knot2 RotateRearHandle (in float radians)
+    public Knot2 RotateRearHandle(in float radians)
     {
-        Utils.SinCos (radians, out float sina, out float cosa);
-        return this.RotateRearHandle (cosa, sina);
+        Utils.SinCos(radians, out float sina, out float cosa);
+        return this.RotateRearHandle(cosa, sina);
     }
 
     /// <summary>
@@ -415,10 +421,10 @@ public class Knot2
     /// <param name="cosa">cosine</param>
     /// <param name="sina">sine</param>
     /// <returns>this knot</returns>
-    public Knot2 RotateRearHandle (in float cosa, in float sina)
+    public Knot2 RotateRearHandle(in float cosa, in float sina)
     {
         this.rearHandle -= this.coord;
-        this.rearHandle = Vec2.RotateZ (this.rearHandle, cosa, sina);
+        this.rearHandle = Vec2.RotateZ(this.rearHandle, cosa, sina);
         this.rearHandle += this.coord;
 
         return this;
@@ -429,10 +435,10 @@ public class Knot2
     /// </summary>
     /// <param name="radians">radians</param>
     /// <returns>this knot</returns>
-    public Knot2 RotateZ (in float radians)
+    public Knot2 RotateZ(in float radians)
     {
-        Utils.SinCos (radians, out float sina, out float cosa);
-        return this.RotateZ (cosa, sina);
+        Utils.SinCos(radians, out float sina, out float cosa);
+        return this.RotateZ(cosa, sina);
     }
 
     /// <summary>
@@ -444,11 +450,11 @@ public class Knot2
     /// <param name="cosa">cosine of the angle</param>
     /// <param name="sina">sine of the angle</param>
     /// <returns>this knot</returns>
-    public Knot2 RotateZ (in float cosa, in float sina)
+    public Knot2 RotateZ(in float cosa, in float sina)
     {
-        this.coord = Vec2.RotateZ (this.coord, cosa, sina);
-        this.foreHandle = Vec2.RotateZ (this.foreHandle, cosa, sina);
-        this.rearHandle = Vec2.RotateZ (this.rearHandle, cosa, sina);
+        this.coord = Vec2.RotateZ(this.coord, cosa, sina);
+        this.foreHandle = Vec2.RotateZ(this.foreHandle, cosa, sina);
+        this.rearHandle = Vec2.RotateZ(this.rearHandle, cosa, sina);
 
         return this;
     }
@@ -458,7 +464,7 @@ public class Knot2
     /// </summary>
     /// <param name="scale">factor</param>
     /// <returns>this knot</returns>
-    public Knot2 Scale (in float scale)
+    public Knot2 Scale(in float scale)
     {
         this.coord *= scale;
         this.foreHandle *= scale;
@@ -472,7 +478,7 @@ public class Knot2
     /// </summary>
     /// <param name="scale">non uniform scalar</param>
     /// <returns>this knot</returns>
-    public Knot2 Scale (in Vec2 scale)
+    public Knot2 Scale(in Vec2 scale)
     {
         this.coord *= scale;
         this.foreHandle *= scale;
@@ -486,7 +492,7 @@ public class Knot2
     /// </summary>
     /// <param name="scalar">scalar</param>
     /// <returns>this knot</returns>
-    public Knot2 ScaleForeHandleBy (in float scalar = 1.0f)
+    public Knot2 ScaleForeHandleBy(in float scalar = 1.0f)
     {
         this.foreHandle -= this.coord;
         this.foreHandle *= scalar;
@@ -500,10 +506,10 @@ public class Knot2
     /// </summary>
     /// <param name="magnitude">magnitude</param>
     /// <returns>this knot</returns>
-    public Knot2 ScaleForeHandleTo (in float magnitude)
+    public Knot2 ScaleForeHandleTo(in float magnitude)
     {
         this.foreHandle -= this.coord;
-        this.foreHandle = Vec2.Rescale (this.foreHandle, magnitude);
+        this.foreHandle = Vec2.Rescale(this.foreHandle, magnitude);
         this.foreHandle += this.coord;
 
         return this;
@@ -514,10 +520,10 @@ public class Knot2
     /// </summary>
     /// <param name="magnitude">magnitude</param>
     /// <returns>the knot</returns>
-    public Knot2 ScaleHandlesBy (in float scalar)
+    public Knot2 ScaleHandlesBy(in float scalar)
     {
-        this.ScaleForeHandleBy (scalar);
-        this.ScaleRearHandleBy (scalar);
+        this.ScaleForeHandleBy(scalar);
+        this.ScaleRearHandleBy(scalar);
 
         return this;
     }
@@ -527,10 +533,10 @@ public class Knot2
     /// </summary>
     /// <param name="magnitude">magnitude</param>
     /// <returns>the knot</returns>
-    public Knot2 ScaleHandlesTo (in float magnitude)
+    public Knot2 ScaleHandlesTo(in float magnitude)
     {
-        this.ScaleForeHandleTo (magnitude);
-        this.ScaleRearHandleTo (magnitude);
+        this.ScaleForeHandleTo(magnitude);
+        this.ScaleRearHandleTo(magnitude);
 
         return this;
     }
@@ -540,7 +546,7 @@ public class Knot2
     /// </summary>
     /// <param name="scalar">scalar</param>
     /// <returns>this knot</returns>
-    public Knot2 ScaleRearHandleBy (in float scalar = 1.0f)
+    public Knot2 ScaleRearHandleBy(in float scalar = 1.0f)
     {
         this.rearHandle -= this.coord;
         this.rearHandle *= scalar;
@@ -554,10 +560,10 @@ public class Knot2
     /// </summary>
     /// <param name="magnitude">magnitude</param>
     /// <returns>this knot</returns>
-    public Knot2 ScaleRearHandleTo (in float magnitude = 1.0f)
+    public Knot2 ScaleRearHandleTo(in float magnitude = 1.0f)
     {
         this.rearHandle -= this.coord;
-        this.rearHandle = Vec2.Rescale (this.rearHandle, magnitude);
+        this.rearHandle = Vec2.Rescale(this.rearHandle, magnitude);
         this.rearHandle += this.coord;
 
         return this;
@@ -572,14 +578,14 @@ public class Knot2
     /// <param name="yFh">fore handle y</param>
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
-    public Knot2 Set ( //
+    public Knot2 Set( //
         in float xCo, in float yCo, //
         in float xFh, in float yFh, //
         in float xRh, in float yRh)
     {
-        this.coord = new Vec2 (xCo, yCo);
-        this.foreHandle = new Vec2 (xFh, yFh);
-        this.rearHandle = new Vec2 (xRh, yRh);
+        this.coord = new Vec2(xCo, yCo);
+        this.foreHandle = new Vec2(xFh, yFh);
+        this.rearHandle = new Vec2(xRh, yRh);
 
         return this;
     }
@@ -589,11 +595,11 @@ public class Knot2
     /// </summary>
     /// <param name="tr">transform</param>
     /// <returns>this knot</returns>
-    public Knot2 Transform (in Mat3 m)
+    public Knot2 Transform(in Mat3 m)
     {
-        this.coord = Mat3.MulPoint (m, this.coord);
-        this.foreHandle = Mat3.MulPoint (m, this.foreHandle);
-        this.rearHandle = Mat3.MulPoint (m, this.rearHandle);
+        this.coord = Mat3.MulPoint(m, this.coord);
+        this.foreHandle = Mat3.MulPoint(m, this.foreHandle);
+        this.rearHandle = Mat3.MulPoint(m, this.rearHandle);
 
         return this;
     }
@@ -603,11 +609,11 @@ public class Knot2
     /// </summary>
     /// <param name="tr">transform</param>
     /// <returns>this knot</returns>
-    public Knot2 Transform (in Transform2 tr)
+    public Knot2 Transform(in Transform2 tr)
     {
-        this.coord = Transform2.MulPoint (tr, this.coord);
-        this.foreHandle = Transform2.MulPoint (tr, this.foreHandle);
-        this.rearHandle = Transform2.MulPoint (tr, this.rearHandle);
+        this.coord = Transform2.MulPoint(tr, this.coord);
+        this.foreHandle = Transform2.MulPoint(tr, this.foreHandle);
+        this.rearHandle = Transform2.MulPoint(tr, this.rearHandle);
 
         return this;
     }
@@ -617,7 +623,7 @@ public class Knot2
     /// </summary>
     /// <param name="v">vector</param>
     /// <returns>this knot</returns>
-    public Knot2 Translate (in Vec2 v)
+    public Knot2 Translate(in Vec2 v)
     {
         this.coord += v;
         this.foreHandle += v;
@@ -630,9 +636,9 @@ public class Knot2
     /// Converts a vector to a knot.
     /// </summary>
     /// <param name="v">vector</param>
-    public static implicit operator Knot2 (in Vec2 v)
+    public static implicit operator Knot2(in Vec2 v)
     {
-        return new Knot2 (v);
+        return new Knot2(v);
     }
 
     /// <summary>
@@ -643,9 +649,9 @@ public class Knot2
     /// <param name="b">destination</param>
     /// <param name="step">step</param>
     /// <returns>the evaluation</returns>
-    public static Vec2 BezierPoint (in Knot2 a, in Knot2 b, in float step)
+    public static Vec2 BezierPoint(in Knot2 a, in Knot2 b, in float step)
     {
-        return Vec2.BezierPoint (
+        return Vec2.BezierPoint(
             a.coord, a.foreHandle,
             b.rearHandle, b.coord,
             step);
@@ -658,9 +664,9 @@ public class Knot2
     /// <param name="b">destination</param>
     /// <param name="step">step</param>
     /// <returns>the evaluation</returns>
-    public static Vec2 BezierTangent (in Knot2 a, in Knot2 b, in float step)
+    public static Vec2 BezierTangent(in Knot2 a, in Knot2 b, in float step)
     {
-        return Vec2.BezierTangent (
+        return Vec2.BezierTangent(
             a.coord, a.foreHandle,
             b.rearHandle, b.coord,
             step);
@@ -674,9 +680,9 @@ public class Knot2
     /// <param name="b">destination</param>
     /// <param name="step">step</param>
     /// <returns>the evaluation</returns>
-    public static Vec2 BezierTanUnit (in Knot2 a, in Knot2 b, in float step)
+    public static Vec2 BezierTanUnit(in Knot2 a, in Knot2 b, in float step)
     {
-        return Vec2.BezierTanUnit (
+        return Vec2.BezierTanUnit(
             a.coord, a.foreHandle,
             b.rearHandle, b.coord,
             step);
@@ -687,9 +693,9 @@ public class Knot2
     /// </summary>
     /// <param name="knot">knot</param>
     /// <returns>fore handle vector</returns>
-    public static Vec2 ForeDir (in Knot2 knot)
+    public static Vec2 ForeDir(in Knot2 knot)
     {
-        return Vec2.Normalize (Knot2.ForeVec (knot));
+        return Vec2.Normalize(Knot2.ForeVec(knot));
     }
 
     /// <summary>
@@ -698,9 +704,9 @@ public class Knot2
     /// </summary>
     /// <param name="knot">knot</param>
     /// <returns>magnitude</returns>
-    public static float ForeMag (in Knot2 knot)
+    public static float ForeMag(in Knot2 knot)
     {
-        return Vec2.DistEuclidean (knot.foreHandle, knot.coord);
+        return Vec2.DistEuclidean(knot.foreHandle, knot.coord);
     }
 
     /// <summary>
@@ -708,7 +714,7 @@ public class Knot2
     /// </summary>
     /// <param name="knot">knot</param>
     /// <returns>fore handle vector</returns>
-    public static Vec2 ForeVec (in Knot2 knot)
+    public static Vec2 ForeVec(in Knot2 knot)
     {
         return knot.foreHandle - knot.coord;
     }
@@ -724,7 +730,7 @@ public class Knot2
     /// <param name="xCenter">x center</param>
     /// <param name="yCenter">y center</param>
     /// <returns>the knot</returns>
-    public static Knot2 FromPolar ( //
+    public static Knot2 FromPolar( //
         in float cosa = 1.0f, //
         in float sina = 0.0f, //
         in float radius = 1.0f, //
@@ -744,7 +750,7 @@ public class Knot2
         float rhx = cox + hmsina;
         float rhy = coy - hmcosa;
 
-        return new Knot2 (cox, coy, fhx, fhy, rhx, rhy);
+        return new Knot2(cox, coy, fhx, fhy, rhx, rhy);
     }
 
     /// <summary>
@@ -752,9 +758,9 @@ public class Knot2
     /// </summary>
     /// <param name="knot">knot</param>
     /// <returns>rear handle vector</returns>
-    public static Vec2 RearDir (in Knot2 knot)
+    public static Vec2 RearDir(in Knot2 knot)
     {
-        return Vec2.Normalize (Knot2.RearVec (knot));
+        return Vec2.Normalize(Knot2.RearVec(knot));
     }
 
     /// <summary>
@@ -763,9 +769,9 @@ public class Knot2
     /// </summary>
     /// <param name="knot">knot</param>
     /// <returns>magnitude</returns>
-    public static float RearMag (in Knot2 knot)
+    public static float RearMag(in Knot2 knot)
     {
-        return Vec2.DistEuclidean (knot.rearHandle, knot.coord);
+        return Vec2.DistEuclidean(knot.rearHandle, knot.coord);
     }
 
     /// <summary>
@@ -773,7 +779,7 @@ public class Knot2
     /// </summary>
     /// <param name="knot">knot</param>
     /// <returns>rear handle vector</returns>
-    public static Vec2 RearVec (in Knot2 knot)
+    public static Vec2 RearVec(in Knot2 knot)
     {
         return knot.rearHandle - knot.coord;
     }
@@ -784,9 +790,9 @@ public class Knot2
     /// <param name="kn">knot</param>
     /// <param name="places">places</param>
     /// <returns>string</returns>
-    public static string ToString (in Knot2 kn, in int places = 4)
+    public static string ToString(in Knot2 kn, in int places = 4)
     {
-        return Knot2.ToString (new StringBuilder (256), kn, places).ToString ( );
+        return Knot2.ToString(new StringBuilder(256), kn, places).ToString();
     }
 
     /// <summary>
@@ -796,16 +802,16 @@ public class Knot2
     /// <param name="kn">knot</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Knot2 kn, in int places = 4)
+    public static StringBuilder ToString(in StringBuilder sb, in Knot2 kn, in int places = 4)
     {
-        sb.Append ("{ coord: ");
-        Vec2.ToString (sb, kn.coord, places);
-        sb.Append (", foreHandle: ");
-        Vec2.ToString (sb, kn.foreHandle, places);
-        sb.Append (", rearHandle: ");
-        Vec2.ToString (sb, kn.rearHandle, places);
-        sb.Append (' ');
-        sb.Append ('}');
+        sb.Append("{ coord: ");
+        Vec2.ToString(sb, kn.coord, places);
+        sb.Append(", foreHandle: ");
+        Vec2.ToString(sb, kn.foreHandle, places);
+        sb.Append(", rearHandle: ");
+        Vec2.ToString(sb, kn.rearHandle, places);
+        sb.Append(' ');
+        sb.Append('}');
         return sb;
     }
 }
