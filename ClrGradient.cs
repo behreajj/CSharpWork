@@ -557,7 +557,7 @@ public class ClrGradient : IEnumerable
     /// Finds a color given a step in the range [0.0, 1.0]. When the step falls
     /// between color keys, the resultant color is created by an easing function.
     /// </summary>
-    /// <param name="cg>color gradient</param>
+    /// <param name="cg">color gradient</param>
     /// <param name="step">step</param>
     /// <returns>color</returns>
     public static Clr Eval(in ClrGradient cg, in float step)
@@ -569,7 +569,7 @@ public class ClrGradient : IEnumerable
     /// Finds a color given a step in the range [0.0, 1.0]. When the step falls
     /// between color keys, the resultant color is created by an easing function.
     /// </summary>
-    /// <param name="cg>color gradient</param>
+    /// <param name="cg">color gradient</param>
     /// <param name="step">step</param>
     /// <param name="easing">easing function</param>
     /// <returns>color</returns>
