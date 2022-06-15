@@ -326,7 +326,7 @@ public class ClrGradient : IEnumerable
     /// </summary>
     /// <param name="added">number to add</param>
     /// <returns>this gradient</returns>
-    protected ClrGradient CompressKeysLeft(in int added = 1)
+    ClrGradient CompressKeysLeft(in int added = 1)
     {
         int len = this.keys.Count;
         float scalar = 1.0f / (len + added - 1.0f);
@@ -346,7 +346,7 @@ public class ClrGradient : IEnumerable
     /// </summary>
     /// <param name="added">number to add</param>
     /// <returns>this gradient</returns>
-    protected ClrGradient CompressKeysRight(in int added = 1)
+    ClrGradient CompressKeysRight(in int added = 1)
     {
         int len = this.keys.Count;
         float scalar = added / (len + added - 1.0f);
@@ -529,7 +529,7 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Locates the insertion point for a step in the gradient that will maintain sorted order.
     /// </summary>
-    /// <param name="cg>color gradient</param>
+    /// <param name="cg">color gradient</param>
     /// <param name="step">step</param>
     /// <returns>the index</returns>
     static int BisectRight(in ClrGradient cg, in float step)
