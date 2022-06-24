@@ -700,10 +700,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static Vec4 Abs(in Vec4 v)
     {
         return new Vec4(
-            Utils.Abs(v._x),
-            Utils.Abs(v._y),
-            Utils.Abs(v._z),
-            Utils.Abs(v._w));
+            MathF.Abs(v._x),
+            MathF.Abs(v._y),
+            MathF.Abs(v._z),
+            MathF.Abs(v._w));
     }
 
     /// <summary>
@@ -768,10 +768,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static Vec4 Ceil(in Vec4 v)
     {
         return new Vec4(
-            Utils.Ceil(v._x),
-            Utils.Ceil(v._y),
-            Utils.Ceil(v._z),
-            Utils.Ceil(v._w));
+            MathF.Ceiling(v._x),
+            MathF.Ceiling(v._y),
+            MathF.Ceiling(v._z),
+            MathF.Ceiling(v._w));
     }
 
     /// <summary>
@@ -858,11 +858,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the Euclidean distance</returns>
     public static float DistEuclidean(in Vec4 a, in Vec4 b)
     {
-        // double dx = b._x - a._x; double dy = b._y - a._y; double dz = b._z -
-        // a._z; double dw = b._w - a._w; return (float) Math.Sqrt (dx * dx + dy
-        // * dy + dz * dz + dw * dw);
-
-        return Utils.Sqrt(Vec4.DistSq(a, b));
+        return MathF.Sqrt(Vec4.DistSq(a, b));
     }
 
     /// <summary>
@@ -893,11 +889,11 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     {
         if (c != 0.0f)
         {
-            float dx = Utils.Pow(Utils.Diff(b._x, a._x), c);
-            float dy = Utils.Pow(Utils.Diff(b._y, a._y), c);
-            float dz = Utils.Pow(Utils.Diff(b._z, a._z), c);
-            float dw = Utils.Pow(Utils.Diff(b._w, a._w), c);
-            return Utils.Pow(dx + dy + dz + dw, 1.0f / c);
+            float dx = MathF.Pow(Utils.Diff(b._x, a._x), c);
+            float dy = MathF.Pow(Utils.Diff(b._y, a._y), c);
+            float dz = MathF.Pow(Utils.Diff(b._z, a._z), c);
+            float dw = MathF.Pow(Utils.Diff(b._w, a._w), c);
+            return MathF.Pow(dx + dy + dz + dw, 1.0f / c);
         }
         return 0.0f;
     }
@@ -947,10 +943,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static Vec4 Floor(in Vec4 v)
     {
         return new Vec4(
-            Utils.Floor(v._x),
-            Utils.Floor(v._y),
-            Utils.Floor(v._z),
-            Utils.Floor(v._w));
+            MathF.Floor(v._x),
+            MathF.Floor(v._y),
+            MathF.Floor(v._z),
+            MathF.Floor(v._w));
     }
 
     /// <summary>
@@ -1057,7 +1053,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         float mSq = Vec4.MagSq(v);
         if (mSq > (limit * limit))
         {
-            return Utils.Div(limit, Utils.SqrtUnchecked(mSq)) * v;
+            return Utils.Div(limit, MathF.Sqrt(mSq)) * v;
         }
         return v;
     }
@@ -1089,11 +1085,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>the magnitude</returns>
     public static float Mag(in Vec4 v)
     {
-        // double xd = v._x; double yd = v._y; double zd = v._z; double wd =
-        // v._w;
-        // return (float) Math.Sqrt (xd * xd + yd * yd + zd * zd + wd * wd);
-
-        return Utils.Sqrt(Vec4.Mag(v));
+        return MathF.Sqrt(Vec4.MagSq(v));
     }
 
     /// <summary>
@@ -1143,10 +1135,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static Vec4 Max(in Vec4 a, in Vec4 b)
     {
         return new Vec4(
-            Utils.Max(a._x, b._x),
-            Utils.Max(a._y, b._y),
-            Utils.Max(a._z, b._z),
-            Utils.Max(a._w, b._w));
+            MathF.Max(a._x, b._x),
+            MathF.Max(a._y, b._y),
+            MathF.Max(a._z, b._z),
+            MathF.Max(a._w, b._w));
     }
 
     /// <summary>
@@ -1158,10 +1150,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static Vec4 Min(in Vec4 a, in Vec4 b)
     {
         return new Vec4(
-            Utils.Min(a._x, b._x),
-            Utils.Min(a._y, b._y),
-            Utils.Min(a._z, b._z),
-            Utils.Min(a._w, b._w));
+            MathF.Min(a._x, b._x),
+            MathF.Min(a._y, b._y),
+            MathF.Min(a._z, b._z),
+            MathF.Min(a._w, b._w));
     }
 
     /// <summary>
@@ -1264,10 +1256,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static Vec4 Pow(in Vec4 a, in Vec4 b)
     {
         return new Vec4(
-            Utils.Pow(a._x, b._x),
-            Utils.Pow(a._y, b._y),
-            Utils.Pow(a._z, b._z),
-            Utils.Pow(a._w, b._w));
+            MathF.Pow(a._x, b._x),
+            MathF.Pow(a._y, b._y),
+            MathF.Pow(a._z, b._z),
+            MathF.Pow(a._w, b._w));
     }
 
     /// <summary>
@@ -1399,7 +1391,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         float iDotN = Vec4.Dot(i, n);
         float k = 1.0f - eta * eta * (1.0f - iDotN * iDotN);
         if (k < 0.0f) { return Vec4.Zero; }
-        return (eta * i) - (n * (eta * iDotN + Utils.Sqrt(k)));
+        return (eta * i) - (n * (eta * iDotN + MathF.Sqrt(k)));
     }
 
     /// <summary>
@@ -1467,10 +1459,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static Vec4 Round(in Vec4 v, in int places)
     {
         return new Vec4(
-            Utils.Round(v._x, places),
-            Utils.Round(v._y, places),
-            Utils.Round(v._z, places),
-            Utils.Round(v._w, places));
+            MathF.Round(v._x, places),
+            MathF.Round(v._y, places),
+            MathF.Round(v._z, places),
+            MathF.Round(v._w, places));
     }
 
     /// <summary>
@@ -1481,10 +1473,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static Vec4 Sign(in Vec4 v)
     {
         return new Vec4(
-            Utils.Sign(v._x),
-            Utils.Sign(v._y),
-            Utils.Sign(v._z),
-            Utils.Sign(v._w));
+            MathF.Sign(v._x),
+            MathF.Sign(v._y),
+            MathF.Sign(v._z),
+            MathF.Sign(v._w));
     }
 
     /// <summary>
@@ -1561,10 +1553,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static Vec4 Trunc(in Vec4 v)
     {
         return new Vec4(
-            Utils.Trunc(v._x),
-            Utils.Trunc(v._y),
-            Utils.Trunc(v._z),
-            Utils.Trunc(v._w));
+            MathF.Truncate(v._x),
+            MathF.Truncate(v._y),
+            MathF.Truncate(v._z),
+            MathF.Truncate(v._w));
     }
 
     /// <summary>

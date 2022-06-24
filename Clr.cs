@@ -123,18 +123,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>the equivalence</returns>
     public override bool Equals(object value)
     {
-        if (Object.ReferenceEquals(this, value))
-        {
-            return true;
-        }
-        if (value is null)
-        {
-            return false;
-        }
-        if (value is Clr)
-        {
-            return this.Equals((Clr)value);
-        }
+        if (Object.ReferenceEquals(this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Clr) { return this.Equals((Clr)value); }
         return false;
     }
 
@@ -322,8 +313,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>the evaluation</returns>
     public static bool EqAlphaSatArith(in Clr a, in Clr b)
     {
-        return (int)(0.5f + 255.0f * Utils.Clamp(a._a, 0.0f, 1.0f)) ==
-               (int)(0.5f + 255.0f * Utils.Clamp(b._a, 0.0f, 1.0f));
+        return (int)(Utils.Clamp(a._a, 0.0f, 1.0f) * 255.0f + 0.5f) ==
+               (int)(Utils.Clamp(b._a, 0.0f, 1.0f) * 255.0f + 0.5f);
     }
 
     /// <summary>
@@ -335,12 +326,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>the evaluation</returns>
     public static bool EqRgbSatArith(in Clr a, in Clr b)
     {
-        return (int)(0.5f + 255.0f * Utils.Clamp(a._b, 0.0f, 1.0f)) ==
-               (int)(0.5f + 255.0f * Utils.Clamp(b._b, 0.0f, 1.0f)) &&
-               (int)(0.5f + 255.0f * Utils.Clamp(a._g, 0.0f, 1.0f)) ==
-               (int)(0.5f + 255.0f * Utils.Clamp(b._g, 0.0f, 1.0f)) &&
-               (int)(0.5f + 255.0f * Utils.Clamp(a._r, 0.0f, 1.0f)) ==
-               (int)(0.5f + 255.0f * Utils.Clamp(b._r, 0.0f, 1.0f));
+        return (int)(Utils.Clamp(a._b, 0.0f, 1.0f) * 255.0f + 0.5f) ==
+               (int)(Utils.Clamp(b._b, 0.0f, 1.0f) * 255.0f + 0.5f) &&
+               (int)(Utils.Clamp(a._g, 0.0f, 1.0f) * 255.0f + 0.5f) ==
+               (int)(Utils.Clamp(b._g, 0.0f, 1.0f) * 255.0f + 0.5f) &&
+               (int)(Utils.Clamp(a._r, 0.0f, 1.0f) * 255.0f + 0.5f) ==
+               (int)(Utils.Clamp(b._r, 0.0f, 1.0f) * 255.0f + 0.5f);
     }
 
     /// <summary>
@@ -546,8 +537,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>Lab color</returns>
     public static Vec4 LchaToLaba(in Vec4 lch)
     {
+        // TODO: Use single precision?
         double hRad = (double)lch.x * 6.283185307179586d;
-        float chroma = Utils.Max(0.0f, lch.y);
+        float chroma = MathF.Max(0.0f, lch.y);
         return new Vec4(
             chroma * (float)Math.Cos(hRad),
             chroma * (float)Math.Sin(hRad),
@@ -598,6 +590,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>the standard color</returns>
     public static Clr LinearToStandard(in Clr c, in bool alpha = false)
     {
+        // TODO: Use single precision?
         double inv24 = 1.0d / 2.4d;
         return new Clr(
             c._r > 0.0031308f ?
@@ -1086,10 +1079,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>the color in hexadecimal</returns>
     public static int ToHexAbgrUnchecked(in Clr c)
     {
-        return (int)(0.5f + 255.0f * c._a) << 0x18 |
-               (int)(0.5f + 255.0f * c._b) << 0x10 |
-               (int)(0.5f + 255.0f * c._g) << 0x08 |
-               (int)(0.5f + 255.0f * c._r);
+        return (int)(c._a * 255.0f + 0.5f) << 0x18 |
+               (int)(c._b * 255.0f + 0.5f) << 0x10 |
+               (int)(c._g * 255.0f + 0.5f) << 0x08 |
+               (int)(c._r * 255.0f + 0.5f);
     }
 
     /// <summary>
@@ -1100,10 +1093,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>the color in hexadecimal</returns>
     public static int ToHexArgbUnchecked(in Clr c)
     {
-        return (int)(0.5f + 255.0f * c._a) << 0x18 |
-               (int)(0.5f + 255.0f * c._r) << 0x10 |
-               (int)(0.5f + 255.0f * c._g) << 0x08 |
-               (int)(0.5f + 255.0f * c._b);
+        return (int)(c._a * 255.0f + 0.5f) << 0x18 |
+               (int)(c._r * 255.0f + 0.5f) << 0x10 |
+               (int)(c._g * 255.0f + 0.5f) << 0x08 |
+               (int)(c._b * 255.0f + 0.5f);
     }
 
     /// <summary>
@@ -1114,10 +1107,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>the color in hexadecimal</returns>
     public static int ToHexRgbaUnchecked(in Clr c)
     {
-        return (int)(0.5f + 255.0f * c._r) << 0x18 |
-               (int)(0.5f + 255.0f * c._g) << 0x10 |
-               (int)(0.5f + 255.0f * c._b) << 0x08 |
-               (int)(0.5f + 255.0f * c._a);
+        return (int)(c._r * 255.0f + 0.5f) << 0x18 |
+               (int)(c._g * 255.0f + 0.5f) << 0x10 |
+               (int)(c._b * 255.0f + 0.5f) << 0x08 |
+               (int)(c._a * 255.0f + 0.5f);
     }
 
     /// <summary>
@@ -1142,9 +1135,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>string builder</returns>
     public static StringBuilder ToHexWeb(in StringBuilder sb, in Clr c)
     {
-        int r = (int)(0.5f + 255.0f * Utils.Clamp(c._r, 0.0f, 1.0f));
-        int g = (int)(0.5f + 255.0f * Utils.Clamp(c._g, 0.0f, 1.0f));
-        int b = (int)(0.5f + 255.0f * Utils.Clamp(c._b, 0.0f, 1.0f));
+        int r = (int)(Utils.Clamp(c._r, 0.0f, 1.0f) * 255.0f + 0.5f);
+        int g = (int)(Utils.Clamp(c._g, 0.0f, 1.0f) * 255.0f + 0.5f);
+        int b = (int)(Utils.Clamp(c._b, 0.0f, 1.0f) * 255.0f + 0.5f);
         sb.AppendFormat("{0:X6}", (r << 0x10 | g << 0x08 | b));
         return sb;
     }

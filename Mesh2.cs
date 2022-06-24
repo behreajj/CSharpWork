@@ -1075,7 +1075,7 @@ public class Mesh2
         in float radius = 0.5f, //
         float oculus = 0.5f, //
         in float startAngle = 0.0f, //
-        in float stopAngle = Utils.Pi, //
+        in float stopAngle = MathF.PI, //
         in PolyType poly = PolyType.Tri)
     {
         float a1 = Utils.WrapRadians(startAngle) * Utils.OneTau;
@@ -1097,14 +1097,14 @@ public class Mesh2
             return target;
         }
 
-        int sctCount = Utils.Ceil(1.0f + Utils.Max(3.0f, sectors) * arcLen1);
+        int sctCount = Utils.Ceil(1.0f + MathF.Max(3.0f, sectors) * arcLen1);
         int sctCount2 = sctCount + sctCount;
 
         Vec2[] vs = target.coords = Vec2.Resize(target.coords, sctCount2);
         Vec2[] vts = target.texCoords = Vec2.Resize(target.texCoords,
             sctCount2);
 
-        float rad = Utils.Max(Utils.Epsilon, radius);
+        float rad = MathF.Max(Utils.Epsilon, radius);
         float oculRad = oculFac * rad;
         float oculRadVt = oculFac * 0.5f;
 
@@ -1116,8 +1116,8 @@ public class Mesh2
         {
             float step = k * toStep;
             float theta = Utils.Mix(origAngle, destAngle, step);
-            float cosTheta = Utils.Cos(theta);
-            float sinTheta = Utils.Sin(theta);
+            float cosTheta = MathF.Cos(theta);
+            float sinTheta = MathF.Sin(theta);
 
             vs[i] = new Vec2(
                 cosTheta * rad,
@@ -1139,66 +1139,66 @@ public class Mesh2
         int len;
         switch (poly)
         {
-        case PolyType.Ngon:
-            {
-                len = sctCount2;
-                int last = len - 1;
-                target.loops = new Loop2[] { new Loop2(len) };
-                Loop2 indices = target.loops[0];
-
-                for (int i = 0, j = 0; i < sctCount; ++i, j += 2)
+            case PolyType.Ngon:
                 {
-                    int k = sctCount + i;
-                    int m = last - j;
-                    indices[i] = new Index2(j, j);
-                    indices[k] = new Index2(m, m);
-                }
-            }
-            break;
-        case PolyType.Quad:
-            {
-                len = sctCount - 1;
-                target.loops = Loop2.Resize(target.loops, len, 4, true);
+                    len = sctCount2;
+                    int last = len - 1;
+                    target.loops = new Loop2[] { new Loop2(len) };
+                    Loop2 indices = target.loops[0];
 
-                for (int k = 0, i = 0, j = 1; k < len; ++k, i += 2, j += 2)
+                    for (int i = 0, j = 0; i < sctCount; ++i, j += 2)
+                    {
+                        int k = sctCount + i;
+                        int m = last - j;
+                        indices[i] = new Index2(j, j);
+                        indices[k] = new Index2(m, m);
+                    }
+                }
+                break;
+            case PolyType.Quad:
                 {
-                    int m = i + 2;
-                    int n = j + 2;
+                    len = sctCount - 1;
+                    target.loops = Loop2.Resize(target.loops, len, 4, true);
 
-                    Loop2.Quad(
-                        new Index2(i, i),
-                        new Index2(m, m),
-                        new Index2(n, n),
-                        new Index2(j, j),
-                        target.loops[k]);
+                    for (int k = 0, i = 0, j = 1; k < len; ++k, i += 2, j += 2)
+                    {
+                        int m = i + 2;
+                        int n = j + 2;
+
+                        Loop2.Quad(
+                            new Index2(i, i),
+                            new Index2(m, m),
+                            new Index2(n, n),
+                            new Index2(j, j),
+                            target.loops[k]);
+                    }
                 }
-            }
-            break;
-        case PolyType.Tri:
-        default:
-            {
-                len = sctCount2 - 2;
-                target.loops = Loop2.Resize(target.loops, len, 3, true);
-
-                for (int i = 0, j = 1; i < len; i += 2, j += 2)
+                break;
+            case PolyType.Tri:
+            default:
                 {
-                    int m = i + 2;
-                    int n = j + 2;
+                    len = sctCount2 - 2;
+                    target.loops = Loop2.Resize(target.loops, len, 3, true);
 
-                    Loop2.Tri(
-                        new Index2(i, i),
-                        new Index2(m, m),
-                        new Index2(j, j),
-                        target.loops[i]);
+                    for (int i = 0, j = 1; i < len; i += 2, j += 2)
+                    {
+                        int m = i + 2;
+                        int n = j + 2;
 
-                    Loop2.Tri(
-                        new Index2(m, m),
-                        new Index2(n, n),
-                        new Index2(j, j),
-                        target.loops[j]);
+                        Loop2.Tri(
+                            new Index2(i, i),
+                            new Index2(m, m),
+                            new Index2(j, j),
+                            target.loops[i]);
+
+                        Loop2.Tri(
+                            new Index2(m, m),
+                            new Index2(n, n),
+                            new Index2(j, j),
+                            target.loops[j]);
+                    }
                 }
-            }
-            break;
+                break;
         }
 
         return target;
@@ -1251,13 +1251,13 @@ public class Mesh2
         in float cellMargin = 0.0325f)
     {
         int vRings = Utils.Max(1, rings);
-        float vRad = Utils.Max(Utils.Epsilon, cellRadius);
+        float vRad = MathF.Max(Utils.Epsilon, cellRadius);
 
         float extent = Utils.Sqrt3 * vRad;
         float halfExt = extent * 0.5f;
 
         float rad15 = vRad * 1.5f;
-        float padRad = Utils.Max(Utils.Epsilon, vRad - cellMargin);
+        float padRad = MathF.Max(Utils.Epsilon, vRad - cellMargin);
         float halfRad = padRad * 0.5f;
         float radrt32 = padRad * Utils.Sqrt32;
 
@@ -1360,59 +1360,59 @@ public class Mesh2
 
         switch (poly)
         {
-        case PolyType.Ngon:
-        case PolyType.Quad:
-            {
-                target.loops = Loop2.Resize(target.loops, fLen, 4, true);
-                for (int k = 0; k < fLen; ++k)
+            case PolyType.Ngon:
+            case PolyType.Quad:
                 {
-                    int i = k / cVal;
-                    int j = k % cVal;
+                    target.loops = Loop2.Resize(target.loops, fLen, 4, true);
+                    for (int k = 0; k < fLen; ++k)
+                    {
+                        int i = k / cVal;
+                        int j = k % cVal;
 
-                    int cOff0 = i * cVal1;
-                    int c00 = cOff0 + j;
-                    int c10 = c00 + 1;
-                    int c01 = cOff0 + cVal1 + j;
-                    int c11 = c01 + 1;
+                        int cOff0 = i * cVal1;
+                        int c00 = cOff0 + j;
+                        int c10 = c00 + 1;
+                        int c01 = cOff0 + cVal1 + j;
+                        int c11 = c01 + 1;
 
-                    Loop2.Quad(
-                        new Index2(c00, c00),
-                        new Index2(c10, c10),
-                        new Index2(c11, c11),
-                        new Index2(c01, c01),
-                        target.loops[k]);
+                        Loop2.Quad(
+                            new Index2(c00, c00),
+                            new Index2(c10, c10),
+                            new Index2(c11, c11),
+                            new Index2(c01, c01),
+                            target.loops[k]);
+                    }
                 }
-            }
-            break;
-        case PolyType.Tri:
-        default:
-            {
-                target.loops = Loop2.Resize(target.loops, fLen * 2, 3, true);
-                for (int m = 0, k = 0; k < fLen; ++k, m += 2)
+                break;
+            case PolyType.Tri:
+            default:
                 {
-                    int i = k / cVal;
-                    int j = k % cVal;
+                    target.loops = Loop2.Resize(target.loops, fLen * 2, 3, true);
+                    for (int m = 0, k = 0; k < fLen; ++k, m += 2)
+                    {
+                        int i = k / cVal;
+                        int j = k % cVal;
 
-                    int cOff0 = i * cVal1;
-                    int c00 = cOff0 + j;
-                    int c10 = c00 + 1;
-                    int c01 = cOff0 + cVal1 + j;
-                    int c11 = c01 + 1;
+                        int cOff0 = i * cVal1;
+                        int c00 = cOff0 + j;
+                        int c10 = c00 + 1;
+                        int c01 = cOff0 + cVal1 + j;
+                        int c11 = c01 + 1;
 
-                    Loop2.Tri(
-                        new Index2(c00, c00),
-                        new Index2(c10, c10),
-                        new Index2(c11, c11),
-                        target.loops[m]);
+                        Loop2.Tri(
+                            new Index2(c00, c00),
+                            new Index2(c10, c10),
+                            new Index2(c11, c11),
+                            target.loops[m]);
 
-                    Loop2.Tri(
-                        new Index2(c11, c11),
-                        new Index2(c01, c01),
-                        new Index2(c00, c00),
-                        target.loops[m + 1]);
+                        Loop2.Tri(
+                            new Index2(c11, c11),
+                            new Index2(c01, c01),
+                            new Index2(c00, c00),
+                            target.loops[m + 1]);
+                    }
                 }
-            }
-            break;
+                break;
         }
 
         return target;
@@ -1437,7 +1437,7 @@ public class Mesh2
         int seg = Utils.Max(3, sectors);
         int newLen = poly == PolyType.Ngon ? seg : poly == PolyType.Quad ?
             seg + seg + 1 : seg + 1;
-        float rad = Utils.Max(Utils.Epsilon, radius);
+        float rad = MathF.Max(Utils.Epsilon, radius);
         float offset = Utils.WrapRadians(rotation);
         float toTheta = Utils.Tau / seg;
 
@@ -1447,99 +1447,100 @@ public class Mesh2
 
         switch (poly)
         {
-        case PolyType.Ngon:
-            {
-                target.loops = Loop2.Resize(target.loops, 1, seg, true);
-                for (int i = 0; i < seg; ++i)
+            case PolyType.Ngon:
                 {
-                    float theta = offset + i * toTheta;
-                    float cosTheta = Utils.Cos(theta);
-                    float sinTheta = Utils.Sin(theta);
-                    vs[i] = new Vec2(
-                        rad * cosTheta,
-                        rad * sinTheta);
-                    vts[i] = new Vec2(
-                        cosTheta * 0.5f + 0.5f,
-                        0.5f - sinTheta * 0.5f);
-                    target.loops[0][i] = new Index2(i, i);
+                    target.loops = Loop2.Resize(target.loops, 1, seg, true);
+
+                    for (int i = 0; i < seg; ++i)
+                    {
+                        float theta = offset + i * toTheta;
+                        float cosTheta = MathF.Cos(theta);
+                        float sinTheta = MathF.Sin(theta);
+                        vs[i] = new Vec2(
+                            rad * cosTheta,
+                            rad * sinTheta);
+                        vts[i] = new Vec2(
+                            cosTheta * 0.5f + 0.5f,
+                            0.5f - sinTheta * 0.5f);
+                        target.loops[0][i] = new Index2(i, i);
+                    }
                 }
-            }
-            break;
-        case PolyType.Quad:
-            {
-                target.loops = Loop2.Resize(target.loops, seg, 4, true);
-
-                vs[0] = Vec2.Zero;
-                vts[0] = Vec2.UvCenter;
-
-                // Find corners.
-                for (int i = 0, j = 1; i < seg; ++i, j += 2)
+                break;
+            case PolyType.Quad:
                 {
-                    float theta = offset + i * toTheta;
-                    float cosTheta = Utils.Cos(theta);
-                    float sinTheta = Utils.Sin(theta);
-                    vs[j] = new Vec2(
-                        rad * cosTheta,
-                        rad * sinTheta);
-                    vts[j] = new Vec2(
-                        cosTheta * 0.5f + 0.5f,
-                        0.5f - sinTheta * 0.5f);
-                }
+                    target.loops = Loop2.Resize(target.loops, seg, 4, true);
 
-                // Find midpoints.
-                int last = newLen - 1;
-                for (int i = 0, j = 1, k = 2; i < seg; ++i, j += 2, k += 2)
+                    vs[0] = Vec2.Zero;
+                    vts[0] = Vec2.UvCenter;
+
+                    // Find corners.
+                    for (int i = 0, j = 1; i < seg; ++i, j += 2)
+                    {
+                        float theta = offset + i * toTheta;
+                        float cosTheta = MathF.Cos(theta);
+                        float sinTheta = MathF.Sin(theta);
+                        vs[j] = new Vec2(
+                            rad * cosTheta,
+                            rad * sinTheta);
+                        vts[j] = new Vec2(
+                            cosTheta * 0.5f + 0.5f,
+                            0.5f - sinTheta * 0.5f);
+                    }
+
+                    // Find midpoints.
+                    int last = newLen - 1;
+                    for (int i = 0, j = 1, k = 2; i < seg; ++i, j += 2, k += 2)
+                    {
+                        int m = (j + 2) % last;
+                        vs[k] = Vec2.Mix(vs[j], vs[m]);
+                        vts[k] = Vec2.Mix(vts[j], vts[m]);
+                    }
+
+                    // Find faces.
+                    for (int i = 0, j = 0; i < seg; ++i, j += 2)
+                    {
+                        int s = 1 + Utils.RemFloor(j - 1, last);
+                        int t = 1 + j % last;
+                        int u = 1 + (j + 1) % last;
+
+                        Loop2.Quad(
+                            new Index2(0, 0),
+                            new Index2(s, s),
+                            new Index2(t, t),
+                            new Index2(u, u),
+                            target.loops[i]);
+                    }
+                }
+                break;
+            case PolyType.Tri:
+            default:
                 {
-                    int m = (j + 2) % last;
-                    vs[k] = Vec2.Mix(vs[j], vs[m]);
-                    vts[k] = Vec2.Mix(vts[j], vts[m]);
+                    target.loops = Loop2.Resize(target.loops, seg, 3, true);
+
+                    vs[0] = Vec2.Zero;
+                    vts[0] = Vec2.UvCenter;
+
+                    for (int i = 0, j = 1; i < seg; ++i, ++j)
+                    {
+                        int k = 1 + j % seg;
+                        float theta = i * toTheta;
+                        float cosTheta = MathF.Cos(theta);
+                        float sinTheta = MathF.Sin(theta);
+                        vs[j] = new Vec2(
+                            rad * cosTheta,
+                            rad * sinTheta);
+                        vts[j] = new Vec2(
+                            cosTheta * 0.5f + 0.5f,
+                            0.5f - sinTheta * 0.5f);
+
+                        Loop2.Tri(
+                            new Index2(0, 0),
+                            new Index2(j, j),
+                            new Index2(k, k),
+                            target.loops[i]);
+                    }
                 }
-
-                // Find faces.
-                for (int i = 0, j = 0; i < seg; ++i, j += 2)
-                {
-                    int s = 1 + Utils.RemFloor(j - 1, last);
-                    int t = 1 + j % last;
-                    int u = 1 + (j + 1) % last;
-
-                    Loop2.Quad(
-                        new Index2(0, 0),
-                        new Index2(s, s),
-                        new Index2(t, t),
-                        new Index2(u, u),
-                        target.loops[i]);
-                }
-            }
-            break;
-        case PolyType.Tri:
-        default:
-            {
-                target.loops = Loop2.Resize(target.loops, seg, 3, true);
-
-                vs[0] = Vec2.Zero;
-                vts[0] = Vec2.UvCenter;
-
-                for (int i = 0, j = 1; i < seg; ++i, ++j)
-                {
-                    int k = 1 + j % seg;
-                    float theta = i * toTheta;
-                    float cosTheta = Utils.Cos(theta);
-                    float sinTheta = Utils.Sin(theta);
-                    vs[j] = new Vec2(
-                        rad * cosTheta,
-                        rad * sinTheta);
-                    vts[j] = new Vec2(
-                        cosTheta * 0.5f + 0.5f,
-                        0.5f - sinTheta * 0.5f);
-
-                    Loop2.Tri(
-                        new Index2(0, 0),
-                        new Index2(j, j),
-                        new Index2(k, k),
-                        target.loops[i]);
-                }
-            }
-            break;
+                break;
         }
 
         return target;
@@ -1601,10 +1602,10 @@ public class Mesh2
         in UvProfiles.Rect profile = UvProfiles.Rect.Stretch)
     {
         // Validate corners.
-        float lft = Utils.Min(lb.x, ub.x);
-        float rgt = Utils.Max(lb.x, ub.x);
-        float btm = Utils.Min(lb.y, ub.y);
-        float top = Utils.Max(lb.y, ub.y);
+        float lft = MathF.Min(lb.x, ub.x);
+        float rgt = MathF.Max(lb.x, ub.x);
+        float btm = MathF.Min(lb.y, ub.y);
+        float top = MathF.Max(lb.y, ub.y);
 
         // Protect from zero dimension meshes.
         float w = rgt - lft;
@@ -1660,10 +1661,10 @@ public class Mesh2
         }
 
         // Validate corner insetting factor.
-        float vtlFac = Utils.Min(Utils.Abs(tl), 1.0f - Utils.Epsilon);
-        float vtrFac = Utils.Min(Utils.Abs(tr), 1.0f - Utils.Epsilon);
-        float vbrFac = Utils.Min(Utils.Abs(br), 1.0f - Utils.Epsilon);
-        float vblFac = Utils.Min(Utils.Abs(bl), 1.0f - Utils.Epsilon);
+        float vtlFac = MathF.Min(MathF.Abs(tl), 1.0f - Utils.Epsilon);
+        float vtrFac = MathF.Min(MathF.Abs(tr), 1.0f - Utils.Epsilon);
+        float vbrFac = MathF.Min(MathF.Abs(br), 1.0f - Utils.Epsilon);
+        float vblFac = MathF.Min(MathF.Abs(bl), 1.0f - Utils.Epsilon);
 
         // Booleans to store whether the corner is round.
         bool tlIsRnd = vtlFac > 0.0f;
@@ -1674,7 +1675,7 @@ public class Mesh2
         // Half the short edge is the maximum size.
         // If the corner insetting is zero, then push
         // the insets in by 25 percent.
-        float se = 0.5f * Utils.Min(w, h);
+        float se = 0.5f * MathF.Min(w, h);
         float vtl = se * (tlIsRnd ? vtlFac : 0.25f);
         float vtr = se * (trIsRnd ? vtrFac : 0.25f);
         float vbr = se * (brIsRnd ? vbrFac : 0.25f);
@@ -1779,8 +1780,8 @@ public class Mesh2
             {
                 int j = vtlRes - 1 - i;
                 float theta = (j + 1.0f) * tlToTheta;
-                float x = lftIns0 - vtl * Utils.Cos(theta);
-                float y = topIns1 + vtl * Utils.Sin(theta);
+                float x = lftIns0 - vtl * MathF.Cos(theta);
+                float y = topIns1 + vtl * MathF.Sin(theta);
                 float u = (x - lft) * wInv;
                 float v = (y - btm) * hInv;
                 u = (u - 0.5f) * uScl + 0.5f;
@@ -1807,8 +1808,8 @@ public class Mesh2
             for (int i = 0; i < vblRes; ++i)
             {
                 float theta = (i + 1.0f) * blToTheta;
-                float x = lftIns1 - vbl * Utils.Cos(theta);
-                float y = btmIns1 - vbl * Utils.Sin(theta);
+                float x = lftIns1 - vbl * MathF.Cos(theta);
+                float y = btmIns1 - vbl * MathF.Sin(theta);
                 float u = (x - lft) * wInv;
                 float v = (y - btm) * hInv;
                 u = (u - 0.5f) * uScl + 0.5f;
@@ -1836,8 +1837,8 @@ public class Mesh2
             {
                 int j = vbrRes - 1 - i;
                 float theta = (j + 1.0f) * brToTheta;
-                float x = rgtIns1 + vbr * Utils.Cos(theta);
-                float y = btmIns0 - vbr * Utils.Sin(theta);
+                float x = rgtIns1 + vbr * MathF.Cos(theta);
+                float y = btmIns0 - vbr * MathF.Sin(theta);
                 float u = (x - lft) * wInv;
                 float v = (y - btm) * hInv;
                 u = (u - 0.5f) * uScl + 0.5f;
@@ -1864,8 +1865,8 @@ public class Mesh2
             for (int i = 0; i < vtrRes; ++i)
             {
                 float theta = (i + 1.0f) * trToTheta;
-                float x = rgtIns0 + vtr * Utils.Cos(theta);
-                float y = topIns0 + vtr * Utils.Sin(theta);
+                float x = rgtIns0 + vtr * MathF.Cos(theta);
+                float y = topIns0 + vtr * MathF.Sin(theta);
                 float u = (x - lft) * wInv;
                 float v = (y - btm) * hInv;
                 u = (u - 0.5f) * uScl + 0.5f;

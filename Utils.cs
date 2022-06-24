@@ -111,11 +111,6 @@ public static class Utils
     public const float Phi = 1.618034f;
 
     /// <summary>
-    /// An approximation of PI, 3.14159274 .
-    /// </summary>
-    public const float Pi = 3.14159274f;
-
-    /// <summary>
     /// An angle in radians is multiplied by this constant to convert it to
     /// degrees. 180.0 / PI , approximately 57.29578 .
     /// </summary>
@@ -148,49 +143,6 @@ public static class Utils
     public const float TwoThirds = 0.6666667f;
 
     /// <summary>
-    /// Finds the absolute value of a single precision real number. Equivalent
-    /// to MAX(-a, a).
-    /// </summary>
-    /// <param name="v">input value</param>
-    /// <returns>absolute value</returns>
-    public static float Abs(in float v)
-    {
-        return v < 0.0f ? -v : v;
-    }
-
-    /// <summary>
-    /// A bounds checked approximation of the arc cosine for single precision
-    /// real numbers. Returns a value in the range [0.0, PI] : PI when the input
-    /// is less than or equal to -1.0; PI / 2.0 when the input is 0.0; 0.0 when
-    /// the input is greater than or equal to 1.0. 
-    ///
-    /// Based on the algorithm at the Nvidia Cg 3.1 Toolkit Documentation,
-    /// https://developer.download.nvidia.com/cg/acos.html . This cites M.
-    /// Abramowitz and I.A. Stegun, Eds., Handbook of Mathematical Functions,
-    /// possibly p. 83, which cites Approximations for Digital Computers by C.
-    /// Hastings, Jr.
-    /// </summary>
-    /// <param name="v">input value</param>
-    /// <returns>angle in radians</returns>
-    public static float Acos(in float v)
-    {
-        if (v <= -1.0f) { return Utils.Pi; }
-        if (v >= 1.0f) { return 0.0f; }
-
-        bool ltZero = v < 0.0f;
-        float x = ltZero ? -v : v;
-        float ret = -0.0187293f;
-        ret *= x;
-        ret += 0.074261f;
-        ret *= x;
-        ret -= 0.2121144f;
-        ret *= x;
-        ret += Utils.HalfPi;
-        ret *= (float)Math.Sqrt(1.0d - (double)x);
-        return ltZero ? Utils.Pi - ret : ret;
-    }
-
-    /// <summary>
     /// Evaluates two floats like booleans using the AND logic gate.
     /// </summary>
     /// <param name="a">left operand</param>
@@ -213,74 +165,6 @@ public static class Utils
     public static bool Approx(in float a, in float b, in float tolerance = Utils.Epsilon)
     {
         return Utils.Diff(a, b) <= tolerance;
-    }
-
-    /// <summary>
-    /// A bounds checked approximation of the arc-sine for single precision real
-    /// numbers. Returns a value in the range [-PI / 2.0, PI / 2.0] : -PI / 2.0
-    /// when the input is less than or equal to -1.0; 0.0 when the input is 0.0;
-    /// PI / 2.0 when the input is greater than or equal to 1.0.
-    ///
-    /// Based on the algorithm at the Nvidia Cg 3.1 Toolkit Documentation,
-    /// https://developer.download.nvidia.com/cg/acos.html . This cites M.
-    /// Abramowitz and I.A. Stegun, Eds., Handbook of Mathematical Functions,
-    /// possibly p. 83, which cites Approximations for Digital Computers by C.
-    /// Hastings, Jr.
-    /// </summary>
-    /// <param name="v">input value</param>
-    /// <returns>angle in radians</returns>
-    public static float Asin(in float v)
-    {
-        if (v <= -1.0f) { return -Utils.HalfPi; }
-        if (v >= 1.0f) { return Utils.HalfPi; }
-
-        bool ltZero = v < 0.0f;
-        float x = ltZero ? -v : v;
-        float ret = -0.0187293f;
-        ret *= x;
-        ret += 0.074261f;
-        ret *= x;
-        ret -= 0.2121144f;
-        ret *= x;
-        ret += Utils.HalfPi;
-        ret = Utils.HalfPi - ret * (float)Math.Sqrt(1.0d - (double)x);
-        return ltZero ? -ret : ret;
-    }
-
-    /// <summary>
-    /// Finds a single precision approximation of a signed angle given a
-    /// vertical and horizontal component. Note that the vertical component
-    /// precedes the horizontal. The return value falls in the range [-PI, PI] .
-    ///
-    /// Based on the algorithm at the Nvidia Cg 3.1 Toolkit Documentation,
-    /// https://developer.download.nvidia.com/cg/atan2.html .
-    /// </summary>
-    /// <param name="y">the y coordinate (the ordinate)</param>
-    /// <param name="x">the x coordinate (the abscissa)</param>
-    /// <returns>angle in radians</returns>
-    public static float Atan2(in float y, in float x)
-    {
-        bool yLtZero = y < 0.0f;
-        bool xLtZero = x < 0.0f;
-        float yAbs = yLtZero ? -y : y;
-        float xAbs = xLtZero ? -x : x;
-
-        bool yGtX = yAbs > xAbs;
-        float t0 = yGtX ? yAbs : xAbs;
-        if (t0 == 0.0f) { return 0.0f; }
-        float t2 = (yGtX ? xAbs : yAbs) / t0;
-
-        float t3 = t2 * t2;
-        t0 = -0.01348047f;
-        t0 = t0 * t3 + 0.057477314f;
-        t0 = t0 * t3 - 0.121239071f;
-        t0 = t0 * t3 + 0.195635925f;
-        t0 = t0 * t3 - 0.332994597f;
-        t0 = t0 * t3 + 0.99999563f;
-        t2 = t0 * t2;
-        t2 = yGtX ? Utils.HalfPi - t2 : t2;
-        t2 = xLtZero ? Utils.Pi - t2 : t2;
-        return yLtZero ? -t2 : t2;
     }
 
     /// <summary>
@@ -329,30 +213,9 @@ public static class Utils
         // Don't use abs*sign, as the latter has more
         // flexibility in terms of how you deal with zero sign.
         // return Utils.Abs (mag) * Utils.Sign (sign);
-        return (sign < -0.0f) ? -Utils.Abs(mag) :
-               (sign > 0.0f) ? Utils.Abs(mag) :
+        return (sign < -0.0f) ? -MathF.Abs(mag) :
+               (sign > 0.0f) ? MathF.Abs(mag) :
                0.0f;
-    }
-
-    /// <summary>
-    /// Finds the single-precision cosine of an angle in radians. Returns a
-    /// value in the range [-1.0, 1.0] .
-    /// </summary>
-    /// <param name="radians">the angle in radians</param>
-    /// <returns>cosine of the angle</returns>
-    public static float Cos(in float radians)
-    {
-        return (float)Math.Cos((double)radians);
-    }
-
-    /// <summary>
-    /// Finds the hyperbolic cosine of an angle in radians.
-    /// </summary>
-    /// <param name="radians">the angle in radians</param>
-    /// <returns>cosine of the angle</returns>
-    public static float Cosh(in float radians)
-    {
-        return (float)Math.Cosh((double)radians);
     }
 
     /// <summary>
@@ -376,7 +239,7 @@ public static class Utils
     /// <returns>difference</returns>
     public static float Diff(in float a, in float b)
     {
-        return Utils.Abs(b - a);
+        return MathF.Abs(b - a);
     }
 
     /// <summary>
@@ -388,8 +251,8 @@ public static class Utils
     /// <returns>unsigned distance</returns>
     public static float DistAngleUnsigned(in float a, in float b)
     {
-        return Utils.Pi - Utils.Abs(Utils.Abs(Utils.WrapRadians(b) -
-            Utils.WrapRadians(a)) - Utils.Pi);
+        return MathF.PI - MathF.Abs(MathF.Abs(Utils.WrapRadians(b) -
+            Utils.WrapRadians(a)) - MathF.PI);
     }
 
     /// <summary>
@@ -404,7 +267,7 @@ public static class Utils
     public static float DistAngleUnsigned(in float a, in float b, in float range)
     {
         float halfRange = range * 0.5f;
-        return halfRange - Utils.Abs(Utils.Abs(
+        return halfRange - MathF.Abs(MathF.Abs(
             Utils.RemFloor(b, range) -
             Utils.RemFloor(a, range)) - halfRange);
     }
@@ -434,16 +297,6 @@ public static class Utils
     }
 
     /// <summary>
-    /// Finds Euler's number, 2.7182817, raised to power of the input value.
-    /// </summary>
-    /// <param name="v">input value</param>
-    /// <returns>result</returns>
-    public static float Exp(in float v)
-    {
-        return (float)Math.Exp((double)v);
-    }
-
-    /// <summary>
     /// Floors a real number to the next least integer.
     /// </summary>
     /// <param name="v">input value</param>
@@ -461,7 +314,7 @@ public static class Utils
     /// <returns>fractional portion</returns>
     public static float Fract(in float v)
     {
-        return v - Utils.Trunc(v);
+        return v - MathF.Truncate(v);
     }
 
     /// <summary>
@@ -721,17 +574,6 @@ public static class Utils
     }
 
     /// <summary>
-    /// Finds the greater, or maximum, of two values.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>maximum value</returns>
-    public static float Max(in float a, in float b)
-    {
-        return (a >= b) ? a : (a < b) ? b : 0.0f;
-    }
-
-    /// <summary>
     /// Finds the greatest, or maximum, among three values.
     /// </summary>
     /// <param name="a">first operand</param>
@@ -740,7 +582,7 @@ public static class Utils
     /// <returns>maximum value</returns>
     public static float Max(in float a, in float b, in float c)
     {
-        return Utils.Max(Utils.Max(a, b), c);
+        return MathF.Max(MathF.Max(a, b), c);
     }
 
     /// <summary>
@@ -784,17 +626,6 @@ public static class Utils
     }
 
     /// <summary>
-    /// Finds the lesser, or minimum, of two values.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>minimum value</returns>
-    public static float Min(in float a, in float b)
-    {
-        return (a <= b) ? a : (a > b) ? b : 0.0f;
-    }
-
-    /// <summary>
     /// Finds the least, or minimum, among three values.
     /// </summary>
     /// <param name="a">first operand</param>
@@ -803,7 +634,7 @@ public static class Utils
     /// <returns>minimum value</returns>
     public static float Min(in float a, in float b, in float c)
     {
-        return Utils.Min(Utils.Min(a, b), c);
+        return MathF.Min(MathF.Min(a, b), c);
     }
 
     /// <summary>
@@ -897,17 +728,6 @@ public static class Utils
     }
 
     /// <summary>
-    /// Finds the single-precision of a number raised to the power of another.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>power</returns>
-    public static float Pow(in float a, in float b)
-    {
-        return (float)Math.Pow((double)a, (double)b);
-    }
-
-    /// <summary>
     /// Quantizes a signed number according to a number of levels.
     /// </summary>
     /// <param name="v">input value</param>
@@ -930,7 +750,7 @@ public static class Utils
         if (levels > 0)
         {
             float lf = (float)levels;
-            return Utils.Floor(0.5f + v * lf) / lf;
+            return MathF.Floor(0.5f + v * lf) / lf;
         }
         return v;
     }
@@ -947,10 +767,10 @@ public static class Utils
         if (levels > 1)
         {
             float lf = (float)levels;
-            return Utils.Max(0.0f,
-                (Utils.Ceil(v * lf) - 1.0f) / (lf - 1.0f));
+            return MathF.Max(0.0f,
+                (MathF.Ceiling(v * lf) - 1.0f) / (lf - 1.0f));
         }
-        return Utils.Max(0.0f, v);
+        return MathF.Max(0.0f, v);
     }
 
     /// <summary>
@@ -974,7 +794,7 @@ public static class Utils
     /// <returns>result</returns>
     public static float RemFloor(in float a, in float b)
     {
-        return b != 0.0f ? a - b * Utils.Floor(a / b) : a;
+        return b != 0.0f ? a - b * MathF.Floor(a / b) : a;
     }
 
     /// <summary>
@@ -1020,40 +840,6 @@ public static class Utils
     }
 
     /// <summary>
-    /// Rounds a value to a number of places right of the decimal point.
-    /// Promotes the float to a double, rounds it, then demotes back to a
-    /// float.</summary>
-    /// <param name="v">input value</param>
-    /// <param name="places">number of places</param>
-    /// <returns>rounded value</returns>
-    public static float Round(in float v, in int places)
-    {
-        return (float)Math.Round((double)v, places);
-    }
-
-    /// <summary>
-    /// Finds the sign of an input value. Returns the integer 0 for both -0.0
-    /// (signed negative zero) and 0.0 (signed positive zero).
-    /// </summary>
-    /// <param name="v">input value</param>
-    /// <returns>sign</returns>
-    public static int Sign(in float v)
-    {
-        return (v < -0.0f) ? -1 : (v > 0.0f) ? 1 : 0;
-    }
-
-    /// <summary>
-    /// Finds the single precision sine of an angle in radians. Returns a value
-    /// in the range [-1.0, 1.0] .
-    /// </summary>
-    /// <param name="radians">angle in radians</param>
-    /// <returns>sine of the angle</returns>
-    public static float Sin(in float radians)
-    {
-        return (float)Math.Sin((double)radians);
-    }
-
-    /// <summary>
     /// Finds the sine and cosine of an angle in radians. Assigns the values to
     /// output variables.
     /// </summary>
@@ -1094,7 +880,7 @@ public static class Utils
     /// <returns>approximate value</returns>
     private static float SinCosEval(in float normRad)
     {
-        float r1y = normRad - Utils.Floor(normRad);
+        float r1y = normRad - MathF.Floor(normRad);
 
         bool r2x = r1y < 0.25f;
         float r1x = 0.0f;
@@ -1137,17 +923,6 @@ public static class Utils
     }
 
     /// <summary>
-    /// Finds the hyperbolic sine of an angle in radians cast to a single
-    /// precision real number.
-    /// </summary>
-    /// <param name="radians">the angle</param>
-    /// <returns>hyperbolic sine</returns>
-    public static float Sinh(in float radians)
-    {
-        return (float)Math.Sinh((double)radians);
-    }
-
-    /// <summary>
     /// Finds the smooth step between a left and right edge given an input
     /// factor.
     /// </summary>
@@ -1165,28 +940,6 @@ public static class Utils
     }
 
     /// <summary>
-    /// Returns the square root of a value cast to a float. If the value is less
-    /// than or equal to zero, returns zero.
-    /// </summary>
-    /// <param name="v">input value</param>
-    /// <returns>square root</returns>
-    public static float Sqrt(in float v)
-    {
-        return v > 0.0f ? Utils.SqrtUnchecked(v) : 0.0f;
-    }
-
-    /// <summary>
-    /// Returns the square root of a value cast to a float. Does not check to
-    /// see if the input is greater than zero.
-    /// </summary>
-    /// <param name="v">input value</param>
-    /// <returns>square root</returns>
-    public static float SqrtUnchecked(in float v)
-    {
-        return (float)Math.Sqrt((double)v);
-    }
-
-    /// <summary>
     /// Finds a step, either 0.0 or 1.0, based on an edge and factor.
     /// </summary>
     /// <param name="edge">the edge</param>
@@ -1195,19 +948,6 @@ public static class Utils
     public static float Step(in float edge, in float x = 0.5f)
     {
         return x < edge ? 0.0f : 1.0f;
-    }
-
-    /// <summary>
-    /// Finds the tangent of an angle. Equivalent to dividing the sine of the
-    /// angle by the cosine.
-    /// </summary>
-    /// <param name="radians">the angle</param>
-    /// <returns>tangent</returns>
-    public static float Tan(in float radians)
-    {
-        double rd = (double)radians;
-        double cost = Math.Cos(rd);
-        return cost != 0.0d ? (float)(Math.Sin(rd) / cost) : 0.0f;
     }
 
     /// <summary>
@@ -1334,7 +1074,8 @@ public static class Utils
         {
             double y = nAbsVal * 0.1d;
             nAbsVal = (int)y;
-            digits[filled++] = -(int)((y - nAbsVal) * 10.0d - 0.5d);
+            digits[filled] = -(int)((y - nAbsVal) * 10.0d - 0.5d);
+            ++filled;
         }
 
         if (isNeg) { sb.Append('-'); }
@@ -1346,17 +1087,6 @@ public static class Utils
         }
 
         return sb.ToString();
-    }
-
-    /// <summary>
-    /// Truncates input value. This is an alias for explicitly casting a
-    /// float to an integer, then implicitly casting the integral to a float.
-    /// </summary>
-    /// <param name="v">input value</param>
-    /// <returns>truncation</returns>
-    public static float Trunc(in float v)
-    {
-        return (float)((int)v);
     }
 
     /// <summary>
@@ -1373,7 +1103,7 @@ public static class Utils
     public static float Wrap(in float v, in float lb = -1.0f, in float ub = 1.0f)
     {
         float range = ub - lb;
-        return (range != 0.0f) ? v - range * Utils.Floor((v - lb) / range) : v;
+        return (range != 0.0f) ? v - range * MathF.Floor((v - lb) / range) : v;
     }
 
     /// <summary>
@@ -1384,7 +1114,7 @@ public static class Utils
     /// <returns>output angle</returns>
     public static float WrapDegrees(in float deg)
     {
-        return deg - 360.0f * Utils.Floor(deg * Utils.One360);
+        return deg - 360.0f * MathF.Floor(deg * Utils.One360);
     }
 
     /// <summary>
@@ -1395,7 +1125,7 @@ public static class Utils
     /// <returns>output angle</returns>
     public static float WrapRadians(in float rad)
     {
-        return rad - Utils.Tau * Utils.Floor(rad * Utils.OneTau);
+        return rad - Utils.Tau * MathF.Floor(rad * Utils.OneTau);
     }
 
     /// <summary>

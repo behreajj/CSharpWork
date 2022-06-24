@@ -220,9 +220,7 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Constructs a color gradient.
     /// </summary>
-    ClrGradient()
-    {
-    }
+    protected ClrGradient() { }
 
     /// <summary>
     /// Constructs a color gradient from a list of color keys.
@@ -474,7 +472,7 @@ public class ClrGradient : IEnumerable
     /// </summary>
     /// <param name="i">index</param>
     /// <returns>the key</returns>
-    Key RemoveAt(in int i = -1)
+    protected Key RemoveAt(in int i = -1)
     {
         int j = Utils.RemFloor(i, this.keys.Count);
         Key key = this.keys[j];
@@ -486,7 +484,7 @@ public class ClrGradient : IEnumerable
     /// Removes the first key from the gradient.
     /// </summary>
     /// <returns>the key</returns>
-    Key RemoveFirst()
+    protected Key RemoveFirst()
     {
         return this.RemoveAt(0);
     }
@@ -495,7 +493,7 @@ public class ClrGradient : IEnumerable
     /// Removes the last key from the gradient.
     /// </summary>
     /// <returns>the key</returns>
-    Key RemoveLast()
+    protected Key RemoveLast()
     {
         return this.RemoveAt(this.keys.Count - 1);
     }
@@ -504,7 +502,7 @@ public class ClrGradient : IEnumerable
     /// Resets this gradient to an initial state.
     /// </summary>
     /// <returns>this gradient</returns>
-    ClrGradient Reset()
+    protected ClrGradient Reset()
     {
         this.keys.Clear();
         return this;
@@ -539,7 +537,6 @@ public class ClrGradient : IEnumerable
         int high = keys.Count;
         while (low < high)
         {
-            // The | 0 is floor div.
             int middle = (low + high) / 2;
             if (step < keys[middle].Step)
             {
@@ -580,7 +577,7 @@ public class ClrGradient : IEnumerable
     {
         List<Key> keys = cg.keys;
         int len = keys.Count;
-        if (step <= keys[0].Step) { return keys[0].Color; }
+        if (step <= keys[0].Step || len < 2) { return keys[0].Color; }
         if (step >= keys[len - 1].Step) { return keys[len - 1].Color; }
 
         int nextIdx = ClrGradient.BisectRight(cg, step);
@@ -591,13 +588,10 @@ public class ClrGradient : IEnumerable
 
         float prevStep = prevKey.Step;
         float nextStep = nextKey.Step;
-
         if (prevStep != nextStep)
         {
-            float denom = Utils.Abs(nextStep - prevStep);
-            float num = step - prevStep;
-            if (num != denom) { num %= denom; }
-            return easing(prevKey.Color, nextKey.Color, num / denom);
+            return easing(prevKey.Color, nextKey.Color,
+                (step - prevStep) / (nextStep - prevStep));
         }
         return nextKey.Color;
     }

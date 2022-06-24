@@ -656,9 +656,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Abs(in Vec3 v)
     {
         return new Vec3(
-            Utils.Abs(v._x),
-            Utils.Abs(v._y),
-            Utils.Abs(v._z));
+            MathF.Abs(v._x),
+            MathF.Abs(v._y),
+            MathF.Abs(v._z));
     }
 
     /// <summary>
@@ -760,26 +760,13 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Tests to see if two vectors are parallel.
-    /// </summary>
-    /// <param name="a">left comparisand</param>
-    /// <param name="b">right comparisand</param>
-    /// <returns>the evaluation</returns>
-    public static bool AreParallel(in Vec3 a, in Vec3 b, in float tolerance = Utils.Epsilon)
-    {
-        return (Utils.Abs(a._y * b._z - a._z * b._y) <= tolerance) &&
-            (Utils.Abs(a._z * b._x - a._x * b._z) <= tolerance) &&
-            (Utils.Abs(a._x * b._y - a._y * b._x) <= tolerance);
-    }
-
-    /// <summary>
     /// Finds the vector's azimuth in the range [-PI, PI] .
     /// </summary>
     /// <param name="v">vector</param>
     /// <returns>the angle in radians</returns>
     public static float AzimuthSigned(in Vec3 v)
     {
-        return Utils.Atan2(v._y, v._x);
+        return MathF.Atan2(v._y, v._x);
     }
 
     /// <summary>
@@ -913,9 +900,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Ceil(in Vec3 v)
     {
         return new Vec3(
-            Utils.Ceil(v._x),
-            Utils.Ceil(v._y),
-            Utils.Ceil(v._z));
+            MathF.Ceiling(v._x),
+            MathF.Ceiling(v._y),
+            MathF.Ceiling(v._z));
     }
 
     /// <summary>
@@ -1069,7 +1056,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         // double dx = b._x - a._x; double dy = b._y - a._y; double dz = b._z -
         // a._z; return (float) Math.Sqrt (dx * dx + dy * dy + dz * dz);
 
-        return Utils.Sqrt(Vec3.DistSq(a, b));
+        return MathF.Sqrt(Vec3.DistSq(a, b));
     }
 
     /// <summary>
@@ -1100,10 +1087,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     {
         if (c != 0.0f)
         {
-            float dx = Utils.Pow(Utils.Diff(b._x, a._x), c);
-            float dy = Utils.Pow(Utils.Diff(b._y, a._y), c);
-            float dz = Utils.Pow(Utils.Diff(b._z, a._z), c);
-            return Utils.Pow(dx + dy + dz, 1.0f / c);
+            float dx = MathF.Pow(Utils.Diff(b._x, a._x), c);
+            float dy = MathF.Pow(Utils.Diff(b._y, a._y), c);
+            float dz = MathF.Pow(Utils.Diff(b._z, a._z), c);
+            return MathF.Pow(dx + dy + dz, 1.0f / c);
         }
         return 0.0f;
     }
@@ -1151,9 +1138,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Floor(in Vec3 v)
     {
         return new Vec3(
-            Utils.Floor(v._x),
-            Utils.Floor(v._y),
-            Utils.Floor(v._z));
+            MathF.Floor(v._x),
+            MathF.Floor(v._y),
+            MathF.Floor(v._z));
     }
 
     /// <summary>
@@ -1294,7 +1281,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static float InclinationUnsigned(in Vec3 v)
     {
         float mSq = Vec3.MagSq(v);
-        return (mSq > 0.0f) ? Utils.Acos(v._z / Utils.SqrtUnchecked(mSq)) : Utils.HalfPi;
+        return (mSq > 0.0f) ? MathF.Acos(v._z / MathF.Sqrt(mSq)) : Utils.HalfPi;
     }
 
     /// <summary>
@@ -1320,7 +1307,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float mSq = Vec3.MagSq(v);
         if (mSq > (limit * limit))
         {
-            return Utils.Div(limit, Utils.SqrtUnchecked(mSq)) * v;
+            return Utils.Div(limit, MathF.Sqrt(mSq)) * v;
         }
         return v;
     }
@@ -1351,10 +1338,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>the magnitude</returns>
     public static float Mag(in Vec3 v)
     {
-        // double xd = v._x; double yd = v._y; double zd = v._z;
-        // return (float) Math.Sqrt (xd * xd + yd * yd + zd * zd);
-
-        return Utils.Sqrt(Vec3.MagSq(v));
+        return MathF.Sqrt(Vec3.MagSq(v));
     }
 
     /// <summary>
@@ -1402,9 +1386,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Max(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
-            Utils.Max(a._x, b._x),
-            Utils.Max(a._y, b._y),
-            Utils.Max(a._z, b._z));
+            MathF.Max(a._x, b._x),
+            MathF.Max(a._y, b._y),
+            MathF.Max(a._z, b._z));
     }
 
     /// <summary>
@@ -1416,9 +1400,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Min(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
-            Utils.Min(a._x, b._x),
-            Utils.Min(a._y, b._y),
-            Utils.Min(a._z, b._z));
+            MathF.Min(a._x, b._x),
+            MathF.Min(a._y, b._y),
+            MathF.Min(a._z, b._z));
     }
 
     /// <summary>
@@ -1516,9 +1500,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Pow(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
-            Utils.Pow(a._x, b._x),
-            Utils.Pow(a._y, b._y),
-            Utils.Pow(a._z, b._z));
+            MathF.Pow(a._x, b._x),
+            MathF.Pow(a._y, b._y),
+            MathF.Pow(a._z, b._z));
     }
 
     /// <summary>
@@ -1623,10 +1607,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         in float rhoMax = 1.0f)
     {
         return Vec3.FromSpherical(
-            Utils.Mix(-Utils.Pi, Utils.Pi,
+            Utils.Mix(-MathF.PI, MathF.PI,
                 (float)rng.NextDouble()),
 
-            Utils.Mix(Utils.Pi, 0.0f,
+            Utils.Mix(MathF.PI, 0.0f,
                 (float)rng.NextDouble()),
 
             Utils.Mix(rhoMin, rhoMax,
@@ -1658,7 +1642,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float iDotN = Vec3.Dot(i, n);
         float k = 1.0f - eta * eta * (1.0f - iDotN * iDotN);
         if (k < 0.0f) { return Vec3.Zero; }
-        return (eta * i) - (n * (eta * iDotN + Utils.Sqrt(k)));
+        return (eta * i) - (n * (eta * iDotN + MathF.Sqrt(k)));
     }
 
     /// <summary>
@@ -1893,9 +1877,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Round(in Vec3 v, in int places)
     {
         return new Vec3(
-            Utils.Round(v._x, places),
-            Utils.Round(v._y, places),
-            Utils.Round(v._z, places));
+            MathF.Round(v._x, places),
+            MathF.Round(v._y, places),
+            MathF.Round(v._z, places));
     }
 
     /// <summary>
@@ -1906,9 +1890,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Sign(in Vec3 v)
     {
         return new Vec3(
-            Utils.Sign(v._x),
-            Utils.Sign(v._y),
-            Utils.Sign(v._z));
+            MathF.Sign(v._x),
+            MathF.Sign(v._y),
+            MathF.Sign(v._z));
     }
 
     /// <summary>
@@ -2073,9 +2057,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static Vec3 Trunc(in Vec3 v)
     {
         return new Vec3(
-            Utils.Trunc(v._x),
-            Utils.Trunc(v._y),
-            Utils.Trunc(v._z));
+            MathF.Truncate(v._x),
+            MathF.Truncate(v._y),
+            MathF.Truncate(v._z));
     }
 
     /// <summary>

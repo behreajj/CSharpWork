@@ -1240,8 +1240,8 @@ public class Mesh3
         int verifLats = latitudes < 2 ? 2 : latitudes % 2 != 0 ? latitudes + 1 : latitudes;
         int verifLons = Utils.Max(3, longitudes);
         int verifRings = Utils.Max(0, rings);
-        float verifDepth = Utils.Max(Utils.Epsilon, depth);
-        float verifRad = Utils.Max(Utils.Epsilon, radius);
+        float verifDepth = MathF.Max(Utils.Epsilon, depth);
+        float verifRad = MathF.Max(Utils.Epsilon, radius);
 
         bool useQuads = poly == PolyType.Quad;
         bool calcMid = verifRings > 0;
@@ -1301,7 +1301,7 @@ public class Mesh3
 
         Vec2[] sinThetaCache = new Vec2[verifLons];
         float toTheta = Utils.Tau / verifLons;
-        float toPhi = Utils.Pi / verifLats;
+        float toPhi = MathF.PI / verifLats;
         float toTexHorizontal = 1.0f / verifLons;
         float toTexVertical = 1.0f / halfLats;
         float vtPoleNorth = 0.0f;
@@ -1313,8 +1313,8 @@ public class Mesh3
 
             // Coordinates.
             float theta = jf * toTheta;
-            float sinTheta = Utils.Sin(theta);
-            float cosTheta = Utils.Cos(theta);
+            float sinTheta = MathF.Sin(theta);
+            float cosTheta = MathF.Cos(theta);
             sinThetaCache[j] = new Vec2(cosTheta, sinTheta);
 
             // Texture coordinates at North and South pole.
@@ -1338,18 +1338,18 @@ public class Mesh3
         float vtAspectRatio;
         switch (profile)
         {
-        case UvProfiles.Capsule.Aspect:
-            { vtAspectRatio = verifRad / (verifDepth + 2 * verifRad); }
-            break;
+            case UvProfiles.Capsule.Aspect:
+                { vtAspectRatio = verifRad / (verifDepth + 2 * verifRad); }
+                break;
 
-        case UvProfiles.Capsule.Uniform:
-            { vtAspectRatio = (float)halfLats / (verifRingsP1 + verifLats); }
-            break;
+            case UvProfiles.Capsule.Uniform:
+                { vtAspectRatio = (float)halfLats / (verifRingsP1 + verifLats); }
+                break;
 
-        case UvProfiles.Capsule.Fixed:
-        default:
-            { vtAspectRatio = Utils.OneThird; }
-            break;
+            case UvProfiles.Capsule.Fixed:
+            default:
+                { vtAspectRatio = Utils.OneThird; }
+                break;
         }
         float vtAspectNorth = vtAspectRatio;
         float vtAspectSouth = 1.0f - vtAspectRatio;
@@ -1375,8 +1375,8 @@ public class Mesh3
         {
             float phi = i * toPhi;
 
-            float sinPhiSouth = Utils.Sin(phi);
-            float cosPhiSouth = Utils.Cos(phi);
+            float sinPhiSouth = MathF.Sin(phi);
+            float cosPhiSouth = MathF.Cos(phi);
 
             // Use trigonometric symmetries to avoid calculating another sine
             // and
@@ -1678,7 +1678,7 @@ public class Mesh3
     }
     public static Mesh3 CastToSphere(in Mesh3 source, in Mesh3 target, in float radius = 0.5f)
     {
-        float vrad = Utils.Max(Utils.Epsilon, radius);
+        float vrad = MathF.Max(Utils.Epsilon, radius);
 
         Loop3[] fsSrc = source.loops;
         Vec3[] vsSrc = source.coords;
@@ -1738,7 +1738,7 @@ public class Mesh3
         in float size = 0.5f, //
         in PolyType poly = PolyType.Tri)
     {
-        float vsz = Utils.Max(Utils.Epsilon, size);
+        float vsz = MathF.Max(Utils.Epsilon, size);
         target.coords = new Vec3[]
         {
             new Vec3 (-vsz, -vsz, -vsz),
@@ -1782,11 +1782,11 @@ public class Mesh3
 
         switch (poly)
         {
-        case PolyType.Ngon:
-        case PolyType.Quad:
-            {
-                target.loops = new Loop3[]
+            case PolyType.Ngon:
+            case PolyType.Quad:
                 {
+                    target.loops = new Loop3[]
+                    {
                         new Loop3 (
                         new Index3 (0, 4, 4), new Index3 (1, 5, 4),
                         new Index3 (3, 3, 4), new Index3 (2, 2, 4)),
@@ -1805,15 +1805,15 @@ public class Mesh3
                         new Loop3 (
                         new Index3 (7, 6, 1), new Index3 (3, 13, 1),
                         new Index3 (1, 12, 1), new Index3 (5, 8, 1))
-                };
-            }
-            break;
+                    };
+                }
+                break;
 
-        case PolyType.Tri:
-        default:
-            {
-                target.loops = new Loop3[]
+            case PolyType.Tri:
+            default:
                 {
+                    target.loops = new Loop3[]
+                    {
                         new Loop3 (
                         new Index3 (0, 4, 4),
                         new Index3 (1, 5, 4),
@@ -1862,9 +1862,9 @@ public class Mesh3
                         new Index3 (7, 6, 1),
                         new Index3 (1, 12, 1),
                         new Index3 (5, 8, 1))
-                };
-            }
-            break;
+                    };
+                }
+                break;
         }
 
         return target;
@@ -2273,7 +2273,7 @@ public class Mesh3
             Utils.Epsilon);
 
         // Radii.
-        float rho0 = Utils.Max(Utils.Epsilon, radius);
+        float rho0 = MathF.Max(Utils.Epsilon, radius);
         float rho1 = rho0 * vThick;
 
         // Values for array accesses. 
@@ -2305,7 +2305,7 @@ public class Mesh3
             int j = k % vSect;
 
             // Find theta and phi.
-            float phi = -Utils.Pi + i * toPhi;
+            float phi = -MathF.PI + i * toPhi;
             float theta = j * toTheta;
             Utils.SinCos(phi, out float cosPhi, out float sinPhi);
             Utils.SinCos(theta, out float cosTheta, out float sinTheta);

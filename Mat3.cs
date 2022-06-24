@@ -161,38 +161,38 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
         {
             switch (i)
             {
-            case 0:
-            case -9:
-            return this._m00;
-            case 1:
-            case -8:
-            return this._m01;
-            case 2:
-            case -7:
-            return this._m02;
+                case 0:
+                case -9:
+                    return this._m00;
+                case 1:
+                case -8:
+                    return this._m01;
+                case 2:
+                case -7:
+                    return this._m02;
 
-            case 3:
-            case -6:
-            return this._m10;
-            case 4:
-            case -5:
-            return this._m11;
-            case 5:
-            case -4:
-            return this._m12;
+                case 3:
+                case -6:
+                    return this._m10;
+                case 4:
+                case -5:
+                    return this._m11;
+                case 5:
+                case -4:
+                    return this._m12;
 
-            case 6:
-            case -3:
-            return this._m20;
-            case 7:
-            case -2:
-            return this._m21;
-            case 8:
-            case -1:
-            return this._m22;
+                case 6:
+                case -3:
+                    return this._m20;
+                case 7:
+                case -2:
+                    return this._m21;
+                case 8:
+                case -1:
+                    return this._m22;
 
-            default:
-            return 0.0f;
+                default:
+                    return 0.0f;
             }
         }
     }
@@ -207,56 +207,56 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
         {
             switch (i)
             {
-            case 0:
-            case -3:
-            switch (j)
-            {
-            case 0:
-            case -3:
-            return this._m00;
-            case 1:
-            case -2:
-            return this._m01;
-            case 2:
-            case -1:
-            return this._m02;
-            default:
-            return 0.0f;
-            }
-            case 1:
-            case -2:
-            switch (j)
-            {
-            case 0:
-            case -3:
-            return this._m10;
-            case 1:
-            case -2:
-            return this._m11;
-            case 2:
-            case -1:
-            return this._m12;
-            default:
-            return 0.0f;
-            }
-            case 2:
-            case -1:
-            switch (j)
-            {
-            case 0:
-            case -3:
-            return this._m20;
-            case 1:
-            case -2:
-            return this._m21;
-            case 2:
-            case -1:
-            return this._m22;
-            default:
-            return 0.0f;
-            }
-            default:
-            return 0.0f;
+                case 0:
+                case -3:
+                    switch (j)
+                    {
+                        case 0:
+                        case -3:
+                            return this._m00;
+                        case 1:
+                        case -2:
+                            return this._m01;
+                        case 2:
+                        case -1:
+                            return this._m02;
+                        default:
+                            return 0.0f;
+                    }
+                case 1:
+                case -2:
+                    switch (j)
+                    {
+                        case 0:
+                        case -3:
+                            return this._m10;
+                        case 1:
+                        case -2:
+                            return this._m11;
+                        case 2:
+                        case -1:
+                            return this._m12;
+                        default:
+                            return 0.0f;
+                    }
+                case 2:
+                case -1:
+                    switch (j)
+                    {
+                        case 0:
+                        case -3:
+                            return this._m20;
+                        case 1:
+                        case -2:
+                            return this._m21;
+                        case 2:
+                        case -1:
+                            return this._m22;
+                        default:
+                            return 0.0f;
+                    }
+                default:
+                    return 0.0f;
             }
         }
     }
@@ -947,7 +947,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <returns>skew matrix</returns>
     public static Mat3 FromSkew(in float radians, in Vec2 a, in Vec2 b)
     {
-        float t = Utils.Tan(radians);
+        float t = MathF.Tan(radians);
         float tax = a.x * t;
         float tay = a.y * t;
 

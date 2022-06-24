@@ -320,10 +320,10 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         Vec2 bMn = b.min;
         Vec2 bMx = b.max;
         return new Bounds2(
-            Utils.Min(aMn.x, bMn.x),
-            Utils.Min(aMn.y, bMn.y),
-            Utils.Max(aMx.x, bMx.x),
-            Utils.Max(aMx.y, bMx.y));
+            MathF.Min(aMn.x, bMn.x),
+            MathF.Min(aMn.y, bMn.y),
+            MathF.Max(aMx.x, bMx.x),
+            MathF.Max(aMx.y, bMx.y));
     }
 
     /// <summary>

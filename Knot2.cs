@@ -233,7 +233,7 @@ public class Knot2
         float rMagSq = Vec2.MagSq(rDir);
         if (rMagSq > 0.0f)
         {
-            float flipRescale = -Vec2.DistEuclidean(this.foreHandle, this.coord) / Utils.SqrtUnchecked(rMagSq);
+            float flipRescale = -Vec2.DistEuclidean(this.foreHandle, this.coord) / MathF.Sqrt(rMagSq);
             this.foreHandle = this.coord + (flipRescale * rDir);
         }
 
@@ -251,7 +251,7 @@ public class Knot2
         float fMagSq = Vec2.MagSq(fDir);
         if (fMagSq > 0.0f)
         {
-            float flipRescale = -Vec2.DistEuclidean(this.rearHandle, this.coord) / Utils.SqrtUnchecked(fMagSq);
+            float flipRescale = -Vec2.DistEuclidean(this.rearHandle, this.coord) / MathF.Sqrt(fMagSq);
             this.rearHandle = this.coord + (flipRescale * fDir);
         }
 

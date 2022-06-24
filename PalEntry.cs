@@ -320,9 +320,9 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     public static StringBuilder ToGplString(in StringBuilder sb, in PalEntry pe)
     {
         Clr c = pe.Color;
-        int r = (int)(0.5f + 255.0f * Utils.Clamp(c.r, 0.0f, 1.0f));
-        int g = (int)(0.5f + 255.0f * Utils.Clamp(c.g, 0.0f, 1.0f));
-        int b = (int)(0.5f + 255.0f * Utils.Clamp(c.b, 0.0f, 1.0f));
+        int r = (int)(Utils.Clamp(c.r, 0.0f, 1.0f) * 255.0f + 0.5f);
+        int g = (int)(Utils.Clamp(c.g, 0.0f, 1.0f) * 255.0f + 0.5f);
+        int b = (int)(Utils.Clamp(c.b, 0.0f, 1.0f) * 255.0f + 0.5f);
         sb.Append(r.ToString().PadLeft(3, ' '));
         sb.Append(' ');
         sb.Append(g.ToString().PadLeft(3, ' '));

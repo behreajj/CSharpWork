@@ -385,7 +385,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>the absolute</returns>
     public static float Abs(in Complex z)
     {
-        return Utils.Sqrt(Complex.AbsSq(z));
+        return MathF.Sqrt(Complex.AbsSq(z));
     }
 
     /// <summary>
@@ -466,7 +466,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>result</returns>
     public static Complex Exp(in Complex z)
     {
-        return Complex.Rect(Utils.Exp(z.real), z.imag);
+        return Complex.Rect(MathF.Exp(z.real), z.imag);
     }
 
     /// <summary>
@@ -544,7 +544,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>the phase</returns>
     public static float Phase(in Complex z)
     {
-        return Utils.Atan2(z.imag, z.real);
+        return MathF.Atan2(z.imag, z.real);
     }
 
     /// <summary>
@@ -613,7 +613,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
             Utils.Mix(rhoMin, rhoMax,
                 (float)rng.NextDouble()),
 
-            Utils.Mix(-Utils.Pi, Utils.Pi,
+            Utils.Mix(-MathF.PI, MathF.PI,
                 (float)rng.NextDouble()));
     }
 
@@ -653,9 +653,9 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     public static Complex Sqrt(in float a)
     {
         return (a > 0.0f) ?
-            new Complex(Utils.Sqrt(a), 0.0f) :
+            new Complex(MathF.Sqrt(a), 0.0f) :
             (a < -0.0f) ?
-            new Complex(0.0f, Utils.Sqrt(-a)) :
+            new Complex(0.0f, MathF.Sqrt(-a)) :
             new Complex();
     }
 

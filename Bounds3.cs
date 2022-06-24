@@ -347,12 +347,12 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
         Vec3 bMn = b.min;
         Vec3 bMx = b.max;
         return new Bounds3(
-            Utils.Min(aMn.x, bMn.x),
-            Utils.Min(aMn.y, bMn.y),
-            Utils.Min(aMn.z, bMn.z),
-            Utils.Max(aMx.x, bMx.x),
-            Utils.Max(aMx.y, bMx.y),
-            Utils.Max(aMx.z, bMx.z));
+            MathF.Min(aMn.x, bMn.x),
+            MathF.Min(aMn.y, bMn.y),
+            MathF.Min(aMn.z, bMn.z),
+            MathF.Max(aMx.x, bMx.x),
+            MathF.Max(aMx.y, bMx.y),
+            MathF.Max(aMx.z, bMx.z));
     }
 
     /// <summary>

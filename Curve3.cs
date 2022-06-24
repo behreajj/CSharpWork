@@ -96,7 +96,7 @@ public class Curve3 : IEnumerable
     /// <summary>
     /// The default curve constructor.
     /// </summary>
-    public Curve3() { }
+    protected Curve3() { }
 
     /// <summary>
     /// Creates a curve from a list of knots and a closed loop flag.
@@ -237,6 +237,13 @@ public class Curve3 : IEnumerable
         return this.knots[this.knots.Count - 1];
     }
 
+    /// <summary>
+    /// Inserts a knot at a given index. When the curve is a closed loop, the
+    /// index wraps around; this means negative indices are accepted.
+    /// </summary>
+    /// <param name="i">index</param>
+    /// <param name="knot">knot</param>
+    /// <returns>the curve</returns>
     public Curve3 Insert(in int i, Knot3 knot)
     {
         int k = this.closedLoop ? Utils.RemFloor(i, this.knots.Count + 1) : i;
@@ -244,12 +251,23 @@ public class Curve3 : IEnumerable
         return this;
     }
 
+    /// <summary>
+    /// Prepend a knot to the curve's list of knots.
+    /// </summary>
+    /// <param name="knot">knot</param>
+    /// <returns>this curve</returns>
     public Curve3 Prepend(Knot3 knot)
     {
         this.knots.Insert(0, knot);
         return this;
     }
 
+    /// <summary>
+    /// Prepend an array of knots to the curve's list of knots.
+    /// Promotes the knots from 2D to 3D.
+    /// </summary>
+    /// <param name="kn">array of knots</param>
+    /// <returns>this curve</returns>
     public Curve3 PrependAll(params Knot2[] kn)
     {
         int len = kn.Length;
@@ -262,6 +280,11 @@ public class Curve3 : IEnumerable
         return this;
     }
 
+    /// <summary>
+    /// Prepend an array of knots to the curve's list of knots.
+    /// </summary>
+    /// <param name="kn">array of knots</param>
+    /// <returns>this curve</returns>
     public Curve3 PrependAll(params Knot3[] kn)
     {
         int len = kn.Length;
@@ -274,7 +297,12 @@ public class Curve3 : IEnumerable
         return this;
     }
 
-    public Knot3 RemoveAt(in int i)
+    /// <summary>
+    /// Returns and removes a knot at a given index.
+    /// </summary>
+    /// <param name="i">index</param>
+    /// <returns>the knot</returns>
+    protected Knot3 RemoveAt(in int i)
     {
         int j = this.closedLoop ? Utils.RemFloor(i, this.knots.Count) : i;
         Knot3 knot = this.knots[j];
@@ -282,12 +310,20 @@ public class Curve3 : IEnumerable
         return knot;
     }
 
-    public Knot3 RemoveFirst()
+    /// <summary>
+    /// Removes and returns the first knot in the curve.
+    /// </summary>
+    /// <returns>the knot</returns>
+    protected Knot3 RemoveFirst()
     {
         return this.RemoveAt(0);
     }
 
-    public Knot3 RemoveLast()
+    /// <summary>
+    /// Removes and returns the last knot in the curve.
+    /// </summary>
+    /// <returns>the knot</returns>
+    protected Knot3 RemoveLast()
     {
         return this.RemoveAt(this.knots.Count - 1);
     }
@@ -359,8 +395,8 @@ public class Curve3 : IEnumerable
     /// <returns>this curve</returns>
     public Curve3 Rotate(in float radians, in Vec3 axis)
     {
-        float cosa = Utils.Cos(radians);
-        float sina = Utils.Sin(radians);
+        float cosa = MathF.Cos(radians);
+        float sina = MathF.Sin(radians);
         foreach (Knot3 kn in this.knots) { kn.Rotate(cosa, sina, axis); }
         return this;
     }
@@ -372,8 +408,8 @@ public class Curve3 : IEnumerable
     /// <returns>this curve</returns>
     public Curve3 RotateX(in float radians)
     {
-        float cosa = Utils.Cos(radians);
-        float sina = Utils.Sin(radians);
+        float cosa = MathF.Cos(radians);
+        float sina = MathF.Sin(radians);
         foreach (Knot3 kn in this.knots) { kn.RotateX(cosa, sina); }
         return this;
     }
@@ -385,8 +421,8 @@ public class Curve3 : IEnumerable
     /// <returns>this curve</returns>
     public Curve3 RotateY(in float radians)
     {
-        float cosa = Utils.Cos(radians);
-        float sina = Utils.Sin(radians);
+        float cosa = MathF.Cos(radians);
+        float sina = MathF.Sin(radians);
         foreach (Knot3 kn in this.knots) { kn.RotateY(cosa, sina); }
         return this;
     }
@@ -398,8 +434,8 @@ public class Curve3 : IEnumerable
     /// <returns>this curve</returns>
     public Curve3 RotateZ(in float radians)
     {
-        float cosa = Utils.Cos(radians);
-        float sina = Utils.Sin(radians);
+        float cosa = MathF.Cos(radians);
+        float sina = MathF.Sin(radians);
         foreach (Knot3 kn in this.knots) { kn.RotateZ(cosa, sina); }
         return this;
     }
@@ -604,10 +640,10 @@ public class Curve3 : IEnumerable
     /// <param name="origin">origin</param>
     /// <param name="dest">destination</param>
     /// <returns>the range</returns>
-    public static (Vec3 coord, Vec3 tangent)[] EvalRange(
-        in Curve3 curve,
-        in int count,
-        in float origin,
+    public static (Vec3 coord, Vec3 tangent)[] EvalRange( //
+        in Curve3 curve, //
+        in int count, //
+        in float origin, //
         in float dest)
     {
         int vCount = count < 3 ? 3 : count;
@@ -624,8 +660,7 @@ public class Curve3 : IEnumerable
         float toPercent = 1.0f / (vCount - 1.0f);
         for (int i = 0; i < vCount; ++i)
         {
-            float fac = Utils.Mix(vOrigin, vDest,
-                i * toPercent);
+            float fac = Utils.Mix(vOrigin, vDest, i * toPercent);
             result[i] = Curve3.Eval(curve, fac);
         }
 
@@ -639,9 +674,9 @@ public class Curve3 : IEnumerable
     /// <param name="points">points array</param>
     /// <param name="closedLoop">closed loop flag</param>
     /// <returns>the curve</returns>
-    public static Curve3 FromLinear(
-        in Curve3 target,
-        in Vec3[] points,
+    public static Curve3 FromLinear( //
+        in Curve3 target, //
+        in Vec3[] points, //
         in bool closedLoop = false)
     {
         int len = points.Length;
@@ -664,11 +699,14 @@ public class Curve3 : IEnumerable
         return Curve3.StraightHandles(target);
     }
 
-    public static Curve3 FromQuadratic(
-        in Curve3 target,
-        in Vec3[] points,
+    public static Curve3 FromQuadratic( //
+        in Curve3 target, //
+        in Vec3[] points, //
         in bool closedLoop = false)
     {
+        // TODO: Check that this matches Java implementation.
+        // Add doc comment.
+
         int ptsLen = points.Length;
         if (ptsLen < 3)
         {

@@ -351,7 +351,7 @@ public class Transform2
     public static float MaxDimension(in Transform2 t)
     {
         Vec2 scl = Vec2.Abs(t.scale);
-        return Utils.Max(scl.x, scl.y);
+        return MathF.Max(scl.x, scl.y);
     }
 
     /// <summary>
@@ -362,7 +362,7 @@ public class Transform2
     public static float MinDimension(in Transform2 t)
     {
         Vec2 scl = Vec2.Abs(t.scale);
-        return Utils.Min(scl.x, scl.y);
+        return MathF.Min(scl.x, scl.y);
     }
 
     /// <summary>

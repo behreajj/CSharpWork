@@ -240,7 +240,7 @@ public class Knot3
         float rMagSq = Vec3.MagSq(rDir);
         if (rMagSq > 0.0f)
         {
-            float flipRescale = -Vec3.DistEuclidean(this.foreHandle, this.coord) / Utils.SqrtUnchecked(rMagSq);
+            float flipRescale = -Vec3.DistEuclidean(this.foreHandle, this.coord) / MathF.Sqrt(rMagSq);
             this.foreHandle = this.coord + (flipRescale * rDir);
         }
 
@@ -258,7 +258,7 @@ public class Knot3
         float fMagSq = Vec3.MagSq(fDir);
         if (fMagSq > 0.0f)
         {
-            float flipRescale = -Vec3.DistEuclidean(this.rearHandle, this.coord) / Utils.SqrtUnchecked(fMagSq);
+            float flipRescale = -Vec3.DistEuclidean(this.rearHandle, this.coord) / MathF.Sqrt(fMagSq);
             this.rearHandle = this.coord + (flipRescale * fDir);
         }
 
@@ -893,12 +893,12 @@ public class Knot3
         float bmSq = xBack * xBack +
             yBack * yBack +
             zBack * zBack;
-        float bmInv = bmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked(bmSq) : 0.0f;
+        float bmInv = bmSq != 0.0f ? 1.0f / MathF.Sqrt(bmSq) : 0.0f;
 
         float fmSq = xFore * xFore +
             yFore * yFore +
             zFore * zFore;
-        float fmInv = fmSq != 0.0f ? 1.0f / Utils.SqrtUnchecked(fmSq) : 0.0f;
+        float fmInv = fmSq != 0.0f ? 1.0f / MathF.Sqrt(fmSq) : 0.0f;
 
         float xDir = carry.x + xBack * bmInv - xFore * fmInv;
         float yDir = carry.y + yBack * bmInv - yFore * fmInv;
@@ -907,7 +907,7 @@ public class Knot3
         float dmSq = xDir * xDir +
             yDir * yDir +
             zDir * zDir;
-        float rescl = dmSq != 0.0f ? Utils.OneThird / Utils.SqrtUnchecked(dmSq) : 0.0f;
+        float rescl = dmSq != 0.0f ? Utils.OneThird / MathF.Sqrt(dmSq) : 0.0f;
 
         float xCarry = xDir * rescl;
         float yCarry = yDir * rescl;
@@ -950,12 +950,12 @@ public class Knot3
         float bmSq = xBack * xBack +
             yBack * yBack +
             zBack * zBack;
-        float bmInv = bmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked(bmSq) : 0.0f;
+        float bmInv = bmSq > 0.0f ? 1.0f / MathF.Sqrt(bmSq) : 0.0f;
 
         float fmSq = xFore * xFore +
             yFore * yFore +
             zFore * zFore;
-        float fmInv = fmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked(fmSq) : 0.0f;
+        float fmInv = fmSq > 0.0f ? 1.0f / MathF.Sqrt(fmSq) : 0.0f;
 
         float xDir = carry.x + xBack * bmInv - xFore * fmInv;
         float yDir = carry.y + yBack * bmInv - yFore * fmInv;
@@ -964,7 +964,7 @@ public class Knot3
         float dmSq = xDir * xDir +
             yDir * yDir +
             zDir * zDir;
-        float rescl = dmSq > 0.0f ? Utils.OneThird / Utils.SqrtUnchecked(dmSq) : 0.0f;
+        float rescl = dmSq > 0.0f ? Utils.OneThird / MathF.Sqrt(dmSq) : 0.0f;
 
         float xCarry = xDir * rescl;
         float yCarry = yDir * rescl;
@@ -1001,12 +1001,12 @@ public class Knot3
         float bmSq = xBack * xBack +
             yBack * yBack +
             zBack * zBack;
-        float bmInv = bmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked(bmSq) : 0.0f;
+        float bmInv = bmSq > 0.0f ? 1.0f / MathF.Sqrt(bmSq) : 0.0f;
 
         float fmSq = xFore * xFore +
             yFore * yFore +
             zFore * zFore;
-        float fmInv = fmSq > 0.0f ? 1.0f / Utils.SqrtUnchecked(fmSq) : 0.0f;
+        float fmInv = fmSq > 0.0f ? 1.0f / MathF.Sqrt(fmSq) : 0.0f;
 
         float xDir = carry.x + xBack * bmInv - xFore * fmInv;
         float yDir = carry.y + yBack * bmInv - yFore * fmInv;
@@ -1015,7 +1015,7 @@ public class Knot3
         float dmSq = xDir * xDir +
             yDir * yDir +
             zDir * zDir;
-        float rescl = dmSq > 0.0f ? Utils.OneThird / Utils.SqrtUnchecked(dmSq) : 0.0f;
+        float rescl = dmSq > 0.0f ? Utils.OneThird / MathF.Sqrt(dmSq) : 0.0f;
 
         float xCarry = xDir * rescl;
         float yCarry = yDir * rescl;

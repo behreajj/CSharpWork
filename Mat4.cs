@@ -250,60 +250,60 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         {
             switch (i)
             {
-            case 0:
-            case -16:
-            return this._m00;
-            case 1:
-            case -15:
-            return this._m01;
-            case 2:
-            case -14:
-            return this._m02;
-            case 3:
-            case -13:
-            return this._m03;
+                case 0:
+                case -16:
+                    return this._m00;
+                case 1:
+                case -15:
+                    return this._m01;
+                case 2:
+                case -14:
+                    return this._m02;
+                case 3:
+                case -13:
+                    return this._m03;
 
-            case 4:
-            case -12:
-            return this._m10;
-            case 5:
-            case -11:
-            return this._m11;
-            case 6:
-            case -10:
-            return this._m12;
-            case 7:
-            case -9:
-            return this._m13;
+                case 4:
+                case -12:
+                    return this._m10;
+                case 5:
+                case -11:
+                    return this._m11;
+                case 6:
+                case -10:
+                    return this._m12;
+                case 7:
+                case -9:
+                    return this._m13;
 
-            case 8:
-            case -8:
-            return this._m20;
-            case 9:
-            case -7:
-            return this._m21;
-            case 10:
-            case -6:
-            return this._m22;
-            case 11:
-            case -5:
-            return this._m23;
+                case 8:
+                case -8:
+                    return this._m20;
+                case 9:
+                case -7:
+                    return this._m21;
+                case 10:
+                case -6:
+                    return this._m22;
+                case 11:
+                case -5:
+                    return this._m23;
 
-            case 12:
-            case -4:
-            return this._m30;
-            case 13:
-            case -3:
-            return this._m31;
-            case 14:
-            case -2:
-            return this._m32;
-            case 15:
-            case -1:
-            return this._m33;
+                case 12:
+                case -4:
+                    return this._m30;
+                case 13:
+                case -3:
+                    return this._m31;
+                case 14:
+                case -2:
+                    return this._m32;
+                case 15:
+                case -1:
+                    return this._m33;
 
-            default:
-            return 0.0f;
+                default:
+                    return 0.0f;
             }
         }
     }
@@ -318,84 +318,84 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
         {
             switch (i)
             {
-            case 0:
-            case -4:
-            switch (j)
-            {
-            case 0:
-            case -4:
-            return this._m00;
-            case 1:
-            case -3:
-            return this._m01;
-            case 2:
-            case -2:
-            return this._m02;
-            case 3:
-            case -1:
-            return this._m03;
-            default:
-            return 0.0f;
-            }
-            case 1:
-            case -3:
-            switch (j)
-            {
-            case 0:
-            case -4:
-            return this._m10;
-            case 1:
-            case -3:
-            return this._m11;
-            case 2:
-            case -2:
-            return this._m12;
-            case 3:
-            case -1:
-            return this._m13;
-            default:
-            return 0.0f;
-            }
-            case 2:
-            case -2:
-            switch (j)
-            {
-            case 0:
-            case -4:
-            return this._m20;
-            case 1:
-            case -3:
-            return this._m21;
-            case 2:
-            case -2:
-            return this._m22;
-            case 3:
-            case -1:
-            return this._m23;
-            default:
-            return 0.0f;
-            }
-            case 3:
-            case -1:
-            switch (j)
-            {
-            case 0:
-            case -4:
-            return this._m30;
-            case 1:
-            case -3:
-            return this._m31;
-            case 2:
-            case -2:
-            return this._m32;
-            case 3:
-            case -1:
-            return this._m33;
-            default:
-            return 0.0f;
-            }
-            default:
-            return 0.0f;
+                case 0:
+                case -4:
+                    switch (j)
+                    {
+                        case 0:
+                        case -4:
+                            return this._m00;
+                        case 1:
+                        case -3:
+                            return this._m01;
+                        case 2:
+                        case -2:
+                            return this._m02;
+                        case 3:
+                        case -1:
+                            return this._m03;
+                        default:
+                            return 0.0f;
+                    }
+                case 1:
+                case -3:
+                    switch (j)
+                    {
+                        case 0:
+                        case -4:
+                            return this._m10;
+                        case 1:
+                        case -3:
+                            return this._m11;
+                        case 2:
+                        case -2:
+                            return this._m12;
+                        case 3:
+                        case -1:
+                            return this._m13;
+                        default:
+                            return 0.0f;
+                    }
+                case 2:
+                case -2:
+                    switch (j)
+                    {
+                        case 0:
+                        case -4:
+                            return this._m20;
+                        case 1:
+                        case -3:
+                            return this._m21;
+                        case 2:
+                        case -2:
+                            return this._m22;
+                        case 3:
+                        case -1:
+                            return this._m23;
+                        default:
+                            return 0.0f;
+                    }
+                case 3:
+                case -1:
+                    switch (j)
+                    {
+                        case 0:
+                        case -4:
+                            return this._m30;
+                        case 1:
+                        case -3:
+                            return this._m31;
+                        case 2:
+                        case -2:
+                            return this._m32;
+                        case 3:
+                        case -1:
+                            return this._m33;
+                        default:
+                            return 0.0f;
+                    }
+                default:
+                    return 0.0f;
             }
         }
     }
@@ -1407,7 +1407,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <returns>skew matrix</returns>
     public static Mat4 FromSkew(in float radians, in Vec3 a, in Vec3 b)
     {
-        float t = Utils.Tan(radians);
+        float t = MathF.Tan(radians);
         float tax = a.x * t;
         float tay = a.y * t;
         float taz = a.z * t;
