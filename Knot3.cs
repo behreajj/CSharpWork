@@ -65,7 +65,7 @@ public class Knot3
     /// The handle which warps the curve segment heading towards the knot along
     /// the direction of the curve.
     /// </summary>
-    /// <value>the rear handle</value>
+    /// <value>rear handle</value>
     public Vec3 RearHandle
     {
         get
@@ -410,8 +410,7 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 Rotate(in float radians, in Vec3 axis)
     {
-        Utils.SinCos(radians, out float sina, out float cosa);
-        return this.Rotate(cosa, sina, axis);
+        return this.Rotate(MathF.Cos(radians), MathF.Sin(radians), axis);
     }
 
     /// <summary>
@@ -486,8 +485,7 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 RotateX(in float radians)
     {
-        Utils.SinCos(radians, out float sina, out float cosa);
-        return this.RotateX(cosa, sina);
+        return this.RotateX(MathF.Cos(radians), MathF.Sin(radians));
     }
 
     /// <summary>
@@ -515,8 +513,7 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 RotateY(in float radians)
     {
-        Utils.SinCos(radians, out float sina, out float cosa);
-        return this.RotateY(cosa, sina);
+        return this.RotateY(MathF.Cos(radians), MathF.Sin(radians));
     }
 
     /// <summary>
@@ -544,8 +541,7 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 RotateZ(in float radians)
     {
-        Utils.SinCos(radians, out float sina, out float cosa);
-        return this.RotateZ(cosa, sina);
+        return this.RotateZ(MathF.Cos(radians), MathF.Sin(radians));
     }
 
     /// <summary>
@@ -767,7 +763,7 @@ public class Knot3
     /// <param name="a">origin</param>
     /// <param name="b">destination</param>
     /// <param name="step">step</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec3 BezierPoint(in Knot3 a, in Knot3 b, in float step)
     {
         return Vec3.BezierPoint(
@@ -782,7 +778,7 @@ public class Knot3
     /// <param name="a">origin</param>
     /// <param name="b">destination</param>
     /// <param name="step">step</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec3 BezierTangent(in Knot3 a, in Knot3 b, in float step)
     {
         return Vec3.BezierTangent(
@@ -798,7 +794,7 @@ public class Knot3
     /// <param name="a">origin</param>
     /// <param name="b">destination</param>
     /// <param name="step">step</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec3 BezierTanUnit(in Knot3 a, in Knot3 b, in float step)
     {
         return Vec3.BezierTanUnit(

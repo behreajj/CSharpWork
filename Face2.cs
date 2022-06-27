@@ -12,18 +12,18 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// <summary>
     /// The edges array.
     /// </summary>
-    private readonly Edge2 [ ] edges;
+    private readonly Edge2[] edges;
 
     /// <summary>
     /// Constructs a face from an array of edges.
     /// </summary>
     /// <param name="edges">edges array</param>
-    public Face2 (in Edge2 [ ] edges) { this.edges = edges; }
+    public Face2(in Edge2[] edges) { this.edges = edges; }
 
     /// <summary>
     /// The number of edges in this face.
     /// </summary>
-    /// <value>the length</value>
+    /// <value>length</value>
     public int Length { get { return this.edges.Length; } }
 
     /// <summary>
@@ -31,11 +31,11 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// negative indices may be used.
     /// </summary>
     /// <value>the edge</value>
-    public Edge2 this [ int i ]
+    public Edge2 this[int i]
     {
         get
         {
-            return this.edges [ Utils.RemFloor (i, this.edges.Length) ];
+            return this.edges[Utils.RemFloor(i, this.edges.Length)];
         }
     }
 
@@ -43,12 +43,12 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// Tests this face for equivalence with an object.
     /// </summary>
     /// <param name="value">the object</param>
-    /// <returns>the equivalence</returns>
-    public override bool Equals (object value)
+    /// <returns>equivalence</returns>
+    public override bool Equals(object value)
     {
-        if (Object.ReferenceEquals (this, value)) { return true; }
+        if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Vert3) { return this.Equals ((Face2) value); }
+        if (value is Vert3) { return this.Equals((Face2)value); }
         return false;
     }
 
@@ -56,18 +56,18 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// Returns a hash code representing this face.
     /// </summary>
     /// <returns>the hash code</returns>
-    public override int GetHashCode ( )
+    public override int GetHashCode()
     {
-        return this.edges.GetHashCode ( );
+        return this.edges.GetHashCode();
     }
 
     /// <summary>
     /// Returns a string representation of this face.
     /// </summary>
     /// <returns>the string</returns>
-    public override string ToString ( )
+    public override string ToString()
     {
-        return Face2.ToString (this);
+        return Face2.ToString(this);
     }
 
     /// <summary>
@@ -76,9 +76,9 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// </summary>
     /// <param name="f">comparisand</param>
     /// <returns>evaluation</returns>
-    public int CompareTo (Face2 f)
+    public int CompareTo(Face2 f)
     {
-        return Face2.Center (this).CompareTo (Face2.Center (f));
+        return Face2.Center(this).CompareTo(Face2.Center(f));
     }
 
     /// <summary>
@@ -87,9 +87,9 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// </summary>
     /// <param name="f">face</param>
     /// <returns>equivalence</returns>
-    public bool Equals (Face2 f)
+    public bool Equals(Face2 f)
     {
-        return this.edges.Equals (f.edges);
+        return this.edges.Equals(f.edges);
     }
 
     /// <summary>
@@ -97,9 +97,9 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// </summary>
     /// <param name="f">face</param>
     /// <returns>center</returns>
-    public static Vec2 Center (in Face2 f)
+    public static Vec2 Center(in Face2 f)
     {
-        return Face2.CenterMean (f);
+        return Face2.CenterMean(f);
     }
 
     /// <summary>
@@ -109,13 +109,13 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// </summary>
     /// <param name="f">face</param>
     /// <returns>center</returns>
-    public static Vec2 CenterMean (in Face2 f)
+    public static Vec2 CenterMean(in Face2 f)
     {
         int len = f.edges.Length;
         Vec2 sum = Vec2.Zero;
         for (int i = 0; i < len; ++i)
         {
-            sum += f.edges [ i ].Origin.Coord;
+            sum += f.edges[i].Origin.Coord;
         }
         return sum / len;
     }
@@ -127,11 +127,11 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// <param name="f">face</param>
     /// <param name="t">factor</param>
     /// <returns>point</returns>
-    public static Vec2 Eval (in Face2 f, in float t)
+    public static Vec2 Eval(in Face2 f, in float t)
     {
-        float tScaled = f.Length * Utils.RemFloor (t, 1.0f);
-        int i = (int) tScaled;
-        return Edge2.Eval (f [ i ], tScaled - i);
+        float tScaled = f.Length * Utils.RemFloor(t, 1.0f);
+        int i = (int)tScaled;
+        return Edge2.Eval(f[i], tScaled - i);
     }
 
     /// <summary>
@@ -140,13 +140,13 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// </summary>
     /// <param name="f">face</param>
     /// <returns>perimeter</returns>
-    public static float Perimeter (in Face2 f)
+    public static float Perimeter(in Face2 f)
     {
         int len = f.Length;
         float sum = 0.0f;
         for (int i = 0; i < len; ++i)
         {
-            sum += Edge2.Mag (f [ i ]);
+            sum += Edge2.Mag(f[i]);
         }
         return sum;
     }
@@ -157,9 +157,9 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// <param name="f">face</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
-    public static string ToString (in Face2 f, in int places = 4)
+    public static string ToString(in Face2 f, in int places = 4)
     {
-        return Face2.ToString (new StringBuilder (1024), f, places).ToString ( );
+        return Face2.ToString(new StringBuilder(1024), f, places).ToString();
     }
 
     /// <summary>
@@ -169,12 +169,12 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// <param name="f">face</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString (in StringBuilder sb, in Face2 f, in int places = 4)
+    public static StringBuilder ToString(in StringBuilder sb, in Face2 f, in int places = 4)
     {
-        sb.Append ("{ edges: ");
-        Edge2.ToString (sb, f.edges, places);
-        sb.Append (' ');
-        sb.Append ('}');
+        sb.Append("{ edges: ");
+        Edge2.ToString(sb, f.edges, places);
+        sb.Append(' ');
+        sb.Append('}');
         return sb;
     }
 }

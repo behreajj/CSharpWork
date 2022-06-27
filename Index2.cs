@@ -45,14 +45,14 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
         {
             switch (i)
             {
-            case 0:
-            case -2:
-            return this._v;
-            case 1:
-            case -1:
-            return this._vt;
-            default:
-            return 0;
+                case 0:
+                case -2:
+                    return this._v;
+                case 1:
+                case -1:
+                    return this._vt;
+                default:
+                    return 0;
             }
         }
     }
@@ -75,7 +75,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// Tests this index for equivalence with an object.
     /// </summary>
     /// <param name="value">the object</param>
-    /// <returns>the equivalence</returns>
+    /// <returns>equivalence</returns>
     public override bool Equals(object value)
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
@@ -111,7 +111,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// IEquatable interface.
     /// </summary>
     /// <param name="i">index</param>
-    /// <returns>the equivalence</returns>
+    /// <returns>equivalence</returns>
     public bool Equals(Index2 i)
     {
         if (this._v != i._v) { return false; }

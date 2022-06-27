@@ -161,7 +161,7 @@ public class Curve2 : IEnumerable
     /// Evaluates whether a knot is contained by this curve.
     /// </summary>
     /// <param name="knot">knot</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public bool Contains(in Knot2 knot)
     {
         return this.knots.Contains(knot);
@@ -419,7 +419,7 @@ public class Curve2 : IEnumerable
     ///
     /// Useful when consolidating multiple curve entities into one curve entity.
     /// </summary>
-    /// <param name="tr"></param>
+    /// <param name="tr">transform</param>
     /// <returns>this curve</returns>
     public Curve2 Transform(in Transform2 tr)
     {

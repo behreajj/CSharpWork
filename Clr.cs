@@ -41,7 +41,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <summary>
     /// Returns the number of elements in this color.
     /// </summary>
-    /// <value>the length</value>
+    /// <value>length</value>
     public int Length { get { return 4; } }
 
     /// <summary>
@@ -120,7 +120,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Tests this color for equivalence with an object.
     /// </summary>
     /// <param name="value">the object</param>
-    /// <returns>the equivalence</returns>
+    /// <returns>equivalence</returns>
     public override bool Equals(object value)
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
@@ -165,7 +165,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// IEquatable interface.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>the equivalence</returns>
+    /// <returns>equivalence</returns>
     public bool Equals(Clr c)
     {
         return Clr.EqSatArith(this, c);
@@ -176,7 +176,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// than zero.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static explicit operator bool(in Clr c)
     {
         return Clr.Any(c);
@@ -186,7 +186,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// A color evaluates to true if its alpha channel is greater than zero.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool operator true(in Clr c)
     {
         return Clr.Any(c);
@@ -197,7 +197,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// zero.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool operator false(in Clr c)
     {
         return Clr.None(c);
@@ -254,7 +254,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Tests to see if all color channels are greater than zero.
     /// </summary>
     /// <param name="c">the color</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool All(in Clr c)
     {
         return (c._a > 0.0f) &&
@@ -268,7 +268,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// i.e., if it has some opacity.
     /// </summary>
     /// <param name="c">the color</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool Any(in Clr c)
     {
         return c._a > 0.0f;
@@ -295,7 +295,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="c">color</param>
     /// <param name="v">value</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool Contains(in Clr c, in float v)
     {
         return Utils.Approx(c._a, v) ||
@@ -310,7 +310,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool EqAlphaSatArith(in Clr a, in Clr b)
     {
         return (int)(Utils.Clamp(a._a, 0.0f, 1.0f) * 255.0f + 0.5f) ==
@@ -323,7 +323,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool EqRgbSatArith(in Clr a, in Clr b)
     {
         return (int)(Utils.Clamp(a._b, 0.0f, 1.0f) * 255.0f + 0.5f) ==
@@ -341,7 +341,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool EqSatArith(in Clr a, in Clr b)
     {
         return Clr.EqAlphaSatArith(a, b) &&
@@ -537,12 +537,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>Lab color</returns>
     public static Vec4 LchaToLaba(in Vec4 lch)
     {
-        // TODO: Use single precision?
-        double hRad = (double)lch.x * 6.283185307179586d;
+        float hRad = lch.x * Utils.Tau;
         float chroma = MathF.Max(0.0f, lch.y);
         return new Vec4(
-            chroma * (float)Math.Cos(hRad),
-            chroma * (float)Math.Sin(hRad),
+            chroma * MathF.Cos(hRad),
+            chroma * MathF.Sin(hRad),
             lch.z,
             lch.w);
     }
@@ -590,23 +589,22 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>the standard color</returns>
     public static Clr LinearToStandard(in Clr c, in bool alpha = false)
     {
-        // TODO: Use single precision?
-        double inv24 = 1.0d / 2.4d;
+        float inv24 = 1.0f / 2.4f;
         return new Clr(
             c._r > 0.0031308f ?
-            (float)(Math.Pow(c._r, inv24) * 1.055d - 0.055d) :
+            MathF.Pow(c._r, inv24) * 1.055f - 0.055f :
             c._r * 12.92f,
 
             c._g > 0.0031308f ?
-            (float)(Math.Pow(c._g, inv24) * 1.055d - 0.055d) :
+            MathF.Pow(c._g, inv24) * 1.055f - 0.055f :
             c._g * 12.92f,
 
             c._b > 0.0031308f ?
-            (float)(Math.Pow(c._b, inv24) * 1.055d - 0.055d) :
+            MathF.Pow(c._b, inv24) * 1.055f - 0.055f :
             c._b * 12.92f,
 
             alpha ? c._a > 0.0031308f ?
-            (float)(Math.Pow(c._a, inv24) * 1.055d - 0.055d) :
+            MathF.Pow(c._a, inv24) * 1.055f - 0.055f :
             c._a * 12.92f :
             c._a);
     }
@@ -768,7 +766,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// zero, i.e., if it is completely transparent.
     /// </summary>
     /// <param name="c">the color</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool None(in Clr c)
     {
         return c._a <= 0.0f;
@@ -1122,7 +1120,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>string</returns>
     public static string ToHexWeb(in Clr c)
     {
-        return Clr.ToHexWeb(new StringBuilder(6), c).ToString();
+        return Clr.ToHexWeb(new StringBuilder(8), c).ToString();
     }
 
     /// <summary>

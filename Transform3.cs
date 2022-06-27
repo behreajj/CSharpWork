@@ -135,7 +135,7 @@ public class Transform3
     /// <summary>
     /// Returns a hash code representing this transform.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         unchecked
@@ -151,7 +151,7 @@ public class Transform3
     /// <summary>
     /// Returns a string representation of this transform.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Transform3.ToString(this);
@@ -174,7 +174,7 @@ public class Transform3
     /// rotation.
     /// </summary>
     /// <param name="v">direction</param>
-    /// <returns>transform</returns>
+    /// <returns>this transform</returns>
     public Transform3 MoveByLocal(in Vec3 v)
     {
         this.Location += Transform3.MulDir(this, v);
@@ -275,8 +275,8 @@ public class Transform3
     }
 
     /// <summary>
-    ///   Scales the transform by a uniform scalar, i.e., multiplies the scale by
-    ///   the argument.
+    /// Scales the transform by a uniform scalar, i.e., multiplies the scale by
+    /// the argument.
     /// </summary>
     /// <param name="v">uniform scalar</param>
     /// <returns>this transform</returns>    
@@ -287,8 +287,8 @@ public class Transform3
     }
 
     /// <summary>
-    ///   Scales the transform by a nonuniform scalar, i.e., multiplies the scale
-    ///   by the argument.
+    /// Scales the transform by a nonuniform scalar, i.e., multiplies the scale
+    /// by the argument.
     /// </summary>
     /// <param name="v">nonuniform scalar</param>
     /// <returns>this transform</returns>

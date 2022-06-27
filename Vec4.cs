@@ -31,7 +31,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Returns the number of values (dimensions) in this vector.
     /// </summary>
-    /// <value>the length</value>
+    /// <value>length</value>
     public int Length { get { return 4; } }
 
     /// <summary>
@@ -61,7 +61,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Gets the first three components as a 3D vector.
     /// </summary>
-    /// <returns>3D vector</returns>
+    /// <value>3D vector</value>
     public Vec3 xyz
     {
         get
@@ -135,7 +135,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// equality  with another vector, use the static approx function instead.
     /// </summary>
     /// <param name="value">the object</param>
-    /// <returns>the equivalence</returns>
+    /// <returns>equivalence</returns>
     public override bool Equals(object value)
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
@@ -175,7 +175,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// y, x . Returns 0 as a last resort.
     /// </summary>
     /// <param name="v">the comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public int CompareTo(Vec4 v)
     {
         return (this._w < v._w) ? -1 :
@@ -195,7 +195,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// the static approx function instead.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the equivalence</returns>
+    /// <returns>equivalence</returns>
     public bool Equals(Vec4 v)
     {
         if (this._w.GetHashCode() != v._w.GetHashCode()) { return false; }
@@ -312,7 +312,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// zero.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool operator true(in Vec4 v)
     {
         return Vec4.All(v);
@@ -323,7 +323,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// zero.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool operator false(in Vec4 v)
     {
         return Vec4.None(v);
@@ -355,7 +355,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec4 operator &(in Vec4 a, in Vec4 b)
     {
         return new Vec4(
@@ -371,7 +371,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec4 operator |(in Vec4 a, in Vec4 b)
     {
         return new Vec4(
@@ -387,7 +387,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec4 operator ^(in Vec4 a, in Vec4 b)
     {
         return new Vec4(
@@ -589,7 +589,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec4 operator <(in Vec4 a, in Vec4 b)
     {
         return new Vec4(
@@ -608,7 +608,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec4 operator >(in Vec4 a, in Vec4 b)
     {
         return new Vec4(
@@ -627,7 +627,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec4 operator <=(in Vec4 a, in Vec4 b)
     {
         return new Vec4(
@@ -646,7 +646,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec4 operator >=(in Vec4 a, in Vec4 b)
     {
         return new Vec4(
@@ -664,7 +664,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec4 operator !=(in Vec4 a, in Vec4 b)
     {
         return new Vec4(
@@ -682,7 +682,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec4 operator ==(in Vec4 a, in Vec4 b)
     {
         return new Vec4(
@@ -711,7 +711,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// testing valid dimensions (width and depth) stored in vectors.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool All(in Vec4 v)
     {
         return v._x != 0.0f &&
@@ -724,7 +724,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Tests to see if any of the vector's components are non-zero.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool Any(in Vec4 v)
     {
         return v._x != 0.0f ||
@@ -739,7 +739,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <param name="tolerance">the tolerance</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool Approx(in Vec4 a, in Vec4 b, in float tolerance = Utils.Epsilon)
     {
         return Utils.Approx(a._x, b._x, tolerance) &&
@@ -754,7 +754,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <param name="a">vector</param>
     /// <param name="b">the magnitude</param>
     /// <param name="tolerance">the tolerance</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool ApproxMag(in Vec4 a, in float b = 1.0f, in float tolerance = Utils.Epsilon)
     {
         return Utils.Approx(Vec4.MagSq(a), b * b, tolerance);
@@ -795,7 +795,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// </summary>
     /// <param name="a">the vector</param>
     /// <param name="b">the value</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool Contains(in Vec4 a, in float b)
     {
         return Utils.Approx(a._x, b) ||
@@ -1034,8 +1034,8 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Tests to see if the vector is on the unit sphere, i.e., has a magnitude
     /// of approximately 1.0 .
     /// </summary>
-    /// <param name="v"></param>
-    /// <returns>the evaluation</returns>
+    /// <param name="v">vector</param>
+    /// <returns>evaluation</returns>
     public static bool IsUnit(in Vec4 v)
     {
         return Utils.Approx(Vec4.MagSq(v), 1.0f);
@@ -1081,7 +1081,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// ) ) Where possible, use magSq or dot to avoid the computational cost of
     /// the square-root.
     /// </summary>
-    /// <param name="v"></param>
+    /// <param name="v">vector</param>
     /// <returns>the magnitude</returns>
     public static float Mag(in Vec4 v)
     {
@@ -1093,7 +1093,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// result as dot ( a, a ) . Useful when calculating the lengths of many
     /// vectors, so as to avoid the computational cost of the square-root.
     /// </summary>
-    /// <param name="v"></param>
+    /// <param name="v">vector</param>
     /// <returns>the magnitude squared</returns>
     public static float MagSq(in Vec4 v)
     {
@@ -1101,29 +1101,6 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
             v._y * v._y +
             v._z * v._z +
             v._w * v._w;
-    }
-
-    /// <summary>
-    /// Maps an input vector from an original range to a target range.
-    /// </summary>
-    /// <param name="v">vector</param>
-    /// <param name="lbOrigin">lower bound of original range</param>
-    /// <param name="ubOrigin">upper bound of original range</param>
-    /// <param name="lbDest">lower bound of destination range</param>
-    /// <param name="ubDest">upper bound of destination range</param>
-    /// <returns>the mapped value</returns>
-    public static Vec4 Map( //
-        in Vec4 v, //
-        in Vec4 lbOrigin, //
-        in Vec4 ubOrigin, // 
-        in Vec4 lbDest, //
-        in Vec4 ubDest)
-    {
-        return new Vec4(
-            Utils.Map(v._x, lbOrigin._x, ubOrigin._x, lbDest._x, ubDest._x),
-            Utils.Map(v._y, lbOrigin._y, ubOrigin._y, lbDest._y, ubDest._y),
-            Utils.Map(v._z, lbOrigin._z, ubOrigin._z, lbDest._z, ubDest._z),
-            Utils.Map(v._w, lbOrigin._w, ubOrigin._w, lbDest._w, ubDest._w));
     }
 
     /// <summary>
@@ -1212,7 +1189,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// safeguarding against invalid directions.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool None(in Vec4 v)
     {
         return v._x == 0.0f &&
@@ -1392,6 +1369,29 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         float k = 1.0f - eta * eta * (1.0f - iDotN * iDotN);
         if (k < 0.0f) { return Vec4.Zero; }
         return (eta * i) - (n * (eta * iDotN + MathF.Sqrt(k)));
+    }
+
+    /// <summary>
+    /// Maps an input vector from an original range to a target range.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <param name="lbOrigin">lower bound of original range</param>
+    /// <param name="ubOrigin">upper bound of original range</param>
+    /// <param name="lbDest">lower bound of destination range</param>
+    /// <param name="ubDest">upper bound of destination range</param>
+    /// <returns>the mapped value</returns>
+    public static Vec4 Remap( //
+        in Vec4 v, //
+        in Vec4 lbOrigin, //
+        in Vec4 ubOrigin, // 
+        in Vec4 lbDest, //
+        in Vec4 ubDest)
+    {
+        return new Vec4(
+            Utils.Remap(v._x, lbOrigin._x, ubOrigin._x, lbDest._x, ubDest._x),
+            Utils.Remap(v._y, lbOrigin._y, ubOrigin._y, lbDest._y, ubDest._y),
+            Utils.Remap(v._z, lbOrigin._z, ubOrigin._z, lbDest._z, ubDest._z),
+            Utils.Remap(v._w, lbOrigin._w, ubOrigin._w, lbDest._w, ubDest._w));
     }
 
     /// <summary>

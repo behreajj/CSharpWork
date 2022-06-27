@@ -186,7 +186,7 @@ public class Mesh2
     /// Removes elements from the coordinate, texture coordinate and normal
     /// arrays of the mesh which are not visited by the face indices.
     /// </summary>
-    /// <returns>mesh</returns>
+    /// <returns>this mesh</returns>
     public Mesh2 Clean()
     {
         // TODO: Test.
@@ -260,7 +260,7 @@ public class Mesh2
     /// </summary>
     /// <param name="faceIndex">index</param>
     /// <param name="deletions">removal count</param>
-    /// <returns>mesh</returns>
+    /// <returns>this mesh</returns>
     public Mesh2 DeleteFaces(in int faceIndex, in int deletions = 1)
     {
         int aLen = this.loops.Length;
@@ -279,7 +279,7 @@ public class Mesh2
     /// Negates the x component of all texture coordinates (u) in the mesh.
     /// Does so by subtracting the value from 1.0.
     /// </summary>
-    /// <returns>this mesh.</returns>
+    /// <returns>this mesh</returns>
     public Mesh2 FlipU()
     {
         int vtsLen = this.texCoords.Length;
@@ -295,7 +295,7 @@ public class Mesh2
     /// Negates the y component of all texture coordinates (v) in the mesh.
     /// Does so by subtracting the value from 1.0.
     /// </summary>
-    /// <returns>this mesh.</returns>
+    /// <returns>this mesh</returns>
     public Mesh2 FlipV()
     {
         int vtsLen = this.texCoords.Length;
@@ -1069,6 +1069,9 @@ public class Mesh2
         return this;
     }
 
+    /// <summary>
+    /// </summary>
+    /// <returns>arc</returns>
     public static Mesh2 Arc( //
         in Mesh2 target, //
         in int sectors = 32, //
@@ -1557,7 +1560,7 @@ public class Mesh2
     /// <param name="res">resolution</param>
     /// <param name="poly">polygon type</param>
     /// <param name="profile">UV Profile</param>
-    /// <returns>the rectangle</returns>
+    /// <returns>rectangle</returns>
     public static Mesh2 Rect( //
         in Mesh2 target, //
         in Vec2 lb, in Vec2 ub, //
@@ -1590,7 +1593,7 @@ public class Mesh2
     /// <param name="blRes">bottom left resolution</param>
     /// <param name="poly">polygon type</param>
     /// <param name="profile">UV Profile</param>
-    /// <returns>the rectangle</returns>
+    /// <returns>rectangle</returns>
     public static Mesh2 Rect( //
         in Mesh2 target, //
         in Vec2 lb, in Vec2 ub, //

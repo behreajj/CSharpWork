@@ -93,7 +93,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// Tests this entry for equivalence with an object.
     /// </summary>
     /// <param name="value">the object</param>
-    /// <returns>the equivalence</returns>
+    /// <returns>equivalence</returns>
     public override bool Equals(object value)
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
@@ -146,7 +146,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// IEquatable interface.
     /// </summary>
     /// <param name="k">key</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public bool Equals(PalEntry pe)
     {
         if (pe is null) { return false; }
@@ -156,9 +156,9 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// <summary>
     /// Sets an entry from a color and a name.
     /// </summary>
-    /// <param name="color"></param>
-    /// <param name="name"></param>
-    /// <returns></returns>
+    /// <param name="color">color</param>
+    /// <param name="name">name</param>
+    /// <returns>this entry</returns>
     public PalEntry Set(in Clr color, in string name)
     {
         this.Color = color;

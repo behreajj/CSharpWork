@@ -15,7 +15,7 @@ public class Loop2
     /// <summary>
     /// Array of compound vertex indices.
     /// </summary> 
-    /// <value>the index</value>
+    /// <value>indices</value>
     public Index2[] Indices
     {
         get
@@ -32,14 +32,14 @@ public class Loop2
     /// <summary>
     /// The number of vertex indices in this loop.
     /// </summary>
-    /// <value>the length</value>
+    /// <value>length</value>
     public int Length { get { return this.indices.Length; } }
 
     /// <summary>
     /// Gets or sets a mesh compound index at i. Wraps around, so
     /// negative indices may be used.
     /// </summary>
-    /// <value>the mesh index</value>
+    /// <value>mesh index</value>
     public Index2 this[int i]
     {
         get
@@ -214,7 +214,7 @@ public class Loop2
     /// <param name="index">insertion point</param>
     /// <param name="deletions">deletion count</param>
     /// <param name="insert">insert</param>
-    /// <returns>the spliced array</returns>
+    /// <returns>spliced array</returns>
     public static Loop2[] Splice(in Loop2[] arr, in int index, in int deletions, in Loop2[] insert)
     {
         int aLen = arr.Length;

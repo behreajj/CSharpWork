@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Collections.Generic;
 
 /// <summary>
 /// An axis aligned bounding box (AABB) for a 3D volume, represented with a
@@ -293,14 +294,8 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// </summary>
     /// <param name="points">points</param>
     /// <returns>bounds</returns>
-    public static Bounds3 FromPoints(params Vec3[] points)
+    public static Bounds3 FromPoints(in IEnumerable<Vec3> points)
     {
-        int len = points.Length;
-        if (len < 1)
-        {
-            return new Bounds3();
-        }
-
         float lbx = float.MaxValue;
         float lby = float.MaxValue;
         float lbz = float.MaxValue;
@@ -309,9 +304,10 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
         float uby = float.MinValue;
         float ubz = float.MinValue;
 
-        for (int i = 0; i < len; ++i)
+        int len = 0;
+        foreach (Vec3 p in points)
         {
-            Vec3 p = points[i];
+            ++len;
             float x = p.x;
             float y = p.y;
             float z = p.z;
@@ -322,6 +318,8 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
             if (z < lbz) { lbz = z; }
             if (z > ubz) { ubz = z; }
         }
+
+        if (len < 1) { return new Bounds3(); }
 
         lbx -= Utils.Epsilon * 2.0f;
         lby -= Utils.Epsilon * 2.0f;
@@ -379,6 +377,28 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
             a.min.y < b.max.y ||
             a.max.x > b.min.x ||
             a.min.x < b.max.x;
+    }
+
+    /// <summary>
+    /// Evaluates whether a bounding volume intersects a sphere.
+    /// </summary>
+    /// <param name="a">bounding area</param>
+    /// <param name="center">sphere center</param>
+    /// <param name="radius">sphere radius</param>
+    /// <returns>evaluation</returns>
+    public static bool Intersect(in Bounds3 a, in Vec3 center, in float radius)
+    {
+        float zd = center.z < a.min.z ? center.z - a.min.z :
+                   center.z > a.max.z ? center.z - a.max.z :
+                   0.0f;
+        float yd = center.y < a.min.y ? center.y - a.min.y :
+                   center.y > a.max.y ? center.y - a.max.y :
+                   0.0f;
+        float xd = center.x < a.min.x ? center.x - a.min.x :
+                   center.x > a.max.x ? center.x - a.max.x :
+                   0.0f;
+
+        return xd * xd + yd * yd + zd * zd < radius * radius;
     }
 
     /// <summary>

@@ -65,7 +65,7 @@ public class Knot2
     /// The handle which warps the curve segment heading towards the knot along
     /// the direction of the curve.
     /// </summary>
-    /// <value>the rear handle</value>
+    /// <value>rear handle</value>
     public Vec2 RearHandle
     {
         get
@@ -359,8 +359,7 @@ public class Knot2
     /// <returns>this knot</returns>
     public Knot2 RotateForeHandle(in float radians)
     {
-        Utils.SinCos(radians, out float sina, out float cosa);
-        return this.RotateForeHandle(cosa, sina);
+        return this.RotateForeHandle(MathF.Cos(radians), MathF.Sin(radians));
     }
 
     /// <summary>
@@ -385,8 +384,7 @@ public class Knot2
     /// <returns>this knot</returns>
     public Knot2 RotateHandles(in float radians)
     {
-        Utils.SinCos(radians, out float sina, out float cosa);
-        return this.RotateHandles(cosa, sina);
+        return this.RotateHandles(MathF.Cos(radians), MathF.Sin(radians));
     }
 
     /// <summary>
@@ -411,8 +409,7 @@ public class Knot2
     /// <returns>this knot</returns>
     public Knot2 RotateRearHandle(in float radians)
     {
-        Utils.SinCos(radians, out float sina, out float cosa);
-        return this.RotateRearHandle(cosa, sina);
+        return this.RotateRearHandle(MathF.Cos(radians), MathF.Sin(radians));
     }
 
     /// <summary>
@@ -437,8 +434,7 @@ public class Knot2
     /// <returns>this knot</returns>
     public Knot2 RotateZ(in float radians)
     {
-        Utils.SinCos(radians, out float sina, out float cosa);
-        return this.RotateZ(cosa, sina);
+        return this.RotateZ(MathF.Cos(radians), MathF.Sin(radians));
     }
 
     /// <summary>
@@ -648,7 +644,7 @@ public class Knot2
     /// <param name="a">origin</param>
     /// <param name="b">destination</param>
     /// <param name="step">step</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec2 BezierPoint(in Knot2 a, in Knot2 b, in float step)
     {
         return Vec2.BezierPoint(
@@ -663,7 +659,7 @@ public class Knot2
     /// <param name="a">origin</param>
     /// <param name="b">destination</param>
     /// <param name="step">step</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec2 BezierTangent(in Knot2 a, in Knot2 b, in float step)
     {
         return Vec2.BezierTangent(
@@ -679,7 +675,7 @@ public class Knot2
     /// <param name="a">origin</param>
     /// <param name="b">destination</param>
     /// <param name="step">step</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static Vec2 BezierTanUnit(in Knot2 a, in Knot2 b, in float step)
     {
         return Vec2.BezierTanUnit(

@@ -54,7 +54,7 @@ public class ClrGradient : IEnumerable
         /// Tests this color key for equivalence with an object.
         /// </summary>
         /// <param name="value">the object</param>
-        /// <returns>the equivalence</returns>
+        /// <returns>equivalence</returns>
         public override bool Equals(object value)
         {
             if (Object.ReferenceEquals(this, value)) { return true; }
@@ -100,7 +100,7 @@ public class ClrGradient : IEnumerable
         /// IEquatable interface.
         /// </summary>
         /// <param name="k">key</param>
-        /// <returns>the evaluation</returns>
+        /// <returns>evaluation</returns>
         public bool Equals(Key k)
         {
             return this.GetHashCode() == k.GetHashCode();
@@ -112,7 +112,7 @@ public class ClrGradient : IEnumerable
         /// </summary>
         /// <param name="a">left comparisand</param>
         /// <param name="b">right comparisand</param>
-        /// <returns>the evaluation</returns>
+        /// <returns>evaluation</returns>
         public static bool operator <(in Key a, in Key b)
         {
             return a.step < b.step;
@@ -124,7 +124,7 @@ public class ClrGradient : IEnumerable
         /// </summary>
         /// <param name="a">left comparisand</param>
         /// <param name="b">right comparisand</param>
-        /// <returns>the evaluation</returns>
+        /// <returns>evaluation</returns>
         public static bool operator >(in Key a, in Key b)
         {
             return a.step > b.step;
@@ -136,7 +136,7 @@ public class ClrGradient : IEnumerable
         /// </summary>
         /// <param name="a">left comparisand</param>
         /// <param name="b">right comparisand</param>
-        /// <returns>the evaluation</returns>
+        /// <returns>evaluation</returns>
         public static bool operator <=(in Key a, in Key b)
         {
             return a.step <= b.step;
@@ -148,7 +148,7 @@ public class ClrGradient : IEnumerable
         /// </summary>
         /// <param name="a">left comparisand</param>
         /// <param name="b">right comparisand</param>
-        /// <returns>the evaluation</returns>
+        /// <returns>evaluation</returns>
         public static bool operator >=(in Key a, in Key b)
         {
             return a.step >= b.step;
@@ -159,7 +159,7 @@ public class ClrGradient : IEnumerable
         /// </summary>
         /// <param name="a">left comparisand</param>
         /// <param name="b">right comparisand</param>
-        /// <returns>the evaluation</returns>
+        /// <returns>evaluation</returns>
         public static bool operator !=(in Key a, in Key b)
         {
             return a.step != b.step;
@@ -170,7 +170,7 @@ public class ClrGradient : IEnumerable
         /// </summary>
         /// <param name="a">left comparisand</param>
         /// <param name="b">right comparisand</param>
-        /// <returns>the evaluation</returns>
+        /// <returns>evaluation</returns>
         public static bool operator ==(in Key a, in Key b)
         {
             return a.step == b.step;
@@ -214,7 +214,7 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Returns the number of color keys in this gradient.
     /// </summary>
-    /// <value>the length</value>
+    /// <value>length</value>
     public int Length { get { return this.keys.Count; } }
 
     /// <summary>
@@ -245,7 +245,7 @@ public class ClrGradient : IEnumerable
     /// Retrieves a color key by index. Wraps the index by the number of color
     /// keys.
     /// </summary>
-    /// <value>the color key</value>
+    /// <value>color key</value>
     public Key this[int i]
     {
         get
@@ -257,7 +257,7 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Retrieves a color given a step in the range [0.0, 1.0] .
     /// </summary>
-    /// <value></value>
+    /// <value>color</value>
     public Clr this[float step]
     {
         get
@@ -362,8 +362,8 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Evaluates whether the gradient contains a key at a given tolerance.
     /// </summary>
-    /// <param name="key">the key</param>
-    /// <returns>the evaluation</returns>
+    /// <param name="key">color key</param>
+    /// <returns>evaluation</returns>
     public int ContainsKey(Key key)
     {
         return this.keys.FindIndex((Key x) => Utils.Approx(x.Step, key.Step, 0.0005f));
@@ -381,7 +381,7 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Gets the first color key from the gradient.
     /// </summary>
-    /// <returns>the first key</returns>
+    /// <returns>first key</returns>
     public Key GetFirst()
     {
         return this.keys[0];
@@ -390,7 +390,7 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Gets the last color key from the gradient.
     /// </summary>
-    /// <returns>the first key</returns>
+    /// <returns>last key</returns>
     public Key GetLast()
     {
         return this.keys[this.keys.Count - 1];
@@ -414,9 +414,20 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Inserts all color keys into this gradient.
     /// </summary>
-    /// <param name="keys"></param>
-    /// <returns></returns>
+    /// <param name="keys">color keys</param>
+    /// <returns>this gradient</returns>
     public ClrGradient InsertAll(params Key[] keys)
+    {
+        foreach (Key key in keys) { this.Insert(key); }
+        return this;
+    }
+
+    /// <summary>
+    /// Inserts all color keys into this gradient.
+    /// </summary>
+    /// <param name="keys">color keys</param>
+    /// <returns>this gradient</returns>
+    public ClrGradient InsertAll(in IEnumerable<Key> keys)
     {
         foreach (Key key in keys) { this.Insert(key); }
         return this;
@@ -471,7 +482,7 @@ public class ClrGradient : IEnumerable
     /// Removes a key at a given index.
     /// </summary>
     /// <param name="i">index</param>
-    /// <returns>the key</returns>
+    /// <returns>color key</returns>
     protected Key RemoveAt(in int i = -1)
     {
         int j = Utils.RemFloor(i, this.keys.Count);
@@ -483,7 +494,7 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Removes the first key from the gradient.
     /// </summary>
-    /// <returns>the key</returns>
+    /// <returns>first key</returns>
     protected Key RemoveFirst()
     {
         return this.RemoveAt(0);
@@ -492,7 +503,7 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Removes the last key from the gradient.
     /// </summary>
-    /// <returns>the key</returns>
+    /// <returns>last key</returns>
     protected Key RemoveLast()
     {
         return this.RemoveAt(this.keys.Count - 1);
@@ -529,7 +540,7 @@ public class ClrGradient : IEnumerable
     /// </summary>
     /// <param name="cg">color gradient</param>
     /// <param name="step">step</param>
-    /// <returns>the index</returns>
+    /// <returns>index</returns>
     static int BisectRight(in ClrGradient cg, in float step)
     {
         int low = 0;
@@ -604,7 +615,7 @@ public class ClrGradient : IEnumerable
     /// <param name="count">count</param>
     /// <param name="origin">origin</param>
     /// <param name="dest">destination</param>
-    /// <returns>the colors</returns>
+    /// <returns>colors</returns>
     public static Clr[] EvalRange( //
         in ClrGradient cg, //
         in int count, //
@@ -624,7 +635,7 @@ public class ClrGradient : IEnumerable
     /// <param name="origin">origin</param>
     /// <param name="dest">destination</param>
     /// <param name="easing">easing function</param>
-    /// <returns>the colors</returns>
+    /// <returns>colors</returns>
     public static Clr[] EvalRange( //
         in ClrGradient cg, //
         in int count, //
@@ -652,7 +663,7 @@ public class ClrGradient : IEnumerable
     /// Returns the Magma color palette, consisting of 16 keys.
     /// </summary>
     /// <param name="target">output gradient</param>
-    /// <returns>the gradient</returns>
+    /// <returns>gradient</returns>
     public static ClrGradient PaletteMagma(in ClrGradient target)
     {
         List<Key> keys = target.keys;
@@ -687,7 +698,7 @@ public class ClrGradient : IEnumerable
     /// blue, magenta and red. Red is repeated so the gradient is periodic.
     /// </summary>
     /// <param name="target">output gradient</param>
-    /// <returns>the gradient</returns>
+    /// <returns>gradient</returns>
     public static ClrGradient PaletteRgb(in ClrGradient target)
     {
         List<Key> keys = target.keys;
@@ -710,7 +721,7 @@ public class ClrGradient : IEnumerable
     /// repeated so that the gradient is periodic.
     /// </summary>
     /// <param name="target">output gradient</param>
-    /// <returns>the gradient</returns>
+    /// <returns>gradient</returns>
     public static ClrGradient PaletteRyb(in ClrGradient target)
     {
         List<Key> keys = target.keys;
@@ -738,7 +749,7 @@ public class ClrGradient : IEnumerable
     /// Returns the Viridis color palette, consisting of 16 keys.
     /// </summary>
     /// <param name="target">output gradient</param>
-    /// <returns>the gradient</returns>
+    /// <returns>gradient</returns>
     public static ClrGradient PaletteViridis(in ClrGradient target)
     {
         List<Key> keys = target.keys;
@@ -774,7 +785,7 @@ public class ClrGradient : IEnumerable
     /// key minus the step of the first.
     /// </summary>
     /// <param name="c">color gradient</param>
-    /// <returns>span</returns>
+    /// <returns>range</returns>
     public static float Range(in ClrGradient cg)
     {
         return cg.keys[cg.keys.Count - 1].Step - cg.keys[0].Step;

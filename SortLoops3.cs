@@ -9,14 +9,14 @@ public class SortLoops3 : IComparer<Loop3>
     /// <summary>
     /// Coordinates referenced by loop indices.
     /// </summary>
-    protected readonly Vec3 [ ] coords;
+    protected readonly Vec3[] coords;
 
     /// <summary>
     /// Constructs a loop sorting comparator from
     /// an array to a mesh's coordinates.
     /// </summary>
     /// <param name="coords">mesh coordinates</param>
-    public SortLoops3 (in Vec3 [ ] coords)
+    public SortLoops3(in Vec3[] coords)
     {
         this.coords = coords;
     }
@@ -26,28 +26,28 @@ public class SortLoops3 : IComparer<Loop3>
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
 
-    public int Compare (Loop3 a, Loop3 b)
+    public int Compare(Loop3 a, Loop3 b)
     {
-        Vec3 aAvg = new Vec3 ( );
-        Index3 [ ] aIdcs = a.Indices;
+        Vec3 aAvg = new Vec3();
+        Index3[] aIdcs = a.Indices;
         int aLen = aIdcs.Length;
         for (int i = 0; i < aLen; ++i)
         {
-            aAvg += this.coords [ aIdcs [ i ].v ];
+            aAvg += this.coords[aIdcs[i].v];
         }
         aAvg /= aLen;
 
-        Vec3 bAvg = new Vec3 ( );
-        Index3 [ ] bIdcs = b.Indices;
+        Vec3 bAvg = new Vec3();
+        Index3[] bIdcs = b.Indices;
         int bLen = bIdcs.Length;
         for (int i = 0; i < bLen; ++i)
         {
-            bAvg += this.coords [ bIdcs [ i ].v ];
+            bAvg += this.coords[bIdcs[i].v];
         }
         bAvg /= bLen;
 
-        return aAvg.CompareTo (bAvg);
+        return aAvg.CompareTo(bAvg);
     }
 }

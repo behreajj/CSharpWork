@@ -15,7 +15,7 @@ public class Loop3
     /// <summary>
     /// Array of compound vertex indices.
     /// </summary>
-    /// <value>the index</value>
+    /// <value>indices</value>
     public Index3[] Indices
     {
         get
@@ -32,14 +32,14 @@ public class Loop3
     /// <summary>
     /// The number of vertex indices in this loop.
     /// </summary>
-    /// <value>the length</value>
+    /// <value>length</value>
     public int Length { get { return this.indices.Length; } }
 
     /// <summary>
     /// Gets or sets a mesh compound index at i. Wraps around, so
     /// negative indices may be used.
     /// </summary>
-    /// <value>the mesh index</value>
+    /// <value>mesh index</value>
     public Index3 this[int i]
     {
         get
@@ -137,7 +137,7 @@ public class Loop3
     /// <param name="d">fourth vertex</param>
     /// <param name="e">fifth vertex</param>
     /// <param name="target">target loop</param>
-    /// <returns>quadrilateral loop</returns>
+    /// <returns>pentagon loop</returns>
     public static Loop3 Pentagon( //
         in Index3 a, //
         in Index3 b, //
@@ -230,7 +230,7 @@ public class Loop3
     /// <param name="index">insertion point</param>
     /// <param name="deletions">deletion count</param>
     /// <param name="insert">insert</param>
-    /// <returns>the spliced array</returns>
+    /// <returns>spliced array</returns>
     public static Loop3[] Splice(in Loop3[] arr, in int index, in int deletions, in Loop3[] insert)
     {
         int aLen = arr.Length;

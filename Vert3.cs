@@ -61,7 +61,7 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// Tests this vertex for equivalence with an object.
     /// </summary>
     /// <param name="value">the object</param>
-    /// <returns>the equivalence</returns>
+    /// <returns>equivalence</returns>
     public override bool Equals(object value)
     {
         if (Object.ReferenceEquals(this, value)) { return true; }

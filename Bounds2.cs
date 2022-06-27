@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Collections.Generic;
 
 /// <summary>
 /// An axis aligned bounding box (AABB) for a 2D area, represented with a
@@ -276,20 +277,18 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// </summary>
     /// <param name="points">points</param>
     /// <returns>bounds</returns>
-    public static Bounds2 FromPoints(params Vec2[] points)
+    public static Bounds2 FromPoints(in IEnumerable<Vec2> points)
     {
-        int len = points.Length;
-        if (len < 1) { return new Bounds2(); }
-
         float lbx = float.MaxValue;
         float lby = float.MaxValue;
 
         float ubx = float.MinValue;
         float uby = float.MinValue;
 
-        for (int i = 0; i < len; ++i)
+        int len = 0;
+        foreach (Vec2 p in points)
         {
-            Vec2 p = points[i];
+            ++len;
             float x = p.x;
             float y = p.y;
             if (x < lbx) { lbx = x; }
@@ -297,6 +296,8 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
             if (y < lby) { lby = y; }
             if (y > uby) { uby = y; }
         }
+
+        if (len < 1) { return new Bounds2(); }
 
         lbx -= Utils.Epsilon * 2.0f;
         lby -= Utils.Epsilon * 2.0f;
@@ -348,6 +349,25 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
             a.min.y < b.max.y ||
             a.max.x > b.min.x ||
             a.min.x < b.max.x;
+    }
+
+    /// <summary>
+    /// Evaluates whether a bounding area intersects a circle.
+    /// </summary>
+    /// <param name="a">bounding area</param>
+    /// <param name="center">circle center</param>
+    /// <param name="radius">circle radius</param>
+    /// <returns>evaluation</returns>
+    public static bool Intersect(in Bounds2 a, in Vec2 center, in float radius)
+    {
+        float yd = center.y < a.min.y ? center.y - a.min.y :
+                   center.y > a.max.y ? center.y - a.max.y :
+                   0.0f;
+        float xd = center.x < a.min.x ? center.x - a.min.x :
+                   center.x > a.max.x ? center.x - a.max.x :
+                   0.0f;
+
+        return xd * xd + yd * yd < radius * radius;
     }
 
     /// <summary>

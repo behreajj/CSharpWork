@@ -6,7 +6,7 @@ public static class Simplex
     /// <summary>
     /// A default seed set to the system current time in milliseconds.
     /// </summary>
-    public static int DefaultSeed = (int) System.DateTime.Now.Ticks;
+    public static int DefaultSeed = (int)System.DateTime.Now.Ticks;
 
     private const float F2 = 0.36602542f;
     private const float F3 = 0.33333333f;
@@ -57,7 +57,7 @@ public static class Simplex
     /// </summary>
     private const float Step4 = 0.5f;
 
-    private static readonly Vec2[ ] Grad2Lut = new Vec2[ ]
+    private static readonly Vec2[] Grad2Lut = new Vec2[]
     {
         new Vec2 (-1.0f, -1.0f),
         new Vec2 (1.0f, 0.0f),
@@ -69,7 +69,7 @@ public static class Simplex
         new Vec2 (1.0f, -1.0f)
     };
 
-    private static readonly Vec3[ ] Grad3Lut = new Vec3[ ]
+    private static readonly Vec3[] Grad3Lut = new Vec3[]
     {
         new Vec3 (1.0f, 0.0f, 1.0f),
         new Vec3 (0.0f, 1.0f, 1.0f),
@@ -89,7 +89,7 @@ public static class Simplex
         new Vec3 (0.0f, -1.0f, -1.0f)
     };
 
-    private static readonly Vec4[ ] Grad4Lut = new Vec4[ ]
+    private static readonly Vec4[] Grad4Lut = new Vec4[]
     {
         new Vec4 (0.0f, 1.0f, 1.0f, 1.0f),
         new Vec4 (0.0f, 1.0f, 1.0f, -1.0f),
@@ -125,7 +125,7 @@ public static class Simplex
         new Vec4 (-1.0f, -1.0f, -1.0f, 0.0f)
     };
 
-    private static readonly Vec3[ ] Grad3U = new Vec3[ ]
+    private static readonly Vec3[] Grad3U = new Vec3[]
     {
         new Vec3 (1.0f, 0.0f, 1.0f),
         new Vec3 (0.0f, 1.0f, 1.0f),
@@ -145,7 +145,7 @@ public static class Simplex
         new Vec3 (-Simplex.Rt2Rt3, Simplex.Rt2Rt3, -Simplex.Rt2Rt3)
     };
 
-    private static readonly Vec3[ ] Grad3V = new Vec3[ ]
+    private static readonly Vec3[] Grad3V = new Vec3[]
     {
         new Vec3 (-Simplex.Rt2Rt3, Simplex.Rt2Rt3, Simplex.Rt2Rt3),
         new Vec3 (-Simplex.Rt2Rt3, -Simplex.Rt2Rt3, Simplex.Rt2Rt3),
@@ -165,7 +165,7 @@ public static class Simplex
         new Vec3 (0.0f, -1.0f, -1.0f)
     };
 
-    private static readonly int[, ] Permute = new int[, ]
+    private static readonly int[,] Permute = new int[,]
     { { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, { 0, 2, 3, 1 }, //
         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 3, 0 }, // 
         { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 }, //
@@ -184,64 +184,64 @@ public static class Simplex
         { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 }
     };
 
-    private static Vec2 Gradient2 (
-        int i = 0,
-        int j = 0,
+    private static Vec2 Gradient2( //
+        int i = 0, //
+        int j = 0, //
         int seed = Utils.HashBase)
     {
-        return Simplex.Grad2Lut[Simplex.Hash (i, j, seed) & 0x7];
+        return Simplex.Grad2Lut[Simplex.Hash(i, j, seed) & 0x7];
     }
 
-    private static Vec3 Gradient3 (
-        int i = 0,
-        int j = 0,
-        int k = 0,
+    private static Vec3 Gradient3( //
+        int i = 0, //
+        int j = 0, //
+        int k = 0, //
         int seed = Utils.HashBase)
     {
-        return Simplex.Grad3Lut[Simplex.Hash (i, j, Simplex.Hash (k, seed, 0)) &
+        return Simplex.Grad3Lut[Simplex.Hash(i, j, Simplex.Hash(k, seed, 0)) &
             0xf];
     }
 
-    private static Vec4 Gradient4 (
-        int i = 0,
-        int j = 0,
-        int k = 0,
-        int l = 0,
+    private static Vec4 Gradient4( //
+        int i = 0, //
+        int j = 0, //
+        int k = 0, //
+        int l = 0, //
         int seed = Utils.HashBase)
     {
-        return Simplex.Grad4Lut[Simplex.Hash (i, j, Simplex.Hash (k, l, seed)) &
+        return Simplex.Grad4Lut[Simplex.Hash(i, j, Simplex.Hash(k, l, seed)) &
             0x1f];
     }
 
-    private static Vec2 GradRot2 (
-        int i = 0,
-        int j = 0,
-        int seed = Utils.HashBase,
-        float cosa = 1.0f,
+    private static Vec2 GradRot2( //
+        int i = 0, //
+        int j = 0, //
+        int seed = Utils.HashBase, //
+        float cosa = 1.0f, //
         float sina = 0.0f)
     {
-        return Vec2.RotateZ (Simplex.Grad2Lut[Simplex.Hash (i, j, seed) & 0x7],
+        return Vec2.RotateZ(Simplex.Grad2Lut[Simplex.Hash(i, j, seed) & 0x7],
             cosa, sina);
     }
 
-    private static Vec3 GradRot3 (
-        int i = 0,
-        int j = 0,
-        int k = 0,
-        int seed = Utils.HashBase,
-        float cosa = 1.0f,
+    private static Vec3 GradRot3( //
+        int i = 0, //
+        int j = 0, //
+        int k = 0, //
+        int seed = Utils.HashBase, //
+        float cosa = 1.0f, //
         float sina = 0.0f)
     {
-        int h = Simplex.Hash (i, j, Simplex.Hash (k, seed, 0)) & 0xf;
+        int h = Simplex.Hash(i, j, Simplex.Hash(k, seed, 0)) & 0xf;
         Vec3 gu = Simplex.Grad3U[h];
         Vec3 gv = Simplex.Grad3V[h];
-        return new Vec3 (
+        return new Vec3(
             cosa * gu.x + sina * gv.x,
             cosa * gu.y + sina * gv.y,
             cosa * gu.z + sina * gv.z);
     }
 
-    private static int Hash (int a = 0, int b = 0, int c = 0)
+    private static int Hash(int a = 0, int b = 0, int c = 0)
     {
         c ^= b;
         c -= b << 0xe | b >> 0x20 - 0xe;
@@ -260,23 +260,23 @@ public static class Simplex
         return c;
     }
 
-    public static (float fac, Vec4 deriv) Eval4 (in Vec4 v, int seed = Utils.HashBase)
+    public static (float fac, Vec4 deriv) Eval4(in Vec4 v, int seed = Utils.HashBase)
     {
-        return Simplex.Eval4 (v.x, v.y, v.z, v.w, seed);
+        return Simplex.Eval4(v.x, v.y, v.z, v.w, seed);
     }
 
-    public static (float fac, Vec4 deriv) Eval4 (
-        float x = 0.0f,
-        float y = 0.0f,
-        float z = 0.0f,
-        float w = 0.0f,
+    public static (float fac, Vec4 deriv) Eval4( //
+        float x = 0.0f, //
+        float y = 0.0f, //
+        float z = 0.0f, //
+        float w = 0.0f, //
         int seed = Utils.HashBase)
     {
         float s = (x + y + z + w) * Simplex.F4;
-        int i = Utils.Floor (x + s);
-        int j = Utils.Floor (y + s);
-        int k = Utils.Floor (z + s);
-        int l = Utils.Floor (w + s);
+        int i = Utils.Floor(x + s);
+        int j = Utils.Floor(y + s);
+        int k = Utils.Floor(z + s);
+        int l = Utils.Floor(w + s);
 
         float t = (i + j + k + l) * Simplex.G4;
         float x0 = x - (i - t);
@@ -347,18 +347,18 @@ public static class Simplex
         float t43 = 0.0f;
         float t44 = 0.0f;
 
-        Vec4 g0 = new Vec4 ( );
-        Vec4 g1 = new Vec4 ( );
-        Vec4 g2 = new Vec4 ( );
-        Vec4 g3 = new Vec4 ( );
-        Vec4 g4 = new Vec4 ( );
+        Vec4 g0 = new Vec4();
+        Vec4 g1 = new Vec4();
+        Vec4 g2 = new Vec4();
+        Vec4 g3 = new Vec4();
+        Vec4 g4 = new Vec4();
 
         float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0);
         if (t0 >= 0.0f)
         {
             t20 = t0 * t0;
             t40 = t20 * t20;
-            g0 = Simplex.Gradient4 (i, j, k, l, seed);
+            g0 = Simplex.Gradient4(i, j, k, l, seed);
             n0 = g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0;
         }
 
@@ -367,7 +367,7 @@ public static class Simplex
         {
             t21 = t1 * t1;
             t41 = t21 * t21;
-            g1 = Simplex.Gradient4 (i + i1, j + j1, k + k1, l + l1, seed);
+            g1 = Simplex.Gradient4(i + i1, j + j1, k + k1, l + l1, seed);
             n1 = g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1;
         }
 
@@ -376,7 +376,7 @@ public static class Simplex
         {
             t22 = t2 * t2;
             t42 = t22 * t22;
-            g2 = Simplex.Gradient4 (i + i2, j + j2, k + k2, l + l2, seed);
+            g2 = Simplex.Gradient4(i + i2, j + j2, k + k2, l + l2, seed);
             n2 = g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2;
         }
 
@@ -385,7 +385,7 @@ public static class Simplex
         {
             t23 = t3 * t3;
             t43 = t23 * t23;
-            g3 = Simplex.Gradient4 (i + i3, j + j3, k + k3, l + l3, seed);
+            g3 = Simplex.Gradient4(i + i3, j + j3, k + k3, l + l3, seed);
             n3 = g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3;
         }
 
@@ -394,7 +394,7 @@ public static class Simplex
         {
             t24 = t4 * t4;
             t44 = t24 * t24;
-            g4 = Simplex.Gradient4 (i + 1, j + 1, k + 1, l + 1, seed);
+            g4 = Simplex.Gradient4(i + 1, j + 1, k + 1, l + 1, seed);
             n4 = g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4;
         }
 
@@ -448,24 +448,24 @@ public static class Simplex
         derivw *= Simplex.Scale4;
 
         return (fac: Simplex.Scale4 * (t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3 + t44 * n4),
-            deriv: new Vec4 (derivx, derivy, derivz, derivw));
+            deriv: new Vec4(derivx, derivy, derivz, derivw));
     }
 
-    public static (float fac, Vec3 deriv) Eval3 (in Vec3 v, int seed = Utils.HashBase)
+    public static (float fac, Vec3 deriv) Eval3(in Vec3 v, int seed = Utils.HashBase)
     {
-        return Simplex.Eval3 (v.x, v.y, v.z, seed);
+        return Simplex.Eval3(v.x, v.y, v.z, seed);
     }
 
-    public static (float fac, Vec3 deriv) Eval3 (
-        float x = 0.0f,
-        float y = 0.0f,
-        float z = 0.0f,
+    public static (float fac, Vec3 deriv) Eval3( //
+        float x = 0.0f, //
+        float y = 0.0f, //
+        float z = 0.0f, //
         int seed = Utils.HashBase)
     {
         float s = (x + y + z) * Simplex.F3;
-        int i = Utils.Floor (x + s);
-        int j = Utils.Floor (y + s);
-        int k = Utils.Floor (z + s);
+        int i = Utils.Floor(x + s);
+        int j = Utils.Floor(y + s);
+        int k = Utils.Floor(z + s);
 
         float t = (i + j + k) * Simplex.G3;
         float x0 = x - (i - t);
@@ -550,15 +550,15 @@ public static class Simplex
         float n2 = 0.0f;
         float n3 = 0.0f;
 
-        Vec3 g0 = new Vec3 ( );
-        Vec3 g1 = new Vec3 ( );
-        Vec3 g2 = new Vec3 ( );
-        Vec3 g3 = new Vec3 ( );
+        Vec3 g0 = new Vec3();
+        Vec3 g1 = new Vec3();
+        Vec3 g2 = new Vec3();
+        Vec3 g3 = new Vec3();
 
         float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0);
         if (t0 >= 0.0f)
         {
-            g0 = Simplex.Gradient3 (i, j, k, seed);
+            g0 = Simplex.Gradient3(i, j, k, seed);
             t20 = t0 * t0;
             t40 = t20 * t20;
             n0 = g0.x * x0 + g0.y * y0 + g0.z * z0;
@@ -567,7 +567,7 @@ public static class Simplex
         float t1 = 0.5f - (x1 * x1 + y1 * y1 + z1 * z1);
         if (t1 >= 0.0f)
         {
-            g1 = Simplex.Gradient3 (i + i1, j + j1, k + k1, seed);
+            g1 = Simplex.Gradient3(i + i1, j + j1, k + k1, seed);
             t21 = t1 * t1;
             t41 = t21 * t21;
             n1 = g1.x * x1 + g1.y * y1 + g1.z * z1;
@@ -576,7 +576,7 @@ public static class Simplex
         float t2 = 0.5f - (x2 * x2 + y2 * y2 + z2 * z2);
         if (t2 >= 0.0f)
         {
-            g2 = Simplex.Gradient3 (i + i2, j + j2, k + k2, seed);
+            g2 = Simplex.Gradient3(i + i2, j + j2, k + k2, seed);
             t22 = t2 * t2;
             t42 = t22 * t22;
             n2 = g2.x * x2 + g2.y * y2 + g2.z * z2;
@@ -585,7 +585,7 @@ public static class Simplex
         float t3 = 0.5f - (x3 * x3 + y3 * y3 + z3 * z3);
         if (t3 >= 0.0f)
         {
-            g3 = Simplex.Gradient3 (i + 1, j + 1, k + 1, seed);
+            g3 = Simplex.Gradient3(i + 1, j + 1, k + 1, seed);
             t23 = t3 * t3;
             t43 = t23 * t23;
             n3 = g3.x * x3 + g3.y * y3 + g3.z * z3;
@@ -624,22 +624,22 @@ public static class Simplex
         derivz *= Simplex.Scale3;
 
         return (fac: Simplex.Scale3 * (t40 * n0 + t41 * n1 + t42 * n2 + t43 * n3),
-            deriv: new Vec3 (derivx, derivy, derivz));
+            deriv: new Vec3(derivx, derivy, derivz));
     }
 
-    public static (float fac, Vec2 deriv) Eval2 (in Vec2 v, int seed = Utils.HashBase)
+    public static (float fac, Vec2 deriv) Eval2(in Vec2 v, int seed = Utils.HashBase)
     {
-        return Simplex.Eval2 (v.x, v.y, seed);
+        return Simplex.Eval2(v.x, v.y, seed);
     }
 
-    public static (float fac, Vec2 deriv) Eval2 (
-        float x = 0.0f,
-        float y = 0.0f,
+    public static (float fac, Vec2 deriv) Eval2( //
+        float x = 0.0f, //
+        float y = 0.0f, //
         int seed = Utils.HashBase)
     {
         float s = (x + y) * Simplex.F2;
-        int i = Utils.Floor (x + s);
-        int j = Utils.Floor (y + s);
+        int i = Utils.Floor(x + s);
+        int j = Utils.Floor(y + s);
 
         float t = (i + j) * Simplex.G2;
         float x0 = x - (i - t);
@@ -674,14 +674,14 @@ public static class Simplex
         float n1 = 0.0f;
         float n2 = 0.0f;
 
-        Vec2 g0 = new Vec2 ( );
-        Vec2 g1 = new Vec2 ( );
-        Vec2 g2 = new Vec2 ( );
+        Vec2 g0 = new Vec2();
+        Vec2 g1 = new Vec2();
+        Vec2 g2 = new Vec2();
 
         float t0 = 0.5f - (x0 * x0 + y0 * y0);
         if (t0 >= 0.0f)
         {
-            g0 = Simplex.Gradient2 (i, j, seed);
+            g0 = Simplex.Gradient2(i, j, seed);
             t20 = t0 * t0;
             t40 = t20 * t20;
             n0 = g0.x * x0 + g0.y * y0;
@@ -690,7 +690,7 @@ public static class Simplex
         float t1 = 0.5f - (x1 * x1 + y1 * y1);
         if (t1 >= 0.0f)
         {
-            g1 = Simplex.Gradient2 (i + i1, j + j1, seed);
+            g1 = Simplex.Gradient2(i + i1, j + j1, seed);
             t21 = t1 * t1;
             t41 = t21 * t21;
             n1 = g1.x * x1 + g1.y * y1;
@@ -699,7 +699,7 @@ public static class Simplex
         float t2 = 0.5f - (x2 * x2 + y2 * y2);
         if (t2 >= 0.0f)
         {
-            g2 = Simplex.Gradient2 (i + 1, j + 1, seed);
+            g2 = Simplex.Gradient2(i + 1, j + 1, seed);
             t22 = t2 * t2;
             t42 = t22 * t22;
             n2 = g2.x * x2 + g2.y * y2;
@@ -727,48 +727,48 @@ public static class Simplex
         derivy *= Simplex.Scale2;
 
         return (fac: Simplex.Scale2 * (t40 * n0 + t41 * n1 + t42 * n2),
-            deriv: new Vec2 (derivx, derivy));
+            deriv: new Vec2(derivx, derivy));
     }
 
-    public static (Vec2 fac, Vec2 xDeriv, Vec2 yDeriv) Noise2 (in Vec2 v, int seed = Utils.HashBase)
+    public static (Vec2 fac, Vec2 xDeriv, Vec2 yDeriv) Noise2(in Vec2 v, int seed = Utils.HashBase)
     {
-        float st = Vec2.Mag (v) * Simplex.Step2;
+        float st = Vec2.Mag(v) * Simplex.Step2;
 
-        (float fac, Vec2 deriv) x = Simplex.Eval2 (v.x + st, v.y, seed);
-        (float fac, Vec2 deriv) y = Simplex.Eval2 (v.x, v.y + st, seed);
+        (float fac, Vec2 deriv) x = Simplex.Eval2(v.x + st, v.y, seed);
+        (float fac, Vec2 deriv) y = Simplex.Eval2(v.x, v.y + st, seed);
 
-        return (fac: new Vec2 (x.fac, y.fac),
-            xDeriv : x.deriv,
-            yDeriv : y.deriv);
+        return (fac: new Vec2(x.fac, y.fac),
+            xDeriv: x.deriv,
+            yDeriv: y.deriv);
     }
 
-    public static (Vec3 fac, Vec3 xDeriv, Vec3 yDeriv, Vec3 zDeriv) Noise3 (in Vec3 v, int seed = Utils.HashBase)
+    public static (Vec3 fac, Vec3 xDeriv, Vec3 yDeriv, Vec3 zDeriv) Noise3(in Vec3 v, int seed = Utils.HashBase)
     {
-        float st = Vec3.Mag (v) * Simplex.Step3;
+        float st = Vec3.Mag(v) * Simplex.Step3;
 
-        (float fac, Vec3 deriv) x = Simplex.Eval3 (v.x + st, v.y, v.z, seed);
-        (float fac, Vec3 deriv) y = Simplex.Eval3 (v.x, v.y + st, v.z, seed);
-        (float fac, Vec3 deriv) z = Simplex.Eval3 (v.x, v.y, v.z + st, seed);
+        (float fac, Vec3 deriv) x = Simplex.Eval3(v.x + st, v.y, v.z, seed);
+        (float fac, Vec3 deriv) y = Simplex.Eval3(v.x, v.y + st, v.z, seed);
+        (float fac, Vec3 deriv) z = Simplex.Eval3(v.x, v.y, v.z + st, seed);
 
-        return (fac: new Vec3 (x.fac, y.fac, z.fac),
-            xDeriv : x.deriv,
-            yDeriv : y.deriv,
-            zDeriv : z.deriv);
+        return (fac: new Vec3(x.fac, y.fac, z.fac),
+            xDeriv: x.deriv,
+            yDeriv: y.deriv,
+            zDeriv: z.deriv);
     }
 
-    public static (Vec4 fac, Vec4 xDeriv, Vec4 yDeriv, Vec4 zDeriv, Vec4 wDeriv) Noise4 (in Vec4 v, int seed = Utils.HashBase)
+    public static (Vec4 fac, Vec4 xDeriv, Vec4 yDeriv, Vec4 zDeriv, Vec4 wDeriv) Noise4(in Vec4 v, int seed = Utils.HashBase)
     {
-        float st = Vec4.Mag (v) * Simplex.Step4;
+        float st = Vec4.Mag(v) * Simplex.Step4;
 
-        (float fac, Vec4 deriv) x = Simplex.Eval4 (v.x + st, v.y, v.z, v.w, seed);
-        (float fac, Vec4 deriv) y = Simplex.Eval4 (v.x, v.y + st, v.z, v.w, seed);
-        (float fac, Vec4 deriv) z = Simplex.Eval4 (v.x, v.y, v.z + st, v.w, seed);
-        (float fac, Vec4 deriv) w = Simplex.Eval4 (v.x, v.y, v.z, v.w + st, seed);
+        (float fac, Vec4 deriv) x = Simplex.Eval4(v.x + st, v.y, v.z, v.w, seed);
+        (float fac, Vec4 deriv) y = Simplex.Eval4(v.x, v.y + st, v.z, v.w, seed);
+        (float fac, Vec4 deriv) z = Simplex.Eval4(v.x, v.y, v.z + st, v.w, seed);
+        (float fac, Vec4 deriv) w = Simplex.Eval4(v.x, v.y, v.z, v.w + st, seed);
 
-        return (fac: new Vec4 (x.fac, y.fac, z.fac, w.fac),
-            xDeriv : x.deriv,
-            yDeriv : y.deriv,
-            zDeriv : z.deriv,
-            wDeriv : w.deriv);
+        return (fac: new Vec4(x.fac, y.fac, z.fac, w.fac),
+            xDeriv: x.deriv,
+            yDeriv: y.deriv,
+            zDeriv: z.deriv,
+            wDeriv: w.deriv);
     }
 }

@@ -45,11 +45,12 @@ public static class Utils
     /// </summary>
     public const int HashMul = 16777619;
 
-
+    // <summary>
     // Magnitude for orthogonal handles when four curve
     // knots are used to approximate an ellipse or circle
     // (90 degrees per knot), Derived from
     // (Math.Sqrt(2.0) - 1.0) * 4.0 / 3.0.
+    // </summary>
     public const float Kappa = 0.552285f;
 
     /// <summary>
@@ -516,17 +517,6 @@ public static class Utils
     }
 
     /// <summary>
-    /// Finds the natural logarithm of the input value cast to a single
-    /// precision real number.
-    /// </summary>
-    /// <param name="v">input value</param>
-    /// <returns>natural logarithm</returns>
-    public static float Log(in float v)
-    {
-        return (v > 0.0f) ? (float)Math.Log((double)v) : 0.0f;
-    }
-
-    /// <summary>
     /// Maps an input value from an original range to a target range. If the
     /// upper and lower bound of the original range are equal, will return the
     /// value unchanged.
@@ -537,7 +527,7 @@ public static class Utils
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
     /// <returns>mapped value</returns>
-    public static float Map( //
+    public static float Remap( //
         in float v, //
         in float lbOrigin = -1.0f, //
         in float ubOrigin = 1.0f, //
@@ -759,9 +749,9 @@ public static class Utils
     /// Quantizes a positive number according to a number of levels.
     /// The quantization is based on the left edge.
     /// </summary>
-    /// <param name="v"></param>
-    /// <param name="levels"></param>
-    /// <returns></returns>
+    /// <param name="v">input value</param>
+    /// <param name="levels">levels</param>
+    /// <returns>quantized value</returns>
     public static float QuantizeUnsigned(in float v, in int levels)
     {
         if (levels > 1)
@@ -837,33 +827,6 @@ public static class Utils
     {
         return (v < -0.0f) ? (int)(v - 0.5f) :
             (v > 0.0f) ? (int)(v + 0.5f) : 0;
-    }
-
-    /// <summary>
-    /// Finds the sine and cosine of an angle in radians. Assigns the values to
-    /// output variables.
-    /// </summary>
-    /// <param name="radians">angle in radians</param>
-    /// <param name="sina">sine</param>
-    /// <param name="cosa">cosine</param>
-    public static void SinCos(in float radians, out float sina, out float cosa)
-    {
-        float nrm = Utils.OneTau * radians;
-        sina = Utils.SinCosEval(nrm - 0.25f);
-        cosa = Utils.SinCosEval(nrm);
-    }
-
-    /// <summary>
-    /// Finds the sine and cosine of an angle in radians. Returns a named tuple.
-    /// </summary>
-    /// <param name="radians">angle in radians</param>
-    /// <returns>tuple</returns>
-    public static (float sin, float cos) SinCos(in float radians)
-    {
-        float nrm = Utils.OneTau * radians;
-        return (
-            sin: Utils.SinCosEval(nrm - 0.25f),
-            cos: Utils.SinCosEval(nrm));
     }
 
     /// <summary>
@@ -1094,7 +1057,7 @@ public static class Utils
     /// bound: lower bounds inclusive; upper bounds exclusive. Due to single
     /// precision accuracy, results will be inexact. In cases where the lower
     /// bound is greater than the upper bound, the two will be swapped. In cases
-    /// where the range is 0.0, 0.0 will be returned.
+    /// where the range is 0.0, the value will be returned.
     /// </summary>
     /// <param name="v">input value</param>
     /// <param name="lb">lower bound</param>

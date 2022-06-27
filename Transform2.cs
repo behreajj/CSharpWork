@@ -136,7 +136,7 @@ public class Transform2
     /// <summary>
     /// Returns a hash code representing this transform.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         unchecked
@@ -152,7 +152,7 @@ public class Transform2
     /// <summary>
     /// Returns a string representation of this transform.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Transform2.ToString(this);

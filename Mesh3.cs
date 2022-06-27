@@ -176,7 +176,7 @@ public class Mesh3
     /// Removes elements from the coordinate, texture coordinate and normal
     /// arrays of the mesh which are not visited by the face indices.
     /// </summary>
-    /// <returns>mesh</returns>
+    /// <returns>this mesh</returns>
     public Mesh3 Clean()
     {
         Dictionary<int, Vec3> usedCoords = new Dictionary<int, Vec3>();
@@ -245,7 +245,7 @@ public class Mesh3
     /// Negates all the normals in this mesh,
     /// then reverses all the face directions.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>this mesh</returns>
     public Mesh3 FlipNormals()
     {
         int vnsLen = this.normals.Length;
@@ -261,7 +261,7 @@ public class Mesh3
     /// Negates the x component of all texture coordinates (u) in the mesh.
     /// Does so by subtracting the value from 1.0.
     /// </summary>
-    /// <returns>this mesh.</returns>
+    /// <returns>this mesh</returns>
     public Mesh3 FlipU()
     {
         int vtsLen = this.texCoords.Length;
@@ -277,7 +277,7 @@ public class Mesh3
     /// Negates the y component of all texture coordinates (v) in the mesh.
     /// Does so by subtracting the value from 1.0.
     /// </summary>
-    /// <returns>this mesh.</returns>
+    /// <returns>this mesh</returns>
     public Mesh3 FlipV()
     {
         int vtsLen = this.texCoords.Length;
@@ -2307,8 +2307,11 @@ public class Mesh3
             // Find theta and phi.
             float phi = -MathF.PI + i * toPhi;
             float theta = j * toTheta;
-            Utils.SinCos(phi, out float cosPhi, out float sinPhi);
-            Utils.SinCos(theta, out float cosTheta, out float sinTheta);
+
+            float cosPhi = MathF.Cos(phi);
+            float sinPhi = MathF.Sin(phi);
+            float cosTheta = MathF.Cos(theta);
+            float sinTheta = MathF.Sin(theta);
 
             float rhoCosPhi = rho0 + rho1 * cosPhi;
             float rhoSinPhi = rho1 * sinPhi;

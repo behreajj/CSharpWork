@@ -46,7 +46,7 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// Tests this edge for equivalence with an object.
     /// </summary>
     /// <param name="value">the object</param>
-    /// <returns>the equivalence</returns>
+    /// <returns>equivalence</returns>
     public override bool Equals(object value)
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
@@ -82,7 +82,7 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// Compares edges according to their origin, then destination.
     /// </summary>
     /// <param name="e">the comparisand</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public int CompareTo(Edge3 e)
     {
         int a = this.origin.CompareTo(e.origin);
@@ -110,7 +110,7 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <param name="tolerance">tolerance</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool AreNeighbors( //
         in Edge3 a, //
         in Edge3 b, //

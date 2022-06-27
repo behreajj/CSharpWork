@@ -42,6 +42,7 @@ public class Palette
             }
         }
 
+        /// <summary>
         /// The entry's name.
         /// If the name is invalid, the entry's color
         /// in web-friendly hexadcimal is used instead.
@@ -65,10 +66,15 @@ public class Palette
             }
         }
 
-        // Constructs an empty tag object.
+        /// <summary>
+        /// Constructs an empty tag object.
+        /// </summary>
         public Tag() { }
 
-        // Constructs a tag from a name.
+        /// <summary>
+        /// Constructs a tag from a name.
+        /// </summary>
+        /// <param name="name">name</param>
         public Tag(in string name)
         {
             this.Name = name;
@@ -77,8 +83,8 @@ public class Palette
         /// <summary>
         /// Tests this tag for equivalence with an object.
         /// </summary>
-        /// <param name="value">the object</param>
-        /// <returns>the equivalence</returns>
+        /// <param name="value">object</param>
+        /// <returns>equivalence</returns>
         public override bool Equals(object value)
         {
             if (Object.ReferenceEquals(this, value)) { return true; }
@@ -121,7 +127,7 @@ public class Palette
         /// IEquatable interface.
         /// </summary>
         /// <param name="k">key</param>
-        /// <returns>the evaluation</returns>
+        /// <returns>evaluation</returns>
         public bool Equals(Tag tag)
         {
             if (tag is null) { return false; }
@@ -184,7 +190,7 @@ public class Palette
     /// <summary>
     /// Returns the number of entries in this palette.
     /// </summary>
-    /// <value>the length</value>
+    /// <value>length</value>
     public int Length { get { return this.entries.Length; } }
 
     /// <summary>
@@ -223,7 +229,10 @@ public class Palette
     /// <param name="name">name</param>
     /// <param name="author">author</param>
     /// <param name="len">palette length</param>
-    public Palette(in string name = "Palette", in string author = "Anonymous", in int len = 1)
+    public Palette( //
+        in string name = "Palette", //
+        in string author = "Anonymous", //
+        in int len = 1)
     {
         this.Name = name;
         this.Author = author;
@@ -258,7 +267,7 @@ public class Palette
     /// <summary>
     /// Returns a string representation of this palette.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Palette.ToString(this);

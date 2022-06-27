@@ -58,7 +58,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <summary>
     /// Returns the number of values in this matrix.
     /// </summary>
-    /// <value>the length</value>
+    /// <value>length</value>
     public int Length { get { return 9; } }
 
     /// <summary>
@@ -152,116 +152,6 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     }
 
     /// <summary>
-    /// Retrieves an element by index.
-    /// </summary>
-    /// <value>the element</value>
-    public float this[int i]
-    {
-        get
-        {
-            switch (i)
-            {
-                case 0:
-                case -9:
-                    return this._m00;
-                case 1:
-                case -8:
-                    return this._m01;
-                case 2:
-                case -7:
-                    return this._m02;
-
-                case 3:
-                case -6:
-                    return this._m10;
-                case 4:
-                case -5:
-                    return this._m11;
-                case 5:
-                case -4:
-                    return this._m12;
-
-                case 6:
-                case -3:
-                    return this._m20;
-                case 7:
-                case -2:
-                    return this._m21;
-                case 8:
-                case -1:
-                    return this._m22;
-
-                default:
-                    return 0.0f;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Retrieves an element by indices.
-    /// </summary>
-    /// <value>the element</value>
-    public float this[int i, int j]
-    {
-        get
-        {
-            switch (i)
-            {
-                case 0:
-                case -3:
-                    switch (j)
-                    {
-                        case 0:
-                        case -3:
-                            return this._m00;
-                        case 1:
-                        case -2:
-                            return this._m01;
-                        case 2:
-                        case -1:
-                            return this._m02;
-                        default:
-                            return 0.0f;
-                    }
-                case 1:
-                case -2:
-                    switch (j)
-                    {
-                        case 0:
-                        case -3:
-                            return this._m10;
-                        case 1:
-                        case -2:
-                            return this._m11;
-                        case 2:
-                        case -1:
-                            return this._m12;
-                        default:
-                            return 0.0f;
-                    }
-                case 2:
-                case -1:
-                    switch (j)
-                    {
-                        case 0:
-                        case -3:
-                            return this._m20;
-                        case 1:
-                        case -2:
-                            return this._m21;
-                        case 2:
-                        case -1:
-                            return this._m22;
-                        default:
-                            return 0.0f;
-                    }
-                default:
-                    return 0.0f;
-            }
-        }
-    }
-
-    /// <summary>
     /// Constructs a matrix from float values.
     /// </summary>
     /// <param name="m00">row 0, column 0</param>
@@ -325,7 +215,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// Tests this matrix for equivalence with an object.
     /// </summary>
     /// <param name="value">the object</param>
-    /// <returns>the equivalence</returns>
+    /// <returns>equivalence</returns>
     public override bool Equals(object value)
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
@@ -369,7 +259,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// IEquatable interface.
     /// </summary>
     /// <param name="m">matrix</param>
-    /// <returns>the equivalence</returns>
+    /// <returns>equivalence</returns>
     public bool Equals(Mat3 m)
     {
         if (this._m00.GetHashCode() != m._m00.GetHashCode()) { return false; }
@@ -468,7 +358,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// zero.
     /// </summary>
     /// <param name="m">the input matrix</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool operator true(in Mat3 m)
     {
         return Mat3.All(m);
@@ -478,7 +368,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// A matrix evaluates to false when all of its elements are equal to zero.
     /// </summary>
     /// <param name="m">the input matrix</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool operator false(in Mat3 m)
     {
         return Mat3.None(m);
@@ -489,7 +379,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// </summary>
     ///   <param name="a">left operand</param>
     ///   <param name="b">right operand</param>
-    ///   <returns>the evaluation</returns>
+    ///   <returns>evaluation</returns>
     public static Mat3 operator &(in Mat3 a, in Mat3 b)
     {
         return new Mat3(
@@ -510,7 +400,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// </summary>
     ///   <param name="a">left operand</param>
     ///   <param name="b">right operand</param>
-    ///   <returns>the evaluation</returns>
+    ///   <returns>evaluation</returns>
     public static Mat3 operator |(in Mat3 a, in Mat3 b)
     {
         return new Mat3(
@@ -531,7 +421,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// </summary>
     ///   <param name="a">left operand</param>
     ///   <param name="b">right operand</param>
-    ///   <returns>the evaluation</returns>
+    ///   <returns>evaluation</returns>
     public static Mat3 operator ^(in Mat3 a, in Mat3 b)
     {
         return new Mat3(
@@ -774,7 +664,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// Evaluates whether all elements of a matrix are not equal to zero. 
     /// </summary>
     /// <param name="m">matrix</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool All(in Mat3 m)
     {
         return (m._m00 != 0.0f) && (m._m01 != 0.0f) && (m._m02 != 0.0f) &&
@@ -786,7 +676,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// Evaluates whether any elements of a matrix are not equal to zero. 
     /// </summary>
     /// <param name="m">matrix</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool Any(in Mat3 m)
     {
         return (m._m00 != 0.0f) || (m._m01 != 0.0f) || (m._m02 != 0.0f) ||
@@ -884,8 +774,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <returns>matrix</returns>
     public static Mat3 FromRotZ(in float radians)
     {
-        Utils.SinCos(radians, out float sina, out float cosa);
-        return Mat3.FromRotZ(cosa, sina);
+        return Mat3.FromRotZ(MathF.Cos(radians), MathF.Sin(radians));
     }
 
     /// <summary>
@@ -1047,7 +936,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// Evaluates whether all elements of a matrix are equal to zero. 
     /// </summary>
     /// <param name="m">matrix</param>
-    /// <returns>the evaluation</returns>
+    /// <returns>evaluation</returns>
     public static bool None(in Mat3 m)
     {
         return (m._m00 == 0.0f) && (m._m01 == 0.0f) && (m._m02 == 0.0f) &&
