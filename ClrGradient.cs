@@ -611,7 +611,7 @@ public class ClrGradient : IEnumerable
     /// Evaluates an array of colors for a step distributed evenly across the
     /// range [0.0, 1.0] for the supplied count.
     /// </summary>
-    /// <param name="cg>color gradient</param>
+    /// <param name="cg">color gradient</param>
     /// <param name="count">count</param>
     /// <param name="origin">origin</param>
     /// <param name="dest">destination</param>
@@ -630,7 +630,7 @@ public class ClrGradient : IEnumerable
     /// Evaluates an array of colors for a step distributed evenly across the
     /// range [0.0, 1.0] for the supplied count.
     /// </summary>
-    /// <param name="cg>color gradient</param>
+    /// <param name="cg">color gradient</param>
     /// <param name="count">count</param>
     /// <param name="origin">origin</param>
     /// <param name="dest">destination</param>
@@ -784,7 +784,7 @@ public class ClrGradient : IEnumerable
     /// [0.0, 1.0] and under. Equal to the step of the last color
     /// key minus the step of the first.
     /// </summary>
-    /// <param name="c">color gradient</param>
+    /// <param name="cg">color gradient</param>
     /// <returns>range</returns>
     public static float Range(in ClrGradient cg)
     {

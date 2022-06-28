@@ -354,7 +354,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// returns the color representation of up.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the color</returns>
+    /// <returns>color</returns>
     public static Clr FromDir(in Vec3 v)
     {
         float mSq = Vec3.MagSq(v);
@@ -373,9 +373,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <summary>
     /// Converts a hexadecimal representation of a color into a color.
     /// </summary>
-    /// <param name="c">color</param>
+    /// <param name="c">integer</param>
     /// <param name="order">color channel order</param>
-    /// <returns>the color</returns>
+    /// <returns>color</returns>
     public static Clr FromHex(in int c, in ColorChannel order = ColorChannel.ARGB)
     {
         switch (order)
@@ -394,8 +394,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Converts a hexadecimal representation of a color into a color.
     /// The integer is expected to be ordered as 0xAABBGGRR.
     /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>the color</returns>
+    /// <param name="c">integer</param>
+    /// <returns>color</returns>
     public static Clr FromHexAbgr(in int c)
     {
         return new Clr(
@@ -409,8 +409,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Converts a hexadecimal representation of a color into a color.
     /// The integer is expected to be ordered as 0xAARRGGBB.
     /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>the color</returns>
+    /// <param name="c">integer</param>
+    /// <returns>color</returns>
     public static Clr FromHexArgb(in int c)
     {
         return new Clr(
@@ -424,8 +424,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Converts a hexadecimal representation of a color into a color.
     /// The integer is expected to be ordered as 0xRRGGBBAA.
     /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>the color</returns>
+    /// <param name="c">integer</param>
+    /// <returns>color</returns>
     public static Clr FromHexRgba(in int c)
     {
         return new Clr(
@@ -445,13 +445,13 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// the x component; chroma, to y; luminance,
     /// to z; alpha, to w.
     /// </summary>
-    /// <param name="lab">lab color</param>
-    /// <returns>lch color</returns>
+    /// <param name="lab">Lab color</param>
+    /// <returns>LCh color</returns>
     public static Vec4 LabaToLcha(in Vec4 lab)
     {
-        double a = (double)lab.x;
-        double b = (double)lab.y;
-        double chromaSq = a * a + b * b;
+        float a = lab.x;
+        float b = lab.y;
+        float chromaSq = a * a + b * b;
         if (chromaSq < Utils.Epsilon)
         {
             float fac = Utils.Clamp(lab.z * 0.01f, 0.0f, 1.0f);
@@ -462,9 +462,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         else
         {
             return new Vec4(
-                Utils.OneTau * Utils.WrapRadians(
-                    (float)Math.Atan2(b, a)),
-                (float)Math.Sqrt(chromaSq),
+                Utils.OneTau * Utils.WrapRadians(MathF.Atan2(b, a)),
+                MathF.Sqrt(chromaSq),
                 lab.z,
                 lab.w);
         }
@@ -477,7 +476,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// is expected to hold a and y, b.
     /// </summary>
     /// <param name="lab">lab color</param>
-    /// <returns>the color</returns>
+    /// <returns>color</returns>
     public static Clr LabaToStandard(in Vec4 lab)
     {
         return Clr.LinearToStandard(
@@ -492,7 +491,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// is expected to hold a and y, b.
     /// </summary>
     /// <param name="lab">lab color</param>
-    /// <returns>the xyz color</returns>
+    /// <returns>xyz color</returns>
     public static Vec4 LabaToXyza(in Vec4 lab)
     {
         double offset = 16.0d / 116.0d;
@@ -573,7 +572,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Assumes the color is in linear RGB.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>the luminance</returns>
+    /// <returns>luminance</returns>
     public static float LinearLuminance(in Clr c)
     {
         return 0.21264935f * c._r +
@@ -584,9 +583,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <summary>
     /// Converts a color from linear RGB to standard RGB (sRGB).
     /// </summary>
-    /// <param name="c">the linear color</param>
+    /// <param name="c">linear color</param>
     /// <param name="alpha">transform the alpha channel</param>
-    /// <returns>the standard color</returns>
+    /// <returns>standard color</returns>
     public static Clr LinearToStandard(in Clr c, in bool alpha = false)
     {
         float inv24 = 1.0f / 2.4f;
@@ -613,8 +612,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Converts a color from linear RGB to CIE XYZ.
     /// The alpha channel is unaffected by the transformation.
     /// </summary>
-    /// <param name="c">the linear color</param>
-    /// <returns>the XYZ color</returns>
+    /// <param name="c">linear color</param>
+    /// <returns>XYZ color</returns>
     public static Vec4 LinearToXyza(in Clr c)
     {
         return new Vec4(
@@ -632,7 +631,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="a">origin color</param>
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
-    /// <returns>the mixed color</returns>
+    /// <returns>mixed color</returns>
     public static Clr MixLaba(in Clr a, in Clr b, in float t)
     {
         Clr aLin = Clr.StandardToLinear(a);
@@ -658,7 +657,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="a">origin color</param>
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
-    /// <returns>the mixed color</returns>
+    /// <returns>mixed color</returns>
     public static Clr MixLcha(in Clr a, in Clr b, in float t)
     {
         return Clr.MixLcha(a, b, t, (x, y, z, w) => Utils.LerpAngleNear(x, y, z, w));
@@ -675,7 +674,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
     /// <param name="easing">easing function</param>
-    /// <returns>the mixed color</returns>
+    /// <returns>mixed color</returns>
     public static Clr MixLcha( //
         in Clr a, //
         in Clr b, //
@@ -733,7 +732,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="a">origin color</param>
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
-    /// <returns>the mixed color</returns>
+    /// <returns>mixed color</returns>
     public static Clr MixRgbaLinear(in Clr a, in Clr b, in float t)
     {
         float u = 1.0f - t;
@@ -752,7 +751,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="a">origin color</param>
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
-    /// <returns>the mixed color</returns>
+    /// <returns>mixed color</returns>
     public static Clr MixRgbaStandard(in Clr a, in Clr b, in float t)
     {
         return Clr.LinearToStandard(
@@ -765,7 +764,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Tests to see if the alpha channel of this color is less than or equal to
     /// zero, i.e., if it is completely transparent.
     /// </summary>
-    /// <param name="c">the color</param>
+    /// <param name="c">color</param>
     /// <returns>evaluation</returns>
     public static bool None(in Clr c)
     {
@@ -777,8 +776,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// alpha channel. If alpha is less than or equal to zero, returns
     /// clear black.
     /// </summary>
-    /// <param name="c">the color</param>
-    /// <returns>the premultiplied color</returns>
+    /// <param name="c">color</param>
+    /// <returns>premultiplied color</returns>
     public static Clr Premul(in Clr c)
     {
         if (c.a <= 0.0f) { return Clr.ClearBlack; }
@@ -793,9 +792,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <summary>
     /// Reduces the signal, or granularity, of a color's channels.
     /// </summary>
-    /// <param name="c">the color</param>
-    /// <param name="levels">the levels</param>
-    /// <returns>the posterized color</returns>
+    /// <param name="c">color</param>
+    /// <param name="levels">levels</param>
+    /// <returns>posterized color</returns>
     public static Clr Quantize(in Clr c, in int levels)
     {
         return Clr.QuantizeUnsigned(c, levels);
@@ -917,7 +916,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="rng">the random number generator</param>
     /// <param name="lb">the lower bound</param>
     /// <param name="ub">the upper bound</param>
-    /// <returns>the color</returns>
+    /// <returns>color</returns>
     public static Clr RandomRgba(in Random rng, in float lb = 0.0f, in float ub = 1.0f)
     {
         return new Clr(
@@ -932,7 +931,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Converts the color from standard RGB to linear.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>the luminance</returns>
+    /// <returns>luminance</returns>
     public static float StandardLuminance(in Clr c)
     {
         return Clr.LinearLuminance(Clr.StandardToLinear(c));
@@ -944,7 +943,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// component, a in the x component and b in the y component.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>the lab color</returns>
+    /// <returns>lab color</returns>
     public static Vec4 StandardToLaba(in Clr c)
     {
         return Clr.XyzaToLaba(
@@ -961,7 +960,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// to z; alpha, to w.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>the lab color</returns>
+    /// <returns>lab color</returns>
     public static Vec4 StandardToLcha(in Clr c)
     {
         return Clr.LabaToLcha(
@@ -975,7 +974,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="c">the standard color</param>
     /// <param name="alpha">transform the alpha channel</param>
-    /// <returns>the linear color</returns>
+    /// <returns>linear color</returns>
     public static Clr StandardToLinear(in Clr c, in bool alpha = false)
     {
         double inv1055 = 1.0d / 1.055d;
@@ -1003,7 +1002,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="c">the input color</param>
     /// <param name="order">color channel order</param>
-    /// <returns>the color in hexadecimal</returns>
+    /// <returns>color in hexadecimal</returns>
     public static int ToHex(in Clr c, in ColorChannel order = ColorChannel.ARGB)
     {
         switch (order)
@@ -1021,8 +1020,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <summary>
     /// Converts a color to an integer. Returns an integer ordered as 0xAABBGGRR.
     /// </summary>
-    /// <param name="c">the input color</param>
-    /// <returns>the color in hexadecimal</returns>
+    /// <param name="c">color</param>
+    /// <returns>color in hexadecimal</returns>
     public static int ToHexAbgr(in Clr c)
     {
         return Clr.ToHexAbgrUnchecked(Clr.Clamp(c, 0.0f, 1.0f));
@@ -1031,8 +1030,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <summary>
     /// Converts a color to an integer. Returns an integer ordered as 0xAARRGGBB.
     /// </summary>
-    /// <param name="c">the input color</param>
-    /// <returns>the color in hexadecimal</returns>
+    /// <param name="c">color</param>
+    /// <returns>color in hexadecimal</returns>
     public static int ToHexArgb(in Clr c)
     {
         return Clr.ToHexArgbUnchecked(Clr.Clamp(c, 0.0f, 1.0f));
@@ -1041,8 +1040,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <summary>
     /// Converts a color to an integer. Returns an integer ordered as 0xRRGGBBAA.
     /// </summary>
-    /// <param name="c">the input color</param>
-    /// <returns>the color in hexadecimal</returns>
+    /// <param name="c">color</param>
+    /// <returns>color in hexadecimal</returns>
     public static int ToHexRgba(in Clr c)
     {
         return Clr.ToHexRgbaUnchecked(Clr.Clamp(c, 0.0f, 1.0f));
@@ -1052,9 +1051,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Converts a color to an integer. Does not check if the color's components
     /// are in a valid range, [0.0, 1.0].
     /// </summary>
-    /// <param name="c">the input color</param>
+    /// <param name="c">color</param>
     /// <param name="order">color channel order</param>
-    /// <returns>the color in hexadecimal</returns>
+    /// <returns>color in hexadecimal</returns>
     public static int ToHexUnchecked(in Clr c, in ColorChannel order = ColorChannel.ARGB)
     {
         switch (order)
@@ -1073,8 +1072,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Converts a color to an integer. Does not check if the color's components
     /// are in a valid range, [0.0, 1.0]. Returns an integer ordered as 0xAABBGGRR.
     /// </summary>
-    /// <param name="c">the input color</param>
-    /// <returns>the color in hexadecimal</returns>
+    /// <param name="c">color</param>
+    /// <returns>color in hexadecimal</returns>
     public static int ToHexAbgrUnchecked(in Clr c)
     {
         return (int)(c._a * 255.0f + 0.5f) << 0x18 |
@@ -1087,8 +1086,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Converts a color to an integer. Does not check if the color's components
     /// are in a valid range, [0.0, 1.0]. Returns an integer ordered as 0xAARRGGBB.
     /// </summary>
-    /// <param name="c">the input color</param>
-    /// <returns>the color in hexadecimal</returns>
+    /// <param name="c">color</param>
+    /// <returns>color in hexadecimal</returns>
     public static int ToHexArgbUnchecked(in Clr c)
     {
         return (int)(c._a * 255.0f + 0.5f) << 0x18 |
@@ -1101,8 +1100,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Converts a color to an integer. Does not check if the color's components
     /// are in a valid range, [0.0, 1.0]. Returns an integer ordered as 0xRRGGBBAA.
     /// </summary>
-    /// <param name="c">the input color</param>
-    /// <returns>the color in hexadecimal</returns>
+    /// <param name="c">color</param>
+    /// <returns>color in hexadecimal</returns>
     public static int ToHexRgbaUnchecked(in Clr c)
     {
         return (int)(c._r * 255.0f + 0.5f) << 0x18 |
@@ -1201,8 +1200,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// luminance in the z component,
     /// a in the x component and b in the y component.
     /// </summary>
-    /// <param name="v">the XYZ color</param>
-    /// <returns>the lab color</returns>
+    /// <param name="v">XYZ color</param>
+    /// <returns>lab color</returns>
     public static Vec4 XyzaToLaba(in Vec4 v)
     {
         double oneThird = 1.0d / 3.0d;
@@ -1249,8 +1248,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Converts a color from CIE XYZ to linear RGB.
     /// The alpha channel is unaffected by the transformation.
     /// </summary>
-    /// <param name="c">the XYZ color</param>
-    /// <returns>the linear color</returns>
+    /// <param name="v">XYZ color</param>
+    /// <returns>linear color</returns>
     public static Clr XyzaToLinear(in Vec4 v)
     {
         return new Clr(
