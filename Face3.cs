@@ -55,7 +55,7 @@ public readonly struct Face3 : IComparable<Face3>, IEquatable<Face3>
     /// <summary>
     /// Returns a hash code representing this face.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         return this.edges.GetHashCode();
@@ -64,7 +64,7 @@ public readonly struct Face3 : IComparable<Face3>, IEquatable<Face3>
     /// <summary>
     /// Returns a string representation of this face.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Face3.ToString(this);

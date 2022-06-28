@@ -112,7 +112,7 @@ public class Curve3 : IEnumerable
     /// <summary>
     /// Returns a hash code representing this curve.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         unchecked
@@ -213,7 +213,7 @@ public class Curve3 : IEnumerable
     /// <summary>
     /// Gets the enumerator for this curve.
     /// </summary>
-    /// <returns>the enumerator</returns>
+    /// <returns>enumerator</returns>
     public IEnumerator GetEnumerator()
     {
         return this.knots.GetEnumerator();
@@ -785,7 +785,7 @@ public class Curve3 : IEnumerable
     /// </summary>
     /// <param name="c">curve</param>
     /// <param name="places">number of places</param>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public static string ToString(in Curve3 c, in int places = 4)
     {
         return Curve3.ToString(new StringBuilder(1024), c, places).ToString();
@@ -797,7 +797,7 @@ public class Curve3 : IEnumerable
     /// <param name="sb">string builder</param>
     /// <param name="c">curve</param>
     /// <param name="places">number of places</param>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public static StringBuilder ToString(in StringBuilder sb, in Curve3 c, in int places = 4)
     {
         List<Knot3> knots = c.knots;

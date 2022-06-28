@@ -73,7 +73,7 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// <summary>
     /// Returns a hash code representing this vertex.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         unchecked
@@ -87,7 +87,7 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// <summary>
     /// Returns a string representation of this vertex.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Vert3.ToString(this);

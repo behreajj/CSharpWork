@@ -227,7 +227,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <summary>
     /// Returns a hash code representing this matrix.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         int hash = Utils.MulBase ^ this._m00.GetHashCode();
@@ -248,7 +248,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <summary>
     /// Returns a string representation of this matrix.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Mat3.ToString(this);
@@ -281,7 +281,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// Returns an enumerator (or iterator) for this matrix, allowing its
     /// components to be accessed in a foreach loop.
     /// </summary>
-    /// <returns>the enumerator</returns>
+    /// <returns>enumerator</returns>
     public IEnumerator GetEnumerator()
     {
         yield return this._m00;
@@ -300,7 +300,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <summary>
     /// Returns a float array of length 9 containing this matrix's components.
     /// </summary>
-    /// <returns>the array</returns>
+    /// <returns>array</returns>
     public float[] ToArray1()
     {
         return new float[]
@@ -314,7 +314,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <summary>
     /// Returns a 3 x 3 float array containing this matrix's components.
     /// </summary>
-    /// <returns>the array</returns>
+    /// <returns>array</returns>
     public float[,] ToArray2()
     {
         return new float[,]

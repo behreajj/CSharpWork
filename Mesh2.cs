@@ -124,7 +124,7 @@ public class Mesh2
     /// <summary>
     /// Returns a string representation of this mesh.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Mesh2.ToString(this);

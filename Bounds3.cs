@@ -134,7 +134,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// <summary>
     /// Returns a string representation of this bounds.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Bounds3.ToString(this);

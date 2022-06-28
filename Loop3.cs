@@ -93,7 +93,7 @@ public class Loop3
     /// <summary>
     /// Returns a string representation of this vector.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Loop3.ToString(this);

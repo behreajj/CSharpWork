@@ -122,7 +122,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <summary>
     /// Returns a string representation of this bounds.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Bounds2.ToString(this);

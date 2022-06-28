@@ -93,7 +93,7 @@ public class Loop2
     /// <summary>
     /// Returns a string representation of this loop.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Loop2.ToString(this);

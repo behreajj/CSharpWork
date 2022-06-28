@@ -10,132 +10,6 @@ using System.Text;
 public class Palette
 {
     /// <summary>
-    /// Associates palette entries together under a name.
-    /// </summary>
-    [Serializable]
-    protected class Tag : IComparable<Tag>, IEquatable<Tag>
-    {
-        /// <summary>
-        /// Character limit for entry names.
-        /// </summary>
-        public const int NameCharLimit = 64;
-
-        /// <summary>
-        /// List of entries under the tag.
-        /// </summary>
-        protected List<PalEntry> entries = new List<PalEntry>();
-
-        /// <summary>
-        /// The tag's name.
-        /// </summary>
-        protected string name = "Tag";
-
-        /// <summary>
-        /// Gets the list of entries.
-        /// </summary>
-        /// <value>entries</value>
-        public List<PalEntry> Entries
-        {
-            get
-            {
-                return this.entries;
-            }
-        }
-
-        /// <summary>
-        /// The entry's name.
-        /// If the name is invalid, the entry's color
-        /// in web-friendly hexadcimal is used instead.
-        /// </summary>
-        /// <value>name</value>
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-
-            set
-            {
-                string trval = value.Trim();
-                if (trval.Length > 0)
-                {
-                    this.name = trval.Substring(0,
-                        Utils.Min(trval.Length, Tag.NameCharLimit));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Constructs an empty tag object.
-        /// </summary>
-        public Tag() { }
-
-        /// <summary>
-        /// Constructs a tag from a name.
-        /// </summary>
-        /// <param name="name">name</param>
-        public Tag(in string name)
-        {
-            this.Name = name;
-        }
-
-        /// <summary>
-        /// Tests this tag for equivalence with an object.
-        /// </summary>
-        /// <param name="value">object</param>
-        /// <returns>equivalence</returns>
-        public override bool Equals(object value)
-        {
-            if (Object.ReferenceEquals(this, value)) { return true; }
-            if (value is null) { return false; }
-            if (value is Palette.Tag) { return this.Equals((Palette.Tag)value); }
-            return false;
-        }
-
-        /// <summary>
-        /// Returns a hash code for this tag based on its name.
-        /// </summary>
-        /// <returns>the hash code</returns>
-        public override int GetHashCode()
-        {
-            return this.Name.ToLower().GetHashCode();
-        }
-
-        /// <summary>
-        /// Returns a string representation of this tag.
-        /// </summary>
-        /// <returns>the string</returns>
-        public override string ToString()
-        {
-            return this.Name.ToString();
-        }
-
-        /// <summary>
-        /// Compares tags according to their names.
-        /// </summary>
-        /// <param name="pe">entry</param>
-        /// <returns>the comparison</returns>
-        public int CompareTo(Tag tag)
-        {
-            if (tag is null) { return 1; }
-            return this.Name.ToLower().CompareTo(tag.Name.ToLower());
-        }
-
-        /// <summary>
-        /// Tests this tag for equivalence with another in compliance with the
-        /// IEquatable interface.
-        /// </summary>
-        /// <param name="k">key</param>
-        /// <returns>evaluation</returns>
-        public bool Equals(Tag tag)
-        {
-            if (tag is null) { return false; }
-            return this.GetHashCode() == tag.GetHashCode();
-        }
-    }
-
-    /// <summary>
     /// Character limit for author name.
     /// </summary>
     public const int AuthorCharLimit = 96;
@@ -159,11 +33,6 @@ public class Palette
     /// The palette's name.
     /// </summary>
     protected String name = "Palette";
-
-    /// <summary>
-    /// A list of tags.
-    /// </summary>
-    protected List<Tag> tags = new List<Tag>();
 
     /// <summary>
     /// The palette's author.
@@ -288,17 +157,6 @@ public class Palette
     }
 
     /// <summary>
-    /// Appends a tag from a name and an array
-    /// of palette entry indices.
-    /// </summary>
-    /// <param name="name">tag name</param>
-    /// <param name="indices">tag indices</param>
-    public void AppendTag(in string name, params int[] indices)
-    {
-        this.InsertTag(this.tags.Count, name, indices);
-    }
-
-    /// <summary>
     /// Contracts this palette's size by the amount.
     /// </summary>
     /// <param name="v">amount</param>
@@ -314,14 +172,6 @@ public class Palette
     public void ExpandBy(in int v)
     {
         this.Resize(this.entries.Length + v);
-    }
-
-    /// <summary>
-    /// Clears the palette's tags.
-    /// </summary>
-    public void ClearTags()
-    {
-        this.tags.Clear();
     }
 
     /// <summary>
@@ -360,59 +210,6 @@ public class Palette
     }
 
     /// <summary>
-    /// Gets an array of colors associated with a tag.
-    /// </summary>
-    /// <param name="i">index</param>
-    /// <returns>colors</returns>
-    public Clr[] GetTagColors(in int i)
-    {
-        Tag tag = this.tags[i];
-        List<PalEntry> tagEntries = tag.Entries;
-        int len = tagEntries.Count;
-        Clr[] result = new Clr[len];
-        for (int j = 0; j < len; ++j)
-        {
-            result[j] = tagEntries[j].Color;
-        }
-        return result;
-    }
-
-    /// <summary>
-    /// Gets the palette entry indices associated with a tag.
-    /// </summary>
-    /// <param name="i">tag index</param>
-    /// <returns>indices</returns>
-    public int[] GetTagIndices(in int i)
-    {
-        // TODO: Test
-        Tag tag = this.tags[i];
-        List<PalEntry> tagEntries = tag.Entries;
-        int len = tagEntries.Count;
-        List<int> resultList = new List<int>();
-        for (int j = 0; j < len; ++j)
-        {
-            PalEntry tagPalEntry = tagEntries[j];
-            int index = Array.IndexOf(this.entries, tagPalEntry);
-            if (index > -1)
-            {
-                resultList.Add(index);
-            }
-        }
-        resultList.Sort();
-        return resultList.ToArray();
-    }
-
-    /// <summary>
-    /// Gets the name of a palette tag at an index.
-    /// </summary>
-    /// <param name="i">index</param>
-    /// <returns>name</returns>
-    public string GetTagName(in int i)
-    {
-        return this.tags[i].Name;
-    }
-
-    /// <summary>
     /// Gets the index of a color in the palette, if the
     /// palette contains it. Otherwise, returns a default.
     /// </summary>
@@ -440,21 +237,6 @@ public class Palette
     }
 
     /// <summary>
-    /// Creates a tag at an insertion index from a name and an array
-    /// of palette entry indices.
-    /// </summary>
-    /// <param name="i">insertion index</param>
-    /// <param name="name">tag name</param>
-    /// <param name="indices">tag indices</param>
-    public void InsertTag(in int i, in string name, params int[] indices)
-    {
-        Tag tag = new Tag(name);
-        int j = Utils.RemFloor(i, this.tags.Count + 1);
-        this.tags.Insert(j, tag);
-        this.SetTagIndices(j, indices);
-    }
-
-    /// <summary>
     /// Prepends a color to this palette.
     /// Optionally, allows the color to be named.
     /// </summary>
@@ -469,17 +251,6 @@ public class Palette
     }
 
     /// <summary>
-    /// Prepends a tag from a name and an array
-    /// of palette entry indices.
-    /// </summary>
-    /// <param name="name">tag name</param>
-    /// <param name="indices">tag indices</param>
-    public void PrependTag(in string name, params int[] indices)
-    {
-        this.InsertTag(0, name, indices);
-    }
-
-    /// <summary>
     /// Removes a palette entry at an index.
     /// Returns the entry color if the removal
     /// was successful; otherwise, returns clear
@@ -491,7 +262,6 @@ public class Palette
     {
         (PalEntry[], PalEntry) result = PalEntry.RemoveAt(this.entries, index);
         this.entries = result.Item1;
-        this.TrimTagEntries();
 
         if (result.Item2 != null)
         {
@@ -504,25 +274,12 @@ public class Palette
     }
 
     /// <summary>
-    /// Removes a tag at an index.
-    /// </summary>
-    /// <param name="index">index</param>
-    public void RemoveTagAt(in int index)
-    {
-        if (index > -1 && index < tags.Count)
-        {
-            this.tags.RemoveAt(index);
-        }
-    }
-
-    /// <summary>
     /// Resizes the palette to the specified length.
     /// </summary>
     /// <param name="len">length</param>
     public void Resize(in int len)
     {
         this.entries = PalEntry.Resize(this.entries, len);
-        this.TrimTagEntries();
     }
 
     /// <summary>
@@ -543,66 +300,6 @@ public class Palette
     public void SetPalEntryName(in int i, in string name)
     {
         this.entries[i].Name = name;
-    }
-
-    /// <summary>
-    /// Sets the palette entry indices associated with a tag.
-    /// If an index in the array is out-of-bounds, it is not
-    /// added to the tag.
-    /// </summary>
-    /// <param name="i">tag index</param>
-    /// <param name="indices">indices</param>
-    public void SetTagIndices(in int i, params int[] indices)
-    {
-        Tag tag = this.tags[i];
-        List<PalEntry> tagEntries = tag.Entries;
-        tagEntries.Clear();
-        int indicesLen = indices.Length;
-        int palEntriesLen = this.entries.Length;
-        for (int j = 0; j < indicesLen; ++j)
-        {
-            int index = indices[j];
-            if (index > -1 && index < palEntriesLen)
-            {
-                PalEntry entry = this.entries[index];
-                tagEntries.Add(entry);
-            }
-        }
-        tagEntries.Sort();
-    }
-
-    /// <summary>
-    /// Sets the name of a palette tag at an index.
-    /// </summary>
-    /// <param name="i">index</param>
-    /// <param name="name">name</param>
-    public void SetTagName(in int i, in string name)
-    {
-        this.tags[i].Name = name;
-    }
-
-    /// <summary>
-    /// Iterates over all the tags in a palette, removing
-    /// entries from each tag that is no longer present
-    /// in the palette.
-    /// </summary>
-    public void TrimTagEntries()
-    {
-        int tagsLen = this.tags.Count;
-        for (int i = 0; i < tagsLen; ++i)
-        {
-            Tag tag = this.tags[i];
-            List<PalEntry> tagEntries = tag.Entries;
-            int tagEntriesLen = tagEntries.Count;
-            for (int j = tagEntriesLen - 1; j > -1; --j)
-            {
-                PalEntry tagPalEntry = tagEntries[j];
-                if (Array.IndexOf(this.entries, tagPalEntry) < 0)
-                {
-                    tagEntries.Remove(tagPalEntry);
-                }
-            }
-        }
     }
 
     /// <summary>
@@ -661,7 +358,6 @@ public class Palette
             }
         }
 
-        target.TrimTagEntries();
         return target;
     }
 
@@ -710,7 +406,6 @@ public class Palette
             }
         }
 
-        target.TrimTagEntries();
         return target;
     }
 
@@ -734,7 +429,6 @@ public class Palette
 
         target.Name = "Rgb";
         target.Author = "Anonymous";
-        target.ClearTags();
         return target;
     }
 
@@ -772,7 +466,6 @@ public class Palette
             }
         }
 
-        target.TrimTagEntries();
         return target;
     }
 
@@ -901,42 +594,6 @@ public class Palette
             }
         }
 
-        sb.Append(" ], tags: [ ");
-        List<Tag> tags = pal.tags;
-        int tagsLen = tags.Count;
-        int tagsLast = tagsLen - 1;
-        for (int j = 0; j < tagsLen; ++j)
-        {
-            Tag tag = tags[j];
-            if (tag != null)
-            {
-                sb.Append("{ name: \"");
-                sb.Append(tag.Name);
-                sb.Append("\", indices: [ ");
-                List<PalEntry> tagEntries = tag.Entries;
-                int tagEntriesLen = tagEntries.Count;
-                int tagEntriesLast = tagEntriesLen - 1;
-                for (int k = 0; k < tagEntriesLen; ++k)
-                {
-                    PalEntry tagPalEntry = tagEntries[k];
-                    if (tagPalEntry != null)
-                    {
-                        sb.Append(Array.IndexOf(palEntries, tagPalEntry));
-                        if (k < tagEntriesLast)
-                        {
-                            sb.Append(',').Append(' ');
-                        }
-                    }
-                }
-
-                sb.Append(" ] }");
-                if (j < tagsLast)
-                {
-                    sb.Append(',').Append(' ');
-                }
-            }
-        }
-
         sb.Append(" ] }");
         return sb;
     }
@@ -987,7 +644,6 @@ public class Palette
         }
 
         target.entries = uniqueEntries;
-        target.TrimTagEntries();
         return target;
     }
 }

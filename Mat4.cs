@@ -348,7 +348,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// Returns a hash code representing this matrix.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         int hash = Utils.MulBase ^ this._m00.GetHashCode();
@@ -377,7 +377,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// Returns a string representation of this matrix.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Mat4.ToString(this);
@@ -418,7 +418,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Returns an enumerator (or iterator) for this matrix, allowing its
     /// components to be accessed in a foreach loop.
     /// </summary>
-    /// <returns>the enumerator</returns>
+    /// <returns>enumerator</returns>
     public IEnumerator GetEnumerator()
     {
         yield return this._m00;
@@ -445,7 +445,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// Returns a float array of length 16 containing this matrix's components.
     /// </summary>
-    /// <returns>the array</returns>
+    /// <returns>array</returns>
     public float[] ToArray1()
     {
         return new float[]
@@ -460,7 +460,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// Returns a 4 x 4 float array containing this matrix's components.
     /// </summary>
-    /// <returns>the array</returns>
+    /// <returns>array</returns>
     public float[,] ToArray2()
     {
         return new float[,]
@@ -474,7 +474,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// Returns a named value tuple containing this matrix's components.
     /// </summary>
-    /// <returns>the tuple</returns>
+    /// <returns>tuple</returns>
     public (float m00, float m01, float m02, float m03,
             float m10, float m11, float m12, float m13,
             float m20, float m21, float m22, float m23,

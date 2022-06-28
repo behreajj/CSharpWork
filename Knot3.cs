@@ -173,7 +173,7 @@ public class Knot3
     /// Returns the knot's hash code based on those of its three constituent
     /// vectors.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         unchecked
@@ -189,7 +189,7 @@ public class Knot3
     /// <summary>
     /// Returns a string representation of this knot.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Knot3.ToString(this);

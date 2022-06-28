@@ -103,7 +103,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <summary>
     /// Returns a hash code representing this index.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         unchecked
@@ -117,7 +117,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <summary>
     /// Returns a string representation of this index.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Index3.ToString(this);
@@ -141,7 +141,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// Returns an enumerator (or iterator) for this index, allowing its
     /// components to be accessed in a foreach loop.
     /// </summary>
-    /// <returns>the enumerator</returns>
+    /// <returns>enumerator</returns>
     public IEnumerator GetEnumerator()
     {
         yield return this._v;

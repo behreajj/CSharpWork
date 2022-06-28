@@ -119,7 +119,7 @@ public class Octree
     /// <summary>
     /// Returns a string representation of this octree.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Octree.ToString(this);
@@ -150,6 +150,11 @@ public class Octree
             if (isLeaf)
             {
                 this.points.Add(v);
+                if (this.points.Count > this.capacity)
+                {
+                    this.Split(this.capacity);
+                }
+                return true;
             }
             else
             {
@@ -535,13 +540,13 @@ public class Octree
         {
             sb.Append(", points: [ ");
             SortedSet<Vec3> points = o.points;
-            int i = 0;
+            int i = -1;
             int last = points.Count - 1;
             foreach (Vec3 v in points)
             {
-                Vec3.ToString(v, places);
-                if (i < last) sb.Append(", ");
                 ++i;
+                Vec3.ToString(sb, v, places);
+                if (i < last) sb.Append(", ");
             }
             sb.Append(' ');
             sb.Append(']');
@@ -550,20 +555,20 @@ public class Octree
         {
             sb.Append(", children: [ ");
             List<Octree> children = o.children;
-            int last = children.Count;
+            int last = children.Count - 1;
             for (int i = 0; i < last; ++i)
             {
                 Octree child = children[i];
                 if (child != null)
                 {
-                    Octree.ToString(child, places);
+                    Octree.ToString(sb, child, places);
                     sb.Append(", ");
                 }
             }
 
             if (children[last] != null)
             {
-                Octree.ToString(children[last], places);
+                Octree.ToString(sb, children[last], places);
             }
 
             sb.Append(' ');

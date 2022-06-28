@@ -105,7 +105,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// <summary>
     /// Returns a hash code for this entry based on its color.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         if (Clr.None(this.color)) { return 0; }
@@ -115,7 +115,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// <summary>
     /// Returns a string representation of this entry.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return PalEntry.ToString(this);

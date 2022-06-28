@@ -166,7 +166,7 @@ public class Mesh3
     /// <summary>
     /// Returns a string representation of this mesh.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Mesh3.ToString(this);

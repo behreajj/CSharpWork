@@ -58,7 +58,7 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <summary>
     /// Returns a hash code representing this edge.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         unchecked
@@ -71,7 +71,7 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <summary>
     /// Returns a string representation of this vertex.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Edge3.ToString(this);

@@ -209,7 +209,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <summary>
     /// Returns a hash code representing this quaternion.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         unchecked
@@ -224,7 +224,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <summary>
     /// Returns a string representation of this quaternion.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Quat.ToString(this);

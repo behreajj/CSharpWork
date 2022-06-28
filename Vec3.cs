@@ -143,7 +143,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Returns a hash code representing this vector.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         unchecked
@@ -157,7 +157,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Returns a string representation of this vector.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Vec3.ToString(this);
@@ -201,7 +201,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Returns an enumerator (or iterator) for this vector, allowing its
     /// components to be accessed in a foreach loop.
     /// </summary>
-    /// <returns>the enumerator</returns>
+    /// <returns>enumerator</returns>
     public IEnumerator GetEnumerator()
     {
         yield return this._x;

@@ -132,7 +132,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <summary>
     /// Returns a hash code representing this color.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         return Clr.ToHexArgb(this);
@@ -141,7 +141,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <summary>
     /// Returns a string representation of this color.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return Clr.ToString(this);

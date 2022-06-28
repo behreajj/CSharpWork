@@ -67,7 +67,7 @@ public class ClrGradient : IEnumerable
         /// Returns a hash code for this key based on its step, not based on its
         /// color.
         /// </summary>
-        /// <returns>the hash code</returns>
+        /// <returns>hash code</returns>
         public override int GetHashCode()
         {
             return this.step.GetHashCode();
@@ -76,7 +76,7 @@ public class ClrGradient : IEnumerable
         /// <summary>
         /// Returns a string representation of this key.
         /// </summary>
-        /// <returns>the string</returns>
+        /// <returns>string</returns>
         public override string ToString()
         {
             return Key.ToString(this);
@@ -269,7 +269,7 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Gets the hash code for the keys of this gradient.
     /// </summary>
-    /// <returns>the hash code</returns>
+    /// <returns>hash code</returns>
     public override int GetHashCode()
     {
         return this.keys.GetHashCode();
@@ -278,7 +278,7 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Returns a string representation of this gradient.
     /// </summary>
-    /// <returns>the string</returns>
+    /// <returns>string</returns>
     public override string ToString()
     {
         return ClrGradient.ToString(this);
@@ -372,7 +372,7 @@ public class ClrGradient : IEnumerable
     /// <summary>
     /// Gets the enumerator for the keys of this gradient.
     /// </summary>
-    /// <returns>the enumerator</returns>
+    /// <returns>enumerator</returns>
     public IEnumerator GetEnumerator()
     {
         return this.keys.GetEnumerator();
