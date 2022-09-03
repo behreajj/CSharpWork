@@ -10,13 +10,15 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
 {
     /// <summary>
     /// Arbitrary hue in LCh assigned to desaturated colors closer to daylight.
+    /// Roughly 99.0 / 360.0 degrees.
     /// </summary>
-    public const float LchHueDay = 99.0f / 360.0f;
+    public const float LchHueDay = 0.275f;
 
     /// <summary>
     /// Arbitrary hue in LCh assigned to desaturated colors that are closer to shadow.
+    /// Roughly 308.0 / 360.0 degrees.
     /// </summary>
-    public const float LchHueShade = 308.0f / 360.0f;
+    public const float LchHueShade = 0.85555553f;
 
     /// <summary>
     /// The red color channel.
@@ -399,10 +401,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     public static Clr FromHexAbgr(in int c)
     {
         return new Clr(
-            (c & 0xff) * Utils.One255,
-            (c >> 0x08 & 0xff) * Utils.One255,
-            (c >> 0x10 & 0xff) * Utils.One255,
-            (c >> 0x18 & 0xff) * Utils.One255);
+            Utils.One255 * (c & 0xff),
+            Utils.One255 * (c >> 0x08 & 0xff),
+            Utils.One255 * (c >> 0x10 & 0xff),
+            Utils.One255 * (c >> 0x18 & 0xff));
     }
 
     /// <summary>
@@ -414,10 +416,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     public static Clr FromHexArgb(in int c)
     {
         return new Clr(
-            (c >> 0x10 & 0xff) * Utils.One255,
-            (c >> 0x08 & 0xff) * Utils.One255,
-            (c & 0xff) * Utils.One255,
-            (c >> 0x18 & 0xff) * Utils.One255);
+            Utils.One255 * (c >> 0x10 & 0xff),
+            Utils.One255 * (c >> 0x08 & 0xff),
+            Utils.One255 * (c & 0xff),
+            Utils.One255 * (c >> 0x18 & 0xff));
     }
 
     /// <summary>
@@ -429,10 +431,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     public static Clr FromHexRgba(in int c)
     {
         return new Clr(
-            (c >> 0x18 & 0xff) * Utils.One255,
-            (c >> 0x10 & 0xff) * Utils.One255,
-            (c >> 0x08 & 0xff) * Utils.One255,
-            (c & 0xff) * Utils.One255);
+            Utils.One255 * (c >> 0x18 & 0xff),
+            Utils.One255 * (c >> 0x10 & 0xff),
+            Utils.One255 * (c >> 0x08 & 0xff),
+            Utils.One255 * (c & 0xff));
     }
 
     /// <summary>
@@ -463,9 +465,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         {
             return new Vec4(
                 Utils.OneTau * Utils.WrapRadians(MathF.Atan2(b, a)),
-                MathF.Sqrt(chromaSq),
-                lab.z,
-                lab.w);
+                MathF.Sqrt(chromaSq), lab.z, lab.w);
         }
     }
 
@@ -632,7 +632,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
     /// <returns>mixed color</returns>
-    public static Clr MixLaba(in Clr a, in Clr b, in float t)
+    public static Clr MixLaba(in Clr a, in Clr b, in float t = 0.5f)
     {
         Clr aLin = Clr.StandardToLinear(a);
         Vec4 aXyz = Clr.LinearToXyza(aLin);
@@ -658,7 +658,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
     /// <returns>mixed color</returns>
-    public static Clr MixLcha(in Clr a, in Clr b, in float t)
+    public static Clr MixLcha(in Clr a, in Clr b, in float t = 0.5f)
     {
         return Clr.MixLcha(a, b, t, (x, y, z, w) => Utils.LerpAngleNear(x, y, z, w));
     }
@@ -675,10 +675,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="t">step</param>
     /// <param name="easing">easing function</param>
     /// <returns>mixed color</returns>
-    public static Clr MixLcha( //
-        in Clr a, //
-        in Clr b, //
-        in float t, //
+    public static Clr MixLcha(
+        in Clr a,
+        in Clr b,
+        in float t,
         in Func<float, float, float, float, float> easing)
     {
         Clr aLin = Clr.StandardToLinear(a);
@@ -703,13 +703,13 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         }
         else
         {
-            float aChr = (float)Math.Sqrt(aChrSq);
+            float aChr = MathF.Sqrt(aChrSq);
             float aHue = Utils.OneTau * Utils.WrapRadians(
-                (float)Math.Atan2(ab, aa));
+                MathF.Atan2(ab, aa));
 
-            float bChr = (float)Math.Sqrt(bChrSq);
+            float bChr = MathF.Sqrt(bChrSq);
             float bHue = Utils.OneTau * Utils.WrapRadians(
-                (float)Math.Atan2(bb, ba));
+                MathF.Atan2(bb, ba));
 
             float u = 1.0f - t;
             Vec4 cLch = new Vec4(
@@ -727,24 +727,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
 
     /// <summary>
     /// Mixes two colors by a step in the range [0.0, 1.0] .
-    /// Assumes the colors are in linear RGB.
-    /// </summary>
-    /// <param name="a">origin color</param>
-    /// <param name="b">destination color</param>
-    /// <param name="t">step</param>
-    /// <returns>mixed color</returns>
-    public static Clr MixRgbaLinear(in Clr a, in Clr b, in float t)
-    {
-        float u = 1.0f - t;
-        return new Clr(
-            u * a._r + t * b._r,
-            u * a._g + t * b._g,
-            u * a._b + t * b._b,
-            u * a._a + t * b._a);
-    }
-
-    /// <summary>
-    /// Mixes two colors by a step in the range [0.0, 1.0] .
     /// Assumes the colors are in standard RGB; converts them to
     /// linear, then mixes them, then converts to standard.
     /// </summary>
@@ -752,12 +734,29 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="b">destination color</param>
     /// <param name="t">step</param>
     /// <returns>mixed color</returns>
-    public static Clr MixRgbaStandard(in Clr a, in Clr b, in float t)
+    public static Clr MixRgbaLinear(in Clr a, in Clr b, in float t = 0.5f)
     {
         return Clr.LinearToStandard(
-            Clr.MixRgbaLinear(
+            Clr.MixRgbaStandard(
                 Clr.StandardToLinear(a),
                 Clr.StandardToLinear(b), t));
+    }
+
+    /// <summary>
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// </summary>
+    /// <param name="a">origin color</param>
+    /// <param name="b">destination color</param>
+    /// <param name="t">step</param>
+    /// <returns>mixed color</returns>
+    public static Clr MixRgbaStandard(in Clr a, in Clr b, in float t = 0.5f)
+    {
+        float u = 1.0f - t;
+        return new Clr(
+            u * a._r + t * b._r,
+            u * a._g + t * b._g,
+            u * a._b + t * b._b,
+            u * a._a + t * b._a);
     }
 
     /// <summary>
@@ -820,10 +819,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="gLevels">green levels</param>
     /// <param name="bLevels">blue levels</param>
     /// <returns>posterized color</returns>
-    public static Clr QuantizeSigned( //
-        in Clr c, //
-        in int rLevels, //
-        in int gLevels, //
+    public static Clr QuantizeSigned(
+        in Clr c,
+        in int rLevels,
+        in int gLevels,
         in int bLevels)
     {
         return new Clr(
@@ -841,11 +840,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="bLevels">blue levels</param>
     /// <param name="aLevels">alpha levels</param>
     /// <returns>posterized color</returns>
-    public static Clr QuantizeSigned( //
-        in Clr c, //
-        in int rLevels, //
-        in int gLevels, //
-        in int bLevels, //
+    public static Clr QuantizeSigned(
+        in Clr c,
+        in int rLevels,
+        in int gLevels,
+        in int bLevels,
         in int aLevels)
     {
         return new Clr(
@@ -875,10 +874,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="gLevels">green levels</param>
     /// <param name="bLevels">blue levels</param>
     /// <returns>posterized color</returns>
-    public static Clr QuantizeUnsigned( //
-        in Clr c, //
-        in int rLevels, //
-        in int gLevels, //
+    public static Clr QuantizeUnsigned(
+        in Clr c,
+        in int rLevels,
+        in int gLevels,
         in int bLevels)
     {
         return new Clr(
@@ -896,11 +895,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="bLevels">blue levels</param>
     /// <param name="aLevels">alpha levels</param>
     /// <returns>posterized color</returns>
-    public static Clr QuantizeUnsigned( //
-        in Clr c, //
-        in int rLevels, //
-        in int gLevels, //
-        in int bLevels, //
+    public static Clr QuantizeUnsigned(
+        in Clr c,
+        in int rLevels,
+        in int gLevels,
+        in int bLevels,
         in int aLevels)
     {
         return new Clr(
@@ -977,22 +976,22 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>linear color</returns>
     public static Clr StandardToLinear(in Clr c, in bool alpha = false)
     {
-        double inv1055 = 1.0d / 1.055d;
+        float inv1055 = 1.0f / 1.055f;
         return new Clr(
             c._r > 0.04045f ?
-            (float)Math.Pow((c._r + 0.055d) * inv1055, 2.4d) :
+            MathF.Pow((c._r + 0.055f) * inv1055, 2.4f) :
             c._r * 0.07739938f,
 
             c._g > 0.04045f ?
-            (float)Math.Pow((c._g + 0.055d) * inv1055, 2.4d) :
+            MathF.Pow((c._g + 0.055f) * inv1055, 2.4f) :
             c._g * 0.07739938f,
 
             c._b > 0.04045f ?
-            (float)Math.Pow((c._b + 0.055d) * inv1055, 2.4d) :
+            MathF.Pow((c._b + 0.055f) * inv1055, 2.4f) :
             c._b * 0.07739938f,
 
             alpha ? c._a > 0.04045f ?
-            (float)Math.Pow((c._a + 0.055d) * inv1055, 2.4d) :
+            MathF.Pow((c._a + 0.055f) * inv1055, 2.4f) :
             c._a * 0.07739938f :
             c._a);
     }
@@ -1157,9 +1156,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="c">color</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString( //
-        in StringBuilder sb, //
-        in Clr c, //
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Clr c,
         in int places = 4)
     {
         sb.Append("{ r: ");
@@ -1180,8 +1179,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// alpha channel. Reverses pre-multiplication. If alpha is less than
     /// or equal to zero, returns  clear black.
     /// </summary>
-    /// <param name="c">the color</param>
-    /// <returns>the unpremultiplied color</returns>
+    /// <param name="c">color</param>
+    /// <returns>unpremultiplied color</returns>
     public static Clr Unpremul(in Clr c)
     {
         if (c.a <= 0.0f) { return Clr.ClearBlack; }

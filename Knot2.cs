@@ -488,7 +488,7 @@ public class Knot2
     /// </summary>
     /// <param name="scalar">scalar</param>
     /// <returns>this knot</returns>
-    public Knot2 ScaleForeHandleBy(in float scalar = 1.0f)
+    public Knot2 ScaleForeHandleBy(in float scalar)
     {
         this.foreHandle -= this.coord;
         this.foreHandle *= scalar;
@@ -514,8 +514,8 @@ public class Knot2
     /// <summary>
     /// Scales both the fore and rear handle by a factor.
     /// </summary>
-    /// <param name="magnitude">magnitude</param>
-    /// <returns>the knot</returns>
+    /// <param name="scalar">scalar</param>
+    /// <returns>this knot</returns>
     public Knot2 ScaleHandlesBy(in float scalar)
     {
         this.ScaleForeHandleBy(scalar);
@@ -542,7 +542,7 @@ public class Knot2
     /// </summary>
     /// <param name="scalar">scalar</param>
     /// <returns>this knot</returns>
-    public Knot2 ScaleRearHandleBy(in float scalar = 1.0f)
+    public Knot2 ScaleRearHandleBy(in float scalar)
     {
         this.rearHandle -= this.coord;
         this.rearHandle *= scalar;
@@ -556,7 +556,7 @@ public class Knot2
     /// </summary>
     /// <param name="magnitude">magnitude</param>
     /// <returns>this knot</returns>
-    public Knot2 ScaleRearHandleTo(in float magnitude = 1.0f)
+    public Knot2 ScaleRearHandleTo(in float magnitude)
     {
         this.rearHandle -= this.coord;
         this.rearHandle = Vec2.Rescale(this.rearHandle, magnitude);
@@ -574,9 +574,10 @@ public class Knot2
     /// <param name="yFh">fore handle y</param>
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
-    public Knot2 Set( //
-        in float xCo, in float yCo, //
-        in float xFh, in float yFh, //
+    /// <returns>this knot</returns>
+    public Knot2 Set(
+        in float xCo, in float yCo,
+        in float xFh, in float yFh,
         in float xRh, in float yRh)
     {
         this.coord = new Vec2(xCo, yCo);
@@ -589,7 +590,7 @@ public class Knot2
     /// <summary>
     /// Transforms this knot by a matrix.
     /// </summary>
-    /// <param name="tr">transform</param>
+    /// <param name="m">matrix</param>
     /// <returns>this knot</returns>
     public Knot2 Transform(in Mat3 m)
     {
@@ -687,32 +688,32 @@ public class Knot2
     /// <summary>
     /// Gets the fore handle of a knot as a direction, rather than as a point.
     /// </summary>
-    /// <param name="knot">knot</param>
+    /// <param name="kn">knot</param>
     /// <returns>fore handle vector</returns>
-    public static Vec2 ForeDir(in Knot2 knot)
+    public static Vec2 ForeDir(in Knot2 kn)
     {
-        return Vec2.Normalize(Knot2.ForeVec(knot));
+        return Vec2.Normalize(Knot2.ForeVec(kn));
     }
 
     /// <summary>
     /// Returns the magnitude of the knot's fore handle, i.e., the Euclidean
     /// distance between the fore handle and the coordinate.
     /// </summary>
-    /// <param name="knot">knot</param>
+    /// <param name="kn">knot</param>
     /// <returns>magnitude</returns>
-    public static float ForeMag(in Knot2 knot)
+    public static float ForeMag(in Knot2 kn)
     {
-        return Vec2.DistEuclidean(knot.foreHandle, knot.coord);
+        return Vec2.DistEuclidean(kn.foreHandle, kn.coord);
     }
 
     /// <summary>
     /// Gets the fore handle of a knot as a vector, rather than as a point.
     /// </summary>
-    /// <param name="knot">knot</param>
+    /// <param name="kn">knot</param>
     /// <returns>fore handle vector</returns>
-    public static Vec2 ForeVec(in Knot2 knot)
+    public static Vec2 ForeVec(in Knot2 kn)
     {
-        return knot.foreHandle - knot.coord;
+        return kn.foreHandle - kn.coord;
     }
 
     /// <summary>
@@ -726,14 +727,16 @@ public class Knot2
     /// <param name="xCenter">x center</param>
     /// <param name="yCenter">y center</param>
     /// <returns>the knot</returns>
-    public static Knot2 FromPolar( //
-        in float cosa = 1.0f, //
-        in float sina = 0.0f, //
-        in float radius = 1.0f, //
-        in float handleMag = Utils.FourThirds, //
-        in float xCenter = 0.0f, //
+    public static Knot2 FromPolar(
+        in float cosa = 1.0f,
+        in float sina = 0.0f,
+        in float radius = 1.0f,
+        in float handleMag = Utils.FourThirds,
+        in float xCenter = 0.0f,
         in float yCenter = 0.0f)
     {
+        // TODO: Remove this from knots? Inline in curve.
+
         float cox = xCenter + radius * cosa;
         float coy = yCenter + radius * sina;
 
@@ -752,32 +755,32 @@ public class Knot2
     /// <summary>
     /// Gets the rear handle of a knot as a direction, rather than as a point.
     /// </summary>
-    /// <param name="knot">knot</param>
+    /// <param name="kn">knot</param>
     /// <returns>rear handle vector</returns>
-    public static Vec2 RearDir(in Knot2 knot)
+    public static Vec2 RearDir(in Knot2 kn)
     {
-        return Vec2.Normalize(Knot2.RearVec(knot));
+        return Vec2.Normalize(Knot2.RearVec(kn));
     }
 
     /// <summary>
     /// Returns the magnitude of the knot's rear handle, i.e., the Euclidean
     /// distance between the rear handle and the coordinate.
     /// </summary>
-    /// <param name="knot">knot</param>
+    /// <param name="kn">knot</param>
     /// <returns>magnitude</returns>
-    public static float RearMag(in Knot2 knot)
+    public static float RearMag(in Knot2 kn)
     {
-        return Vec2.DistEuclidean(knot.rearHandle, knot.coord);
+        return Vec2.DistEuclidean(kn.rearHandle, kn.coord);
     }
 
     /// <summary>
     /// Gets the rear handle of a knot as a vector, rather than as a point.
     /// </summary>
-    /// <param name="knot">knot</param>
+    /// <param name="kn">knot</param>
     /// <returns>rear handle vector</returns>
-    public static Vec2 RearVec(in Knot2 knot)
+    public static Vec2 RearVec(in Knot2 kn)
     {
-        return knot.rearHandle - knot.coord;
+        return kn.rearHandle - kn.coord;
     }
 
     /// <summary>

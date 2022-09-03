@@ -49,7 +49,7 @@ public static class Utils
     // Magnitude for orthogonal handles when four curve
     // knots are used to approximate an ellipse or circle
     // (90 degrees per knot), Derived from
-    // (Math.Sqrt(2.0) - 1.0) * 4.0 / 3.0.
+    // (Math.Sqrt(2.0) - 1.0) * 4.0 / 3.0 .
     // </summary>
     public const float Kappa = 0.552285f;
 
@@ -206,12 +206,12 @@ public static class Utils
     /// Returns the first floating-point argument with the sign of the second
     /// floating-point argument. Returns zero if the sign is zero.
     /// </summary>
-    /// <param name="mag">the magnitude</param>
-    /// <param name="sign">the sign</param>
+    /// <param name="mag">magnitude</param>
+    /// <param name="sign">sign</param>
     /// <returns>magnified sign</returns>
     public static float CopySign(in float mag, in float sign)
     {
-        // Don't use abs*sign, as the latter has more
+        // Don't use abs * sign, as the latter has more
         // flexibility in terms of how you deal with zero sign.
         // return Utils.Abs (mag) * Utils.Sign (sign);
         return (sign < -0.0f) ? -MathF.Abs(mag) :
@@ -347,13 +347,15 @@ public static class Utils
     /// <param name="origin">origin angle</param>
     /// <param name="dest">destination angle</param>
     /// <param name="t">factor</param>
+    /// <param name="range">range</param>
     /// <returns>angle</returns>
-    public static float LerpAngle( //
-        in float origin, //
-        in float dest, //
-        in float t = 0.5f)
+    public static float LerpAngle(
+        in float origin,
+        in float dest,
+        in float t = 0.5f,
+        in float range = Utils.Tau)
     {
-        return Utils.LerpAngleNear(origin, dest, t);
+        return Utils.LerpAngleNear(origin, dest, t, range);
     }
 
     /// <summary>
@@ -364,11 +366,12 @@ public static class Utils
     /// <param name="origin">origin angle</param>
     /// <param name="dest">destination angle</param>
     /// <param name="t">factor</param>
+    /// <param name="range">range</param>
     /// <returns>angle</returns>
-    public static float LerpAngleNear( //
-        in float origin, //
-        in float dest, //
-        in float t = 0.5f, //
+    public static float LerpAngleNear(
+        in float origin,
+        in float dest,
+        in float t = 0.5f,
         in float range = Utils.Tau)
     {
         float o = Utils.RemFloor(origin, range);
@@ -405,11 +408,12 @@ public static class Utils
     /// <param name="origin">origin angle</param>
     /// <param name="dest">destination angle</param>
     /// <param name="t">factor</param>
+    /// <param name="range">range</param>
     /// <returns>angle</returns>
-    public static float LerpAngleFar( //
-        in float origin, //
-        in float dest, //
-        in float t = 0.5f, //
+    public static float LerpAngleFar(
+        in float origin,
+        in float dest,
+        in float t = 0.5f,
         in float range = Utils.Tau)
     {
         float o = Utils.RemFloor(origin, range);
@@ -442,11 +446,12 @@ public static class Utils
     /// <param name="origin">origin angle</param>
     /// <param name="dest">destination angle</param>
     /// <param name="t">factor</param>
+    /// <param name="range">range</param>
     /// <returns>angle</returns>
-    public static float LerpAngleCCW( //
-        in float origin, //
-        in float dest, //
-        in float t = 0.5f, //
+    public static float LerpAngleCCW(
+        in float origin,
+        in float dest,
+        in float t = 0.5f,
         in float range = Utils.Tau)
     {
         float o = Utils.RemFloor(origin, range);
@@ -474,11 +479,12 @@ public static class Utils
     /// <param name="origin">origin angle</param>
     /// <param name="dest">destination angle</param>
     /// <param name="t">factor</param>
+    /// <param name="range">range</param>
     /// <returns>angle</returns>
-    public static float LerpAngleCW( //
-        in float origin, //
-        in float dest, //
-        in float t = 0.5f, //
+    public static float LerpAngleCW(
+        in float origin,
+        in float dest,
+        in float t = 0.5f,
         in float range = Utils.Tau)
     {
         float o = Utils.RemFloor(origin, range);
@@ -506,9 +512,9 @@ public static class Utils
     /// <param name="edge1">right edge</param>
     /// <param name="x">factor</param>
     /// <returns>linear step</returns>
-    public static float LinearStep( //
-        in float edge0 = 0.0f, //
-        in float edge1 = 1.0f, //
+    public static float LinearStep(
+        in float edge0 = 0.0f,
+        in float edge1 = 1.0f,
         in float x = 0.5f)
     {
         float denom = edge1 - edge0;
@@ -527,11 +533,11 @@ public static class Utils
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
     /// <returns>mapped value</returns>
-    public static float Remap( //
-        in float v, //
-        in float lbOrigin = -1.0f, //
-        in float ubOrigin = 1.0f, //
-        in float lbDest = 0.0f, //
+    public static float Remap(
+        in float v,
+        in float lbOrigin = -1.0f,
+        in float ubOrigin = 1.0f,
+        in float lbDest = 0.0f,
         in float ubDest = 1.0f)
     {
         float denom = ubOrigin - lbOrigin;
@@ -577,12 +583,14 @@ public static class Utils
 
     /// <summary>
     /// Finds the greatest, or maximum, among a list of values.
+    /// Returns zero if the list contains no values.
     /// </summary>
-    /// <param name="values">the list of values</param>
+    /// <param name="values">list of values</param>
     /// <returns>maximum value</returns>
     public static float Max(params float[] values)
     {
         int len = values.Length;
+        if (len < 1) { return 0.0f; }
         float result = float.MinValue;
         for (int i = 0; i < len; ++i)
         {
@@ -629,12 +637,14 @@ public static class Utils
 
     /// <summary>
     /// Finds the least, or minimum, among a list of values.
+    /// Returns zero if the list contains no values.
     /// </summary>
-    /// <param name="values">the list of values</param>
+    /// <param name="values">list of values</param>
     /// <returns>minimum value</returns>
     public static float Min(params float[] values)
     {
         int len = values.Length;
+        if (len < 1) { return 0.0f; }
         float result = float.MaxValue;
         for (int i = 0; i < len; ++i)
         {
@@ -711,7 +721,7 @@ public static class Utils
     /// <returns>oscillation</returns>
     public static float PingPong(in float a, in float b, in float t, in float pause = 1.0f)
     {
-        float x = 0.5f + 0.5f * pause * Utils.SinCosEval(t - 0.5f);
+        float x = 0.5f + 0.5f * pause * MathF.Sin(MathF.PI * (t - 0.5f));
         if (t <= 0.0f) { return a; }
         if (t >= 1.0f) { return b; }
         return (1.0f - x) * a + x * b;
@@ -830,62 +840,6 @@ public static class Utils
     }
 
     /// <summary>
-    /// A helper method to facilitate the approximate sine and cosine of an
-    /// angle with single precision real numbers. The radians supplied to this
-    /// function should be normalized through division by Tau . Subtract 0.25
-    /// from the input value to return the sine instead of the cosine. 
-    ///
-    /// This is based on the algorithm described at
-    /// Nvidia Cg 3.1 Toolkit Documentation,
-    /// https://developer.download.nvidia.com/cg/sin.html .
-    /// </summary>
-    /// <param name="normRad">the normalized radians</param>
-    /// <returns>approximate value</returns>
-    private static float SinCosEval(in float normRad)
-    {
-        float r1y = normRad - MathF.Floor(normRad);
-
-        bool r2x = r1y < 0.25f;
-        float r1x = 0.0f;
-        if (r2x)
-        {
-            float r0x = r1y * r1y;
-            r1x = 24.980804f * r0x - 60.14581f;
-            r1x = r1x * r0x + 85.45379f;
-            r1x = r1x * r0x - 64.939354f;
-            r1x = r1x * r0x + 19.739208f;
-            r1x = r1x * r0x - 1.0f;
-        }
-
-        bool r2z = r1y >= 0.75f;
-        float r1z = 0.0f;
-        if (r2z)
-        {
-            float r0z = 1.0f - r1y;
-            r0z *= r0z;
-            r1z = 24.980804f * r0z - 60.14581f;
-            r1z = r1z * r0z + 85.45379f;
-            r1z = r1z * r0z - 64.939354f;
-            r1z = r1z * r0z + 19.739208f;
-            r1z = r1z * r0z - 1.0f;
-        }
-
-        float r0y = 0.5f - r1y;
-        r1y = 0.0f;
-        if (r1y >= -9.0f ^ (r2x | r2z))
-        {
-            r0y *= r0y;
-            r1y = 60.14581f - r0y * 24.980804f;
-            r1y = r1y * r0y - 85.45379f;
-            r1y = r1y * r0y + 64.939354f;
-            r1y = r1y * r0y - 19.739208f;
-            r1y = r1y * r0y + 1.0f;
-        }
-
-        return -r1x - r1z - r1y;
-    }
-
-    /// <summary>
     /// Finds the smooth step between a left and right edge given an input
     /// factor.
     /// </summary>
@@ -893,9 +847,9 @@ public static class Utils
     /// <param name="edge1">right edge</param>
     /// <param name="x">factor</param>
     /// <returns>smooth step</returns>
-    public static float SmoothStep( //
-        in float edge0 = 0.0f, //
-        in float edge1 = 1.0f, //
+    public static float SmoothStep(
+        in float edge0 = 0.0f,
+        in float edge1 = 1.0f,
         in float x = 0.5f)
     {
         float t = Utils.LinearStep(edge0, edge1, x);
@@ -1071,7 +1025,7 @@ public static class Utils
 
     /// <summary>
     /// A specialized version of mod which wraps an angle in degrees to the
-    /// range [0.0, 360.0] .
+    /// range [0.0, 360.0) .
     /// </summary>
     /// <param name="deg">angle in degrees</param>
     /// <returns>output angle</returns>
@@ -1082,7 +1036,7 @@ public static class Utils
 
     /// <summary>
     /// A specialized version of mod which wraps an angle in radians to the
-    /// range [0.0, TAU] .
+    /// range [0.0, TAU) .
     /// </summary>
     /// <param name="rad">angle in radians</param>
     /// <returns>output angle</returns>

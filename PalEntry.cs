@@ -125,7 +125,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// Compares entries according to their colors.
     /// </summary>
     /// <param name="pe">entry</param>
-    /// <returns>the comparison</returns>
+    /// <returns>comparison</returns>
     public int CompareTo(PalEntry pe)
     {
         if (pe is null) { return 1; }
@@ -145,7 +145,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// Tests this entry for equivalence with another in compliance with the
     /// IEquatable interface.
     /// </summary>
-    /// <param name="k">key</param>
+    /// <param name="pe">palette entry</param>
     /// <returns>evaluation</returns>
     public bool Equals(PalEntry pe)
     {
@@ -167,7 +167,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     }
 
     /// <summary>
-    /// Converrts a color to a palette entry.
+    /// Converts a color to a palette entry.
     /// </summary>
     /// <param name="c">color</param>
     public static implicit operator PalEntry(in Clr c)
@@ -301,7 +301,6 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// suitable for a GPL file extension.
     /// </summary>
     /// <param name="pe">entry</param>
-    /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
     public static string ToGplString(in PalEntry pe)
     {
@@ -315,7 +314,6 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="pe">entry</param>
-    /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
     public static StringBuilder ToGplString(in StringBuilder sb, in PalEntry pe)
     {
@@ -338,7 +336,6 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// suitable for a PAL file extension.
     /// </summary>
     /// <param name="pe">entry</param>
-    /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
     public static string ToPalString(in PalEntry pe)
     {
@@ -351,7 +348,6 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="pe">entry</param>
-    /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
     public static StringBuilder ToPalString(in StringBuilder sb, in PalEntry pe)
     {
@@ -373,8 +369,8 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// <param name="pe">entry</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string</returns>
-    public static string ToString( //
-        in PalEntry pe, //
+    public static string ToString(
+        in PalEntry pe,
         in int places = 4)
     {
         return PalEntry.ToString(new StringBuilder(128), pe, places).ToString();
@@ -387,9 +383,9 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// <param name="pe">entry</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString( // 
-        in StringBuilder sb, //
-        in PalEntry pe, // 
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in PalEntry pe,
         in int places = 4)
     {
         sb.Append("{ color: ");

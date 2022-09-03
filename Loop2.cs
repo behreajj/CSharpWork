@@ -121,13 +121,13 @@ public class Loop2
     /// <param name="f">sixth vertex</param>
     /// <param name="target">target loop</param>
     /// <returns>hexagon loop</returns>
-    public static Loop2 Hex( //
-        in Index2 a, //
-        in Index2 b, //
-        in Index2 c, //
-        in Index2 d, //
-        in Index2 e, //
-        in Index2 f, //
+    public static Loop2 Hex(
+        in Index2 a,
+        in Index2 b,
+        in Index2 c,
+        in Index2 d,
+        in Index2 e,
+        in Index2 f,
         in Loop2 target)
     {
         target.indices = new Index2[] { a, b, c, d, e, f };
@@ -144,11 +144,11 @@ public class Loop2
     /// <param name="d">fourth vertex</param>
     /// <param name="target">target loop</param>
     /// <returns>quadrilateral loop</returns>
-    public static Loop2 Quad( //
-        in Index2 a, //
-        in Index2 b, //
-        in Index2 c, //
-        in Index2 d, //
+    public static Loop2 Quad(
+        in Index2 a,
+        in Index2 b,
+        in Index2 c,
+        in Index2 d,
         in Loop2 target)
     {
         target.indices = new Index2[] { a, b, c, d };
@@ -166,10 +166,10 @@ public class Loop2
     /// <param name="vertsPerLoop">vertices per loop</param>
     /// <param name="resizeExisting">change existing loop length</param>
     /// <returns>resized array</returns>
-    public static Loop2[] Resize( //
-        in Loop2[] arr, // 
-        in int sz, //
-        in int vertsPerLoop = 3, //
+    public static Loop2[] Resize(
+        in Loop2[] arr,
+        in int sz,
+        in int vertsPerLoop = 3,
         in bool resizeExisting = false)
     {
         if (sz < 1) { return new Loop2[] { }; }
@@ -325,10 +325,10 @@ public class Loop2
     /// <param name="c">third vertex</param>
     /// <param name="target">target loop</param>
     /// <returns>triangle loop</returns>
-    public static Loop2 Tri( //
-        in Index2 a, //
-        in Index2 b, //
-        in Index2 c, //
+    public static Loop2 Tri(
+        in Index2 a,
+        in Index2 b,
+        in Index2 c,
         in Loop2 target)
     {
         target.indices = new Index2[] { a, b, c };

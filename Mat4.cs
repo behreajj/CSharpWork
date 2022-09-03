@@ -259,10 +259,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="m31">row 3, column 1</param>
     /// <param name="m32">row 3, column 2</param>
     /// <param name="m33">row 3, column 3</param>
-    public Mat4( //
-        in float m00 = 1.0f, in float m01 = 0.0f, in float m02 = 0.0f, in float m03 = 0.0f, //
-        in float m10 = 0.0f, in float m11 = 1.0f, in float m12 = 0.0f, in float m13 = 0.0f, // 
-        in float m20 = 0.0f, in float m21 = 0.0f, in float m22 = 1.0f, in float m23 = 0.0f, // 
+    public Mat4(
+        in float m00 = 1.0f, in float m01 = 0.0f, in float m02 = 0.0f, in float m03 = 0.0f,
+        in float m10 = 0.0f, in float m11 = 1.0f, in float m12 = 0.0f, in float m13 = 0.0f,
+        in float m20 = 0.0f, in float m21 = 0.0f, in float m22 = 1.0f, in float m23 = 0.0f,
         in float m30 = 0.0f, in float m31 = 0.0f, in float m32 = 0.0f, in float m33 = 1.0f)
     {
         this._m00 = m00;
@@ -305,10 +305,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="m31">row 3, column 1</param>
     /// <param name="m32">row 3, column 2</param>
     /// <param name="m33">row 3, column 3</param>
-    public Mat4( // 
-        in bool m00 = true, in bool m01 = false, in bool m02 = false, in bool m03 = false, //
-        in bool m10 = false, in bool m11 = true, in bool m12 = false, in bool m13 = false, // 
-        in bool m20 = false, in bool m21 = false, in bool m22 = true, in bool m23 = false, // 
+    public Mat4(
+        in bool m00 = true, in bool m01 = false, in bool m02 = false, in bool m03 = false,
+        in bool m10 = false, in bool m11 = true, in bool m12 = false, in bool m13 = false,
+        in bool m20 = false, in bool m21 = false, in bool m22 = true, in bool m23 = false,
         in bool m30 = false, in bool m31 = false, in bool m32 = false, in bool m33 = true)
     {
         this._m00 = m00 ? 1.0f : 0.0f;
@@ -464,9 +464,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     public float[,] ToArray2()
     {
         return new float[,]
-        { { this._m00, this._m01, this._m02, this._m03 }, //
-            { this._m10, this._m11, this._m12, this._m13 }, //
-            { this._m20, this._m21, this._m22, this._m23 }, //
+        { { this._m00, this._m01, this._m02, this._m03 },
+            { this._m10, this._m11, this._m12, this._m13 },
+            { this._m20, this._m21, this._m22, this._m23 },
             { this._m30, this._m31, this._m32, this._m33 }
         };
     }
@@ -599,10 +599,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <returns>negation</returns>
     public static Mat4 operator -(in Mat4 m)
     {
-        return new Mat4( //
-            -m._m00, -m._m01, -m._m02, -m._m03, //
-            -m._m10, -m._m11, -m._m12, -m._m13, //
-            -m._m20, -m._m21, -m._m22, -m._m23, //
+        return new Mat4(
+            -m._m00, -m._m01, -m._m02, -m._m03,
+            -m._m10, -m._m11, -m._m12, -m._m13,
+            -m._m20, -m._m21, -m._m22, -m._m23,
             -m._m30, -m._m31, -m._m32, -m._m33);
     }
 
@@ -904,8 +904,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes( //
-        in Vec2 right, //
+    public static Mat4 FromAxes(
+        in Vec2 right,
         in Vec2 forward)
     {
         return new Mat4(
@@ -924,9 +924,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes( //
-        in Vec2 right, // 
-        in Vec2 forward, // 
+    public static Mat4 FromAxes(
+        in Vec2 right,
+        in Vec2 forward,
         in Vec2 translation)
     {
         return new Mat4(
@@ -945,8 +945,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="up">up axis</param>
     /// <returns>matrix</returns>
     public static Mat4 FromAxes( // 
-        in Vec3 right, // 
-        in Vec3 forward, // 
+        in Vec3 right,
+        in Vec3 forward,
         in Vec3 up)
     {
         return new Mat4(
@@ -965,10 +965,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="up">up axis</param>
     /// <param name="translation">translation axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes( // 
-        in Vec3 right, // 
-        in Vec3 forward, // 
-        in Vec3 up, // 
+    public static Mat4 FromAxes(
+        in Vec3 right,
+        in Vec3 forward,
+        in Vec3 up,
         in Vec3 translation)
     {
         return new Mat4(
@@ -986,9 +986,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="up">up axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes( // 
-        in Vec4 right, // 
-        in Vec4 forward, // 
+    public static Mat4 FromAxes(
+        in Vec4 right,
+        in Vec4 forward,
         in Vec4 up)
     {
         return new Mat4(
@@ -1006,10 +1006,10 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="up">up axis</param>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes( // 
-        in Vec4 right, //
-        in Vec4 forward, //
-        in Vec4 up, //
+    public static Mat4 FromAxes(
+        in Vec4 right,
+        in Vec4 forward,
+        in Vec4 up,
         in Vec4 translation)
     {
         return new Mat4(

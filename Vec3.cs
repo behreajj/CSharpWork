@@ -212,7 +212,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Returns a float array of length 3 containing this vector's components.
     /// </summary>
-    /// <returns>the array</returns>
+    /// <returns>array</returns>
     public float[] ToArray()
     {
         return this.ToArray(new float[this.Length], 0);
@@ -235,7 +235,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Returns a named value tuple containing this vector's components.
     /// </summary>
-    /// <returns>the tuple</returns>
+    /// <returns>tuple</returns>
     public (float x, float y, float z) ToTuple()
     {
         return (x: this._x, y: this._y, z: this._z);
@@ -305,20 +305,20 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Evaluates a vector as a boolean. Equivalent to using the ~ operator.
+    /// Evaluates a vector as a boolean. Equivalent to using the ! operator.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the opposite</returns>
+    /// <returns>opposite</returns>
     public static Vec3 operator !(in Vec3 v)
     {
         return Vec3.Not(v);
     }
 
     /// <summary>
-    /// Evaluates a vector as a boolean. Equivalent to using the ! operator.
+    /// Evaluates a vector as a boolean. Equivalent to using the ~ operator.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the complement</returns>
+    /// <returns>complement</returns>
     public static Vec3 operator ~(in Vec3 v)
     {
         return Vec3.Not(v);
@@ -373,7 +373,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Negates vector
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the negation</returns>
+    /// <returns>negation</returns>
     public static Vec3 operator -(in Vec3 v)
     {
         return new Vec3(-v._x, -v._y, -v._z);
@@ -385,7 +385,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the product</returns>
+    /// <returns>product</returns>
     public static Vec3 operator *(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -399,7 +399,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand, the vector</param>
     /// <param name="b">right operand, the scalar</param>
-    /// <returns>the product</returns>
+    /// <returns>product</returns>
     public static Vec3 operator *(in Vec3 a, in float b)
     {
         return new Vec3(
@@ -413,7 +413,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand, the scalar</param>
     /// <param name="b">right operand, the vector</param>
-    /// <returns>the product</returns>
+    /// <returns>product</returns>
     public static Vec3 operator *(in float a, in Vec3 b)
     {
         return new Vec3(
@@ -429,7 +429,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">numerator</param>
     /// <param name="b">denominator</param>
-    /// <returns>the quotient</returns>
+    /// <returns>quotient</returns>
     public static Vec3 operator /(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -443,7 +443,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">vector, numerator</param>
     /// <param name="b">scalar, denominator</param>
-    /// <returns>the product</returns>
+    /// <returns>product</returns>
     public static Vec3 operator /(in Vec3 a, in float b)
     {
         if (b != 0.0f)
@@ -462,7 +462,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">scalar, numerator</param>
     /// <param name="b">vector, denominator</param>
-    /// <returns>the product</returns>
+    /// <returns>product</returns>
     public static Vec3 operator /(in float a, in Vec3 b)
     {
         return new Vec3(
@@ -476,7 +476,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the result</returns>
+    /// <returns>result</returns>
     public static Vec3 operator %(in Vec3 a, in Vec3 b)
     {
         return Vec3.RemTrunc(a, b);
@@ -487,7 +487,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the result</returns>
+    /// <returns>result</returns>
     public static Vec3 operator %(in Vec3 a, in float b)
     {
         if (b != 0.0f)
@@ -505,7 +505,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the result</returns>
+    /// <returns>result</returns>
     public static Vec3 operator %(in float a, in Vec3 b)
     {
         return new Vec3(
@@ -519,7 +519,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the sum</returns>
+    /// <returns>sum</returns>
     public static Vec3 operator +(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -533,7 +533,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the difference</returns>
+    /// <returns>difference</returns>
     public static Vec3 operator -(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -652,7 +652,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Finds the absolute value of each vector component.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the absolute vector</returns>
+    /// <returns>absolute vector</returns>
     public static Vec3 Abs(in Vec3 v)
     {
         return new Vec3(
@@ -669,9 +669,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>evaluation</returns>
     public static bool All(in Vec3 v)
     {
-        return v._x != 0.0f &&
-            v._y != 0.0f &&
-            v._z != 0.0f;
+        return v._x != 0.0f && v._y != 0.0f && v._z != 0.0f;
     }
 
     /// <summary>
@@ -679,7 +677,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">the first vector</param>
     /// <param name="b">the second vector</param>
-    /// <returns>the angle</returns>
+    /// <returns>angle</returns>
     public static float AngleBetween(in Vec3 a, in Vec3 b)
     {
         // Double precision is required for accurate angle distance.
@@ -711,9 +709,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>evaluation</returns>
     public static bool Any(in Vec3 v)
     {
-        return v._x != 0.0f ||
-            v._y != 0.0f ||
-            v._z != 0.0f;
+        return v._x != 0.0f || v._y != 0.0f || v._z != 0.0f;
     }
 
     /// <summary>
@@ -721,7 +717,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">array</param>
     /// <param name="b">vector</param>
-    /// <returns>the array</returns>
+    /// <returns>array</returns>
     public static Vec3[] Append(in Vec3[] a, in Vec3 b)
     {
         bool aNull = a == null;
@@ -738,13 +734,13 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <param name="tolerance">the tolerance</param>
+    /// <param name="tol">the tolerance</param>
     /// <returns>evaluation</returns>
-    public static bool Approx(in Vec3 a, in Vec3 b, in float tolerance = Utils.Epsilon)
+    public static bool Approx(in Vec3 a, in Vec3 b, in float tol = Utils.Epsilon)
     {
-        return Utils.Approx(a._x, b._x, tolerance) &&
-            Utils.Approx(a._y, b._y, tolerance) &&
-            Utils.Approx(a._z, b._z, tolerance);
+        return Utils.Approx(a._x, b._x, tol) &&
+            Utils.Approx(a._y, b._y, tol) &&
+            Utils.Approx(a._z, b._z, tol);
     }
 
     /// <summary>
@@ -752,18 +748,18 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">vector</param>
     /// <param name="b">the magnitude</param>
-    /// <param name="tolerance">the tolerance</param>
+    /// <param name="tol">the tolerance</param>
     /// <returns>evaluation</returns>
-    public static bool ApproxMag(in Vec3 a, in float b = 1.0f, in float tolerance = Utils.Epsilon)
+    public static bool ApproxMag(in Vec3 a, in float b = 1.0f, in float tol = Utils.Epsilon)
     {
-        return Utils.Approx(Vec3.MagSq(a), b * b, tolerance);
+        return Utils.Approx(Vec3.MagSq(a), b * b, tol);
     }
 
     /// <summary>
     /// Finds the vector's azimuth in the range [-PI, PI] .
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the angle in radians</returns>
+    /// <returns>angle in radians</returns>
     public static float AzimuthSigned(in Vec3 v)
     {
         return MathF.Atan2(v._y, v._x);
@@ -773,7 +769,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Finds the vector's azimuth in the range [0.0, TAU] .
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the angle in radians</returns>
+    /// <returns>angle in radians</returns>
     public static float AzimuthUnsigned(in Vec3 v)
     {
         return Utils.WrapRadians(Vec3.AzimuthSigned(v));
@@ -791,12 +787,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="cp1">second control point</param>
     /// <param name="ap1">second anchor point</param>
     /// <param name="step">step</param>
-    /// <returns>the point along the curve</returns>
-    public static Vec3 BezierPoint( //
-        in Vec3 ap0, //
-        in Vec3 cp0, //
-        in Vec3 cp1, //
-        in Vec3 ap1, //
+    /// <returns>point along the curve</returns>
+    public static Vec3 BezierPoint(
+        in Vec3 ap0,
+        in Vec3 cp0,
+        in Vec3 cp1,
+        in Vec3 ap1,
         in float step)
     {
         if (step <= 0.0f) { return new Vec3(ap0._x, ap0._y, ap0._z); }
@@ -841,12 +837,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="cp1">second control point</param>
     /// <param name="ap1">second anchor point</param>
     /// <param name="step">step</param>
-    /// <returns>the tangent along the curve</returns>
-    public static Vec3 BezierTangent( //
-        in Vec3 ap0, //
-        in Vec3 cp0, //
-        in Vec3 cp1, //
-        in Vec3 ap1, //
+    /// <returns>tangent along the curve</returns>
+    public static Vec3 BezierTangent(
+        in Vec3 ap0,
+        in Vec3 cp0,
+        in Vec3 cp1,
+        in Vec3 ap1,
         in float step)
     {
         if (step <= 0.0f) { return cp0 - ap0; }
@@ -880,12 +876,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="cp1">second control point</param>
     /// <param name="ap1">second anchor point</param>
     /// <param name="step">step</param>
-    /// <returns>the tangent along the curve</returns>
-    public static Vec3 BezierTanUnit( //
-        in Vec3 ap0, //
-        in Vec3 cp0, //
-        in Vec3 cp1, //
-        in Vec3 ap1, //
+    /// <returns>tangent along the curve</returns>
+    public static Vec3 BezierTanUnit(
+        in Vec3 ap0,
+        in Vec3 cp0,
+        in Vec3 cp1,
+        in Vec3 ap1,
         in float step)
     {
         return Vec3.Normalize(Vec3.BezierTangent(
@@ -896,7 +892,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Raises each component of the vector to the nearest greater integer.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the result</returns>
+    /// <returns>result</returns>
     public static Vec3 Ceil(in Vec3 v)
     {
         return new Vec3(
@@ -911,7 +907,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">vector</param>
     /// <param name="lb">the range lower bound</param>
     /// <param name="ub">the range upper bound</param>
-    /// <returns>the clamped vector</returns>
+    /// <returns>clamped vector</returns>
     public static Vec3 Clamp(in Vec3 v, in float lb = 0.0f, in float ub = 1.0f)
     {
         return new Vec3(
@@ -925,7 +921,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left array</param>
     /// <param name="b">right array</param>
-    /// <returns>the concatenation</returns>
+    /// <returns>concatenation</returns>
     public static Vec3[] Concat(in Vec3[] a, in Vec3[] b)
     {
         bool aNull = a == null;
@@ -958,8 +954,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Tests to see if the vector contains a value
     /// </summary>
-    /// <param name="a">the vector</param>
-    /// <param name="b">the value</param>
+    /// <param name="a">vector</param>
+    /// <param name="b">value</param>
     /// <returns>evaluation</returns>
     public static bool Contains(in Vec3 a, in float b)
     {
@@ -974,7 +970,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">the magnitude</param>
     /// <param name="b">the sign</param>
-    /// <returns>the signed vector</returns>
+    /// <returns>signed vector</returns>
     public static Vec3 CopySign(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -1007,7 +1003,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the cross product</returns>
+    /// <returns>cross product</returns>
     public static Vec3 Cross(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -1021,7 +1017,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the absolute difference</returns>
+    /// <returns>absolute difference</returns>
     public static Vec3 Diff(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -1036,7 +1032,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the distance</returns>
+    /// <returns>distance</returns>
     public static float DistChebyshev(in Vec3 a, in Vec3 b)
     {
         return Utils.Max(Utils.Diff(b._x, a._x),
@@ -1050,12 +1046,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the Euclidean distance</returns>
+    /// <returns>Euclidean distance</returns>
     public static float DistEuclidean(in Vec3 a, in Vec3 b)
     {
-        // double dx = b._x - a._x; double dy = b._y - a._y; double dz = b._z -
-        // a._z; return (float) Math.Sqrt (dx * dx + dy * dy + dz * dz);
-
         return MathF.Sqrt(Vec3.DistSq(a, b));
     }
 
@@ -1065,7 +1058,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the Manhattan distance</returns>
+    /// <returns>Manhattan distance</returns>
     public static float DistManhattan(in Vec3 a, in Vec3 b)
     {
         return Utils.Diff(b._x, a._x) +
@@ -1082,7 +1075,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <param name="c">the exponent</param>
-    /// <returns>the Minkowski distance</returns>
+    /// <returns>Minkowski distance</returns>
     public static float DistMinkowski(in Vec3 a, in Vec3 b, in float c = 2.0f)
     {
         if (c != 0.0f)
@@ -1102,7 +1095,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the distance squared</returns>
+    /// <returns>distance squared</returns>
     public static float DistSq(in Vec3 a, in Vec3 b)
     {
         float dx = b._x - a._x;
@@ -1122,7 +1115,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the dot product</returns>
+    /// <returns>dot product</returns>
     public static float Dot(in Vec3 a, in Vec3 b)
     {
         return a._x * b._x +
@@ -1134,7 +1127,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Floors each component of the vector.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the floor</returns>
+    /// <returns>floor</returns>
     public static Vec3 Floor(in Vec3 v)
     {
         return new Vec3(
@@ -1147,7 +1140,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Returns the fractional portion of the vector's components.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the fractional portion</returns>
+    /// <returns>fractional portion</returns>
     public static Vec3 Fract(in Vec3 v)
     {
         return new Vec3(
@@ -1165,10 +1158,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="azimuth">the angle theta in radians</param>
     /// <param name="inclination">the angle phi in radians</param>
     /// <param name="radius">rho, the vector's magnitude</param>
-    /// <returns>the vector</returns>
-    public static Vec3 FromSpherical( //
-        in float azimuth = 0.0f, // 
-        in float inclination = 0.0f, // 
+    /// <returns>vector</returns>
+    public static Vec3 FromSpherical(
+        in float azimuth = 0.0f,
+        in float inclination = 0.0f,
         in float radius = 1.0f)
     {
         float rsp = radius * MathF.Sin(inclination);
@@ -1205,7 +1198,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Generates a 3D array of vectors.
     /// </summary>
-    /// <returns>the array</returns>
+    /// <returns>array</returns>
     public static Vec3[,,] Grid()
     {
         return Vec3.GridCartesian(
@@ -1222,12 +1215,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="cols">number of columns</param>
     /// <param name="rows">number of rows</param>
     /// <param name="layers">number of layers</param>
-    /// <returns>the array</returns>
-    public static Vec3[,,] GridCartesian( //
-        in Vec3 lowerBound, //
-        in Vec3 upperBound, //
-        in int cols = 8, //
-        in int rows = 8, //
+    /// <returns>array</returns>
+    public static Vec3[,,] GridCartesian(
+        in Vec3 lowerBound,
+        in Vec3 upperBound,
+        in int cols = 8,
+        in int rows = 8,
         in int layers = 8)
     {
         int lval = layers < 2 ? 2 : layers;
@@ -1265,7 +1258,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Finds the vector's signed inclination.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the signed inclination</returns>
+    /// <returns>signed inclination</returns>
     public static float InclinationSigned(in Vec3 v)
     {
         return Utils.HalfPi - Vec3.InclinationUnsigned(v);
@@ -1275,7 +1268,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Finds the vector's unsigned inclination.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the unsigned inclination</returns>
+    /// <returns>unsigned inclination</returns>
     public static float InclinationUnsigned(in Vec3 v)
     {
         float mSq = Vec3.MagSq(v);
@@ -1298,8 +1291,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// beneath the limit.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <param name="limit">the limit</param>
-    /// <returns>the limited vector</returns>
+    /// <param name="limit">limit</param>
+    /// <returns>limited vector</returns>
     public static Vec3 Limit(in Vec3 v, in float limit)
     {
         float mSq = Vec3.MagSq(v);
@@ -1317,7 +1310,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="edge0">left edge</param>
     /// <param name="edge1">right edge</param>
     /// <param name="x">factor</param>
-    /// <returns>the linear step</returns>
+    /// <returns>linear step</returns>
     public static Vec3 LinearStep(in Vec3 edge0, in Vec3 edge1, in Vec3 x)
     {
         return new Vec3(
@@ -1333,7 +1326,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// the square-root.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the magnitude</returns>
+    /// <returns>magnitude</returns>
     public static float Mag(in Vec3 v)
     {
         return MathF.Sqrt(Vec3.MagSq(v));
@@ -1345,7 +1338,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// vectors, so as to avoid the computational cost of the square-root.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the magnitude squared</returns>
+    /// <returns>magnitude squared</returns>
     public static float MagSq(in Vec3 v)
     {
         return v._x * v._x +
@@ -1358,7 +1351,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">the input value</param>
     /// <param name="b">upper bound</param>
-    /// <returns>the maximum value</returns>
+    /// <returns>maximum value</returns>
     public static Vec3 Max(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -1372,7 +1365,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">the input value</param>
     /// <param name="b">lower bound</param>
-    /// <returns>the minimum value</returns>
+    /// <returns>minimum value</returns>
     public static Vec3 Min(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -1384,9 +1377,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Mixes two vectors together. Adds the vectors then divides by half.
     /// </summary>
-    /// <param name="a">the original vector</param>
-    /// <param name="b">the destination vector</param>
-    /// <returns>the mix</returns>
+    /// <param name="a">original vector</param>
+    /// <param name="b">destination vector</param>
+    /// <returns>mix</returns>
     public static Vec3 Mix(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -1399,10 +1392,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Mixes two vectors together by a step. Uses the formula (1.0 - t) a + t b
     /// . The step is unclamped.
     /// </summary>
-    /// <param name="a">the original vector</param>
-    /// <param name="b">the destination vector</param>
-    /// <param name="t">the step</param>
-    /// <returns>the mix</returns>
+    /// <param name="a">original vector</param>
+    /// <param name="b">destination vector</param>
+    /// <param name="t">step</param>
+    /// <returns>mix</returns>
     public static Vec3 Mix(in Vec3 a, in Vec3 b, in float t)
     {
         float u = 1.0f - t;
@@ -1417,10 +1410,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// . The step is unclamped; to find an appropriate clamped step, use mix in
     /// conjunction with step, linearstep or smoothstep.
     /// </summary>
-    /// <param name="a">the original vector</param>
-    /// <param name="b">the destination vector</param>
-    /// <param name="t">the step</param>
-    /// <returns>the mix</returns>
+    /// <param name="a">original vector</param>
+    /// <param name="b">destination vector</param>
+    /// <param name="t">step</param>
+    /// <returns>mix</returns>
     public static Vec3 Mix(in Vec3 a, in Vec3 b, in Vec3 t)
     {
         return new Vec3(
@@ -1437,9 +1430,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>evaluation</returns>
     public static bool None(in Vec3 v)
     {
-        return v._x == 0.0f &&
-            v._y == 0.0f &&
-            v._z == 0.0f;
+        return v._x == 0.0f && v._y == 0.0f && v._z == 0.0f;
     }
 
     /// <summary>
@@ -1448,7 +1439,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// circle.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the unit vector</returns>
+    /// <returns>unit vector</returns>
     public static Vec3 Normalize(in Vec3 v)
     {
         return v / Vec3.Mag(v);
@@ -1457,8 +1448,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Evaluates a vector like a boolean, where n != 0.0 is true.
     /// </summary>
-    /// <param name="v">the vector</param>
-    /// <returns>the truth table opposite</returns>
+    /// <param name="v">vector</param>
+    /// <returns>truth table opposite</returns>
     public static Vec3 Not(in Vec3 v)
     {
         return new Vec3(
@@ -1472,7 +1463,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the result</returns>
+    /// <returns>result</returns>
     public static Vec3 Pow(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -1486,7 +1477,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the scalar projection</returns>
+    /// <returns>scalar projection</returns>
     public static float ProjectScalar(in Vec3 a, in Vec3 b)
     {
         float bSq = Vec3.MagSq(b);
@@ -1501,7 +1492,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the vector projection</returns>
+    /// <returns>vector projection</returns>
     public static Vec3 ProjectVector(in Vec3 a, in Vec3 b)
     {
         return b * Vec3.ProjectScalar(a, b);
@@ -1523,7 +1514,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">input vector</param>
     /// <param name="levels">levels</param>
-    /// <returns>the quantized vector</returns>
+    /// <returns>quantized vector</returns>
     public static Vec3 Quantize(in Vec3 v, in int levels = 8)
     {
         return new Vec3(
@@ -1539,10 +1530,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="rng">the random number generator</param>
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
-    /// <returns>the random vector</returns>
-    public static Vec3 RandomCartesian( //
-        in System.Random rng, //
-        in Vec3 lb, //
+    /// <returns>random vector</returns>
+    public static Vec3 RandomCartesian(
+        in System.Random rng,
+        in Vec3 lb,
         in Vec3 ub)
     {
         return new Vec3(
@@ -1558,10 +1549,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="rng">the random number generator</param>
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
-    /// <returns>the random vector</returns>
-    public static Vec3 RandomCartesian( //
-        in System.Random rng, //
-        in float lb = 0.0f, //
+    /// <returns>random vector</returns>
+    public static Vec3 RandomCartesian(
+        in System.Random rng,
+        in float lb = 0.0f,
         in float ub = 1.0f)
     {
         return new Vec3(
@@ -1576,10 +1567,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="rng">the random number generator</param>
     /// <param name="rhoMin">the minimum radius</param>
     /// <param name="rhoMax">the maximum radius</param>
-    /// <returns>the output vector</returns>
-    public static Vec3 RandomSpherical( //
-        in System.Random rng, //
-        in float rhoMin = 1.0f, //
+    /// <returns>output vector</returns>
+    public static Vec3 RandomSpherical(
+        in System.Random rng,
+        in float rhoMin = 1.0f,
         in float rhoMax = 1.0f)
     {
         return Vec3.FromSpherical(
@@ -1598,9 +1589,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     ///
     /// i - 2.0 ( dot( n, i ) n )
     /// </summary>
-    /// <param name="i">the incident vector</param>
-    /// <param name="n">the normal vector</param>
-    /// <returns>the reflected vector</returns>
+    /// <param name="i">incident vector</param>
+    /// <param name="n">normal vector</param>
+    /// <returns>reflected vector</returns>
     public static Vec3 Reflect(in Vec3 i, in Vec3 n)
     {
         return i - ((2.0f * Vec3.Dot(n, i)) * n);
@@ -1609,10 +1600,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Refracts a vector through a volume using Snell's law.
     /// </summary>
-    /// <param name="i">the incident vector</param>
-    /// <param name="n">the normal vector</param>
+    /// <param name="i">incident vector</param>
+    /// <param name="n">normal vector</param>
     /// <param name="eta">ratio of refraction indices</param>
-    /// <returns>the refracted vector</returns>
+    /// <returns>refracted vector</returns>
     public static Vec3 Refract(in Vec3 i, in Vec3 n, in float eta)
     {
         float iDotN = Vec3.Dot(i, n);
@@ -1629,12 +1620,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="ubOrigin">upper bound of original range</param>
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
-    /// <returns>the mapped value</returns>
-    public static Vec3 Remap( //
-        in Vec3 v, //
-        in Vec3 lbOrigin, //
-        in Vec3 ubOrigin, //
-        in Vec3 lbDest, //
+    /// <returns>mapped value</returns>
+    public static Vec3 Remap(
+        in Vec3 v,
+        in Vec3 lbOrigin,
+        in Vec3 ubOrigin,
+        in Vec3 lbDest,
         in Vec3 ubDest)
     {
         return new Vec3(
@@ -1648,7 +1639,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the result</returns>
+    /// <returns>result</returns>
     public static Vec3 RemFloor(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -1662,7 +1653,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the result</returns>
+    /// <returns>result</returns>
     public static Vec3 RemTrunc(in Vec3 a, in Vec3 b)
     {
         return new Vec3(
@@ -1675,9 +1666,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Normalizes a vector, then multiplies it by a scalar, in effect setting
     /// its magnitude to that scalar.
     /// </summary>
-    /// <param name="v">the vector</param>
-    /// <param name="scalar">the scalar</param>
-    /// <returns>the rescaled vector</returns>
+    /// <param name="v">vector</param>
+    /// <param name="scalar">scalar</param>
+    /// <returns>rescaled vector</returns>
     public static Vec3 Rescale(in Vec3 v, in float scalar)
     {
         return v * Utils.Div(scalar, Vec3.Mag(v));
@@ -1688,7 +1679,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="arr">array</param>
     /// <param name="sz">new size</param>
-    /// <returns>the resized array</returns>
+    /// <returns>resized array</returns>
     public static Vec3[] Resize(in Vec3[] arr, in int sz)
     {
         if (sz < 1) { return new Vec3[] { }; }
@@ -1713,7 +1704,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">vector</param>
     /// <param name="radians">the angle in radians</param>
     /// <param name="axis">the axis</param>
-    /// <returns>the rotated vector</returns>
+    /// <returns>rotated vector</returns>
     public static Vec3 Rotate(in Vec3 v, in float radians, in Vec3 axis)
     {
         return Vec3.Rotate(v, MathF.Cos(radians), MathF.Sin(radians), axis);
@@ -1733,7 +1724,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
     /// <param name="axis">the axis</param>
-    /// <returns>the rotated vector</returns>
+    /// <returns>rotated vector</returns>
     public static Vec3 Rotate(in Vec3 v, in float cosa, in float sina, in Vec3 axis)
     {
         float complcos = 1.0f - cosa;
@@ -1764,7 +1755,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">vector</param>
     /// <param name="radians">the angle in radians</param>
-    /// <returns>the rotated vector</returns>
+    /// <returns>rotated vector</returns>
     public static Vec3 RotateX(in Vec3 v, in float radians)
     {
         return Vec3.RotateX(v, MathF.Cos(radians), MathF.Sin(radians));
@@ -1780,7 +1771,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">vector</param>
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
-    /// <returns>the rotated vector</returns>
+    /// <returns>rotated vector</returns>
     public static Vec3 RotateX(in Vec3 v, in float cosa, in float sina)
     {
         return new Vec3(
@@ -1794,7 +1785,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">vector</param>
     /// <param name="radians">the angle in radians</param>
-    /// <returns>the rotated vector</returns>
+    /// <returns>rotated vector</returns>
     public static Vec3 RotateY(in Vec3 v, in float radians)
     {
         return Vec3.RotateY(v, MathF.Cos(radians), MathF.Sin(radians));
@@ -1810,7 +1801,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">vector</param>
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
-    /// <returns>the rotated vector</returns>
+    /// <returns>rotated vector</returns>
     public static Vec3 RotateY(in Vec3 v, in float cosa, in float sina)
     {
         return new Vec3(
@@ -1824,7 +1815,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">vector</param>
     /// <param name="radians">the angle in radians</param>
-    /// <returns>the rotated vector</returns>
+    /// <returns>rotated vector</returns>
     public static Vec3 RotateZ(in Vec3 v, in float radians)
     {
         return Vec3.RotateZ(v, MathF.Cos(radians), MathF.Sin(radians));
@@ -1840,7 +1831,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">vector</param>
     /// <param name="cosa">the cosine of the angle</param>
     /// <param name="sina">the sine of the angle</param>
-    /// <returns>the rotated vector</returns>
+    /// <returns>rotated vector</returns>
     public static Vec3 RotateZ(in Vec3 v, in float cosa, in float sina)
     {
         return new Vec3(
@@ -1853,7 +1844,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Rounds each component of the vector to the nearest whole number.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the rounded vector</returns>
+    /// <returns>rounded vector</returns>
     public static Vec3 Round(in Vec3 v)
     {
         return new Vec3(
@@ -1867,7 +1858,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="v">vector</param>
     /// <param name="places">the number of places</param>
-    /// <returns>the rounded vector</returns>
+    /// <returns>rounded vector</returns>
     public static Vec3 Round(in Vec3 v, in int places)
     {
         return new Vec3(
@@ -1880,7 +1871,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Finds the sign of the vector: -1, if negative; 1, if positive.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the sign</returns>
+    /// <returns>sign</returns>
     public static Vec3 Sign(in Vec3 v)
     {
         return new Vec3(
@@ -1896,7 +1887,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="a">origin</param>
     /// <param name="b">destination</param>
     /// <param name="t">factor</param>
-    /// <returns>the vector</returns>
+    /// <returns>vector</returns>
     public static Vec3 Slerp(in Vec3 a, in Vec3 b, in float t = 0.5f)
     {
         double ax = a._x;
@@ -1931,7 +1922,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="edge0">left edge</param>
     /// <param name="edge1">right edge</param>
     /// <param name="x">factor</param>
-    /// <returns>the smooth step</returns>
+    /// <returns>smooth step</returns>
     public static Vec3 SmoothStep(in Vec3 edge0, in Vec3 edge1, in Vec3 x)
     {
         return new Vec3(
@@ -1946,7 +1937,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="edge">edge</param>
     /// <param name="x">factor</param>
-    /// <returns>the step</returns>
+    /// <returns>step</returns>
     public static Vec3 Step(in Vec3 edge, in Vec3 x)
     {
         return new Vec3(
@@ -1960,7 +1951,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// theta; inclination, phi; and magnitude, rho.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the tuple</returns>
+    /// <returns>tuple</returns>
     public static (float theta, float phi, float rho) ToSpherical(in Vec3 v)
     {
         return (
@@ -2047,7 +2038,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Truncates each component of the vector.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>the truncation</returns>
+    /// <returns>truncation</returns>
     public static Vec3 Trunc(in Vec3 v)
     {
         return new Vec3(
@@ -2065,7 +2056,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <param name="v">the vector</param>
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
-    /// <returns>the wrapped vector</returns>
+    /// <returns>wrapped vector</returns>
     public static Vec3 Wrap(in Vec3 v, in Vec3 lb, in Vec3 ub)
     {
         return new Vec3(

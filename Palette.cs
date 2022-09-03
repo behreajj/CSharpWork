@@ -98,9 +98,9 @@ public class Palette
     /// <param name="name">name</param>
     /// <param name="author">author</param>
     /// <param name="len">palette length</param>
-    public Palette( //
-        in string name = "Palette", //
-        in string author = "Anonymous", //
+    public Palette(
+        in string name = "Palette",
+        in string author = "Anonymous",
         in int len = 1)
     {
         this.Name = name;
@@ -380,7 +380,11 @@ public class Palette
     /// <param name="length">sample length</param>
     /// <param name="target">target palette</param>
     /// <returns>reversed palette</returns>
-    public static Palette Reverse(in Palette source, in int index, in int length, in Palette target)
+    public static Palette Reverse(
+        in Palette source,
+        in int index,
+        in int length,
+        in Palette target)
     {
         PalEntry[] sourceEntries = source.entries;
         int sourceLen = sourceEntries.Length;
@@ -440,7 +444,11 @@ public class Palette
     /// <param name="length">sample length</param>
     /// <param name="target">target palette</param>
     /// <returns>subset</returns>
-    public static Palette Subset(in Palette source, in int index, in int length, in Palette target)
+    public static Palette Subset(
+        in Palette source,
+        in int index,
+        in int length,
+        in Palette target)
     {
         PalEntry[] sourceEntries = source.entries;
         int sourceLen = sourceEntries.Length;

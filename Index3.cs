@@ -176,7 +176,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <summary>
     /// Returns a named value tuple containing this index's components.
     /// </summary>
-    /// <returns>the tuple</returns>
+    /// <returns>tuple</returns>
     public (int v, int vt, int vn) ToTuple()
     {
         return (v: this._v, vt: this._vt, vn: this._vn);

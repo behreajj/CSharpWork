@@ -1,6 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-
 public static class Simplex
 {
     /// <summary>
@@ -184,29 +181,29 @@ public static class Simplex
         { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 }
     };
 
-    private static Vec2 Gradient2( //
-        int i = 0, //
-        int j = 0, //
+    private static Vec2 Gradient2(
+        int i = 0,
+        int j = 0,
         int seed = Utils.HashBase)
     {
         return Simplex.Grad2Lut[Simplex.Hash(i, j, seed) & 0x7];
     }
 
-    private static Vec3 Gradient3( //
-        int i = 0, //
-        int j = 0, //
-        int k = 0, //
+    private static Vec3 Gradient3(
+        int i = 0,
+        int j = 0,
+        int k = 0,
         int seed = Utils.HashBase)
     {
         return Simplex.Grad3Lut[Simplex.Hash(i, j, Simplex.Hash(k, seed, 0)) &
             0xf];
     }
 
-    private static Vec4 Gradient4( //
-        int i = 0, //
-        int j = 0, //
-        int k = 0, //
-        int l = 0, //
+    private static Vec4 Gradient4(
+        int i = 0,
+        int j = 0,
+        int k = 0,
+        int l = 0,
         int seed = Utils.HashBase)
     {
         return Simplex.Grad4Lut[Simplex.Hash(i, j, Simplex.Hash(k, l, seed)) &
@@ -265,11 +262,11 @@ public static class Simplex
         return Simplex.Eval4(v.x, v.y, v.z, v.w, seed);
     }
 
-    public static (float fac, Vec4 deriv) Eval4( //
-        float x = 0.0f, //
-        float y = 0.0f, //
-        float z = 0.0f, //
-        float w = 0.0f, //
+    public static (float fac, Vec4 deriv) Eval4(
+        float x = 0.0f,
+        float y = 0.0f,
+        float z = 0.0f,
+        float w = 0.0f,
         int seed = Utils.HashBase)
     {
         float s = (x + y + z + w) * Simplex.F4;
@@ -456,10 +453,10 @@ public static class Simplex
         return Simplex.Eval3(v.x, v.y, v.z, seed);
     }
 
-    public static (float fac, Vec3 deriv) Eval3( //
-        float x = 0.0f, //
-        float y = 0.0f, //
-        float z = 0.0f, //
+    public static (float fac, Vec3 deriv) Eval3(
+        float x = 0.0f,
+        float y = 0.0f,
+        float z = 0.0f,
         int seed = Utils.HashBase)
     {
         float s = (x + y + z) * Simplex.F3;
@@ -632,9 +629,9 @@ public static class Simplex
         return Simplex.Eval2(v.x, v.y, seed);
     }
 
-    public static (float fac, Vec2 deriv) Eval2( //
-        float x = 0.0f, //
-        float y = 0.0f, //
+    public static (float fac, Vec2 deriv) Eval2(
+        float x = 0.0f,
+        float y = 0.0f,
         int seed = Utils.HashBase)
     {
         float s = (x + y) * Simplex.F2;

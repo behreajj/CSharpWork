@@ -102,9 +102,9 @@ public class Mesh2
     /// <param name="loops">loops</param>
     /// <param name="coords">coordinates</param>
     /// <param name="texCoords">texture coordinates</param>
-    public Mesh2( //
-        in Loop2[] loops, //
-        in Vec2[] coords, //
+    public Mesh2(
+        in Loop2[] loops,
+        in Vec2[] coords,
         in Vec2[] texCoords)
     {
         this.loops = loops;
@@ -564,8 +564,12 @@ public class Mesh2
         return arr;
     }
 
-    public (Loop2[] loopsNew, Vec2[] vsNew, Vec2[] vtsNew) InsetFace(in int faceIndex = 0, in float fac = 0.5f)
+    public (Loop2[] loopsNew, Vec2[] vsNew, Vec2[] vtsNew) InsetFace(
+        in int faceIndex = 0,
+        in float fac = 0.5f)
     {
+        // TODO: Add comment.
+
         if (fac <= 0.0f)
         {
             return (loopsNew: new Loop2[0],
@@ -690,6 +694,11 @@ public class Mesh2
         return this;
     }
 
+    /// <summary>
+    /// Copies a source mesh by value.
+    /// </summary>
+    /// <param name="source">source mesh</param>
+    /// <returns>this mesh</returns>
     public Mesh2 Set(in Mesh2 source)
     {
         // TODO: Test
@@ -722,14 +731,14 @@ public class Mesh2
     /// midpoints to the center. This generates a quadrilateral for the number
     /// of edges in the face. Returns a tuple containing the new data created.
     /// </summary>
-    /// <param name="faceIdx">face index</param>
-    /// <returns>the tuple</returns>
+    /// <param name="faceIndex">face index</param>
+    /// <returns>tuple</returns>
     public (Loop2[] loopsNew,
             Vec2[] vsNew,
-            Vec2[] vtsNew) SubdivFaceCenter(in int faceIdx)
+            Vec2[] vtsNew) SubdivFaceCenter(in int faceIndex = 0)
     {
         int facesLen = this.loops.Length;
-        int i = Utils.RemFloor(faceIdx, facesLen);
+        int i = Utils.RemFloor(faceIndex, facesLen);
         Index2[] face = this.loops[i].Indices;
         int faceLen = face.Length;
 
@@ -795,14 +804,14 @@ public class Mesh2
     /// vertices to the center. This generates a triangle for the number of
     /// edges in the face.
     /// </summary>
-    /// <param name="faceIdx">the face index</param>
+    /// <param name="faceIndex">the face index</param>
     /// <returns>new data</returns>
     public (Loop2[] loopsNew,
             Vec2[] vsNew,
-            Vec2[] vtsNew) SubdivFaceFan(in int faceIdx)
+            Vec2[] vtsNew) SubdivFaceFan(in int faceIndex = 0)
     {
         int facesLen = this.loops.Length;
-        int i = Utils.RemFloor(faceIdx, facesLen);
+        int i = Utils.RemFloor(faceIndex, facesLen);
         Index2[] face = this.loops[i].Indices;
         int faceLen = face.Length;
 
@@ -858,14 +867,14 @@ public class Mesh2
     /// original. This is best suited to meshes made of triangles. Returns a
     /// tuple containing the new data created.
     /// </summary>
-    /// <param name="faceIdx">face index</param>
-    /// <returns>the tuple</returns>
+    /// <param name="faceIndex">face index</param>
+    /// <returns>tuple</returns>
     public (Loop2[] loopsNew,
             Vec2[] vsNew,
-            Vec2[] vtsNew) SubdivFaceInscribe(in int faceIdx)
+            Vec2[] vtsNew) SubdivFaceInscribe(in int faceIndex = 0)
     {
         int facesLen = this.loops.Length;
-        int i = Utils.RemFloor(faceIdx, facesLen);
+        int i = Utils.RemFloor(faceIndex, facesLen);
         Index2[] face = this.loops[i].Indices;
         int faceLen = face.Length;
 
@@ -1027,7 +1036,7 @@ public class Mesh2
     /// <summary>
     /// Transforms a mesh by an affine transform matrix.
     /// </summary>
-    /// <param name="m">affine transform</param>
+    /// <param name="m">matrix</param>
     /// <returns>this mesh</returns>
     public Mesh2 Transform(in Mat3 m)
     {

@@ -163,9 +163,9 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <param name="m20">row 2, column 0</param>
     /// <param name="m21">row 2, column 1</param>
     /// <param name="m22">row 2, column 2</param>
-    public Mat3( //
-        in float m00 = 1.0f, in float m01 = 0.0f, in float m02 = 0.0f, //
-        in float m10 = 0.0f, in float m11 = 1.0f, in float m12 = 0.0f, //
+    public Mat3(
+        in float m00 = 1.0f, in float m01 = 0.0f, in float m02 = 0.0f,
+        in float m10 = 0.0f, in float m11 = 1.0f, in float m12 = 0.0f,
         in float m20 = 0.0f, in float m21 = 0.0f, in float m22 = 1.0f)
     {
         this._m00 = m00;
@@ -193,9 +193,9 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <param name="m20">row 2, column 0</param>
     /// <param name="m21">row 2, column 1</param>
     /// <param name="m22">row 2, column 2</param>
-    public Mat3( //
-        in bool m00 = true, in bool m01 = false, in bool m02 = false, //
-        in bool m10 = false, in bool m11 = true, in bool m12 = false, //
+    public Mat3(
+        in bool m00 = true, in bool m01 = false, in bool m02 = false,
+        in bool m10 = false, in bool m11 = true, in bool m12 = false,
         in bool m20 = false, in bool m21 = false, in bool m22 = true)
     {
         this._m00 = m00 ? 1.0f : 0.0f;
@@ -327,7 +327,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <summary>
     /// Returns a named value tuple containing this matrix's components.
     /// </summary>
-    /// <returns>the tuple</returns>
+    /// <returns>tuple</returns>
     public (float m00, float m01, float m02,
             float m10, float m11, float m12,
             float m20, float m21, float m22) ToTuple()
@@ -342,8 +342,8 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// Converts a boolean to a matrix by supplying the boolean to all the
     /// matrix's components: 1.0 for true; 0.0 for false.
     /// </summary>
-    /// <param name="b">the boolean</param>
-    /// <returns>the vector</returns>
+    /// <param name="b">boolean</param>
+    /// <returns>vector</returns>
     public static implicit operator Mat3(in bool b)
     {
         float eval = b ? 1.0f : 0.0f;

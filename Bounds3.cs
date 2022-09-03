@@ -55,12 +55,12 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// <param name="xMax">maximum x</param>
     /// <param name="yMax">maximum y</param>
     /// <param name="zMax">maximum z</param>
-    public Bounds3( //
-        in float xMin, //
-        in float yMin, //
-        in float zMin, //
-        in float xMax, //
-        in float yMax, //
+    public Bounds3(
+        in float xMin,
+        in float yMin,
+        in float zMin,
+        in float xMax,
+        in float yMax,
         in float zMax)
     {
         float bxMin = xMin < xMax ? xMin : xMax;
@@ -442,9 +442,9 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// <param name="zMin">z minimum</param>
     /// <param name="zMax">z maximum</param>
     /// <returns>bounds</returns>
-    public static Bounds3 Promote( //
-        in Bounds2 b, //
-        in float zMin = float.MinValue, //
+    public static Bounds3 Promote(
+        in Bounds2 b,
+        in float zMin = float.MinValue,
         in float zMax = float.MaxValue)
     {
         Vec2 bMn = b.Min;
@@ -463,10 +463,10 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// <param name="yFac">y factor</param>
     /// <param name="zFac">z factor</param>
     /// <returns>eight children</returns>
-    public static Bounds3[] Split( //
-        in Bounds3 b, //
-        in float xFac = 0.5f, //
-        in float yFac = 0.5f, //
+    public static Bounds3[] Split(
+        in Bounds3 b,
+        in float xFac = 0.5f,
+        in float yFac = 0.5f,
         in float zFac = 0.5f)
     {
         Vec3 bMin = b.min;
@@ -544,7 +544,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     {
         get
         {
-            return new Bounds3( //
+            return new Bounds3(
                 -110.0f, -110.0f, -1.0f,
                 110.0f, 110.0f, 101.0f);
         }
@@ -559,7 +559,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     {
         get
         {
-            return new Bounds3( //
+            return new Bounds3(
                 -1.0f - Utils.Epsilon * 2.0f,
                 1.0f + Utils.Epsilon * 2.0f);
         }
@@ -574,7 +574,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     {
         get
         {
-            return new Bounds3( //
+            return new Bounds3(
                 -Utils.Epsilon * 2.0f,
                 1.0f + Utils.Epsilon * 2.0f);
         }

@@ -122,9 +122,9 @@ public class Transform3
     /// <param name="width">x scale</param>
     /// <param name="height">y scale</param>
     /// <param name="depth">z scale</param>
-    public Transform3( //
-        in float x, in float y, in float z, //
-        in float real, in float i, in float j, in float k, //
+    public Transform3(
+        in float x, in float y, in float z,
+        in float real, in float i, in float j, in float k,
         in float width, in float height, in float depth)
     {
         this.Location = new Vec3(x, y, z);
@@ -201,22 +201,13 @@ public class Transform3
     /// <param name="step">step</param>
     /// <param name="easing">easing function</param>
     /// <returns>this transform</returns>
-    public Transform3 MoveTo(in Vec3 v, in Vec3 step, in Func<Vec3, Vec3, Vec3, Vec3> easing)
+    public Transform3 MoveTo(
+        in Vec3 v,
+        in Vec3 step,
+        in Func<Vec3, Vec3, Vec3, Vec3> easing)
     {
         Vec3 t = easing(this.location, v, step);
         this.Location = Vec3.Mix(this.location, v, t);
-        return this;
-    }
-
-    /// <summary>
-    /// Rotates the transform to a new orientation, then updates the transform's
-    /// axes.
-    /// </summary>
-    /// <param name="q">orientation</param>
-    /// <returns>this transform</returns>
-    public Transform3 RotateTo(in Quat q)
-    {
-        this.Rotation = q;
         return this;
     }
 
@@ -317,7 +308,10 @@ public class Transform3
     /// <param name="step">step</param>
     /// <param name="easing">easing function</param>
     /// <returns>this transform</returns>
-    public Transform3 ScaleTo(in Vec3 v, in Vec3 step, in Func<Vec3, Vec3, Vec3, Vec3> easing)
+    public Transform3 ScaleTo(
+        in Vec3 v,
+        in Vec3 step,
+        in Func<Vec3, Vec3, Vec3, Vec3> easing)
     {
         Vec3 s = Vec3.CopySign(v, this.scale);
         Vec3 t = easing(this.scale, s, step);
@@ -488,9 +482,9 @@ public class Transform3
     /// <param name="tr">transform</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString( // 
-        in StringBuilder sb, //
-        in Transform3 tr, //
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Transform3 tr,
         in int places = 4)
     {
         sb.Append("{ location: ");

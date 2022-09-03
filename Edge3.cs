@@ -109,15 +109,15 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <param name="tolerance">tolerance</param>
+    /// <param name="tol">tolerance</param>
     /// <returns>evaluation</returns>
-    public static bool AreNeighbors( //
-        in Edge3 a, //
-        in Edge3 b, //
-        in float tolerance = Utils.Epsilon)
+    public static bool AreNeighbors(
+        in Edge3 a,
+        in Edge3 b,
+        in float tol = Utils.Epsilon)
     {
-        return Vec3.Approx(a.origin.Coord, b.dest.Coord, tolerance) &&
-            Vec3.Approx(a.dest.Coord, b.origin.Coord, tolerance);
+        return Vec3.Approx(a.origin.Coord, b.dest.Coord, tol) &&
+            Vec3.Approx(a.dest.Coord, b.origin.Coord, tol);
     }
 
     /// <summary>

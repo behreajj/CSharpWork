@@ -106,9 +106,9 @@ public class Octree
     /// <param name="bounds">bounds</param>
     /// <param name="capacity">capacity</param>
     /// <param name="level">level</param>
-    public Octree( //
-        in Bounds3 bounds, //
-        in int capacity = Octree.DefaultCapacity, //
+    public Octree(
+        in Bounds3 bounds,
+        in int capacity = Octree.DefaultCapacity,
         in int level = Octree.RootLevel)
     {
         this.Bounds = bounds;
@@ -213,7 +213,7 @@ public class Octree
         foreach (Vec3 v in this.points)
         {
             bool found = false;
-            for (int j = 0; j < Octree.ChildCount && !found; ++j)
+            for (int j = 0; !found && j < Octree.ChildCount; ++j)
             {
                 int k = (idxOffset + j) % Octree.ChildCount;
                 found = this.children[k].Insert(v);
@@ -233,8 +233,8 @@ public class Octree
     /// <param name="o">octree</param>
     /// <param name="includeEmpty">include empty</param>
     /// <returns>centers array</returns>
-    public static Vec3[] CentersMean( //
-        in Octree o, //
+    public static Vec3[] CentersMean(
+        in Octree o,
         in bool includeEmpty = false)
     {
         List<Vec3> result = new List<Vec3>();
@@ -335,17 +335,87 @@ public class Octree
     }
 
     /// <summary>
+    /// Creates an octree from an array of colors.
+    /// </summary>
+    /// <param name="colors">colors</param>
+    /// <param name="model">color model</param>
+    /// <param name="capacity">capacity</param>
+    /// <returns>octree</returns>
+    public static Octree FromColors(
+        in IEnumerable<Clr> colors,
+        in ClrModel model = ClrModel.CieLab,
+        in int capacity = Octree.DefaultCapacity)
+    {
+        Octree o;
+        switch (model)
+        {
+            case ClrModel.Standard:
+                {
+                    o = new Octree(Bounds3.UnitCubeUnsigned, capacity);
+                    foreach (Clr c in colors)
+                    {
+                        o.Insert(new Vec3(c.r, c.g, c.b));
+                    }
+                }
+                break;
+            case ClrModel.Linear:
+                {
+                    o = new Octree(Bounds3.UnitCubeUnsigned, capacity);
+                    foreach (Clr c in colors)
+                    {
+                        Clr l = Clr.StandardToLinear(c);
+                        o.Insert(new Vec3(l.r, l.g, l.b));
+                    }
+                }
+                break;
+            case ClrModel.CieXyz:
+                {
+                    o = new Octree(Bounds3.UnitCubeUnsigned, capacity);
+                    foreach (Clr c in colors)
+                    {
+                        Clr l = Clr.StandardToLinear(c);
+                        Vec4 v = Clr.LinearToXyza(l);
+                        o.Insert(v.xyz);
+                    }
+                }
+                break;
+            case ClrModel.Normal:
+                {
+                    o = new Octree(Bounds3.UnitCubeSigned, capacity);
+                    foreach (Clr c in colors)
+                    {
+                        o.Insert(Vec3.FromColor(c));
+                    }
+                }
+                break;
+            case ClrModel.CieLch:
+            case ClrModel.CieLab:
+            default:
+                {
+                    o = new Octree(Bounds3.CieLab, capacity, Octree.RootLevel);
+                    foreach (Clr c in colors)
+                    {
+                        Vec4 lab = Clr.StandardToLaba(c);
+                        o.Insert(lab.xyz);
+                    }
+                }
+                break;
+        }
+        return o;
+    }
+
+    /// <summary>
     /// Creates an octree from an array of points.
     /// </summary>
     /// <param name="points">points</param>
     /// <param name="capacity">capacity</param>
     /// <returns>octree</returns>
     public static Octree FromPoints(
-        in IEnumerable<Vec3> points, //
+        in IEnumerable<Vec3> points,
         in int capacity = Octree.DefaultCapacity)
     {
         Bounds3 b = Bounds3.FromPoints(points);
-        Octree o = new Octree(b, capacity, Octree.RootLevel);
+        Octree o = new Octree(b, capacity);
         o.InsertAll(points);
         return o;
     }
@@ -390,8 +460,8 @@ public class Octree
     /// <param name="o">octree</param>
     /// <param name="range">bounds</param>
     /// <returns>found points</returns>
-    public static Vec3[] Query( //
-        in Octree o, //
+    public static Vec3[] Query(
+        in Octree o,
         in Bounds3 range)
     {
         SortedDictionary<float, Vec3> found = new SortedDictionary<float, Vec3>();
@@ -408,9 +478,9 @@ public class Octree
     /// <param name="center">sphere center</param>
     /// <param name="radius">sphere radius</param>
     /// <returns>found points</returns>
-    public static Vec3[] Query( //
-        in Octree o, //
-        in Vec3 center, //
+    public static Vec3[] Query(
+        in Octree o,
+        in Vec3 center,
         in float radius)
     {
         SortedDictionary<float, Vec3> found = new SortedDictionary<float, Vec3>();
@@ -429,9 +499,9 @@ public class Octree
     /// <param name="range">bounds</param>
     /// <param name="found">found dictionary</param>
     /// <returns>distance points dictionary</returns>
-    protected static SortedDictionary<float, Vec3> Query( //
-        in Octree o, //
-        in Bounds3 range, //
+    protected static SortedDictionary<float, Vec3> Query(
+        in Octree o,
+        in Bounds3 range,
         in SortedDictionary<float, Vec3> found)
     {
         if (Bounds3.Intersect(o.bounds, range))
@@ -444,16 +514,16 @@ public class Octree
                     isLeaf = false;
                     Octree.Query(child, range, found);
                 }
+            }
 
-                if (isLeaf)
+            if (isLeaf)
+            {
+                Vec3 rCenter = Bounds3.Center(range);
+                foreach (Vec3 v in o.points)
                 {
-                    Vec3 rCenter = Bounds3.Center(range);
-                    foreach (Vec3 v in o.points)
+                    if (Bounds3.ContainsInclExcl(range, v))
                     {
-                        if (Bounds3.ContainsInclExcl(range, v))
-                        {
-                            found[Vec3.DistChebyshev(v, rCenter)] = v;
-                        }
+                        found[Vec3.DistChebyshev(v, rCenter)] = v;
                     }
                 }
             }
@@ -472,10 +542,10 @@ public class Octree
     /// <param name="radius">sphere radius</param>
     /// <param name="found">found dictionary</param>
     /// <returns>distance points dictionary</returns>
-    protected static SortedDictionary<float, Vec3> Query( //
-        in Octree o, //
-        in Vec3 center, //
-        in float radius, //
+    protected static SortedDictionary<float, Vec3> Query(
+        in Octree o,
+        in Vec3 center,
+        in float radius,
         in SortedDictionary<float, Vec3> found)
     {
         if (Bounds3.Intersect(o.bounds, center, radius))

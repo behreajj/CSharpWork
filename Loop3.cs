@@ -138,12 +138,12 @@ public class Loop3
     /// <param name="e">fifth vertex</param>
     /// <param name="target">target loop</param>
     /// <returns>pentagon loop</returns>
-    public static Loop3 Pentagon( //
-        in Index3 a, //
-        in Index3 b, //
-        in Index3 c, //
-        in Index3 d, //
-        in Index3 e, //
+    public static Loop3 Pentagon(
+        in Index3 a,
+        in Index3 b,
+        in Index3 c,
+        in Index3 d,
+        in Index3 e,
         in Loop3 target)
     {
         target.indices = new Index3[] { a, b, c, d, e };
@@ -160,11 +160,11 @@ public class Loop3
     /// <param name="d">fourth vertex</param>
     /// <param name="target">target loop</param>
     /// <returns>quadrilateral loop</returns>
-    public static Loop3 Quad( //
-        in Index3 a, //
-        in Index3 b, //
-        in Index3 c, //
-        in Index3 d, //
+    public static Loop3 Quad(
+        in Index3 a,
+        in Index3 b,
+        in Index3 c,
+        in Index3 d,
         in Loop3 target)
     {
         target.indices = new Index3[] { a, b, c, d };
@@ -182,10 +182,10 @@ public class Loop3
     /// <param name="vertsPerLoop">vertices per loop</param>
     /// <param name="resizeExisting">change existing loop length</param>
     /// <returns>resized array</returns>
-    public static Loop3[] Resize( //
-        in Loop3[] arr, //
-        in int sz, //
-        in int vertsPerLoop = 3, //
+    public static Loop3[] Resize(
+        in Loop3[] arr,
+        in int sz,
+        in int vertsPerLoop = 3,
         in bool resizeExisting = false)
     {
         if (sz < 1) { return new Loop3[] { }; }
@@ -341,10 +341,10 @@ public class Loop3
     /// <param name="c">third vertex</param>
     /// <param name="target">target loop</param>
     /// <returns>triangle loop</returns>
-    public static Loop3 Tri( //
-        in Index3 a, //
-        in Index3 b, //
-        in Index3 c, //
+    public static Loop3 Tri(
+        in Index3 a,
+        in Index3 b,
+        in Index3 c,
         in Loop3 target)
     {
         target.indices = new Index3[] { a, b, c };

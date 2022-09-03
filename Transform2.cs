@@ -123,9 +123,9 @@ public class Transform2
     /// <param name="rotation">rotation</param>
     /// <param name="width">x scale</param>
     /// <param name="height">y scale</param>
-    public Transform2( //
-        in float x, in float y, //
-        in float rotation, //
+    public Transform2(
+        in float x, in float y,
+        in float rotation,
         in float width, in float height)
     {
         this.Location = new Vec2(x, y);
@@ -224,7 +224,10 @@ public class Transform2
     /// <param name="step">step</param>
     /// <param name="easing">easing function</param>
     /// <returns>this transform</returns>
-    public Transform2 MoveTo(in Vec2 v, in Vec2 step, in Func<Vec2, Vec2, Vec2, Vec2> easing)
+    public Transform2 MoveTo(
+        in Vec2 v,
+        in Vec2 step,
+        in Func<Vec2, Vec2, Vec2, Vec2> easing)
     {
         Vec2 t = easing(this.location, v, step);
         this.Location = Vec2.Mix(this.location, v, t);
@@ -237,7 +240,7 @@ public class Transform2
     /// <param name="radians">angle</param>
     /// <param name="step">step</param>
     /// <returns>this transform</returns>
-    public Transform2 RotateTo(in float radians, in float step = 1.0f)
+    public Transform2 RotateTo(in float radians, in float step)
     {
         this.Rotation = Utils.LerpAngleNear(this.rotation, radians, step);
         return this;
@@ -298,7 +301,10 @@ public class Transform2
     /// <param name="step">step</param>
     /// <param name="easing">easing function</param>
     /// <returns>this transform</returns>
-    public Transform2 ScaleTo(in Vec2 v, in Vec2 step, in Func<Vec2, Vec2, Vec2, Vec2> easing)
+    public Transform2 ScaleTo( //
+        in Vec2 v, //
+        in Vec2 step, //
+        in Func<Vec2, Vec2, Vec2, Vec2> easing)
     {
         Vec2 s = Vec2.CopySign(v, this.scale);
         Vec2 t = easing(this.scale, s, step);
@@ -423,7 +429,7 @@ public class Transform2
     /// <returns>string</returns>
     public static string ToString(in Transform2 tr, in int places = 4)
     {
-        return Transform2.ToString(new StringBuilder(160), tr, places).ToString();
+        return Transform2.ToString(new StringBuilder(256), tr, places).ToString();
     }
 
     /// <summary>
@@ -433,9 +439,9 @@ public class Transform2
     /// <param name="tr">transform</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString( //
-        in StringBuilder sb, //
-        in Transform2 tr, //
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Transform2 tr,
         in int places = 4)
     {
         sb.Append("{ location: ");

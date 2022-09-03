@@ -158,9 +158,9 @@ public class Knot3
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
     /// <param name="zRh">rear handle z</param>
-    public Knot3( // 
-        in float xCo, in float yCo, in float zCo, //
-        in float xFh, in float yFh, in float zFh, //
+    public Knot3(
+        in float xCo, in float yCo, in float zCo,
+        in float xFh, in float yFh, in float zFh,
         in float xRh, in float yRh, in float zRh)
     {
         this.Set(
@@ -273,15 +273,15 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 FlipX()
     {
-        this.coord = new Vec3( //
+        this.coord = new Vec3(
             -this.coord.x,
             this.coord.y,
             this.coord.z);
-        this.foreHandle = new Vec3( //
+        this.foreHandle = new Vec3(
             -this.foreHandle.x,
             this.foreHandle.y,
             this.foreHandle.z);
-        this.rearHandle = new Vec3( //
+        this.rearHandle = new Vec3(
             -this.rearHandle.x,
             this.rearHandle.y,
             this.rearHandle.z);
@@ -297,15 +297,15 @@ public class Knot3
     public Knot3 FlipY()
     {
         this.coord = new Vec3(
-            this.coord.x, //
+            this.coord.x,
             -this.coord.y,
             this.coord.z);
         this.foreHandle = new Vec3(
-            this.foreHandle.x, //
+            this.foreHandle.x,
             -this.foreHandle.y,
             this.foreHandle.z);
         this.rearHandle = new Vec3(
-            this.rearHandle.x, //
+            this.rearHandle.x,
             -this.rearHandle.y,
             this.rearHandle.z);
         return this;
@@ -321,15 +321,15 @@ public class Knot3
     {
         this.coord = new Vec3(
             this.coord.x,
-            this.coord.y, //
+            this.coord.y,
             -this.coord.z);
         this.foreHandle = new Vec3(
             this.foreHandle.x,
-            this.foreHandle.y, //
+            this.foreHandle.y,
             -this.foreHandle.z);
         this.rearHandle = new Vec3(
             this.rearHandle.x,
-            this.rearHandle.y, //
+            this.rearHandle.y,
             -this.rearHandle.z);
         return this;
     }
@@ -595,7 +595,7 @@ public class Knot3
     /// </summary>
     /// <param name="scalar">scalar</param>
     /// <returns>this knot</returns>
-    public Knot3 ScaleForeHandleBy(in float scalar = 1.0f)
+    public Knot3 ScaleForeHandleBy(in float scalar)
     {
         this.foreHandle -= this.coord;
         this.foreHandle *= scalar;
@@ -621,8 +621,8 @@ public class Knot3
     /// <summary>
     /// Scales both the fore and rear handle by a factor.
     /// </summary>
-    /// <param name="magnitude">magnitude</param>
-    /// <returns>the knot</returns>
+    /// <param name="scalar">scalar</param>
+    /// <returns>this knot</returns>
     public Knot3 ScaleHandlesBy(in float scalar)
     {
         this.ScaleForeHandleBy(scalar);
@@ -649,7 +649,7 @@ public class Knot3
     /// </summary>
     /// <param name="scalar">scalar</param>
     /// <returns>this knot</returns>
-    public Knot3 ScaleRearHandleBy(in float scalar = 1.0f)
+    public Knot3 ScaleRearHandleBy(in float scalar)
     {
         this.rearHandle -= this.coord;
         this.rearHandle *= scalar;
@@ -663,7 +663,7 @@ public class Knot3
     /// </summary>
     /// <param name="magnitude">magnitude</param>
     /// <returns>this knot</returns>
-    public Knot3 ScaleRearHandleTo(in float magnitude = 1.0f)
+    public Knot3 ScaleRearHandleTo(in float magnitude)
     {
         this.rearHandle -= this.coord;
         this.rearHandle = Vec3.Rescale(this.rearHandle, magnitude);
@@ -684,9 +684,10 @@ public class Knot3
     /// <param name="xRh">rear handle x</param>
     /// <param name="yRh">rear handle y</param>
     /// <param name="zRh">rear handle z</param>
-    public Knot3 Set( // 
-        in float xCo, in float yCo, in float zCo, //
-        in float xFh, in float yFh, in float zFh, //
+    /// <returns>this knot</returns>
+    public Knot3 Set(
+        in float xCo, in float yCo, in float zCo,
+        in float xFh, in float yFh, in float zFh,
         in float xRh, in float yRh, in float zRh)
     {
         this.coord = new Vec3(xCo, yCo, zCo);
@@ -699,7 +700,7 @@ public class Knot3
     /// <summary>
     /// Transforms this knot by a matrix.
     /// </summary>
-    /// <param name="tr">transform</param>
+    /// <param name="m">matrix</param>
     /// <returns>this knot</returns>
     public Knot3 Transform(in Mat4 m)
     {
@@ -750,10 +751,10 @@ public class Knot3
     /// <summary>
     /// Promotes a 2D knot to a 3D knot.
     /// </summary>
-    /// <param name="k">knot</param>
-    public static implicit operator Knot3(in Knot2 k)
+    /// <param name="kn">knot</param>
+    public static implicit operator Knot3(in Knot2 kn)
     {
-        return new Knot3(k.Coord, k.ForeHandle, k.RearHandle);
+        return new Knot3(kn.Coord, kn.ForeHandle, kn.RearHandle);
     }
 
     /// <summary>
@@ -806,74 +807,80 @@ public class Knot3
     /// <summary>
     /// Gets the fore handle of a knot as a direction, rather than as a point.
     /// </summary>
-    /// <param name="knot">knot</param>
+    /// <param name="kn">knot</param>
     /// <returns>fore handle vector</returns>
-    public static Vec3 ForeDir(in Knot3 knot)
+    public static Vec3 ForeDir(in Knot3 kn)
     {
-        return Vec3.Normalize(Knot3.ForeVec(knot));
+        return Vec3.Normalize(Knot3.ForeVec(kn));
     }
 
     /// <summary>
     /// Returns the magnitude of the knot's fore handle, i.e., the Euclidean
     /// distance between the fore handle and the coordinate.
     /// </summary>
-    /// <param name="knot">knot</param>
+    /// <param name="kn">knot</param>
     /// <returns>magnitude</returns>
-    public static float ForeMag(in Knot3 knot)
+    public static float ForeMag(in Knot3 kn)
     {
-        return Vec3.DistEuclidean(knot.foreHandle, knot.coord);
+        return Vec3.DistEuclidean(kn.foreHandle, kn.coord);
     }
 
     /// <summary>
     /// Gets the fore handle of a knot as a vector, rather than as a point.
     /// </summary>
-    /// <param name="knot">knot</param>
+    /// <param name="kn">knot</param>
     /// <returns>fore handle vector</returns>
-    public static Vec3 ForeVec(in Knot3 knot)
+    public static Vec3 ForeVec(in Knot3 kn)
     {
-        return knot.foreHandle - knot.coord;
+        return kn.foreHandle - kn.coord;
     }
 
     /// <summary>
     /// Gets the rear handle of a knot as a direction, rather than as a point.
     /// </summary>
-    /// <param name="knot">knot</param>
+    /// <param name="kn">knot</param>
     /// <returns>rear handle vector</returns>
-    public static Vec3 RearDir(in Knot3 knot)
+    public static Vec3 RearDir(in Knot3 kn)
     {
-        return Vec3.Normalize(Knot3.RearVec(knot));
+        return Vec3.Normalize(Knot3.RearVec(kn));
     }
 
     /// <summary>
     /// Returns the magnitude of the knot's rear handle, i.e., the Euclidean
     /// distance between the rear handle and the coordinate.
     /// </summary>
-    /// <param name="knot">knot</param>
+    /// <param name="kn">knot</param>
     /// <returns>magnitude</returns>
-    public static float RearMag(in Knot3 knot)
+    public static float RearMag(in Knot3 kn)
     {
-        return Vec3.DistEuclidean(knot.rearHandle, knot.coord);
+        return Vec3.DistEuclidean(kn.rearHandle, kn.coord);
     }
 
     /// <summary>
     /// Gets the rear handle of a knot as a vector, rather than as a point.
     /// </summary>
-    /// <param name="knot">knot</param>
+    /// <param name="kn">knot</param>
     /// <returns>rear handle vector</returns>
-    public static Vec3 RearVec(in Knot3 knot)
+    public static Vec3 RearVec(in Knot3 kn)
     {
-        return knot.rearHandle - knot.coord;
+        return kn.rearHandle - kn.coord;
     }
 
-    public static Vec3 SmoothHandles( //
-        in Knot3 prev, //
-        in Knot3 curr, //
-        in Knot3 next, //
+    /// <summary>
+    /// Smooths the handles of a knot in a curve.
+    /// Returns the carry for the next iteration.
+    /// </summary>
+    /// <param name="prev">previous knot</param>
+    /// <param name="curr">current knot</param>
+    /// <param name="next">next knot</param>
+    /// <param name="carry">carry</param>
+    /// <returns>carry next</returns>
+    public static Vec3 SmoothHandles(
+        in Knot3 prev,
+        in Knot3 curr,
+        in Knot3 next,
         in Vec3 carry)
     {
-        // TODO: Incorporate in curve smooth handles.
-        // TODO: Comment.
-
         Vec3 coCurr = curr.coord;
         Vec3 coPrev = prev.coord;
         Vec3 coNext = next.coord;
@@ -927,9 +934,18 @@ public class Knot3
             zCarry);
     }
 
-    public static Vec3 SmoothHandlesFirst( //
-        in Knot3 curr, // 
-        in Knot3 next, //
+    /// <summary>
+    /// Smooths the handles of the first knot
+    /// in a curve. Returns the carry for the
+    /// next iteration.
+    /// </summary>
+    /// <param name="curr">current knot</param>
+    /// <param name="next">next knot</param>
+    /// <param name="carry">carry</param>
+    /// <returns>carry next</returns>
+    public static Vec3 SmoothHandlesFirst(
+        in Knot3 curr,
+        in Knot3 next,
         in Vec3 carry)
     {
         Vec3 coCurr = curr.coord;
@@ -978,9 +994,18 @@ public class Knot3
             zCarry);
     }
 
-    public static Vec3 SmoothHandlesLast( //
-        in Knot3 prev, //
-        in Knot3 curr, //
+    /// <summary>
+    /// Smooths the handles of the last knot
+    /// in a curve. Returns the carry for the
+    /// next iteration.
+    /// </summary>
+    /// <param name="prev">previous knot</param>
+    /// <param name="curr">current knot</param>
+    /// <param name="carry">carry</param>
+    /// <returns>carry next</returns>
+    public static Vec3 SmoothHandlesLast(
+        in Knot3 prev,
+        in Knot3 curr,
         in Vec3 carry)
     {
         Vec3 coCurr = curr.coord;

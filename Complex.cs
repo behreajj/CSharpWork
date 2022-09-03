@@ -425,12 +425,12 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <param name="tolerance">tolerance</param>
+    /// <param name="tol">tolerance</param>
     /// <returns>evaluation</returns>
-    public static bool Approx(in Complex a, in Complex b, in float tolerance = Utils.Epsilon)
+    public static bool Approx(in Complex a, in Complex b, in float tol = Utils.Epsilon)
     {
-        return Utils.Approx(a.real, b.real, tolerance) &&
-            Utils.Approx(a.imag, b.imag, tolerance);
+        return Utils.Approx(a.real, b.real, tol) &&
+            Utils.Approx(a.imag, b.imag, tol);
     }
 
     /// <summary>
@@ -502,7 +502,12 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// (c z + d) / (a z + b) .
     /// </summary>
     /// <returns>mobius transformation</returns>
-    public static Complex Mobius(in Complex a, in Complex b, in Complex c, in Complex d, in Complex z)
+    public static Complex Mobius(
+        in Complex a,
+        in Complex b,
+        in Complex c,
+        in Complex d,
+        in Complex z)
     {
         // Denominator: (c * z) + d .
         float czdr = c.real * z.real - c.imag * z.imag + d.real;
@@ -604,9 +609,9 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <param name="rhoMin">radius minimum</param>
     /// <param name="rhoMax">radius maximum</param>
     /// <returns>random complex number</returns>
-    public static Complex Random( //
-        in System.Random rng, //
-        in float rhoMin = 1.0f, //
+    public static Complex Random(
+        in System.Random rng,
+        in float rhoMin = 1.0f,
         in float rhoMax = 1.0f)
     {
         return Complex.Rect(

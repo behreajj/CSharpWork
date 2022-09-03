@@ -53,10 +53,10 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <param name="yMin">minimum y</param>
     /// <param name="xMax">maximum x</param>
     /// <param name="yMax">maximum y</param>
-    public Bounds2( //
-        in float xMin, //
-        in float yMin, //
-        in float xMax, //
+    public Bounds2(
+        in float xMin,
+        in float yMin,
+        in float xMax,
         in float yMax)
     {
         float bxMin = xMin < xMax ? xMin : xMax;
@@ -468,7 +468,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     {
         get
         {
-            return new Bounds2( //
+            return new Bounds2(
                 -1.0f - Utils.Epsilon * 2.0f,
                 1.0f + Utils.Epsilon * 2.0f);
         }
@@ -483,7 +483,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     {
         get
         {
-            return new Bounds2( //
+            return new Bounds2(
                 -Utils.Epsilon * 2.0f,
                 1.0f + Utils.Epsilon * 2.0f);
         }

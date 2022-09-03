@@ -763,7 +763,7 @@ public class Mesh3
     /// of edges in the face. Returns a tuple containing the new data created.
     /// </summary>
     /// <param name="faceIdx">face index</param>
-    /// <returns>the tuple</returns>
+    /// <returns>tuple</returns>
     public (Loop3[] loopsNew,
             Vec3[] vsNew,
             Vec2[] vtsNew,
@@ -921,7 +921,7 @@ public class Mesh3
     /// tuple containing the new data created.
     /// </summary>
     /// <param name="faceIdx">face index</param>
-    /// <returns>the tuple</returns>
+    /// <returns>tuple</returns>
     public (Loop3[] loopsNew,
             Vec3[] vsNew,
             Vec2[] vtsNew,
@@ -1111,7 +1111,7 @@ public class Mesh3
     /// <summary>
     /// Transforms a mesh by an affine transform matrix.
     /// </summary>
-    /// <param name="m">affine transform</param>
+    /// <param name="m">matrix</param>
     /// <returns>this mesh</returns>
     public Mesh3 Transform(in Mat4 m)
     {
@@ -2176,9 +2176,9 @@ public class Mesh3
     /// <param name="itrs">iterations</param>
     /// <param name="size">size</param>
     /// <returns>icosphere</returns>
-    public static Mesh3 Icosphere( //
-        in Mesh3 target, //
-        in int itrs = 3, //
+    public static Mesh3 Icosphere(
+        in Mesh3 target,
+        in int itrs = 3,
         in float size = 0.5f)
     {
         Mesh3.Icosahedron(target);

@@ -345,15 +345,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Converts a quaternion to a real number by finding its magnitude.
-    /// </summary>
-    /// <param name="q">quaternion</param>
-    public static explicit operator float(in Quat q)
-    {
-        return Quat.Mag(q);
-    }
-
-    /// <summary>
     /// A quaternion evaluates to true when any of its components are not equal
     /// to zero.
     /// </summary>
@@ -766,10 +757,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     {
         Vec3 a = Vec3.Normalize(origin);
         Vec3 b = Vec3.Normalize(dest);
-
-        return new Quat(
-            Vec3.Dot(a, b),
-            Vec3.Cross(a, b));
+        return new Quat(Vec3.Dot(a, b), Vec3.Cross(a, b));
     }
 
     /// <summary>
