@@ -1293,9 +1293,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="near">near clip plane</param>
     /// <param name="far">far clip plane</param>
     /// <returns>orthographic projection</returns>
-    public static Mat4 Frustum( //
-        in float left, in float right, // 
-        in float bottom, in float top, // 
+    public static Mat4 Frustum(
+        in float left, in float right,
+        in float bottom, in float top,
         in float near, in float far)
     {
         float n2 = near + near;
@@ -1507,9 +1507,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="near">near clip plane</param>
     /// <param name="far">far clip plane</param>
     /// <returns>orthographic projection</returns>
-    public static Mat4 Orthographic( //
-        in float left, in float right, // 
-        in float bottom, in float top, // 
+    public static Mat4 Orthographic(
+        in float left, in float right,
+        in float bottom, in float top,
         in float near, in float far)
     {
         float w = right - left;
@@ -1658,9 +1658,9 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     {
         get
         {
-            return new Mat4( //
+            return new Mat4(
                 -1.0f, 3.0f, -3.0f, 1.0f,
-                3.0f, -6.0f, 3.0f, 0.0f, //
+                3.0f, -6.0f, 3.0f, 0.0f,
                 -3.0f, 3.0f, 0.0f, 0.0f,
                 1.0f, 0.0f, 0.0f, 0.0f);
         }

@@ -408,6 +408,26 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
+    /// Increments all components of a vector by 1.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>increment</returns>
+    public static Vec4 operator ++(in Vec4 v)
+    {
+        return new Vec4(v._x + 1.0f, v._y + 1.0f, v._z + 1.0f, v._w + 1.0f);
+    }
+
+    /// <summary>
+    /// Decrements all components of a vector by 1.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>decrement</returns>
+    public static Vec4 operator --(in Vec4 v)
+    {
+        return new Vec4(v._x - 1.0f, v._y - 1.0f, v._z - 1.0f, v._w - 1.0f);
+    }
+
+    /// <summary>
     /// Multiplies two vectors, component-wise, i.e.,
     /// returns the Hadamard product.
     /// </summary>
@@ -889,11 +909,13 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     {
         if (c != 0.0f)
         {
-            float dx = MathF.Pow(Utils.Diff(b._x, a._x), c);
-            float dy = MathF.Pow(Utils.Diff(b._y, a._y), c);
-            float dz = MathF.Pow(Utils.Diff(b._z, a._z), c);
-            float dw = MathF.Pow(Utils.Diff(b._w, a._w), c);
-            return MathF.Pow(dx + dy + dz + dw, 1.0f / c);
+            double cd = c;
+            return (float)Math.Pow(
+                Math.Pow(Math.Abs(b._x - a._x), cd) +
+                Math.Pow(Math.Abs(b._y - a._y), cd) +
+                Math.Pow(Math.Abs(b._z - a._z), cd) +
+                Math.Pow(Math.Abs(b._w - a._w), cd),
+                1.0d / cd);
         }
         return 0.0f;
     }
@@ -1021,10 +1043,10 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
                 lowerBound,
                 upperBound,
                 new Vec4(
-                    (float)j * jToStep,
-                    (float)i * iToStep,
-                    (float)h * hToStep,
-                    (float)g * gToStep));
+                    j * jToStep,
+                    i * iToStep,
+                    h * hToStep,
+                    g * gToStep));
         }
 
         return result;
@@ -1207,7 +1229,13 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>unit vector</returns>
     public static Vec4 Normalize(in Vec4 v)
     {
-        return v / Vec4.Mag(v);
+        float mSq = v._x * v._x + v._y * v._y + v._z * v._z + v._w * v._w;
+        if (mSq > 0.0f)
+        {
+            float mInv = 1.0f / MathF.Sqrt(mSq);
+            return new Vec4(v._x * mInv, v._y * mInv, v._z * mInv, v._w * mInv);
+        }
+        return Vec4.Zero;
     }
 
     /// <summary>

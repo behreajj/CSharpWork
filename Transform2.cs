@@ -301,9 +301,9 @@ public class Transform2
     /// <param name="step">step</param>
     /// <param name="easing">easing function</param>
     /// <returns>this transform</returns>
-    public Transform2 ScaleTo( //
-        in Vec2 v, //
-        in Vec2 step, //
+    public Transform2 ScaleTo(
+        in Vec2 v,
+        in Vec2 step,
         in Func<Vec2, Vec2, Vec2, Vec2> easing)
     {
         Vec2 s = Vec2.CopySign(v, this.scale);

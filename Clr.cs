@@ -362,7 +362,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         float mSq = Vec3.MagSq(v);
         if (mSq > 0.0f)
         {
-            float mInv = 0.5f * Utils.InvSqrtUnchecked(mSq);
+            float mInv = 0.5f / MathF.Sqrt(mSq);
             return new Clr(
                 v.x * mInv + 0.5f,
                 v.y * mInv + 0.5f,
@@ -582,6 +582,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
 
     /// <summary>
     /// Converts a color from linear RGB to standard RGB (sRGB).
+    /// If the alpha flag is true, also transforms the alpha channel.
     /// </summary>
     /// <param name="c">linear color</param>
     /// <param name="alpha">transform the alpha channel</param>
@@ -744,6 +745,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
 
     /// <summary>
     /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Does not transform the colors in any way.
     /// </summary>
     /// <param name="a">origin color</param>
     /// <param name="b">destination color</param>
@@ -779,8 +781,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>premultiplied color</returns>
     public static Clr Premul(in Clr c)
     {
-        if (c.a <= 0.0f) { return Clr.ClearBlack; }
-        if (c.a >= 1.0f) { return new Clr(c._r, c._g, c._b, 1.0f); }
+        if (c._a <= 0.0f) { return Clr.ClearBlack; }
+        if (c._a >= 1.0f) { return new Clr(c._r, c._g, c._b, 1.0f); }
         return new Clr(
             c._r * c._a,
             c._g * c._a,
@@ -828,7 +830,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         return new Clr(
             Utils.QuantizeSigned(c._r, rLevels),
             Utils.QuantizeSigned(c._g, gLevels),
-            Utils.QuantizeSigned(c._b, gLevels), c._a);
+            Utils.QuantizeSigned(c._b, bLevels), c._a);
     }
 
     /// <summary>
@@ -883,7 +885,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         return new Clr(
             Utils.QuantizeUnsigned(c._r, rLevels),
             Utils.QuantizeUnsigned(c._g, gLevels),
-            Utils.QuantizeUnsigned(c._b, gLevels), c._a);
+            Utils.QuantizeUnsigned(c._b, bLevels), c._a);
     }
 
     /// <summary>
@@ -905,8 +907,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         return new Clr(
             Utils.QuantizeUnsigned(c._r, rLevels),
             Utils.QuantizeUnsigned(c._g, gLevels),
-            Utils.QuantizeUnsigned(c._b, gLevels),
-            Utils.QuantizeUnsigned(c._a, gLevels));
+            Utils.QuantizeUnsigned(c._b, bLevels),
+            Utils.QuantizeUnsigned(c._a, aLevels));
     }
 
     /// <summary>
@@ -970,6 +972,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
 
     /// <summary>
     /// Converts a color from standard RGB (sRGB) to linear RGB.
+    /// If the alpha flag is true, also transforms the alpha channel.
     /// </summary>
     /// <param name="c">the standard color</param>
     /// <param name="alpha">transform the alpha channel</param>
@@ -1183,8 +1186,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>unpremultiplied color</returns>
     public static Clr Unpremul(in Clr c)
     {
-        if (c.a <= 0.0f) { return Clr.ClearBlack; }
-        if (c.a >= 1.0f) { return new Clr(c._r, c._g, c._b, 1.0f); }
+        if (c._a <= 0.0f) { return Clr.ClearBlack; }
+        if (c._a >= 1.0f) { return new Clr(c._r, c._g, c._b, 1.0f); }
         float aInv = 1.0f / c._a;
         return new Clr(
             c._r * aInv,
@@ -1252,9 +1255,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     public static Clr XyzaToLinear(in Vec4 v)
     {
         return new Clr(
-            3.2408123f * v.x - 1.5373085f * v.y - 0.49858654f * v.z, //
-            -0.969243f * v.x + 1.8759663f * v.y + 0.041555032f * v.z, //
-            0.0556384f * v.x - 0.20400746f * v.y + 1.0571296f * v.z, //
+            3.2408123f * v.x - 1.5373085f * v.y - 0.49858654f * v.z,
+            -0.969243f * v.x + 1.8759663f * v.y + 0.041555032f * v.z,
+            0.0556384f * v.x - 0.20400746f * v.y + 1.0571296f * v.z,
             v.w);
     }
 

@@ -2,18 +2,18 @@ using System.Collections.Generic;
 using System.Text;
 
 /// <summary>
-/// Partitions space to improve collision and intersection tests. An octree
+/// Partitions space to improve collision and intersection tests. A quadtree
 /// node holds a list of points up to a given capacity; when that capacity
-/// is exceeded, the node is split into eight children nodes (octants) and
-/// its list of points is emptied into them. The octants are indexed in an
-/// array from negative (z, y, x) to positive (z, y, x).
+/// is exceeded, the node is split into four children nodes (quadrants) and
+/// its list of points is emptied into them. The quadrants are indexed in an
+/// array from negative (y, x) to positive (y, x).
 /// </summary>
-public class Octree
+public class Quadtree
 {
     /// <summary>
     /// The number of children created when a node is split.
     /// </summary>
-    public const int ChildCount = 8;
+    public const int ChildCount = 4;
 
     /// <summary>
     /// The default number of elements a node can hold.
@@ -28,12 +28,12 @@ public class Octree
     /// <summary>
     /// The bounding volume.
     /// </summary>
-    protected Bounds3 bounds;
+    protected Bounds2 bounds;
 
     /// <summary>
     /// Children nodes.
     /// </summary>
-    protected readonly List<Octree> children = new List<Octree>(Octree.ChildCount);
+    protected readonly List<Quadtree> children = new List<Quadtree>(Quadtree.ChildCount);
 
     /// <summary>
     /// The number of elements a node can hold before
@@ -49,13 +49,13 @@ public class Octree
     /// <summary>
     /// Elements contained by the node if it is leaf.
     /// </summary>
-    protected readonly SortedSet<Vec3> points = new SortedSet<Vec3>();
+    protected readonly SortedSet<Vec2> points = new SortedSet<Vec2>();
 
     /// <summary>
     /// The bounding volume.
     /// </summary>
     /// <value>bounds</value>
-    public Bounds3 Bounds
+    public Bounds2 Bounds
     {
         get
         {
@@ -106,7 +106,7 @@ public class Octree
 
         protected set
         {
-            this.level = value < Octree.RootLevel ? Octree.RootLevel : value;
+            this.level = value < Quadtree.RootLevel ? Quadtree.RootLevel : value;
         }
     }
 
@@ -115,17 +115,17 @@ public class Octree
     /// </summary>
     /// <param name="bounds">bounds</param>
     /// <param name="capacity">capacity</param>
-    public Octree(in Bounds3 bounds, in int capacity = Octree.DefaultCapacity) :
-        this(bounds, capacity, Octree.RootLevel)
+    public Quadtree(in Bounds2 bounds, in int capacity = Quadtree.DefaultCapacity) :
+        this(bounds, capacity, Quadtree.RootLevel)
     { }
 
     /// <summary>
-    /// Constructs an octree with a boundary and capacity at a level.
+    /// Constructs a quadtree with a boundary and capacity at a level.
     /// </summary>
     /// <param name="bounds">bounds</param>
     /// <param name="capacity">capacity</param>
     /// <param name="level">level</param>
-    protected Octree(in Bounds3 bounds, in int capacity, in int level)
+    protected Quadtree(in Bounds2 bounds, in int capacity, in int level)
     {
         this.Bounds = bounds;
         this.Capacity = capacity;
@@ -138,27 +138,27 @@ public class Octree
     /// <returns>string</returns>
     public override string ToString()
     {
-        return Octree.ToString(this);
+        return Quadtree.ToString(this);
     }
 
     /// <summary>
-    /// Inserts a point into the octree. Returns true if the point
-    /// was successfully inserted into the octree directly or indirectly through
+    /// Inserts a point into the quadtree. Returns true if the point
+    /// was successfully inserted into the quadtree directly or indirectly through
     /// one of its children. Returns false if the insertion was
     /// unsuccessful.
     /// </summary>
     /// <param name="v">point</param>
     /// <returns>success</returns>
-    public bool Insert(in Vec3 v)
+    public bool Insert(in Vec2 v)
     {
-        if (Bounds3.ContainsInclExcl(this.bounds, v))
+        if (Bounds2.ContainsInclExcl(this.bounds, v))
         {
-            foreach (Octree child in this.children)
+            foreach (Quadtree child in this.children)
             {
                 if (child.Insert(v)) { return true; }
             }
 
-            if (Octree.IsLeaf(this))
+            if (Quadtree.IsLeaf(this))
             {
                 this.points.Add(v);
                 if (this.points.Count > this.capacity)
@@ -182,10 +182,10 @@ public class Octree
     /// </summary>
     /// <param name="vs">points</param>
     /// <returns>success</returns>
-    public bool InsertAll(params Vec3[] vs)
+    public bool InsertAll(params Vec2[] vs)
     {
         bool flag = true;
-        foreach (Vec3 v in vs) { flag &= Insert(v); }
+        foreach (Vec2 v in vs) { flag &= Insert(v); }
         return flag;
     }
 
@@ -195,38 +195,38 @@ public class Octree
     /// </summary>
     /// <param name="vs">points</param>
     /// <returns>success</returns>
-    public bool InsertAll(in IEnumerable<Vec3> vs)
+    public bool InsertAll(in IEnumerable<Vec2> vs)
     {
         bool flag = true;
-        foreach (Vec3 v in vs) { flag &= Insert(v); }
+        foreach (Vec2 v in vs) { flag &= Insert(v); }
         return flag;
     }
 
     /// <summary>
-    /// Splits this octree node into eight child nodes.
+    /// Splits this quadtree node into four child nodes.
     /// </summary>
     /// <param name="childCapacity">child capacity</param>
-    /// <returns>this octree</returns>
-    protected Octree Split(in int childCapacity = Octree.DefaultCapacity)
+    /// <returns>this quadtree</returns>
+    protected Quadtree Split(in int childCapacity = Quadtree.DefaultCapacity)
     {
         this.children.Clear();
         int nextLevel = this.level + 1;
-        Bounds3[] childrenBounds = Bounds3.Split(this.bounds, 0.5f, 0.5f, 0.5f);
-        for (int i = 0; i < Octree.ChildCount; ++i)
+        Bounds2[] childrenBounds = Bounds2.Split(this.bounds, 0.5f, 0.5f);
+        for (int i = 0; i < Quadtree.ChildCount; ++i)
         {
-            this.children.Add(new Octree(childrenBounds[i], childCapacity, nextLevel));
+            this.children.Add(new Quadtree(childrenBounds[i], childCapacity, nextLevel));
         }
 
         // Pass on points to children.
         // Begin search for the appropriate child node at the
         // index where the previous point was inserted.
         int idxOffset = 0;
-        foreach (Vec3 v in this.points)
+        foreach (Vec2 v in this.points)
         {
             bool found = false;
-            for (int j = 0; !found && j < Octree.ChildCount; ++j)
+            for (int j = 0; !found && j < Quadtree.ChildCount; ++j)
             {
-                int k = (idxOffset + j) % Octree.ChildCount;
+                int k = (idxOffset + j) % Quadtree.ChildCount;
                 found = this.children[k].Insert(v);
                 if (found) { idxOffset = k; }
             }
@@ -241,15 +241,15 @@ public class Octree
     /// If include empty is true, then empty
     /// leaf nodes will append the center of their bounds instead.
     /// </summary>
-    /// <param name="o">octree</param>
+    /// <param name="q">quadtree</param>
     /// <param name="includeEmpty">include empty</param>
     /// <returns>centers array</returns>
-    public static Vec3[] CentersMean(
-        in Octree o,
+    public static Vec2[] CentersMean(
+        in Quadtree q,
         in bool includeEmpty = false)
     {
-        List<Vec3> result = new List<Vec3>();
-        Octree.CentersMean(o, result, includeEmpty);
+        List<Vec2> result = new List<Vec2>();
+        Quadtree.CentersMean(q, result, includeEmpty);
         return result.ToArray();
     }
 
@@ -258,37 +258,37 @@ public class Octree
     /// If include empty is true, then empty
     /// leaf nodes will append the center of their bounds instead.
     /// </summary>
-    /// <param name="o">octree</param>
+    /// <param name="q">quadtree</param>
     /// <param name="target">target</param>
     /// <param name="includeEmpty">include empty</param>
     /// <returns>target list</returns>
-    protected static List<Vec3> CentersMean(
-        in Octree o,
-        in List<Vec3> target,
+    protected static List<Vec2> CentersMean(
+        in Quadtree q,
+        in List<Vec2> target,
         in bool includeEmpty = false)
     {
-        foreach (Octree child in o.children)
+        foreach (Quadtree child in q.children)
         {
-            Octree.CentersMean(child, target, includeEmpty);
+            Quadtree.CentersMean(child, target, includeEmpty);
         }
 
-        if (Octree.IsLeaf(o))
+        if (Quadtree.IsLeaf(q))
         {
-            int ptsLen = o.points.Count;
+            int ptsLen = q.points.Count;
             if (ptsLen > 1)
             {
-                Vec3 sum = Vec3.Zero;
-                foreach (Vec3 v in o.points) { sum += v; }
-                Vec3 avg = sum / ptsLen;
+                Vec2 sum = Vec2.Zero;
+                foreach (Vec2 v in q.points) { sum += v; }
+                Vec2 avg = sum / ptsLen;
                 target.Add(avg);
             }
             else if (ptsLen > 0)
             {
-                target.AddRange(o.points);
+                target.AddRange(q.points);
             }
             else if (includeEmpty)
             {
-                target.Add(Bounds3.Center(o.bounds));
+                target.Add(Bounds2.Center(q.bounds));
             }
         }
 
@@ -299,15 +299,15 @@ public class Octree
     /// Counts the number of leaves held by a node.
     /// Returns 1 if the node is itself a leaf.
     /// </summary>
-    /// <param name="o">octree</param>
+    /// <param name="q">quadtree</param>
     /// <returns>sum</returns>
-    public static int CountLeaves(in Octree o)
+    public static int CountLeaves(in Quadtree q)
     {
-        if (Octree.IsLeaf(o)) { return 1; }
+        if (Quadtree.IsLeaf(q)) { return 1; }
         int sum = 0;
-        foreach (Octree child in o.children)
+        foreach (Quadtree child in q.children)
         {
-            sum += Octree.CountLeaves(child);
+            sum += Quadtree.CountLeaves(child);
         }
         return sum;
     }
@@ -317,99 +317,29 @@ public class Octree
     /// </summary>
     /// <param name="o">octree</param>
     /// <returns>sum</returns>
-    public static int CountPoints(in Octree o)
+    public static int CountPoints(in Quadtree q)
     {
-        if (Octree.IsLeaf(o)) { return o.points.Count; }
+        if (Quadtree.IsLeaf(q)) { return q.points.Count; }
         int sum = 0;
-        foreach (Octree child in o.children)
+        foreach (Quadtree child in q.children)
         {
-            sum += Octree.CountPoints(child);
+            sum += Quadtree.CountPoints(child);
         }
         return sum;
     }
 
     /// <summary>
-    /// Creates an octree from an array of colors.
-    /// </summary>
-    /// <param name="colors">colors</param>
-    /// <param name="model">color model</param>
-    /// <param name="capacity">capacity</param>
-    /// <returns>octree</returns>
-    public static Octree FromColors(
-        in IEnumerable<Clr> colors,
-        in ClrModel model = ClrModel.CieLab,
-        in int capacity = Octree.DefaultCapacity)
-    {
-        Octree o;
-        switch (model)
-        {
-            case ClrModel.Standard:
-                {
-                    o = new Octree(Bounds3.UnitCubeUnsigned, capacity);
-                    foreach (Clr c in colors)
-                    {
-                        o.Insert(new Vec3(c.r, c.g, c.b));
-                    }
-                }
-                break;
-            case ClrModel.Linear:
-                {
-                    o = new Octree(Bounds3.UnitCubeUnsigned, capacity);
-                    foreach (Clr c in colors)
-                    {
-                        Clr l = Clr.StandardToLinear(c);
-                        o.Insert(new Vec3(l.r, l.g, l.b));
-                    }
-                }
-                break;
-            case ClrModel.CieXyz:
-                {
-                    o = new Octree(Bounds3.UnitCubeUnsigned, capacity);
-                    foreach (Clr c in colors)
-                    {
-                        Clr l = Clr.StandardToLinear(c);
-                        Vec4 v = Clr.LinearToXyza(l);
-                        o.Insert(v.xyz);
-                    }
-                }
-                break;
-            case ClrModel.Normal:
-                {
-                    o = new Octree(Bounds3.UnitCubeSigned, capacity);
-                    foreach (Clr c in colors)
-                    {
-                        o.Insert(Vec3.FromColor(c));
-                    }
-                }
-                break;
-            case ClrModel.CieLch:
-            case ClrModel.CieLab:
-            default:
-                {
-                    o = new Octree(Bounds3.CieLab, capacity, Octree.RootLevel);
-                    foreach (Clr c in colors)
-                    {
-                        Vec4 lab = Clr.StandardToLaba(c);
-                        o.Insert(lab.xyz);
-                    }
-                }
-                break;
-        }
-        return o;
-    }
-
-    /// <summary>
-    /// Creates an octree from an array of points.
+    /// Creates a quadtree from an array of points.
     /// </summary>
     /// <param name="points">points</param>
     /// <param name="capacity">capacity</param>
-    /// <returns>octree</returns>
-    public static Octree FromPoints(
-        in IEnumerable<Vec3> points,
-        in int capacity = Octree.DefaultCapacity)
+    /// <returns>quadtree</returns>
+    public static Quadtree FromPoints(
+        in IEnumerable<Vec2> points,
+        in int capacity = Quadtree.DefaultCapacity)
     {
-        Bounds3 b = Bounds3.FromPoints(points);
-        Octree o = new Octree(b, capacity);
+        Bounds2 b = Bounds2.FromPoints(points);
+        Quadtree o = new Quadtree(b, capacity);
         o.InsertAll(points);
         return o;
     }
@@ -418,94 +348,106 @@ public class Octree
     /// Evaluates whether the node has any children.
     /// Returns true if no; otherwise false.
     /// </summary>
-    /// <param name="o">octree</param>
+    /// <param name="q">quadtree</param>
     /// <returns>evaluation</returns>
-    public static bool IsLeaf(in Octree o)
+    public static bool IsLeaf(in Quadtree q)
     {
-        return o.children.Count < 1;
+        return q.children.Count < 1;
     }
 
     /// <summary>
     /// Gets the maximum level, or depth, of the node and its children.
     /// </summary>
-    /// <param name="o">octree</param>
+    /// <param name="q">quadtree</param>
     /// <returns>level</returns>
-    public static int MaxLevel(in Octree o)
+    public static int MaxLevel(in Quadtree q)
     {
-        int mxLvl = o.level;
-        foreach (Octree child in o.children)
+        int mxLvl = q.level;
+        foreach (Quadtree child in q.children)
         {
-            int lvl = Octree.MaxLevel(child);
+            int lvl = Quadtree.MaxLevel(child);
             if (lvl > mxLvl) { mxLvl = lvl; }
         }
         return mxLvl;
     }
 
     /// <summary>
-    /// Queries a node with a box range.
+    /// Returns a string representation of a quadtree.
     /// </summary>
-    /// <param name="o">octree</param>
+    /// <param name="q">quadtree</param>
+    /// <param name="places">number of decimal places</param>
+    /// <returns>string</returns>
+    public static string ToString(in Quadtree q, in int places = 4)
+    {
+        return Quadtree.ToString(new StringBuilder(1024),
+            q, places).ToString();
+    }
+
+    /// <summary>
+    /// Queries a node with a rectangular range.
+    /// </summary>
+    /// <param name="q">quadtree</param>
     /// <param name="range">bounds</param>
     /// <returns>found points</returns>
-    public static Vec3[] Query(
-        in Octree o,
-        in Bounds3 range)
+    public static Vec2[] Query(
+        in Quadtree q,
+        in Bounds2 range)
     {
-        SortedDictionary<float, Vec3> found = new SortedDictionary<float, Vec3>();
-        Octree.Query(o, range, found);
-        Vec3[] arr = new Vec3[found.Count];
+        SortedDictionary<float, Vec2> found = new SortedDictionary<float, Vec2>();
+        Quadtree.Query(q, range, found);
+        Vec2[] arr = new Vec2[found.Count];
         found.Values.CopyTo(arr, 0);
         return arr;
     }
 
     /// <summary>
-    /// Queries a node with a spherical range.
+    /// Queries a node with a circular range.
     /// </summary>
-    /// <param name="o">octree</param>
+    /// <param name="q">quadtree</param>
     /// <param name="center">sphere center</param>
     /// <param name="radius">sphere radius</param>
     /// <returns>found points</returns>
-    public static Vec3[] Query(
-        in Octree o,
-        in Vec3 center,
+    public static Vec2[] Query(
+        in Quadtree q,
+        in Vec2 center,
         in float radius)
     {
-        SortedDictionary<float, Vec3> found = new SortedDictionary<float, Vec3>();
-        Octree.Query(o, center, radius, found);
-        Vec3[] arr = new Vec3[found.Count];
+        SortedDictionary<float, Vec2> found = new SortedDictionary<float, Vec2>();
+        Quadtree.Query(q, center, radius, found);
+        Vec2[] arr = new Vec2[found.Count];
         found.Values.CopyTo(arr, 0);
         return arr;
     }
 
     /// <summary>
-    /// Queries a node with a box range.
+    /// Queries a node with a rectangular range.
     /// Appends results to a dictionary where the Chebyshev
     /// distance is the key and the point is the value.
     /// </summary>
-    /// <param name="o">octree</param>
+    /// <param name="q">quadtree</param>
     /// <param name="range">bounds</param>
     /// <param name="found">found dictionary</param>
     /// <returns>distance points dictionary</returns>
-    protected static SortedDictionary<float, Vec3> Query(
-        in Octree o,
-        in Bounds3 range,
-        in SortedDictionary<float, Vec3> found)
+    protected static SortedDictionary<float, Vec2> Query(
+        in Quadtree q,
+        in Bounds2 range,
+        in SortedDictionary<float, Vec2> found)
     {
-        if (Bounds3.Intersect(o.bounds, range))
+        if (Bounds2.Intersect(q.bounds, range))
         {
-            foreach (Octree child in o.children)
+            foreach (Quadtree child in q.children)
             {
-                Octree.Query(child, range, found);
+                Quadtree.Query(child, range, found);
             }
 
-            if (Octree.IsLeaf(o))
+            if (Quadtree.IsLeaf(q))
             {
-                Vec3 rCenter = Bounds3.Center(range);
-                foreach (Vec3 v in o.points)
+                Vec2 rCenter = Bounds2.Center(range);
+                foreach (Vec2 v in q.points)
                 {
-                    if (Bounds3.ContainsInclExcl(range, v))
+                    if (Bounds2.ContainsInclExcl(range, v))
                     {
-                        found[Vec3.DistChebyshev(v, rCenter)] = v;
+                        found[Vec2.DistChebyshev(v, rCenter)] = v;
                     }
                 }
             }
@@ -515,34 +457,34 @@ public class Octree
     }
 
     /// <summary>
-    /// Queries a node with a spherical range.
+    /// Queries a node with a circular range.
     /// Appends results to a dictionary where the distance
     /// squared is the key and the point is the value.
     /// </summary>
-    /// <param name="o">octree</param>
+    /// <param name="q">quadtree</param>
     /// <param name="center">sphere center</param>
     /// <param name="radius">sphere radius</param>
     /// <param name="found">found dictionary</param>
     /// <returns>distance points dictionary</returns>
-    protected static SortedDictionary<float, Vec3> Query(
-        in Octree o,
-        in Vec3 center,
+    protected static SortedDictionary<float, Vec2> Query(
+        in Quadtree q,
+        in Vec2 center,
         in float radius,
-        in SortedDictionary<float, Vec3> found)
+        in SortedDictionary<float, Vec2> found)
     {
-        if (Bounds3.Intersect(o.bounds, center, radius))
+        if (Bounds2.Intersect(q.bounds, center, radius))
         {
-            foreach (Octree child in o.children)
+            foreach (Quadtree child in q.children)
             {
-                Octree.Query(child, center, radius, found);
+                Quadtree.Query(child, center, radius, found);
             }
 
-            if (Octree.IsLeaf(o))
+            if (Quadtree.IsLeaf(q))
             {
                 float rsq = radius * radius;
-                foreach (Vec3 v in o.points)
+                foreach (Vec2 v in q.points)
                 {
-                    float dsq = Vec3.DistSq(center, v);
+                    float dsq = Vec2.DistSq(center, v);
                     if (dsq < rsq)
                     {
                         found[dsq] = v;
@@ -555,44 +497,32 @@ public class Octree
     }
 
     /// <summary>
-    /// Returns a string representation of an octree.
-    /// </summary>
-    /// <param name="o">octree</param>
-    /// <param name="places">number of decimal places</param>
-    /// <returns>string</returns>
-    public static string ToString(in Octree o, in int places = 4)
-    {
-        return Octree.ToString(new StringBuilder(2048),
-            o, places).ToString();
-    }
-
-    /// <summary>
-    /// Appendsa a representation of an octree to a string builder.
+    /// Appendsa a representation of a quadtree to a string builder.
     /// </summary>
     /// <param name="sb">string builder</param>
-    /// <param name="o">octree</param>
+    /// <param name="q">quadtree</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
     public static StringBuilder ToString(
         in StringBuilder sb,
-        in Octree o,
+        in Quadtree q,
         in int places = 4)
     {
         sb.Append("{ bounds: ");
-        Bounds3.ToString(sb, o.bounds, places);
+        Bounds2.ToString(sb, q.bounds, places);
         sb.Append(", capacity: ");
-        sb.Append(o.capacity);
+        sb.Append(q.capacity);
 
-        if (Octree.IsLeaf(o))
+        if (Quadtree.IsLeaf(q))
         {
             sb.Append(", points: [ ");
-            SortedSet<Vec3> points = o.points;
+            SortedSet<Vec2> points = q.points;
             int i = -1;
             int last = points.Count - 1;
-            foreach (Vec3 v in points)
+            foreach (Vec2 v in points)
             {
                 ++i;
-                Vec3.ToString(sb, v, places);
+                Vec2.ToString(sb, v, places);
                 if (i < last) sb.Append(", ");
             }
             sb.Append(' ');
@@ -601,15 +531,15 @@ public class Octree
         else
         {
             sb.Append(", children: [ ");
-            List<Octree> children = o.children;
+            List<Quadtree> children = q.children;
             int last = children.Count - 1;
             for (int i = 0; i < last; ++i)
             {
-                Octree child = children[i];
-                Octree.ToString(sb, child, places);
+                Quadtree child = children[i];
+                Quadtree.ToString(sb, child, places);
                 sb.Append(", ");
             }
-            Octree.ToString(sb, children[last], places);
+            Quadtree.ToString(sb, children[last], places);
 
             sb.Append(' ');
             sb.Append(']');

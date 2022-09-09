@@ -244,6 +244,60 @@ public static class Utils
     }
 
     /// <summary>
+    /// Finds the distance between two angles.
+    /// Angles are expected to be in radians.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>distance</returns>
+    public static float DistAngle(in float a, in float b)
+    {
+        return Utils.DistAngleSigned(a, b);
+    }
+
+    /// <summary>
+    /// Finds the distance between two periodic values.
+    /// Example ranges are 360.0 for degrees, 1.0 for hues or
+    /// Tau for radians.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>distance</returns>
+    public static float DistAngle(in float a, in float b, in float range)
+    {
+        return Utils.DistAngleSigned(a, b, range);
+    }
+
+    /// <summary>
+    /// Finds the signed distance between two angles.
+    /// Angles are expected to be in radians.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>signed distance</returns>
+    public static float DistAngleSigned(in float a, in float b)
+    {
+        float diff = (a - b + MathF.PI) % Utils.Tau - MathF.PI;
+        return diff < -MathF.PI ? diff + Utils.Tau : diff;
+    }
+
+    /// <summary>
+    /// Finds the signed distance between two periodic values.
+    /// Example ranges are 360.0 for degrees, 1.0 for hues or
+    /// Tau for radians.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <param name="range">range</param>
+    /// <returns>signed distance</returns>
+    public static float DistAngleSigned(in float a, in float b, in float range)
+    {
+        float halfRange = range * 0.5f;
+        float diff = (a - b + halfRange) % range - halfRange;
+        return diff < -halfRange ? diff + range : diff;
+    }
+
+    /// <summary>
     /// Finds the unsigned distance between two angles.
     /// Angles are expected to be in radians.
     /// </summary>

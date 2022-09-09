@@ -380,6 +380,26 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
+    /// Increments all components of a vector by 1.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>increment</returns>
+    public static Vec3 operator ++(in Vec3 v)
+    {
+        return new Vec3(v._x + 1.0f, v._y + 1.0f, v._z + 1.0f);
+    }
+
+    /// <summary>
+    /// Decrements all components of a vector by 1.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>decrement</returns>
+    public static Vec3 operator --(in Vec3 v)
+    {
+        return new Vec3(v._x - 1.0f, v._y - 1.0f, v._z - 1.0f);
+    }
+
+    /// <summary>
     /// Multiplies two vectors, component-wise, i.e.,
     /// returns the Hadamard product.
     /// </summary>
@@ -1080,10 +1100,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     {
         if (c != 0.0f)
         {
-            float dx = MathF.Pow(Utils.Diff(b._x, a._x), c);
-            float dy = MathF.Pow(Utils.Diff(b._y, a._y), c);
-            float dz = MathF.Pow(Utils.Diff(b._z, a._z), c);
-            return MathF.Pow(dx + dy + dz, 1.0f / c);
+            double cd = c;
+            return (float)Math.Pow(
+                Math.Pow(Math.Abs(b._x - a._x), cd) +
+                Math.Pow(Math.Abs(b._y - a._y), cd) +
+                Math.Pow(Math.Abs(b._z - a._z), cd),
+                1.0d / cd);
         }
         return 0.0f;
     }
@@ -1246,9 +1268,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
                 lowerBound,
                 upperBound,
                 new Vec3(
-                    (float)j * jToStep,
-                    (float)i * iToStep,
-                    (float)h * hToStep));
+                    j * jToStep,
+                    i * iToStep,
+                    h * hToStep));
         }
 
         return result;
@@ -1442,7 +1464,13 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>unit vector</returns>
     public static Vec3 Normalize(in Vec3 v)
     {
-        return v / Vec3.Mag(v);
+        float mSq = v._x * v._x + v._y * v._y + v._z * v._z;
+        if (mSq > 0.0f)
+        {
+            float mInv = 1.0f / MathF.Sqrt(mSq);
+            return new Vec3(v._x * mInv, v._y * mInv, v._z * mInv);
+        }
+        return Vec3.Zero;
     }
 
     /// <summary>

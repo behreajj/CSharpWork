@@ -133,10 +133,10 @@ public class Mesh3
     /// <param name="coords">coordinates</param>
     /// <param name="texCoords">texture coordinates</param>
     /// <param name="normals">normals</param>
-    public Mesh3( //
-        in Loop3[] loops, //
-        in Vec3[] coords, //
-        in Vec2[] texCoords, //
+    public Mesh3(
+        in Loop3[] loops,
+        in Vec3[] coords,
+        in Vec2[] texCoords,
         in Vec3[] normals)
     {
         this.loops = loops;
@@ -602,7 +602,6 @@ public class Mesh3
             int vsLen = this.coords.Length;
             for (int i = 0; i < vsLen; ++i) { this.coords[i] *= s; }
         }
-
         return this;
     }
 
@@ -625,7 +624,6 @@ public class Mesh3
                 this.normals[i] = Vec3.Normalize(this.normals[i] / s);
             }
         }
-
         return this;
     }
 
@@ -1225,14 +1223,14 @@ public class Mesh3
     /// <param name="poly">polygon type</param>
     /// <param name="profile">UV profile</param>
     /// <returns>capsule</returns>
-    public static Mesh3 Capsule( //
-        in Mesh3 target, //
-        in int longitudes = 32, //
-        in int latitudes = 16, //
-        in int rings = 0, //
-        in float depth = 1.0f, //
-        in float radius = 0.5f, //
-        in PolyType poly = PolyType.Tri, //
+    public static Mesh3 Capsule(
+        in Mesh3 target,
+        in int longitudes = 32,
+        in int latitudes = 16,
+        in int rings = 0,
+        in float depth = 1.0f,
+        in float radius = 0.5f,
+        in PolyType poly = PolyType.Tri,
         UvProfiles.Capsule profile = UvProfiles.Capsule.Aspect)
     {
         // TODO: REFACTOR to build faces from bottom.
@@ -1880,10 +1878,10 @@ public class Mesh3
     /// <param name="size">size</param>
     /// <param name="poly">polygon type</param>
     /// <returns>dodecahedron</returns>
-    public static Mesh3 CubeSphere( //
-        in Mesh3 target, //
-        in int itrs = 3, //
-        in float size = 0.5f, //
+    public static Mesh3 CubeSphere(
+        in Mesh3 target,
+        in int itrs = 3,
+        in float size = 0.5f,
         in PolyType poly = PolyType.Tri)
     {
         Mesh3.Cube(
@@ -2258,12 +2256,12 @@ public class Mesh3
     /// <param name="radius">radius</param>
     /// <param name="poly">polygon type</param>
     /// <returns>the torus</returns>
-    public static Mesh3 Torus( //
-        in Mesh3 target, //
-        in int sectors = 32, //
-        in int panels = 16, //
-        in float thickness = 0.5f, //
-        in float radius = 0.5f, //
+    public static Mesh3 Torus(
+        in Mesh3 target,
+        in int sectors = 32,
+        in int panels = 16,
+        in float thickness = 0.5f,
+        in float radius = 0.5f,
         in PolyType poly = PolyType.Tri)
     {
         // Validate arguments.
@@ -2384,8 +2382,9 @@ public class Mesh3
     /// <param name="padding">integer padding</param>
     /// <param name="places">real number decimals</param>
     /// <returns>string</returns>
-    public static string ToString(in Mesh3 m, //
-        in int padding = 1, //
+    public static string ToString(
+        in Mesh3 m,
+        in int padding = 1,
         in int places = 4)
     {
         return Mesh3.ToString(new StringBuilder(2048),
@@ -2400,10 +2399,10 @@ public class Mesh3
     /// <param name="padding">integer padding</param>
     /// <param name="places">real number decimals</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString( //
-        in StringBuilder sb, //
-        in Mesh3 m, //
-        in int padding = 1, //
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Mesh3 m,
+        in int padding = 1,
         in int places = 4)
     {
         sb.Append("{ loops: ");

@@ -382,7 +382,6 @@ public class Mesh2
     ///<returns>edges array</returns>
     public Edge2[] GetEdgesDirected()
     {
-
         int loopsLen = this.loops.Length;
         SortedSet<Edge2> result = new SortedSet<Edge2>();
 
@@ -673,7 +672,6 @@ public class Mesh2
             int vsLen = this.coords.Length;
             for (int i = 0; i < vsLen; ++i) { this.coords[i] *= s; }
         }
-
         return this;
     }
 
@@ -690,7 +688,6 @@ public class Mesh2
             int vsLen = this.coords.Length;
             for (int i = 0; i < vsLen; ++i) { this.coords[i] *= s; }
         }
-
         return this;
     }
 
@@ -1081,13 +1078,13 @@ public class Mesh2
     /// <summary>
     /// </summary>
     /// <returns>arc</returns>
-    public static Mesh2 Arc( //
-        in Mesh2 target, //
-        in int sectors = 32, //
-        in float radius = 0.5f, //
-        float oculus = 0.5f, //
-        in float startAngle = 0.0f, //
-        in float stopAngle = MathF.PI, //
+    public static Mesh2 Arc(
+        in Mesh2 target,
+        in int sectors = 32,
+        in float radius = 0.5f,
+        float oculus = 0.5f,
+        in float startAngle = 0.0f,
+        in float stopAngle = MathF.PI,
         in PolyType poly = PolyType.Tri)
     {
         float a1 = Utils.WrapRadians(startAngle) * Utils.OneTau;
@@ -1256,10 +1253,10 @@ public class Mesh2
     /// <param name="cellRadius">cell radius</param>
     /// <param name="cellMargin">margin between cells</param>
     /// <returns>hexagon grid</returns>
-    public static Mesh2 GridHex( //
-        in Mesh2 target, //
-        in int rings = 4, //
-        in float cellRadius = 0.5f, //
+    public static Mesh2 GridHex(
+        in Mesh2 target,
+        in int rings = 4,
+        in float cellRadius = 0.5f,
         in float cellMargin = 0.0325f)
     {
         int vRings = Utils.Max(1, rings);
@@ -1343,10 +1340,10 @@ public class Mesh2
     /// <param name="poly">polygon type</param>
     /// <param name="target">output mesh</param>
     /// <returns>plane</returns>
-    public static Mesh2 Plane( //
-        in Mesh2 target, //
-        in int cols = 3, //
-        in int rows = 3, //
+    public static Mesh2 Plane(
+        in Mesh2 target,
+        in int cols = 3,
+        in int rows = 3,
         in PolyType poly = PolyType.Tri)
     {
         int rVal = Utils.Max(1, rows);
@@ -1570,12 +1567,12 @@ public class Mesh2
     /// <param name="poly">polygon type</param>
     /// <param name="profile">UV Profile</param>
     /// <returns>rectangle</returns>
-    public static Mesh2 Rect( //
-        in Mesh2 target, //
-        in Vec2 lb, in Vec2 ub, //
-        in float rnd = 0.25f, //
-        in int res = 8, //
-        in PolyType poly = PolyType.Tri, //
+    public static Mesh2 Rect(
+        in Mesh2 target,
+        in Vec2 lb, in Vec2 ub,
+        in float rnd = 0.25f,
+        in int res = 8,
+        in PolyType poly = PolyType.Tri,
         in UvProfiles.Rect profile = UvProfiles.Rect.Stretch)
     {
         return Mesh2.Rect(target,
@@ -1603,14 +1600,14 @@ public class Mesh2
     /// <param name="poly">polygon type</param>
     /// <param name="profile">UV Profile</param>
     /// <returns>rectangle</returns>
-    public static Mesh2 Rect( //
-        in Mesh2 target, //
-        in Vec2 lb, in Vec2 ub, //
-        in float tl = 0.25f, in float tr = 0.25f, //
-        in float br = 0.25f, in float bl = 0.25f, //
-        in int tlRes = 8, in int trRes = 8, //
-        in int brRes = 8, in int blRes = 8, //
-        in PolyType poly = PolyType.Tri, //
+    public static Mesh2 Rect(
+        in Mesh2 target,
+        in Vec2 lb, in Vec2 ub,
+        in float tl = 0.25f, in float tr = 0.25f,
+        in float br = 0.25f, in float bl = 0.25f,
+        in int tlRes = 8, in int trRes = 8,
+        in int brRes = 8, in int blRes = 8,
+        in PolyType poly = PolyType.Tri,
         in UvProfiles.Rect profile = UvProfiles.Rect.Stretch)
     {
         // Validate corners.
@@ -2128,9 +2125,9 @@ public class Mesh2
     /// <param name="padding">integer padding</param>
     /// <param name="places">real number decimals</param>
     /// <returns>string</returns>
-    public static string ToString( //
-        in Mesh2 m, //
-        in int padding = 1, //
+    public static string ToString(
+        in Mesh2 m,
+        in int padding = 1,
         in int places = 4)
     {
         return Mesh2.ToString(new StringBuilder(2048),
@@ -2145,10 +2142,10 @@ public class Mesh2
     /// <param name="padding">integer padding</param>
     /// <param name="places">real number decimals</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString( //
-        in StringBuilder sb, //
-        in Mesh2 m, //
-        in int padding = 1, //
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Mesh2 m,
+        in int padding = 1,
         in int places = 4)
     {
         sb.Append("{ loops: ");

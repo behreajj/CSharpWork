@@ -319,6 +319,26 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
+    /// Increments all components of a vector by 1.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>increment</returns>
+    public static Vec2 operator ++(in Vec2 v)
+    {
+        return new Vec2(v._x + 1.0f, v._y + 1.0f);
+    }
+
+    /// <summary>
+    /// Decrements all components of a vector by 1.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>decrement</returns>
+    public static Vec2 operator --(in Vec2 v)
+    {
+        return new Vec2(v._x - 1.0f, v._y - 1.0f);
+    }
+
+    /// <summary>
     /// Multiplies two vectors, component-wise, i.e.,
     /// returns the Hadamard product.
     /// </summary>
@@ -928,10 +948,11 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     {
         if (c != 0.0f)
         {
-            // TODO: Use double precision, then demote?
-            float dx = MathF.Pow(Utils.Diff(b._x, a._x), c);
-            float dy = MathF.Pow(Utils.Diff(b._y, a._y), c);
-            return MathF.Pow(dx + dy, 1.0f / c);
+            double cd = c;
+            return (float)Math.Pow(
+                Math.Pow(Math.Abs(b._x - a._x), cd) +
+                Math.Pow(Math.Abs(b._y - a._y), cd),
+                1.0d / cd);
         }
         return 0.0f;
     }
@@ -1052,8 +1073,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
                 lowerBound,
                 upperBound,
                 new Vec2(
-                    (float)j * jToStep,
-                    (float)i * iToStep));
+                    j * jToStep,
+                    i * iToStep));
         }
 
         return result;
@@ -1238,7 +1259,13 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>unit vector</returns>
     public static Vec2 Normalize(in Vec2 v)
     {
-        return v / Vec2.Mag(v);
+        float mSq = v._x * v._x + v._y * v._y;
+        if (mSq > 0.0f)
+        {
+            float mInv = 1.0f / MathF.Sqrt(mSq);
+            return new Vec2(v._x * mInv, v._y * mInv);
+        }
+        return Vec2.Zero;
     }
 
     /// <summary>

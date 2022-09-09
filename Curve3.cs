@@ -18,7 +18,7 @@ public class Curve3 : IEnumerable
     /// <summary>
     ///  The list of knots contained by the curve.
     /// </summary>
-    protected List<Knot3> knots = new List<Knot3>();
+    protected readonly List<Knot3> knots = new List<Knot3>();
 
     /// <summary>
     /// A flag for whether or not the curve is a closed loop.

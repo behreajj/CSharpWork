@@ -1033,7 +1033,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     {
         Vec3 i = q.imag;
         float mSq = q.real * q.real + Vec3.MagSq(i);
-        if (mSq != 0.0f)
+        if (mSq > 0.0f)
         {
             float mInv = 1.0f / MathF.Sqrt(mSq);
             return new Quat(q.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
