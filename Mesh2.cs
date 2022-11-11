@@ -318,8 +318,7 @@ public class Mesh2
         int vsLen = this.coords.Length;
         for (int i = 0; i < vsLen; ++i)
         {
-            Vec2 v = this.coords[i];
-            this.coords[i] = new Vec2(-v.x, v.y);
+            this.coords[i] = Vec2.FlipX(this.coords[i]);
         }
         this.ReverseFaces();
         return this;
@@ -336,8 +335,7 @@ public class Mesh2
         int vsLen = this.coords.Length;
         for (int i = 0; i < vsLen; ++i)
         {
-            Vec2 v = this.coords[i];
-            this.coords[i] = new Vec2(v.x, -v.y);
+            this.coords[i] = Vec2.FlipY(this.coords[i]);
         }
         this.ReverseFaces();
         return this;
@@ -1076,8 +1074,18 @@ public class Mesh2
     }
 
     /// <summary>
+    /// Creates an arc from a start angle to a stop angle.
+    /// If the start and stop angle are approximately equal,
+    /// returns an inset polygon with the interior face removed.
     /// </summary>
-    /// <returns>arc</returns>
+    /// <param name="target">target mesh</param>
+    /// <param name="sectors">number of sides</param>
+    /// <param name="radius">radius</param>
+    /// <param name="oculus">oculus</param>
+    /// <param name="startAngle">start angle</param>
+    /// <param name="stopAngle">stop angle</param>
+    /// <param name="poly">polygon type</param>
+    /// <returns>polygon</returns>
     public static Mesh2 Arc(
         in Mesh2 target,
         in int sectors = 32,
@@ -1092,7 +1100,7 @@ public class Mesh2
         float arcLen1 = Utils.RemFloor(b1 - a1, 1.0f);
         float oculFac = Utils.Clamp(oculus, Utils.Epsilon, 1.0f - Utils.Epsilon);
 
-        /* 1.0 / 720.0 = 0.001388889f */
+        // 1.0 / 720.0 = 0.001388889f 
         if (arcLen1 < 0.00139f)
         {
             Mesh2.Polygon(
@@ -1436,11 +1444,11 @@ public class Mesh2
     /// <param name="rotation">rotation</param>
     /// <param name="poly">polygon type</param>
     /// <returns>polygon</returns>
-    public static Mesh2 Polygon( //
-        in Mesh2 target, //
-        in int sectors = 32, //
-        in float radius = 0.5f, //
-        float rotation = Utils.HalfPi, //
+    public static Mesh2 Polygon(
+        in Mesh2 target,
+        in int sectors = 32,
+        in float radius = 0.5f,
+        float rotation = Utils.HalfPi,
         in PolyType poly = PolyType.Tri)
     {
         int seg = Utils.Max(3, sectors);
@@ -1782,7 +1790,7 @@ public class Mesh2
         float brToTheta = Utils.HalfPi / (vbrRes + 1.0f);
         float trToTheta = Utils.HalfPi / (vtrRes + 1.0f);
 
-        // Top left arc. Reverse theta progress.
+        // Top left corner. Reverse theta progress.
         if (tlIsRnd)
         {
             for (int i = 0; i < vtlRes; ++i)
@@ -1811,7 +1819,7 @@ public class Mesh2
             vts[tlCrnrIdxStr + 1] = new Vec2(u, v);
         }
 
-        // Bottom left arc.
+        // Bottom left corner.
         if (blIsRnd)
         {
             for (int i = 0; i < vblRes; ++i)
@@ -1839,7 +1847,7 @@ public class Mesh2
             vts[blCrnrIdxStr + 1] = new Vec2(u, v);
         }
 
-        // Bottom right arc. Reverse theta progress.
+        // Bottom right corner. Reverse theta progress.
         if (brIsRnd)
         {
             for (int i = 0; i < vbrRes; ++i)
@@ -1868,7 +1876,7 @@ public class Mesh2
             vts[brCrnrIdxStr + 1] = new Vec2(u, v);
         }
 
-        // Top right arc.
+        // Top right corner.
         if (trIsRnd)
         {
             for (int i = 0; i < vtrRes; ++i)

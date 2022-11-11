@@ -300,8 +300,7 @@ public class Mesh3
         int vsLen = this.coords.Length;
         for (int i = 0; i < vsLen; ++i)
         {
-            Vec3 v = this.coords[i];
-            this.coords[i] = new Vec3(-v.x, v.y, v.z);
+            this.coords[i] = Vec3.FlipX(this.coords[i]);
         }
         this.ReverseFaces();
         return this;
@@ -318,8 +317,7 @@ public class Mesh3
         int vsLen = this.coords.Length;
         for (int i = 0; i < vsLen; ++i)
         {
-            Vec3 v = this.coords[i];
-            this.coords[i] = new Vec3(v.x, -v.y, v.z);
+            this.coords[i] = Vec3.FlipY(this.coords[i]);
         }
         this.ReverseFaces();
         return this;
@@ -336,8 +334,7 @@ public class Mesh3
         int vsLen = this.coords.Length;
         for (int i = 0; i < vsLen; ++i)
         {
-            Vec3 v = this.coords[i];
-            this.coords[i] = new Vec3(v.x, v.y, -v.z);
+            this.coords[i] = Vec3.FlipZ(this.coords[i]);
         }
         this.ReverseFaces();
         return this;
@@ -1377,7 +1374,7 @@ public class Mesh3
             float cosPhiSouth = MathF.Cos(phi);
 
             // Use trigonometric symmetries to avoid calculating another sine
-            // and
+            // and cosine.
             float sinPhiNorth = -cosPhiSouth;
             float cosPhiNorth = sinPhiSouth;
 
@@ -1405,7 +1402,7 @@ public class Mesh3
                 // North normal.
                 vns[vHemiOffsetNorth] = new Vec3(
                     cosPhiNorth * scTheta.x,
-                    cosPhiNorth * scTheta.y, //
+                    cosPhiNorth * scTheta.y,
                     -sinPhiNorth);
 
                 // South coordinate.
@@ -1417,7 +1414,7 @@ public class Mesh3
                 // South normal. 
                 vns[vnHemiOffsetSouth] = new Vec3(
                     cosPhiSouth * scTheta.x,
-                    cosPhiSouth * scTheta.y, //
+                    cosPhiSouth * scTheta.y,
                     -sinPhiSouth);
 
                 ++vHemiOffsetNorth;
@@ -1731,9 +1728,9 @@ public class Mesh3
     /// <param name="size">scalar</param>
     /// <param name="poly">polygon type</param>
     /// <returns>cube</returns>
-    public static Mesh3 Cube( //
-        in Mesh3 target, //
-        in float size = 0.5f, //
+    public static Mesh3 Cube(
+        in Mesh3 target,
+        in float size = 0.5f,
         in PolyType poly = PolyType.Tri)
     {
         float vsz = MathF.Max(Utils.Epsilon, size);
@@ -2328,13 +2325,13 @@ public class Mesh3
             int jVtNext = j + 1;
             int jVNext = jVtNext % vSect;
 
-            /* Coordinate and normal indices. */
+            // Coordinate and normal indices.
             int v00 = vOffCurr + j;
             int v10 = vOffCurr + jVNext;
             int v11 = vOffNext + jVNext;
             int v01 = vOffNext + j;
 
-            /* Texture coordinate indices. */
+            // Texture coordinate indices.
             int vt00 = vtOffCurr + j;
             int vt10 = vtOffCurr + jVtNext;
             int vt11 = vtOffNext + jVtNext;

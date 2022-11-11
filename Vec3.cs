@@ -443,9 +443,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Divides the left operand by the right, component-wise. This is
-    /// mathematically incorrect, but serves as a shortcut for transforming a
-    /// vector by the inverse of a scalar matrix.
+    /// Divides the left operand by the right, component-wise.
     /// </summary>
     /// <param name="a">numerator</param>
     /// <param name="b">denominator</param>
@@ -792,7 +790,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>angle in radians</returns>
     public static float AzimuthUnsigned(in Vec3 v)
     {
-        return Utils.WrapRadians(Vec3.AzimuthSigned(v));
+        float h = Vec3.AzimuthSigned(v);
+        return h < -0.0f ? h + Utils.Tau : h;
     }
 
     /// <summary>
@@ -1140,16 +1139,44 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>dot product</returns>
     public static float Dot(in Vec3 a, in Vec3 b)
     {
-        return a._x * b._x +
-            a._y * b._y +
-            a._z * b._z;
+        return a._x * b._x + a._y * b._y + a._z * b._z;
+    }
+
+    /// <summary>
+    /// Negates a vector's x component.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>flipped</returns>
+    public static Vec3 FlipX(in Vec3 v)
+    {
+        return new Vec3(-v._x, v._y, v._z);
+    }
+
+    /// <summary>
+    /// Negates a vector's y component.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>flipped</returns>
+    public static Vec3 FlipY(in Vec3 v)
+    {
+        return new Vec3(v._x, -v._y, v._z);
+    }
+
+    /// <summary>
+    /// Negates a vector's z component.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>flipped</returns>
+    public static Vec3 FlipZ(in Vec3 v)
+    {
+        return new Vec3(v._x, v._y, -v._z);
     }
 
     /// <summary>
     /// Floors each component of the vector.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>floor</returns>
+    /// <returns>result</returns>
     public static Vec3 Floor(in Vec3 v)
     {
         return new Vec3(
@@ -1371,8 +1398,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Finds the maximum of two vectors by component.
     /// </summary>
-    /// <param name="a">the input value</param>
-    /// <param name="b">upper bound</param>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
     /// <returns>maximum value</returns>
     public static Vec3 Max(in Vec3 a, in Vec3 b)
     {
@@ -1385,8 +1412,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Finds the minimum of two vectors by component.
     /// </summary>
-    /// <param name="a">the input value</param>
-    /// <param name="b">lower bound</param>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
     /// <returns>minimum value</returns>
     public static Vec3 Min(in Vec3 a, in Vec3 b)
     {
@@ -1399,32 +1426,32 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Mixes two vectors together. Adds the vectors then divides by half.
     /// </summary>
-    /// <param name="a">original vector</param>
-    /// <param name="b">destination vector</param>
+    /// <param name="o">origin vector</param>
+    /// <param name="d">destination vector</param>
     /// <returns>mix</returns>
-    public static Vec3 Mix(in Vec3 a, in Vec3 b)
+    public static Vec3 Mix(in Vec3 o, in Vec3 d)
     {
         return new Vec3(
-            0.5f * (a._x + b._x),
-            0.5f * (a._y + b._y),
-            0.5f * (a._z + b._z));
+            0.5f * (o._x + d._x),
+            0.5f * (o._y + d._y),
+            0.5f * (o._z + d._z));
     }
 
     /// <summary>
     /// Mixes two vectors together by a step. Uses the formula (1.0 - t) a + t b
     /// . The step is unclamped.
     /// </summary>
-    /// <param name="a">original vector</param>
-    /// <param name="b">destination vector</param>
+    /// <param name="o">origin vector</param>
+    /// <param name="d">destination vector</param>
     /// <param name="t">step</param>
     /// <returns>mix</returns>
-    public static Vec3 Mix(in Vec3 a, in Vec3 b, in float t)
+    public static Vec3 Mix(in Vec3 o, in Vec3 d, in float t)
     {
         float u = 1.0f - t;
         return new Vec3(
-            u * a._x + t * b._x,
-            u * a._y + t * b._y,
-            u * a._z + t * b._z);
+            u * o._x + t * d._x,
+            u * o._y + t * d._y,
+            u * o._z + t * d._z);
     }
 
     /// <summary>
@@ -1432,16 +1459,16 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// . The step is unclamped; to find an appropriate clamped step, use mix in
     /// conjunction with step, linearstep or smoothstep.
     /// </summary>
-    /// <param name="a">original vector</param>
-    /// <param name="b">destination vector</param>
+    /// <param name="o">origin vector</param>
+    /// <param name="d">destination vector</param>
     /// <param name="t">step</param>
     /// <returns>mix</returns>
-    public static Vec3 Mix(in Vec3 a, in Vec3 b, in Vec3 t)
+    public static Vec3 Mix(in Vec3 o, in Vec3 d, in Vec3 t)
     {
         return new Vec3(
-            Utils.Mix(a._x, b._x, t._x),
-            Utils.Mix(a._y, b._y, t._y),
-            Utils.Mix(a._z, b._z, t._z));
+            Utils.Mix(o._x, d._x, t._x),
+            Utils.Mix(o._y, d._y, t._y),
+            Utils.Mix(o._z, d._z, t._z));
     }
 
     /// <summary>
@@ -1484,20 +1511,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             v._x != 0.0f ? 0.0f : 1.0f,
             v._y != 0.0f ? 0.0f : 1.0f,
             v._z != 0.0f ? 0.0f : 1.0f);
-    }
-
-    /// <summary>
-    /// Raises a vector to the power of another vector.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>result</returns>
-    public static Vec3 Pow(in Vec3 a, in Vec3 b)
-    {
-        return new Vec3(
-            MathF.Pow(a._x, b._x),
-            MathF.Pow(a._y, b._y),
-            MathF.Pow(a._z, b._z));
     }
 
     /// <summary>
@@ -1555,7 +1568,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Creates a random point in the Cartesian coordinate system given a lower
     /// and an upper bound.
     /// </summary>
-    /// <param name="rng">the random number generator</param>
+    /// <param name="rng">random number generator</param>
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>random vector</returns>
@@ -1574,7 +1587,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Creates a random point in the Cartesian coordinate system given a lower
     /// and an upper bound.
     /// </summary>
-    /// <param name="rng">the random number generator</param>
+    /// <param name="rng">random number generator</param>
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>random vector</returns>
@@ -1592,9 +1605,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Creates a vector at a random azimuth, inclination and radius.
     /// </summary>
-    /// <param name="rng">the random number generator</param>
-    /// <param name="rhoMin">the minimum radius</param>
-    /// <param name="rhoMax">the maximum radius</param>
+    /// <param name="rng">random number generator</param>
+    /// <param name="rhoMin">minimum radius</param>
+    /// <param name="rhoMax">maximum radius</param>
     /// <returns>output vector</returns>
     public static Vec3 RandomSpherical(
         in System.Random rng,
@@ -1885,7 +1898,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Rounds each component of the vector to a specified number of places.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <param name="places">the number of places</param>
+    /// <param name="places">number of places</param>
     /// <returns>rounded vector</returns>
     public static Vec3 Round(in Vec3 v, in int places)
     {
@@ -1912,35 +1925,35 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Mixes two vectors together with spherical linear interpolation
     /// by a factor.
     /// </summary>
-    /// <param name="a">origin</param>
-    /// <param name="b">destination</param>
+    /// <param name="o">origin</param>
+    /// <param name="d">destination</param>
     /// <param name="t">factor</param>
     /// <returns>vector</returns>
-    public static Vec3 Slerp(in Vec3 a, in Vec3 b, in float t = 0.5f)
+    public static Vec3 Slerp(in Vec3 o, in Vec3 d, in float t = 0.5f)
     {
-        double ax = a._x;
-        double ay = a._y;
-        double az = a._z;
+        double ox = o._x;
+        double oy = o._y;
+        double oz = o._z;
 
-        double bx = b._x;
-        double by = b._y;
-        double bz = b._z;
+        double dx = d._x;
+        double dy = d._y;
+        double dz = d._z;
 
-        double abDot = ax * bx + ay * by + az * bz;
-        abDot = Math.Min(Math.Max(abDot, -0.999999d), 0.999999d);
+        double odDot = ox * dx + oy * dy + oz * dz;
+        odDot = Math.Min(Math.Max(odDot, -0.999999d), 0.999999d);
 
-        double omega = Math.Acos(abDot);
+        double omega = Math.Acos(odDot);
         double omSin = Math.Sin(omega);
         double omSinInv = (omSin != 0.0d) ? 1.0d / omSin : 1.0d;
 
         double td = t;
-        double aFac = Math.Sin((1.0d - td) * omega) * omSinInv;
-        double bFac = Math.Sin(td * omega) * omSinInv;
+        double oFac = Math.Sin((1.0d - td) * omega) * omSinInv;
+        double dFac = Math.Sin(td * omega) * omSinInv;
 
         return new Vec3(
-            (float)(aFac * ax + bFac * bx),
-            (float)(aFac * ay + bFac * by),
-            (float)(aFac * az + bFac * bz));
+            (float)(oFac * ox + dFac * dx),
+            (float)(oFac * oy + dFac * dy),
+            (float)(oFac * oz + dFac * dz));
     }
 
     /// <summary>

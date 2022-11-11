@@ -103,7 +103,7 @@ public class Curve3 : IEnumerable
     /// </summary>
     /// <param name="cl">closed loop</param>
     /// <param name="kn">knots</param>
-    public Curve3(bool cl, params Knot3[] kn)
+    public Curve3(in bool cl, params Knot3[] kn)
     {
         this.closedLoop = cl;
         this.AppendAll(kn);
@@ -138,9 +138,10 @@ public class Curve3 : IEnumerable
     /// </summary>
     /// <param name="knot">knot</param>
     /// <returns>this curve</returns>
-    public Curve3 Append(Knot3 knot)
+    public Curve3 Append(in Knot3 knot)
     {
         this.knots.Add(knot);
+
         return this;
     }
 
@@ -153,6 +154,7 @@ public class Curve3 : IEnumerable
     {
         int len = kn.Length;
         for (int i = 0; i < len; ++i) { this.knots.Add(kn[i]); }
+
         return this;
     }
 
@@ -164,6 +166,7 @@ public class Curve3 : IEnumerable
     public Curve3 AppendAll(params Knot3[] kn)
     {
         this.knots.AddRange(kn);
+
         return this;
     }
 
@@ -185,6 +188,7 @@ public class Curve3 : IEnumerable
     {
         this.knots.Reverse();
         foreach (Knot3 kn in this.knots) { kn.FlipX(); kn.Reverse(); }
+
         return this;
     }
 
@@ -196,6 +200,7 @@ public class Curve3 : IEnumerable
     {
         this.knots.Reverse();
         foreach (Knot3 kn in this.knots) { kn.FlipY(); kn.Reverse(); }
+
         return this;
     }
 
@@ -207,6 +212,7 @@ public class Curve3 : IEnumerable
     {
         this.knots.Reverse();
         foreach (Knot3 kn in this.knots) { kn.FlipZ(); kn.Reverse(); }
+
         return this;
     }
 
@@ -243,11 +249,12 @@ public class Curve3 : IEnumerable
     /// </summary>
     /// <param name="i">index</param>
     /// <param name="kn">knot</param>
-    /// <returns>the curve</returns>
-    public Curve3 Insert(in int i, Knot3 kn)
+    /// <returns>this curve</returns>
+    public Curve3 Insert(in int i, in Knot3 kn)
     {
         int k = this.closedLoop ? Utils.RemFloor(i, this.knots.Count + 1) : i;
         this.knots.Insert(k, kn);
+
         return this;
     }
 
@@ -256,9 +263,10 @@ public class Curve3 : IEnumerable
     /// </summary>
     /// <param name="kn">knot</param>
     /// <returns>this curve</returns>
-    public Curve3 Prepend(Knot3 kn)
+    public Curve3 Prepend(in Knot3 kn)
     {
         this.knots.Insert(0, kn);
+
         return this;
     }
 
@@ -277,6 +285,7 @@ public class Curve3 : IEnumerable
             this.knots.Insert(j, knot);
             ++j;
         }
+
         return this;
     }
 
@@ -294,6 +303,7 @@ public class Curve3 : IEnumerable
             this.knots.Insert(j, knot);
             ++j;
         }
+
         return this;
     }
 
@@ -722,7 +732,7 @@ public class Curve3 : IEnumerable
                     {
                         Clr c = colors[i];
                         Clr l = Clr.StandardToLinear(c);
-                        Vec4 xyza = Clr.LinearToXyza(l);
+                        Vec4 xyza = Clr.LinearToCieXyz(l);
                         Vec3 v = xyza.xyz;
                         Knot3 kn = knots[i];
                         kn.Coord = v;
@@ -751,7 +761,7 @@ public class Curve3 : IEnumerable
                     for (int i = 0; i < len; ++i)
                     {
                         Clr c = colors[i];
-                        Vec4 lab = Clr.StandardToLaba(c);
+                        Vec4 lab = Clr.StandardToCieLab(c);
                         Vec3 v = lab.xyz;
                         Knot3 kn = knots[i];
                         kn.Coord = v;

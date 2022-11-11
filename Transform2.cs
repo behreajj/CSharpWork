@@ -414,7 +414,7 @@ public class Transform2
     /// Returns a named value tuple containing the right and forward axes.
     /// </summary>
     /// <param name="tr">transform</param>
-    /// <returns>tuple</returns>
+    /// <returns>axes</returns>
     public static (Vec2 right, Vec2 forward) ToAxes(in Transform2 tr)
     {
         Vec2 r = Vec2.FromPolar(tr.rotation);

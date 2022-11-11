@@ -42,6 +42,8 @@ public class ClrGradient : IEnumerable
     /// <param name="colors">colors</param>
     public ClrGradient(params Clr[] colors)
     {
+        // TODO: Replace this with a from colors, which uses
+        // a spline instead of direct addition?
         this.AppendAll(colors);
     }
 
@@ -389,6 +391,9 @@ public class ClrGradient : IEnumerable
         in float step,
         in Func<Clr, Clr, float, Clr> easing)
     {
+        // TODO: If you include mixNormal, then this needs to be
+        // reconsidered. See Lua implementation.
+
         List<ClrKey> keys = cg.keys;
         int len = keys.Count;
         if (step <= keys[0].Step || len < 2) { return keys[0].Color; }

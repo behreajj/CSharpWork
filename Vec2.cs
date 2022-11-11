@@ -373,9 +373,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Divides the left operand by the right, component-wise. This is
-    /// mathematically incorrect, but serves as a shortcut for transforming a
-    /// vector by the inverse of a scalar matrix.
+    /// Divides the left operand by the right, component-wise.
     /// </summary>
     /// <param name="a">numerator</param>
     /// <param name="b">denominator</param>
@@ -990,10 +988,30 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
+    /// Negates a vector's x component.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>flipped</returns>
+    public static Vec2 FlipX(in Vec2 v)
+    {
+        return new Vec2(-v._x, v._y);
+    }
+
+    /// <summary>
+    /// Negates a vector's y component.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>flipped</returns>
+    public static Vec2 FlipY(in Vec2 v)
+    {
+        return new Vec2(v._x, -v._y);
+    }
+
+    /// <summary>
     /// Floors each component of the vector.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>floor</returns>
+    /// <returns>result</returns>
     public static Vec2 Floor(in Vec2 v)
     {
         return new Vec2(
@@ -1097,7 +1115,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <returns>angle in radians</returns>
     public static float HeadingUnsigned(in Vec2 v)
     {
-        return Utils.WrapRadians(Vec2.HeadingSigned(v));
+        float h = Vec2.HeadingSigned(v);
+        return h < -0.0f ? h + Utils.Tau : h;
     }
 
     /// <summary>
@@ -1171,8 +1190,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Finds the maximum of two vectors by component.
     /// </summary>
-    /// <param name="a">the input value</param>
-    /// <param name="b">upper bound</param>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
     /// <returns>maximum value</returns>
     public static Vec2 Max(in Vec2 a, in Vec2 b)
     {
@@ -1184,8 +1203,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Finds the minimum of two vectors by component.
     /// </summary>
-    /// <param name="a">the input value</param>
-    /// <param name="b">lower bound</param>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
     /// <returns>minimum value</returns>
     public static Vec2 Min(in Vec2 a, in Vec2 b)
     {
@@ -1197,30 +1216,30 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Mixes two vectors together. Adds the vectors then divides by half.
     /// </summary>
-    /// <param name="a">original vector</param>
-    /// <param name="b">destination vector</param>
+    /// <param name="o">origin vector</param>
+    /// <param name="d">destination vector</param>
     /// <returns>mix</returns>
-    public static Vec2 Mix(in Vec2 a, in Vec2 b)
+    public static Vec2 Mix(in Vec2 o, in Vec2 d)
     {
         return new Vec2(
-            0.5f * (a._x + b._x),
-            0.5f * (a._y + b._y));
+            0.5f * (o._x + d._x),
+            0.5f * (o._y + d._y));
     }
 
     /// <summary>
     /// Mixes two vectors together by a step. Uses the formula (1.0 - t) a + t b
     /// . The step is unclamped.
     /// </summary>
-    /// <param name="a">original vector</param>
-    /// <param name="b">destination vector</param>
+    /// <param name="o">origin vector</param>
+    /// <param name="d">destination vector</param>
     /// <param name="t">step</param>
     /// <returns>mix</returns>
-    public static Vec2 Mix(in Vec2 a, in Vec2 b, in float t)
+    public static Vec2 Mix(in Vec2 o, in Vec2 d, in float t)
     {
         float u = 1.0f - t;
         return new Vec2(
-            u * a._x + t * b._x,
-            u * a._y + t * b._y);
+            u * o._x + t * d._x,
+            u * o._y + t * d._y);
     }
 
     /// <summary>
@@ -1228,15 +1247,15 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// . The step is unclamped; to find an appropriate clamped step, use mix in
     /// conjunction with step, linearstep or smoothstep.
     /// </summary>
-    /// <param name="a">original vector</param>
-    /// <param name="b">destination vector</param>
+    /// <param name="o">origin vector</param>
+    /// <param name="d">destination vector</param>
     /// <param name="t">step</param>
     /// <returns>mix</returns>
-    public static Vec2 Mix(in Vec2 a, in Vec2 b, in Vec2 t)
+    public static Vec2 Mix(in Vec2 o, in Vec2 d, in Vec2 t)
     {
         return new Vec2(
-            Utils.Mix(a._x, b._x, t._x),
-            Utils.Mix(a._y, b._y, t._y));
+            Utils.Mix(o._x, d._x, t._x),
+            Utils.Mix(o._y, d._y, t._y));
     }
 
     /// <summary>
@@ -1339,19 +1358,6 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Raises a vector to the power of another vector.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>result</returns>
-    public static Vec2 Pow(in Vec2 a, in Vec2 b)
-    {
-        return new Vec2(
-            MathF.Pow(a._x, b._x),
-            MathF.Pow(a._y, b._y));
-    }
-
-    /// <summary>
     /// Returns the scalar projection of a onto b.
     /// </summary>
     /// <param name="a">left operand</param>
@@ -1420,7 +1426,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Creates a random point in the Cartesian coordinate system given a lower
     /// and an upper bound.
     /// </summary>
-    /// <param name="rng">the random number generator</param>
+    /// <param name="rng">random number generator</param>
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>random vector</returns>
@@ -1438,7 +1444,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Creates a random point in the Cartesian coordinate system given a lower
     /// and an upper bound.
     /// </summary>
-    /// <param name="rng">the random number generator</param>
+    /// <param name="rng">random number generator</param>
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>random vector</returns>
@@ -1455,9 +1461,9 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <summary>
     /// Creates a vector at a random heading and radius.
     /// </summary>
-    /// <param name="rng">the random number generator</param>
-    /// <param name="rhoMin">the minimum radius</param>
-    /// <param name="rhoMax">the maximum radius</param>
+    /// <param name="rng">random number generator</param>
+    /// <param name="rhoMin">minimum radius</param>
+    /// <param name="rhoMax">maximum radius</param>
     /// <returns>output vector</returns>
     public static Vec2 RandomPolar(
         in System.Random rng,
@@ -1598,7 +1604,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Rounds each component of the vector to a specified number of places.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <param name="places">the number of places</param>
+    /// <param name="places">number of places</param>
     /// <returns>rounded vector</returns>
     public static Vec2 Round(in Vec2 v, in int places)
     {

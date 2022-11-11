@@ -368,7 +368,7 @@ public class Octree
                     foreach (Clr c in colors)
                     {
                         Clr l = Clr.StandardToLinear(c);
-                        Vec4 v = Clr.LinearToXyza(l);
+                        Vec4 v = Clr.LinearToCieXyz(l);
                         o.Insert(v.xyz);
                     }
                 }
@@ -386,10 +386,10 @@ public class Octree
             case ClrModel.CieLab:
             default:
                 {
-                    o = new Octree(Bounds3.CieLab, capacity, Octree.RootLevel);
+                    o = new Octree(Bounds3.Lab, capacity, Octree.RootLevel);
                     foreach (Clr c in colors)
                     {
-                        Vec4 lab = Clr.StandardToLaba(c);
+                        Vec4 lab = Clr.StandardToCieLab(c);
                         o.Insert(lab.xyz);
                     }
                 }

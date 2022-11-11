@@ -565,7 +565,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
 
     /// <summary>
     /// Raises a complex number to the power of another. Uses the formula
-    ///
     /// pow ( a, b ) := exp ( b log ( a ) )
     /// </summary>
     /// <param name="a">left operand</param>
@@ -578,7 +577,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
 
     /// <summary>
     /// Raises a complex number to the power of a real number. Uses the formula
-    ///
     /// pow ( a, b ) := exp ( b log ( a ) )
     /// </summary>
     /// <param name="a">left operand</param>
@@ -590,8 +588,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     }
 
     /// <summary>
-    /// Raises a real number to the power of a complex number. Uses the formula
-    ///
+    /// Raises a real number to the power of a complex number. Uses the formula    
     /// pow ( a, b ) := exp ( b log ( a ) )
     /// </summary>
     /// <param name="a">left operand</param>

@@ -34,11 +34,11 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <summary>
     /// Constructs an edge from two vertices, an origin and destination.
     /// </summary>
-    /// <param name="origin">origin</param>
+    /// <param name="orig">origin</param>
     /// <param name="dest">destination</param>
-    public Edge3(in Vert3 origin, in Vert3 dest)
+    public Edge3(in Vert3 orig, in Vert3 dest)
     {
-        this.origin = origin;
+        this.origin = orig;
         this.dest = dest;
     }
 

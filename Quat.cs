@@ -712,36 +712,28 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Sets a quaternion from an axis and angle. Normalizes the axis prior to
-    /// calculating the quaternion.
+    /// Creates a quaternion from an axis and angle. Normalizes the axis.
+    /// If the axis has no magnitude, returns the identity.
     /// </summary>
     /// <param name="radians">angle</param>
     /// <param name="axis">axis</param>
     /// <returns>quaternion</returns>
     public static Quat FromAxisAngle(in float radians, in Vec3 axis)
     {
-        float amSq = Vec3.MagSq(axis);
-        if (amSq == 0.0f) { return Quat.Identity; }
-
-        float nx = axis.x;
-        float ny = axis.y;
-        float nz = axis.z;
-
-        if (!Utils.Approx(amSq, 1.0f))
+        float ax = axis.x;
+        float ay = axis.y;
+        float az = axis.z;
+        float amSq = ax * ax + ay * ay + az * az;
+        if (amSq > 0.0f)
         {
-            float amInv = 1.0f / MathF.Sqrt(amSq);
-            nx *= amInv;
-            ny *= amInv;
-            nz *= amInv;
+            float rHalf = (radians % Utils.Tau) * 0.5f;
+            float amInv = MathF.Sin(rHalf) / MathF.Sqrt(amSq);
+            return new Quat(MathF.Cos(rHalf), new Vec3(
+                    ax * amInv,
+                    ay * amInv,
+                    az * amInv));
         }
-
-        float rHalf = (radians % Utils.Tau) * 0.5f;
-        float cosa = MathF.Cos(rHalf);
-        float sina = MathF.Sin(rHalf);
-        return new Quat(cosa,
-            new Vec3(nx * sina,
-                ny * sina,
-                nz * sina));
+        return Quat.Identity;
     }
 
     /// <summary>
@@ -755,9 +747,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>quaternion</returns>
     public static Quat FromTo(in Vec3 origin, in Vec3 dest)
     {
-        Vec3 a = Vec3.Normalize(origin);
-        Vec3 b = Vec3.Normalize(dest);
-        return new Quat(Vec3.Dot(a, b), Vec3.Cross(a, b));
+        Vec3 o = Vec3.Normalize(origin);
+        Vec3 d = Vec3.Normalize(dest);
+        return new Quat(Vec3.Dot(o, d), Vec3.Cross(o, d));
     }
 
     /// <summary>
@@ -788,7 +780,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
     /// <summary>
     /// Multiplies a vector by a quaternion's inverse, allowing a prior
-    /// rotation, allowing a prior rotation to be undone.
+    /// rotation to be undone.
     /// </summary>
     /// <param name="q">quaternion</param>
     /// <param name="v">input vector</param>
@@ -886,40 +878,40 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// Chooses the shortest path between two orientations and maintains
     /// constant speed for a step in [0.0, 1.0] .
     /// </summary>
-    /// <param name="origin">origin</param>
-    /// <param name="dest">destination</param>
+    /// <param name="o">origin</param>
+    /// <param name="d">destination</param>
     /// <param name="step">step</param>
     /// <returns>quaternion</returns>
-    public static Quat Mix(in Quat origin, in Quat dest, in float step = 0.5f)
+    public static Quat Mix(in Quat o, in Quat d, in float step = 0.5f)
     {
         // Decompose origin quaternion.
-        Vec3 ai = origin.imag;
-        float aw = origin.real;
-        float ax = ai.x;
-        float ay = ai.y;
-        float az = ai.z;
+        Vec3 oi = o.imag;
+        float ow = o.real;
+        float ox = oi.x;
+        float oy = oi.y;
+        float oz = oi.z;
 
         // Decompose destination quaternion.
-        Vec3 bi = dest.imag;
-        float bw = dest.real;
-        float bx = bi.x;
-        float by = bi.y;
-        float bz = bi.z;
+        Vec3 di = d.imag;
+        float dw = d.real;
+        float dx = di.x;
+        float dy = di.y;
+        float dz = di.z;
 
         // Clamped dot product.
         float dotp = Utils.Clamp(
-            aw * bw +
-            ax * bx +
-            ay * by +
-            az * bz, -1.0f, 1.0f);
+            ow * dw +
+            ox * dx +
+            oy * dy +
+            oz * dz, -1.0f, 1.0f);
 
         // Flip values if the orientation is negative.
         if (dotp < 0.0f)
         {
-            bw = -bw;
-            bx = -bx;
-            by = -by;
-            bz = -bz;
+            dw = -dw;
+            dx = -dx;
+            dy = -dy;
+            dz = -dz;
             dotp = -dotp;
         }
 
@@ -946,10 +938,10 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         }
 
         // Unclamped linear interpolation.
-        float cw = u * aw + v * bw;
-        float cx = u * ax + v * bx;
-        float cy = u * ay + v * by;
-        float cz = u * az + v * bz;
+        float cw = u * ow + v * dw;
+        float cx = u * ox + v * dx;
+        float cy = u * oy + v * dy;
+        float cz = u * oz + v * dz;
 
         // Find magnitude squared.
         float mSq = cw * cw + cx * cx + cy * cy + cz * cz;
@@ -1071,25 +1063,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Rotates a quaternion around an arbitrary axis by an angle.
-    /// </summary>
-    /// <param name="q">quaternion</param>
-    /// <param name="radians">angle in radians</param>
-    /// <param name="axis">axis</param>
-    /// <returns>rotated quaternion</returns>
-    public static Quat Rotate(in Quat q, in float radians, in Vec3 axis)
-    {
-        float mSq = Quat.MagSq(q);
-        if (mSq > 0.0f)
-        {
-            float wNorm = q.real * Utils.InvSqrtUnchecked(mSq);
-            float halfAngle = MathF.Acos(wNorm);
-            return Quat.FromAxisAngle(halfAngle + halfAngle + radians, axis);
-        }
-        return Quat.FromAxisAngle(radians, axis);
-    }
-
-    /// <summary>
     /// Rotates a quaternion about the x axis by an angle.
     ///
     /// Do not use sequences of orthonormal rotations by Euler angles; this will
@@ -1204,7 +1177,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// Returns a named value tuple containing the right, forward and up axes.
     /// </summary>
     /// <param name="q">quaternion</param>
-    /// <returns>tuple</returns>
+    /// <returns>axes</returns>
     public static (Vec3 right, Vec3 forward, Vec3 up) ToAxes(in Quat q)
     {
         float w = q.real;
@@ -1251,7 +1224,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// Returns a named value tuple containing the angle and axis.
     /// </summary>
     /// <param name="q">quaternion</param>
-    /// <returns>tuple</returns>
+    /// <returns>axis angle</returns>
     public static (float angle, Vec3 axis) ToAxisAngle(in Quat q)
     {
         float mSq = Quat.MagSq(q);

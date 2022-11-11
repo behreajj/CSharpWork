@@ -45,12 +45,12 @@ public static class Utils
     /// </summary>
     public const int HashMul = 16777619;
 
-    // <summary>
-    // Magnitude for orthogonal handles when four curve
-    // knots are used to approximate an ellipse or circle
-    // (90 degrees per knot), Derived from
-    // (Math.Sqrt(2.0) - 1.0) * 4.0 / 3.0 .
-    // </summary>
+    /// <summary>
+    /// Magnitude for orthogonal handles when four curve
+    /// knots are used to approximate an ellipse or circle
+    /// (90 degrees per knot), Derived from
+    /// (Math.Sqrt(2.0) - 1.0) * 4.0 / 3.0 .
+    /// </summary>
     public const float Kappa = 0.552285f;
 
     /// <summary>
@@ -76,13 +76,6 @@ public static class Utils
     /// [0.0, 1.0] . Approximately 0.318309873 .
     /// </summary>
     public const float OnePi = 0.318309873f;
-
-    /// <summary>
-    /// One-sixth, 1.0 / 6.0 . Useful when converting a color in RGB color space
-    /// to one in HSB, given the six sectors formed by primary and secondary
-    /// colors . Approximately 0.16666667 .
-    /// </summary>
-    public const float OneSix = 0.16666667f;
 
     /// <summary>
     /// An approximation of 1.0 / SQRT ( 2.0 ) , 0.707106769 .
@@ -161,7 +154,7 @@ public static class Utils
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <param name="tolerance">the tolerance</param>
+    /// <param name="tolerance">tolerance</param>
     /// <returns>evaluation</returns>
     public static bool Approx(in float a, in float b, in float tolerance = Utils.Epsilon)
     {
@@ -223,7 +216,7 @@ public static class Utils
     /// Finds the approximate cotangent of the angle in radians. Equivalent to
     /// dividing the cosine of the angle by the sine, or to 1.0 / tan ( a ) .
     /// </summary>
-    /// <param name="radians">the angle in radians</param>
+    /// <param name="radians">angle in radians</param>
     /// <returns>cotangent</returns>
     public static float Cot(in float radians)
     {
@@ -387,11 +380,11 @@ public static class Utils
     /// Finds one divided by the square root of an input value. Does not check
     /// if the input is zero.
     /// </summary>
-    /// <param name="a">input value</param>
+    /// <param name="v">input value</param>
     /// <returns>inverse square root</returns>
-    public static float InvSqrtUnchecked(in float a)
+    public static float InvSqrtUnchecked(in float v)
     {
-        return (float)(1.0d / Math.Sqrt(a));
+        return (float)(1.0d / Math.Sqrt(v));
     }
 
     /// <summary>
@@ -577,30 +570,6 @@ public static class Utils
     }
 
     /// <summary>
-    /// Maps an input value from an original range to a target range. If the
-    /// upper and lower bound of the original range are equal, will return the
-    /// value unchanged.
-    /// </summary>
-    /// <param name="v">input value</param>
-    /// <param name="lbOrigin">lower bound of original range</param>
-    /// <param name="ubOrigin">upper bound of original range</param>
-    /// <param name="lbDest">lower bound of destination range</param>
-    /// <param name="ubDest">upper bound of destination range</param>
-    /// <returns>mapped value</returns>
-    public static float Remap(
-        in float v,
-        in float lbOrigin = -1.0f,
-        in float ubOrigin = 1.0f,
-        in float lbDest = 0.0f,
-        in float ubDest = 1.0f)
-    {
-        float denom = ubOrigin - lbOrigin;
-        return (denom != 0.0f) ?
-            lbDest + (ubDest - lbDest) *
-            ((v - lbOrigin) / denom) : v;
-    }
-
-    /// <summary>
     /// Finds the greater, or maximum, of two values.
     /// </summary>
     /// <param name="a">left operand</param>
@@ -711,13 +680,13 @@ public static class Utils
     /// <summary>
     /// Mixes two values by a factor. The mix is unclamped by default.
     /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
+    /// <param name="o">origin</param>
+    /// <param name="d">destination</param>
     /// <param name="t">factor</param>
     /// <returns>mix</returns>
-    public static float Mix(in float a, in float b, in float t = 0.5f)
+    public static float Mix(in float o, in float d, in float t = 0.5f)
     {
-        return (1.0f - t) * a + t * b;
+        return (1.0f - t) * o + t * d;
     }
 
     /// <summary>
@@ -828,6 +797,30 @@ public static class Utils
     }
 
     /// <summary>
+    /// Maps an input value from an original range to a target range. If the
+    /// upper and lower bound of the original range are equal, will return the
+    /// value unchanged.
+    /// </summary>
+    /// <param name="v">input value</param>
+    /// <param name="lbOrigin">lower bound of origin range</param>
+    /// <param name="ubOrigin">upper bound of origin range</param>
+    /// <param name="lbDest">lower bound of destination range</param>
+    /// <param name="ubDest">upper bound of destination range</param>
+    /// <returns>mapped value</returns>
+    public static float Remap(
+        in float v,
+        in float lbOrigin = -1.0f,
+        in float ubOrigin = 1.0f,
+        in float lbDest = 0.0f,
+        in float ubDest = 1.0f)
+    {
+        float denom = ubOrigin - lbOrigin;
+        return (denom != 0.0f) ?
+            lbDest + (ubDest - lbDest) *
+            ((v - lbOrigin) / denom) : v;
+    }
+
+    /// <summary>
     /// Applies floor modulo to the operands. Returns the left operand when the
     /// right operand is zero.
     /// </summary>
@@ -913,8 +906,8 @@ public static class Utils
     /// <summary>
     /// Finds a step, either 0.0 or 1.0, based on an edge and factor.
     /// </summary>
-    /// <param name="edge">the edge</param>
-    /// <param name="x">the factor</param>
+    /// <param name="edge">edge</param>
+    /// <param name="x">factor</param>
     /// <returns>step</returns>
     public static float Step(in float edge, in float x = 0.5f)
     {
@@ -943,9 +936,7 @@ public static class Utils
     /// <returns>string builder</returns>
     public static StringBuilder ToFixed(in StringBuilder sb, in float v, in int places = 7)
     {
-        /*
-         * Dispense with v and places edge cases.
-         */
+        // Dispense with v and places edge cases.
         if (float.IsNaN(v)) { return sb.Append("0.0"); }
         if (places < 0) { return sb.Append((int)v); }
         if (places < 1) { return sb.Append((float)((int)v)); }
@@ -954,10 +945,8 @@ public static class Utils
             return sb.Append(v);
         }
 
-        /*
-         * Find the sign, the unsigned v and the
-         * unsigned integral.
-         */
+        // Find the sign, the unsigned v and the
+        // unsigned integral.
         bool ltZero = v < 0.0f;
         int sign = ltZero ? -1 : (v > 0.0f) ? 1 : 0;
         float abs = ltZero ? -v : v;
@@ -965,10 +954,8 @@ public static class Utils
         int oldLen = sb.Length;
         int len;
 
-        /*
-         * Start the string builder with the integral
-         * and the sign.
-         */
+        // Start the string builder with the integral
+        // and the sign.
         if (sign < 0)
         {
             sb.Append('-').Append(trunc);
@@ -981,24 +968,20 @@ public static class Utils
         }
         sb.Append('.');
 
-        /*
-         * Find the number of places left to work with after the
-         * integral. Any more than 9 and single-precision's
-         * inaccuracy would make the effort worthless.
-         *
-         * For numbers with a big integral, there may not be much
-         * left to work with, and so fewer than the requested
-         * number of places will be used.
-         */
+        // Find the number of places left to work with after the
+        // integral. Any more than 9 and single-precision's
+        // inaccuracy would make the effort worthless.
+        //
+        // For numbers with a big integral, there may not be much
+        // left to work with, and so fewer than the requested
+        // number of places will be used.
         int maxPlaces = 9 - len;
         if (maxPlaces < 1) { return sb.Append(v); }
         int vetPlaces = places < maxPlaces ? places : maxPlaces;
 
-        /* 
-         * Separate each digit by subtracting the truncation from
-         * the v (fract), then multiplying by 10 to shift the
-         * next digit past the decimal point.
-         */
+        // Separate each digit by subtracting the truncation from
+        // the v (fract), then multiplying by 10 to shift the
+        // next digit past the decimal point.
         float frac = abs - trunc;
         for (int i = 0; i < vetPlaces; ++i)
         {
@@ -1031,12 +1014,10 @@ public static class Utils
     /// <returns>string builder</returns>
     public static String ToPadded(in StringBuilder sb, in int v, in int padding = 3)
     {
-        /*
-         * Double precision is needed to preserve accuracy. The max integer value
-         * is 2147483647, which is 10 digits long. The sign needs to be flipped
-         * because working with positive absolute value would allow
-         * the minimum value to overflow to zero.
-         */
+        // Double precision is needed to preserve accuracy. The max integer value
+        // is 2147483647, which is 10 digits long. The sign needs to be flipped
+        // because working with positive absolute value would allow
+        // the minimum value to overflow to zero.
         bool isNeg = v < 0;
         int nAbsVal = isNeg ? v : -v;
         int[] digits = new int[10];

@@ -2,7 +2,7 @@ using System;
 using System.Text;
 
 /// <summary>
-/// Organizes the points that shape a Bezier curve into a coordinate (or anchor
+/// Organizes the points that shape a cubic Bezier curve into a coordinate (or anchor
 /// point), fore handle (the following control point) and rear handle (the
 /// preceding control point).
 /// </summary>
@@ -15,13 +15,13 @@ public class Knot3
     protected Vec3 coord;
 
     /// <summary>
-    /// The handle which warps the curve segment heading away from the knot
+    /// The handle that warps the curve segment heading away from the knot
     /// along the direction of the curve.
     /// </summary>
     protected Vec3 foreHandle;
 
     /// <summary>
-    /// The handle which warps the curve segment heading towards the knot along
+    /// The handle that warps the curve segment heading towards the knot along
     /// the direction of the curve.
     /// </summary>
     protected Vec3 rearHandle;
@@ -44,7 +44,7 @@ public class Knot3
     }
 
     /// <summary>
-    /// The handle which warps the curve segment heading away from the knot
+    /// The handle that warps the curve segment heading away from the knot
     /// along the direction of the curve.
     /// </summary>
     /// <value>fore handle</value>
@@ -62,7 +62,7 @@ public class Knot3
     }
 
     /// <summary>
-    /// The handle which warps the curve segment heading towards the knot along
+    /// The handle that warps the curve segment heading towards the knot along
     /// the direction of the curve.
     /// </summary>
     /// <value>rear handle</value>
@@ -203,6 +203,7 @@ public class Knot3
     public Knot3 AdoptForeHandle(in Knot3 source)
     {
         this.foreHandle = this.coord + (source.foreHandle - source.coord);
+
         return this;
     }
 
@@ -215,6 +216,7 @@ public class Knot3
     {
         this.AdoptForeHandle(source);
         this.AdoptRearHandle(source);
+
         return this;
     }
 
@@ -226,6 +228,7 @@ public class Knot3
     public Knot3 AdoptRearHandle(in Knot3 source)
     {
         this.rearHandle = this.coord + (source.rearHandle - source.coord);
+
         return this;
     }
 
@@ -273,18 +276,10 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 FlipX()
     {
-        this.coord = new Vec3(
-            -this.coord.x,
-            this.coord.y,
-            this.coord.z);
-        this.foreHandle = new Vec3(
-            -this.foreHandle.x,
-            this.foreHandle.y,
-            this.foreHandle.z);
-        this.rearHandle = new Vec3(
-            -this.rearHandle.x,
-            this.rearHandle.y,
-            this.rearHandle.z);
+        this.coord = Vec3.FlipX(this.coord);
+        this.foreHandle = Vec3.FlipX(this.foreHandle);
+        this.rearHandle = Vec3.FlipX(this.rearHandle);
+
         return this;
     }
 
@@ -296,18 +291,10 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 FlipY()
     {
-        this.coord = new Vec3(
-            this.coord.x,
-            -this.coord.y,
-            this.coord.z);
-        this.foreHandle = new Vec3(
-            this.foreHandle.x,
-            -this.foreHandle.y,
-            this.foreHandle.z);
-        this.rearHandle = new Vec3(
-            this.rearHandle.x,
-            -this.rearHandle.y,
-            this.rearHandle.z);
+        this.coord = Vec3.FlipY(this.coord);
+        this.foreHandle = Vec3.FlipY(this.foreHandle);
+        this.rearHandle = Vec3.FlipY(this.rearHandle);
+
         return this;
     }
 
@@ -319,18 +306,10 @@ public class Knot3
     /// <returns>this knot</returns>
     public Knot3 FlipZ()
     {
-        this.coord = new Vec3(
-            this.coord.x,
-            this.coord.y,
-            -this.coord.z);
-        this.foreHandle = new Vec3(
-            this.foreHandle.x,
-            this.foreHandle.y,
-            -this.foreHandle.z);
-        this.rearHandle = new Vec3(
-            this.rearHandle.x,
-            this.rearHandle.y,
-            -this.rearHandle.z);
+        this.coord = Vec3.FlipZ(this.coord);
+        this.foreHandle = Vec3.FlipZ(this.foreHandle);
+        this.rearHandle = Vec3.FlipZ(this.rearHandle);
+
         return this;
     }
 
@@ -353,6 +332,7 @@ public class Knot3
     public Knot3 MirrorHandlesForward()
     {
         this.rearHandle = this.coord - (this.foreHandle - this.coord);
+
         return this;
     }
 
@@ -362,7 +342,7 @@ public class Knot3
     /// </summary>
     /// <param name="v">coordinate</param>
     /// <returns>this knot</returns>
-    public Knot3 Relocate(Vec3 v)
+    public Knot3 Relocate(in Vec3 v)
     {
         this.foreHandle -= this.coord;
         this.rearHandle -= this.coord;

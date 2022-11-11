@@ -2,7 +2,7 @@ using System;
 using System.Text;
 
 /// <summary>
-/// Organizes the points that shape a Bezier curve into a coordinate (or anchor
+/// Organizes the points that shape a cubic Bezier curve into a coordinate (or anchor
 /// point), fore handle (the following control point) and rear handle (the
 /// preceding control point).
 /// </summary>
@@ -15,13 +15,13 @@ public class Knot2
     protected Vec2 coord;
 
     /// <summary>
-    /// The handle which warps the curve segment heading away from the knot
+    /// The handle that warps the curve segment heading away from the knot
     /// along the direction of the curve.
     /// </summary>
     protected Vec2 foreHandle;
 
     /// <summary>
-    /// The handle which warps the curve segment heading towards the knot along
+    /// The handle that warps the curve segment heading towards the knot along
     /// the direction of the curve.
     /// </summary>
     protected Vec2 rearHandle;
@@ -44,7 +44,7 @@ public class Knot2
     }
 
     /// <summary>
-    /// The handle which warps the curve segment heading away from the knot
+    /// The handle that warps the curve segment heading away from the knot
     /// along the direction of the curve.
     /// </summary>
     /// <value>fore handle</value>
@@ -62,7 +62,7 @@ public class Knot2
     }
 
     /// <summary>
-    /// The handle which warps the curve segment heading towards the knot along
+    /// The handle that warps the curve segment heading towards the knot along
     /// the direction of the curve.
     /// </summary>
     /// <value>rear handle</value>
@@ -196,6 +196,7 @@ public class Knot2
     public Knot2 AdoptForeHandle(in Knot2 source)
     {
         this.foreHandle = this.coord + (source.foreHandle - source.coord);
+
         return this;
     }
 
@@ -208,6 +209,7 @@ public class Knot2
     {
         this.AdoptForeHandle(source);
         this.AdoptRearHandle(source);
+
         return this;
     }
 
@@ -219,6 +221,7 @@ public class Knot2
     public Knot2 AdoptRearHandle(in Knot2 source)
     {
         this.rearHandle = this.coord + (source.rearHandle - source.coord);
+
         return this;
     }
 
@@ -266,15 +269,10 @@ public class Knot2
     /// <returns>this knot</returns>
     public Knot2 FlipX()
     {
-        this.coord = new Vec2( //
-            -this.coord.x,
-            this.coord.y);
-        this.foreHandle = new Vec2( //
-            -this.foreHandle.x,
-            this.foreHandle.y);
-        this.rearHandle = new Vec2( //
-            -this.rearHandle.x,
-            this.rearHandle.y);
+        this.coord = Vec2.FlipX(this.coord);
+        this.foreHandle = Vec2.FlipX(this.foreHandle);
+        this.rearHandle = Vec2.FlipX(this.rearHandle);
+
         return this;
     }
 
@@ -286,15 +284,10 @@ public class Knot2
     /// <returns>this knot</returns>
     public Knot2 FlipY()
     {
-        this.coord = new Vec2(
-            this.coord.x, //
-            -this.coord.y);
-        this.foreHandle = new Vec2(
-            this.foreHandle.x, //
-            -this.foreHandle.y);
-        this.rearHandle = new Vec2(
-            this.rearHandle.x, //
-            -this.rearHandle.y);
+        this.coord = Vec2.FlipY(this.coord);
+        this.foreHandle = Vec2.FlipY(this.foreHandle);
+        this.rearHandle = Vec2.FlipY(this.rearHandle);
+
         return this;
     }
 
@@ -306,6 +299,7 @@ public class Knot2
     public Knot2 MirrorHandlesBackward()
     {
         this.foreHandle = this.coord - (this.rearHandle - this.coord);
+
         return this;
     }
 
@@ -317,6 +311,7 @@ public class Knot2
     public Knot2 MirrorHandlesForward()
     {
         this.rearHandle = this.coord - (this.foreHandle - this.coord);
+
         return this;
     }
 
@@ -326,7 +321,7 @@ public class Knot2
     /// </summary>
     /// <param name="v">coordinate</param>
     /// <returns>this knot</returns>
-    public Knot2 Relocate(Vec2 v)
+    public Knot2 Relocate(in Vec2 v)
     {
         this.foreHandle -= this.coord;
         this.rearHandle -= this.coord;

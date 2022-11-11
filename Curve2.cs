@@ -105,7 +105,7 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="cl">closed loop</param>
     /// <param name="kn">knots</param>
-    public Curve2(bool cl, params Knot2[] kn)
+    public Curve2(in bool cl, params Knot2[] kn)
     {
         this.closedLoop = cl;
         this.AppendAll(kn);
@@ -140,9 +140,10 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="kn">knot</param>
     /// <returns>this curve</returns>
-    public Curve2 Append(Knot2 kn)
+    public Curve2 Append(in Knot2 kn)
     {
         this.knots.Add(kn);
+
         return this;
     }
 
@@ -154,6 +155,7 @@ public class Curve2 : IEnumerable
     public Curve2 AppendAll(params Knot2[] kn)
     {
         this.knots.AddRange(kn);
+
         return this;
     }
 
@@ -175,6 +177,7 @@ public class Curve2 : IEnumerable
     {
         this.knots.Reverse();
         foreach (Knot2 kn in this.knots) { kn.FlipX(); kn.Reverse(); }
+
         return this;
     }
 
@@ -186,6 +189,7 @@ public class Curve2 : IEnumerable
     {
         this.knots.Reverse();
         foreach (Knot2 kn in this.knots) { kn.FlipY(); kn.Reverse(); }
+
         return this;
     }
 
@@ -222,11 +226,12 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="i">index</param>
     /// <param name="kn">knot</param>
-    /// <returns>the curve</returns>
-    public Curve2 Insert(in int i, Knot2 kn)
+    /// <returns>this curve</returns>
+    public Curve2 Insert(in int i, in Knot2 kn)
     {
         int k = this.closedLoop ? Utils.RemFloor(i, this.knots.Count + 1) : i;
         this.knots.Insert(k, kn);
+
         return this;
     }
 
@@ -235,9 +240,10 @@ public class Curve2 : IEnumerable
     /// </summary>
     /// <param name="kn">knot</param>
     /// <returns>this curve</returns>
-    public Curve2 Prepend(Knot2 kn)
+    public Curve2 Prepend(in Knot2 kn)
     {
         this.knots.Insert(0, kn);
+
         return this;
     }
 
@@ -255,6 +261,7 @@ public class Curve2 : IEnumerable
             this.knots.Insert(j, knot);
             ++j;
         }
+
         return this;
     }
 

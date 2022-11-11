@@ -474,9 +474,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Divides the left operand by the right, component-wise. This is
-    /// mathematically incorrect, but serves as a shortcut for transforming a
-    /// vector by the inverse of a scalar matrix.
+    /// Divides the left operand by the right, component-wise.
     /// </summary>
     /// <param name="a">numerator</param>
     /// <param name="b">denominator</param>
@@ -781,6 +779,128 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
+    /// Returns a point on a Bezier curve described by two anchor points and two
+    /// control points according to a step in [0.0, 1.0] .
+    ///
+    /// When the step is less than zero, returns the first anchor point. When the
+    /// step is greater than one, returns the second anchor point.
+    /// </summary>
+    /// <param name="ap0">first anchor point</param>
+    /// <param name="cp0">first control point</param>
+    /// <param name="cp1">second control point</param>
+    /// <param name="ap1">second anchor point</param>
+    /// <param name="step">step</param>
+    /// <returns>point along the curve</returns>
+    public static Vec4 BezierPoint(
+        in Vec4 ap0,
+        in Vec4 cp0,
+        in Vec4 cp1,
+        in Vec4 ap1,
+        in float step)
+    {
+        if (step <= 0.0f) { return new Vec4(ap0._x, ap0._y, ap0._z, ap0._w); }
+        else if (step >= 1.0f) { return new Vec4(ap1._x, ap1._y, ap1._z, ap1._w); }
+
+        float u = 1.0f - step;
+        float tcb = step * step;
+        float ucb = u * u;
+        float usq3t = ucb * (step + step + step);
+        float tsq3u = tcb * (u + u + u);
+        ucb *= u;
+        tcb *= step;
+
+        return new Vec4(
+            ap0._x * ucb +
+            cp0._x * usq3t +
+            cp1._x * tsq3u +
+            ap1._x * tcb,
+
+            ap0._y * ucb +
+            cp0._y * usq3t +
+            cp1._y * tsq3u +
+            ap1._y * tcb,
+
+            ap0._z * ucb +
+            cp0._z * usq3t +
+            cp1._z * tsq3u +
+            ap1._z * tcb,
+
+            ap0._w * ucb +
+            cp0._w * usq3t +
+            cp1._w * tsq3u +
+            ap1._w * tcb);
+    }
+
+    /// <summary>
+    /// Returns a tangent on a Bezier curve described by two anchor points and
+    /// two control points according to a step in [0.0, 1.0] .
+    ///
+    /// When the step is less than zero, returns the first anchor point
+    /// subtracted from the first control point. When the step is greater than
+    /// one, returns the second anchor point subtracted from the second control
+    /// point.
+    /// </summary>
+    /// <param name="ap0">first anchor point</param>
+    /// <param name="cp0">first control point</param>
+    /// <param name="cp1">second control point</param>
+    /// <param name="ap1">second anchor point</param>
+    /// <param name="step">step</param>
+    /// <returns>tangent along the curve</returns>
+    public static Vec4 BezierTangent(
+        in Vec4 ap0,
+        in Vec4 cp0,
+        in Vec4 cp1,
+        in Vec4 ap1,
+        in float step)
+    {
+        if (step <= 0.0f) { return cp0 - ap0; }
+        else if (step >= 1.0f) { return ap1 - cp1; }
+
+        float u = 1.0f - step;
+        float t3 = step + step + step;
+        float usq3 = u * (u + u + u);
+        float tsq3 = step * t3;
+        float ut6 = u * (t3 + t3);
+
+        return new Vec4(
+            (cp0._x - ap0._x) * usq3 +
+            (cp1._x - cp0._x) * ut6 +
+            (ap1._x - cp1._x) * tsq3,
+
+            (cp0._y - ap0._y) * usq3 +
+            (cp1._y - cp0._y) * ut6 +
+            (ap1._y - cp1._y) * tsq3,
+
+            (cp0._z - ap0._z) * usq3 +
+            (cp1._z - cp0._z) * ut6 +
+            (ap1._z - cp1._z) * tsq3,
+
+            (cp0._w - ap0._w) * usq3 +
+            (cp1._w - cp0._w) * ut6 +
+            (ap1._w - cp1._w) * tsq3);
+    }
+
+    /// <summary>
+    /// Returns a normalized tangent on a Bezier curve.
+    /// </summary>
+    /// <param name="ap0">first anchor point</param>
+    /// <param name="cp0">first control point</param>
+    /// <param name="cp1">second control point</param>
+    /// <param name="ap1">second anchor point</param>
+    /// <param name="step">step</param>
+    /// <returns>tangent along the curve</returns>
+    public static Vec4 BezierTanUnit(
+        in Vec4 ap0,
+        in Vec4 cp0,
+        in Vec4 cp1,
+        in Vec4 ap1,
+        in float step)
+    {
+        return Vec4.Normalize(Vec4.BezierTangent(
+            ap0, cp0, cp1, ap1, step));
+    }
+
+    /// <summary>
     /// Raises each component of the vector to the nearest greater integer.
     /// </summary>
     /// <param name="v">vector</param>
@@ -958,10 +1078,50 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
+    /// Negates a vector's x component.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>flipped</returns>
+    public static Vec4 FlipX(in Vec4 v)
+    {
+        return new Vec4(-v._x, v._y, v._z, v._w);
+    }
+
+    /// <summary>
+    /// Negates a vector's y component.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>flipped</returns>
+    public static Vec4 FlipY(in Vec4 v)
+    {
+        return new Vec4(v._x, -v._y, v._z, v._w);
+    }
+
+    /// <summary>
+    /// Negates a vector's z component.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>flipped</returns>
+    public static Vec4 FlipZ(in Vec4 v)
+    {
+        return new Vec4(v._x, v._y, -v._z, v._w);
+    }
+
+    /// <summary>
+    /// Negates a vector's w component.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>flipped</returns>
+    public static Vec4 FlipW(in Vec4 v)
+    {
+        return new Vec4(v._x, v._y, v._z, -v._w);
+    }
+
+    /// <summary>
     /// Floors each component of the vector.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>floor</returns>
+    /// <returns>result</returns>
     public static Vec4 Floor(in Vec4 v)
     {
         return new Vec4(
@@ -1128,8 +1288,8 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Finds the maximum of two vectors by component.
     /// </summary>
-    /// <param name="a">the input value</param>
-    /// <param name="b">upper bound</param>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
     /// <returns>maximum value</returns>
     public static Vec4 Max(in Vec4 a, in Vec4 b)
     {
@@ -1143,8 +1303,8 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Finds the minimum of two vectors by component.
     /// </summary>
-    /// <param name="a">the input value</param>
-    /// <param name="b">lower bound</param>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
     /// <returns>minimum value</returns>
     public static Vec4 Min(in Vec4 a, in Vec4 b)
     {
@@ -1158,34 +1318,34 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <summary>
     /// Mixes two vectors together. Adds the vectors then divides by half.
     /// </summary>
-    /// <param name="a">original vector</param>
-    /// <param name="b">destination vector</param>
+    /// <param name="o">origin vector</param>
+    /// <param name="d">destination vector</param>
     /// <returns>mix</returns>
-    public static Vec4 Mix(in Vec4 a, in Vec4 b)
+    public static Vec4 Mix(in Vec4 o, in Vec4 d)
     {
         return new Vec4(
-            0.5f * (a._x + b._x),
-            0.5f * (a._y + b._y),
-            0.5f * (a._z + b._z),
-            0.5f * (a._w + b._w));
+            0.5f * (o._x + d._x),
+            0.5f * (o._y + d._y),
+            0.5f * (o._z + d._z),
+            0.5f * (o._w + d._w));
     }
 
     /// <summary>
     /// Mixes two vectors together by a step. Uses the formula (1.0 - t) a + t b
     /// . The step is unclamped.
     /// </summary>
-    /// <param name="a">original vector</param>
-    /// <param name="b">destination vector</param>
+    /// <param name="o">origin vector</param>
+    /// <param name="d">destination vector</param>
     /// <param name="t">step</param>
     /// <returns>mix</returns>
-    public static Vec4 Mix(in Vec4 a, in Vec4 b, in float t)
+    public static Vec4 Mix(in Vec4 o, in Vec4 d, in float t)
     {
         float u = 1.0f - t;
         return new Vec4(
-            u * a._x + t * b._x,
-            u * a._y + t * b._y,
-            u * a._z + t * b._z,
-            u * a._w + t * b._w);
+            u * o._x + t * d._x,
+            u * o._y + t * d._y,
+            u * o._z + t * d._z,
+            u * o._w + t * d._w);
     }
 
     /// <summary>
@@ -1193,17 +1353,17 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// . The step is unclamped; to find an appropriate clamped step, use mix in
     /// conjunction with step, linearstep or smoothstep.
     /// </summary>
-    /// <param name="a">original vector</param>
-    /// <param name="b">destination vector</param>
+    /// <param name="o">origin vector</param>
+    /// <param name="d">destination vector</param>
     /// <param name="t">step</param>
     /// <returns>mix</returns>
-    public static Vec4 Mix(in Vec4 a, in Vec4 b, in Vec4 t)
+    public static Vec4 Mix(in Vec4 o, in Vec4 d, in Vec4 t)
     {
         return new Vec4(
-            Utils.Mix(a._x, b._x, t._x),
-            Utils.Mix(a._y, b._y, t._y),
-            Utils.Mix(a._z, b._z, t._z),
-            Utils.Mix(a._w, b._w, t._w));
+            Utils.Mix(o._x, d._x, t._x),
+            Utils.Mix(o._y, d._y, t._y),
+            Utils.Mix(o._z, d._z, t._z),
+            Utils.Mix(o._w, d._w, t._w));
     }
 
     /// <summary>
@@ -1250,21 +1410,6 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
             v._y != 0.0f ? 0.0f : 1.0f,
             v._z != 0.0f ? 0.0f : 1.0f,
             v._w != 0.0f ? 0.0f : 1.0f);
-    }
-
-    /// <summary>
-    /// Raises a vector to the power of another vector.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>result</returns>
-    public static Vec4 Pow(in Vec4 a, in Vec4 b)
-    {
-        return new Vec4(
-            MathF.Pow(a._x, b._x),
-            MathF.Pow(a._y, b._y),
-            MathF.Pow(a._z, b._z),
-            MathF.Pow(a._w, b._w));
     }
 
     /// <summary>
@@ -1335,7 +1480,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Creates a random point in the Cartesian coordinate system given a lower
     /// and an upper bound.
     /// </summary>
-    /// <param name="rng">the random number generator</param>
+    /// <param name="rng">random number generator</param>
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>random vector</returns>
@@ -1355,7 +1500,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Creates a random point in the Cartesian coordinate system given a lower
     /// and an upper bound.
     /// </summary>
-    /// <param name="rng">the random number generator</param>
+    /// <param name="rng">random number generator</param>
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>random vector</returns>
@@ -1482,7 +1627,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Rounds each component of the vector to a specified number of places.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <param name="places">the number of places</param>
+    /// <param name="places">number of places</param>
     /// <returns>rounded vector</returns>
     public static Vec4 Round(in Vec4 v, in int places)
     {

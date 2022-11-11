@@ -212,6 +212,17 @@ public class Transform3
     }
 
     /// <summary>
+    /// Rotates this transform around an axis by an angle in radians.
+    /// </summary>
+    /// <param name="radians">angle</param>
+    /// <returns>this transform</returns>
+    public Transform3 RotateBy(in float radians, in Vec3 axis)
+    {
+        this.rotation = this.rotation * Quat.FromAxisAngle(radians, axis);
+        return this;
+    }
+
+    /// <summary>
     /// Eases the transform toward a new orientation by a step in [0.0, 1.0] .
     /// </summary>
     /// <param name="q">orientation</param>
@@ -458,7 +469,7 @@ public class Transform3
     /// Returns a named value tuple containing the right, forward and up axes.
     /// </summary>
     /// <param name="tr">transform</param>
-    /// <returns>tuple</returns>
+    /// <returns>axes</returns>
     public static (Vec3 right, Vec3 forward, Vec3 up) ToAxes(in Transform3 tr)
     {
         return Quat.ToAxes(tr.rotation);

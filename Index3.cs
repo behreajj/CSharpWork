@@ -230,9 +230,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <param name="i">index</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string</returns>
-    public static string ToString( //
-        in Index3 i, //
-        in int padding = 3)
+    public static string ToString(in Index3 i, in int padding = 3)
     {
         return Index3.ToString(new StringBuilder(96), i, padding).ToString();
     }
@@ -244,9 +242,9 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <param name="i">index</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString( //
-        in StringBuilder sb, //
-        in Index3 i, //
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Index3 i,
         in int padding = 3)
     {
         sb.Append("{ v: ");
@@ -265,8 +263,8 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string</returns>
-    public static string ToString( //
-        in Index3[] arr, //
+    public static string ToString(
+        in Index3[] arr,
         in int padding = 3)
     {
         return Index3.ToString(new StringBuilder(1024), arr, padding).ToString();
@@ -279,9 +277,9 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// <param name="i">index</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString( //
-        in StringBuilder sb, //
-        in Index3[] arr, //
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Index3[] arr,
         in int padding = 3)
     {
         sb.Append('[');

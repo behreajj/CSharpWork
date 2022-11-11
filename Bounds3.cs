@@ -535,18 +535,18 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     }
 
     /// <summary>
-    /// Returns a boundary encompassing the CIE L*a*b* color space, with a
-    /// minimum at (-110.0, -110.0, -1.0) and a maximum of (110.0, 110.0,
+    /// Returns a boundary encompassing the LAB color space, with a
+    /// minimum at (-111.0, -111.0, -1.0) and a maximum of (111.0, 111.0,
     /// 101.0).
     /// </summary>
     /// <value>bounds</value>
-    public static Bounds3 CieLab
+    public static Bounds3 Lab
     {
         get
         {
             return new Bounds3(
-                -110.0f, -110.0f, -1.0f,
-                110.0f, 110.0f, 101.0f);
+                -111.0f, -111.0f, -1.0f,
+                111.0f, 111.0f, 101.0f);
         }
     }
 

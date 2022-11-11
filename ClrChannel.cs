@@ -1,7 +1,7 @@
 /// <summary>
 /// Ordering for color channels.
 /// </summary>
-public enum ColorChannel : int
+public enum ClrChannel : int
 {
     ABGR = 0,
     ARGB = 1,
