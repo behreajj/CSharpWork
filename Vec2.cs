@@ -607,10 +607,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
                 (Math.Sqrt(ax * ax + ay * ay) *
                     Math.Sqrt(bx * bx + by * by)));
         }
-        else
-        {
-            return 0.0f;
-        }
+        return 0.0f;
     }
 
     /// <summary>
@@ -1655,16 +1652,21 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Returns a named value tuple containing the vector's signed heading,
+    /// Returns a named value tuple containing the vector's heading,
     /// theta; and magnitude, rho.
     /// </summary>
     /// <param name="v">vector</param>
     /// <returns>a tuple</returns>
     public static (float theta, float rho) ToPolar(in Vec2 v)
     {
-        return (
-            theta: Vec2.HeadingSigned(v),
-            rho: Vec2.Mag(v));
+        float mSq = v._x * v._x + v._y * v._y;
+        if (mSq > 0.0)
+        {
+            return (
+                theta: MathF.Atan2(v._y, v._x),
+                rho: MathF.Sqrt(mSq));
+        }
+        return (theta: 0.0f, rho: 0.0f);
     }
 
     /// <summary>

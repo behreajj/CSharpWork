@@ -491,7 +491,7 @@ public class Octree
         in Bounds3 range,
         in SortedDictionary<float, Vec3> found)
     {
-        if (Bounds3.Intersect(o.bounds, range))
+        if (Bounds3.Intersects(o.bounds, range))
         {
             foreach (Octree child in o.children)
             {
@@ -530,7 +530,7 @@ public class Octree
         in float radius,
         in SortedDictionary<float, Vec3> found)
     {
-        if (Bounds3.Intersect(o.bounds, center, radius))
+        if (Bounds3.Intersects(o.bounds, center, radius))
         {
             foreach (Octree child in o.children)
             {

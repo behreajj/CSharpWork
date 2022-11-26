@@ -27,12 +27,43 @@ public class ClrGradient : IEnumerable
     protected ClrGradient() { }
 
     /// <summary>
-    /// Constructs a color gradient from a list of color keys.
+    /// Constructs a color gradient with evenly distributed
+    /// keys of the provided count. The colors of each key
+    /// default to a grayscale ramp.
     /// </summary>
-    /// <param name="keys">color keys</param>
-    public ClrGradient(params ClrKey[] keys)
+    /// <param name="count">count</param>
+    public ClrGradient(in int count)
     {
-        this.InsertAll(keys);
+        int vc = count < 2 ? 2 : count;
+        float toStep = 1.0f / (vc - 1.0f);
+        for (int i = 0; i < vc; ++i)
+        {
+            float step = i * toStep;
+            float v = step * step; // Approximate pow(step, 2.2).
+            this.keys.Add(new ClrKey(step, new Clr(v, v, v, 1.0f)));
+        }
+    }
+
+    /// <summary>
+    /// Constructs a color gradient from a color. Places 
+    /// black at step 0.0, white at step 1.0, and the color
+    /// somewhere between based on its luminance.
+    /// </summary>
+    /// <param name="color">color</param>
+    public ClrGradient(in Clr color)
+    {
+        float a = color.a;
+        this.keys.Add(new ClrKey(0.0f, new Clr(0.0f, 0.0f, 0.0f, a)));
+
+        float lum = Clr.StandardLuminance(color);
+        if (lum > Utils.Epsilon * 2.0f && lum < 1.0f - Utils.Epsilon * 2.0f)
+        {
+            float gray = MathF.Pow(lum, 1.0f / 2.2f);
+            float middle = Utils.Mix(Utils.OneThird, Utils.TwoThirds, gray);
+            this.keys.Add(new ClrKey(middle, color));
+        }
+
+        this.keys.Add(new ClrKey(1.0f, new Clr(1.0f, 1.0f, 1.0f, a)));
     }
 
     /// <summary>
@@ -42,9 +73,16 @@ public class ClrGradient : IEnumerable
     /// <param name="colors">colors</param>
     public ClrGradient(params Clr[] colors)
     {
-        // TODO: Replace this with a from colors, which uses
-        // a spline instead of direct addition?
         this.AppendAll(colors);
+    }
+
+    /// <summary>
+    /// Constructs a color gradient from a list of color keys.
+    /// </summary>
+    /// <param name="keys">color keys</param>
+    public ClrGradient(params ClrKey[] keys)
+    {
+        this.InsertAll(keys);
     }
 
     /// <summary>

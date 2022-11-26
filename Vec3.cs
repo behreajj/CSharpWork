@@ -714,10 +714,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
                 (Math.Sqrt(ax * ax + ay * ay + az * az) *
                     Math.Sqrt(bx * bx + by * by + bz * bz)));
         }
-        else
-        {
-            return 0.0f;
-        }
+        return 0.0f;
     }
 
     /// <summary>
@@ -1238,6 +1235,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             if (mSq > 0.0f)
             {
                 float mInv = Utils.InvSqrtUnchecked(mSq);
+                float xn = x * mInv;
+                float yn = y * mInv;
+                float zn = z * mInv;
                 return new Vec3(x * mInv, y * mInv, z * mInv);
             }
         }
@@ -1995,10 +1995,16 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>tuple</returns>
     public static (float theta, float phi, float rho) ToSpherical(in Vec3 v)
     {
-        return (
-            theta: Vec3.AzimuthUnsigned(v),
-            phi: Vec3.InclinationUnsigned(v),
-            rho: Vec3.Mag(v));
+        float mSq = v._x * v._x + v._y * v._y + v._z * v._z;
+        if (mSq > 0.0)
+        {
+            float m = MathF.Sqrt(mSq);
+            return (
+                theta: MathF.Atan2(v._y, v._x),
+                phi: Utils.HalfPi - MathF.Acos(v._z / m),
+                rho: m);
+        }
+        return (theta: 0.0f, phi: 0.0f, rho: 0.0f);
     }
 
     /// <summary>

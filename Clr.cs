@@ -286,8 +286,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// the x component; chroma, to y; luminance,
     /// to z; alpha, to w.
     /// </summary>
-    /// <param name="lab">Lab color</param>
-    /// <returns>LCh color</returns>
+    /// <param name="lab">CIE LAB color</param>
+    /// <returns>CIE LCH color</returns>
     public static Vec4 CieLabToCieLch(in Vec4 lab)
     {
         float a = lab.x;
@@ -314,8 +314,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// expected to hold the luminance, while x
     /// is expected to hold a and y, b.
     /// </summary>
-    /// <param name="lab">lab color</param>
-    /// <returns>color</returns>
+    /// <param name="lab">CIE LAB color</param>
+    /// <returns>sRGB color</returns>
     public static Clr CieLabToStandard(in Vec4 lab)
     {
         return Clr.LinearToStandard(
@@ -329,8 +329,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// expected to hold the luminance, while x
     /// is expected to hold a and y, b.
     /// </summary>
-    /// <param name="lab">lab color</param>
-    /// <returns>xyz color</returns>
+    /// <param name="lab">CIE LAB color</param>
+    /// <returns>CIE XYZ color</returns>
     public static Vec4 CieLabToCieXyz(in Vec4 lab)
     {
         double offset = 16.0d / 116.0d;
@@ -371,8 +371,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// in the x component; chroma, in the y;
     /// luminance in the z; alpha in the w.
     /// </summary>
-    /// <param name="lch">LCh color</param>
-    /// <returns>Lab color</returns>
+    /// <param name="lch">CIE LCH color</param>
+    /// <returns>CIE LAB color</returns>
     public static Vec4 CieLchToCieLab(in Vec4 lch)
     {
         float hRad = lch.x * Utils.Tau;
@@ -396,8 +396,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// in the x component; chroma, in the y;
     /// luminance in the z; alpha in the w.
     /// </summary>
-    /// <param name="lch">LCh color</param>
-    /// <returns>Lab color</returns>
+    /// <param name="lch">CIE LCH color</param>
+    /// <returns>CIE LAB color</returns>
     public static Clr CieLchToStandard(in Vec4 lch)
     {
         return Clr.LinearToStandard(
@@ -412,8 +412,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// luminance in the z component,
     /// a in the x component and b in the y component.
     /// </summary>
-    /// <param name="v">XYZ color</param>
-    /// <returns>lab color</returns>
+    /// <param name="v">CIE XYZ color</param>
+    /// <returns>CIE LAB color</returns>
     public static Vec4 CieXyzToCieLab(in Vec4 v)
     {
         double oneThird = 1.0d / 3.0d;
@@ -460,7 +460,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Converts a color from CIE XYZ to linear RGB.
     /// The alpha channel is unaffected by the transformation.
     /// </summary>
-    /// <param name="v">XYZ color</param>
+    /// <param name="v">CIE XYZ color</param>
     /// <returns>linear color</returns>
     public static Clr CieXyzToLinear(in Vec4 v)
     {

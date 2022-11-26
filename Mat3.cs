@@ -318,8 +318,8 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     public float[,] ToArray2()
     {
         return new float[,]
-        { { this._m00, this._m01, this._m02 }, //
-            { this._m10, this._m11, this._m12 }, //
+        { { this._m00, this._m01, this._m02 },
+            { this._m10, this._m11, this._m12 },
             { this._m20, this._m21, this._m22 }
         };
     }
@@ -443,9 +443,9 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <returns>negation</returns>
     public static Mat3 operator -(in Mat3 m)
     {
-        return new Mat3( //
-            -m._m00, -m._m01, -m._m02, //
-            -m._m10, -m._m11, -m._m12, //
+        return new Mat3(
+            -m._m00, -m._m01, -m._m02,
+            -m._m10, -m._m11, -m._m12,
             -m._m20, -m._m21, -m._m22);
     }
 
@@ -703,8 +703,8 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromAxes( //
-        in Vec2 right, //
+    public static Mat3 FromAxes(
+        in Vec2 right,
         in Vec2 forward)
     {
         return new Mat3(
@@ -721,9 +721,9 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromAxes( //
-        in Vec2 right, //
-        in Vec2 forward, //
+    public static Mat3 FromAxes(
+        in Vec2 right,
+        in Vec2 forward,
         in Vec2 translation)
     {
         return new Mat3(
@@ -739,8 +739,8 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <param name="right">right axis</param>
     /// <param name="forward">forward axis</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromAxes( //
-        in Vec3 right, //
+    public static Mat3 FromAxes(
+        in Vec3 right,
         in Vec3 forward)
     {
         return new Mat3(
@@ -756,9 +756,9 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="translation">translation</param>
     /// <returns>matrix</returns>
-    public static Mat3 FromAxes( //
-        in Vec3 right, //
-        in Vec3 forward, //
+    public static Mat3 FromAxes(
+        in Vec3 right,
+        in Vec3 forward,
         in Vec3 translation)
     {
         return new Mat3(

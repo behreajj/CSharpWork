@@ -420,8 +420,8 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Multiplies a quaternion and a vector; the latter is treated as a pure
-    /// quaternion, _not_ as a point. Either see MulVector method or use RPR'.
+    /// Multiplies a quaternion and a vector. The latter is treated as a pure
+    /// quaternion, not as a point. Either see MulVector method or use RPR'.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -433,7 +433,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Multiplies a vector and a quaternion; the former is treated as a pure
+    /// Multiplies a vector and a quaternion. The former is treated as a pure
     /// quaternion, not as a point. Either see MulVector method or use RPR'.
     /// </summary>
     /// <param name="a">left operand</param>
@@ -734,6 +734,31 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
                     az * amInv));
         }
         return Quat.Identity;
+    }
+
+    /// <summary>
+    /// Creates a quaternion from spherical coordinates. The quaternion's right
+    /// axis corresponds to the point on the sphere, i.e., what would be
+    /// returned from Vec3.FromSpherical.
+    /// </summary>
+    /// <param name="azimuth">azimuth</param>
+    /// <param name="inclination">axis</param>
+    /// <returns>quaternion</returns>
+    public static Quat FromSpherical(in float azimuth, in float inclination)
+    {
+        float azHalf = 0.5f * (azimuth % Utils.Tau);
+        float cosAzim = MathF.Cos(azHalf);
+        float sinAzim = MathF.Sin(azHalf);
+
+        float inHalf = Utils.Tau - inclination * 0.5f;
+        float cosIncl = MathF.Cos(inHalf);
+        float sinIncl = MathF.Sin(inHalf);
+
+        return new Quat(
+            cosAzim * cosIncl,
+            sinAzim * -sinIncl,
+            sinIncl * cosAzim,
+            sinAzim * cosIncl);
     }
 
     /// <summary>
@@ -1272,6 +1297,36 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         return (
             angle: angle,
             axis: new Vec3(ax * mInv, ay * mInv, az * mInv));
+    }
+
+    /// <summary>
+    /// Returns a named value tuple containing the quaternion's azimuth,
+    /// theta and inclination, phi. The quaternion's right axis is measured.
+    /// </summary>
+    /// <param name="q">quaternion</param>
+    /// <returns>tuple</returns>
+    public static (float theta, float phi) ToSpherical(in Quat q)
+    {
+        float w = q.real;
+        float ix = q.imag.x;
+        float iy = q.imag.y;
+        float iz = q.imag.z;
+
+        float xy = ix * iy;
+        float xz = ix * iz;
+        float yw = iy * w;
+        float zw = iz * w;
+
+        float vx = w * w + ix * ix - iy * iy - iz * iz;
+        float vy = zw + zw + xy + xy;
+        float vz = xz + xz - (yw + yw);
+
+        float azimuth = MathF.Atan2(vy, vx);
+        float mSq = vx * vx + vy * vy + vz * vz;
+        float inUnsigned = (mSq > 0.0f) ?
+            MathF.Acos(vz / MathF.Sqrt(mSq)) :
+            Utils.HalfPi;
+        return (theta: MathF.Atan2(vy, vx), phi: Utils.HalfPi - inUnsigned);
     }
 
     /// <summary>

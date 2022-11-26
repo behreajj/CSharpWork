@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// Converts basic representations to UnityEngine.
@@ -35,6 +36,36 @@ public static class UnityBridge
     public static Clr FromColor32(in Color32 c)
     {
         return new Clr(c.r, c.g, c.b, c.a);
+    }
+
+
+    /// <summary>
+    /// Converts from a Unity Gradient to a ClrGradient.
+    /// </summary>
+    /// <param name="g">gradient</param>
+    /// <returns>conversion</returns>
+    public static ClrGradient FromGradient(in Gradient g)
+    {
+        GradientColorKey[] colorKeys = g.colorKeys;
+        GradientAlphaKey[] alphaKeys = g.alphaKeys;
+
+        int ckLen = colorKeys.Length;
+        int akLen = alphaKeys.Length;
+
+        SortedSet<float> steps = new SortedSet<float>();
+        for (int h = 0; h < ckLen; ++h) { steps.Add(colorKeys[h].time); }
+        for (int i = 0; i < akLen; ++i) { steps.Add(alphaKeys[i].time); }
+
+        ClrKey[] keys = new ClrKey[steps.Count];
+        int j = 0;
+        foreach (float step in steps)
+        {
+            Color c = g.Evaluate(step);
+            keys[j] = new ClrKey(step, UnityBridge.FromColor(c));
+            ++j;
+        }
+
+        return new ClrGradient(keys);
     }
 
     /// <summary>
@@ -179,5 +210,31 @@ public static class UnityBridge
     public static Vector4 ToVector4(in Vec4 v)
     {
         return new Vector4(v.x, v.y, v.z, v.w);
+    }
+
+    /// <summary>
+    /// Converts to a Unity Gradient from a ClrGradient.
+    /// </summary>
+    /// <param name="cg">color gradient</param>
+    /// <returns>conversion</returns>
+    public static Gradient ToGradient(in ClrGradient cg)
+    {
+        int keyCount = 8;
+        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[keyCount];
+        GradientColorKey[] colorKeys = new GradientColorKey[keyCount];
+
+        float toStep = 1.0f / (keyCount - 1.0f);
+        for (int i = 0; i < keyCount; ++i)
+        {
+            float step = i * toStep;
+            Clr c = ClrGradient.Eval(cg, step);
+            alphaKeys[i] = new GradientAlphaKey(c.a, step);
+            Clr o = new Clr(c.r, c.g, c.b, 1.0f);
+            colorKeys[i] = new GradientColorKey(UnityBridge.ToColor(o), step);
+        }
+
+        Gradient unityGradient = new Gradient();
+        unityGradient.SetKeys(colorKeys, alphaKeys);
+        return unityGradient;
     }
 }

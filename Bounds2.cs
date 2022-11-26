@@ -43,7 +43,11 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// </summary>
     /// <param name="min">minimum</param>
     /// <param name="max">maximum</param>
-    public Bounds2(in Vec2 min, in Vec2 max) : this(min.x, min.y, max.x, max.y) { }
+    public Bounds2(in Vec2 min, in Vec2 max)
+    {
+        this.min = min;
+        this.max = max;
+    }
 
     /// <summary>
     /// Creats a bounds from a nonuniform
@@ -54,31 +58,28 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <param name="xMax">maximum x</param>
     /// <param name="yMax">maximum y</param>
     public Bounds2(
-        in float xMin,
-        in float yMin,
-        in float xMax,
-        in float yMax)
+        in float xMin, in float yMin,
+        in float xMax, in float yMax)
     {
-        float bxMin = xMin < xMax ? xMin : xMax;
-        float byMin = yMin < yMax ? yMin : yMax;
-
-        float bxMax = xMax > xMin ? xMax : xMin;
-        float byMax = yMax > yMin ? yMax : yMin;
-
-        if (Utils.Approx(bxMin, bxMax, Utils.Epsilon))
-        {
-            bxMin -= Utils.Epsilon * 2.0f;
-            bxMax += Utils.Epsilon * 2.0f;
-        }
-
-        if (Utils.Approx(byMin, byMax, Utils.Epsilon))
-        {
-            byMin -= Utils.Epsilon * 2.0f;
-            byMax += Utils.Epsilon * 2.0f;
-        }
-
+        // This used to verify each bounds to be nonzero with
+        // a positive area, but that prevented bounds from
+        // signalling that an intersection had a potentially
+        // negative area.
         this.min = new Vec2(xMin, yMin);
         this.max = new Vec2(xMax, yMax);
+    }
+
+    /// <summary>
+    /// Tests this bounds for equivalence with an object.
+    /// </summary>
+    /// <param name="value">object</param>
+    /// <returns>equivalence</returns>
+    public override bool Equals(object value)
+    {
+        if (Object.ReferenceEquals(this, value)) { return true; }
+        if (value is null) { return false; }
+        if (value is Bounds2) { return this.Equals((Bounds2)value); }
+        return false;
     }
 
     /// <summary>
@@ -95,28 +96,6 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
             hash = hash * Utils.HashMul ^ this.max.GetHashCode();
             return hash;
         }
-    }
-
-    /// <summary>
-    /// Tests this bounds for equivalence with an object.
-    /// </summary>
-    /// <param name="value">object</param>
-    /// <returns>equivalence</returns>
-    public override bool Equals(object value)
-    {
-        if (Object.ReferenceEquals(this, value))
-        {
-            return true;
-        }
-        if (value is null)
-        {
-            return false;
-        }
-        if (value is Bounds2)
-        {
-            return this.Equals((Bounds2)value);
-        }
-        return false;
     }
 
     /// <summary>
@@ -174,6 +153,50 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     }
 
     /// <summary>
+    /// Creates the intersection of the two operands.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>intersection</returns>
+    public static Bounds2 operator &(in Bounds2 a, in Bounds2 b)
+    {
+        return Bounds2.FromIntersection(a, b);
+    }
+
+    /// <summary>
+    /// Creates the union of the two operands.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>union</returns>
+    public static Bounds2 operator |(in Bounds2 a, in Bounds2 b)
+    {
+        return Bounds2.FromUnion(a, b);
+    }
+
+    /// <summary>
+    /// Scales a bounds by a nonuniform scalar.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>scaled bounds</returns>
+    public static Bounds2 operator *(in Bounds2 a, in Vec2 b)
+    {
+        return Bounds2.Scale(a, b);
+    }
+
+    /// <summary>
+    /// Scales a bounds by a nonuniform scalar.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>scaled bounds</returns>
+    public static Bounds2 operator *(in Vec2 a, in Bounds2 b)
+    {
+        return Bounds2.Scale(b, a);
+    }
+
+    /// <summary>
     /// Evaluates whether the minimum and maximum corners
     /// of a bounds are approximately unequal in all
     /// dimensions.
@@ -204,13 +227,33 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     }
 
     /// <summary>
-    /// Finds the area of a bounds.
+    /// Finds the area of a bounds. Defaults to unsigned.
     /// </summary>
     /// <param name="b">bounds</param>
     /// <returns>area</returns>
     public static float Area(in Bounds2 b)
     {
+        return Bounds2.AreaUnsigned(b);
+    }
+
+    /// <summary>
+    /// Finds the signed area of a bounds.
+    /// </summary>
+    /// <param name="b">bounds</param>
+    /// <returns>area</returns>
+    public static float AreaSigned(in Bounds2 b)
+    {
         return (b.max.y - b.min.y) * (b.max.x - b.min.x);
+    }
+
+    /// <summary>
+    /// Finds the unsigned area of a bounds.
+    /// </summary>
+    /// <param name="b">bounds</param>
+    /// <returns>area</returns>
+    public static float AreaUnsigned(in Bounds2 b)
+    {
+        return MathF.Abs(Bounds2.AreaSigned(b));
     }
 
     /// <summary>
@@ -247,7 +290,29 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>extent</returns>
     public static Vec2 Extent(in Bounds2 b)
     {
+        return Bounds2.ExtentUnsigned(b);
+    }
+
+    /// <summary>
+    /// Finds the extent of the bounds, the difference between its
+    /// minimum and maximum corners.
+    /// </summary>
+    /// <param name="b">bounds</param>
+    /// <returns>extent</returns>
+    public static Vec2 ExtentSigned(in Bounds2 b)
+    {
         return b.max - b.min;
+    }
+
+    /// <summary>
+    /// Finds the extent of the bounds, the difference between its
+    /// minimum and maximum corners.
+    /// </summary>
+    /// <param name="b">bounds</param>
+    /// <returns>extent</returns>
+    public static Vec2 ExtentUnsigned(in Bounds2 b)
+    {
+        return Vec2.Abs(Bounds2.ExtentSigned(b));
     }
 
     /// <summary>
@@ -309,32 +374,25 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     }
 
     /// <summary>
-    /// Creates a bounding box that contains both input boxes.
+    /// Creates an intersection of the two operands.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>intersection</returns>
+    public static Bounds2 FromIntersection(in Bounds2 a, in Bounds2 b)
+    {
+        return new Bounds2(Vec2.Max(a.min, b.min), Vec2.Min(a.max, b.max));
+    }
+
+    /// <summary>
+    /// Creates a union of the two operands.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>union</returns>
     public static Bounds2 FromUnion(in Bounds2 a, in Bounds2 b)
     {
-        Vec2 aMn = a.min;
-        Vec2 aMx = a.max;
-        Vec2 bMn = b.min;
-        Vec2 bMx = b.max;
-        return new Bounds2(
-            MathF.Min(aMn.x, bMn.x),
-            MathF.Min(aMn.y, bMn.y),
-            MathF.Max(aMx.x, bMx.x),
-            MathF.Max(aMx.y, bMx.y));
-    }
-
-    /// <summary>
-    /// Finds half the extent of the bounds.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>half extent</returns>
-    public static Vec2 HalfExtent(in Bounds2 b)
-    {
-        return 0.5f * Bounds2.Extent(b);
+        return new Bounds2(Vec2.Min(a.min, b.min), Vec2.Max(a.max, b.max));
     }
 
     /// <summary>
@@ -343,7 +401,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-    public static bool Intersect(in Bounds2 a, in Bounds2 b)
+    public static bool Intersects(in Bounds2 a, in Bounds2 b)
     {
         return a.max.y > b.min.y ||
             a.min.y < b.max.y ||
@@ -358,7 +416,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <param name="center">circle center</param>
     /// <param name="radius">circle radius</param>
     /// <returns>evaluation</returns>
-    public static bool Intersect(in Bounds2 a, in Vec2 center, in float radius)
+    public static bool Intersects(in Bounds2 a, in Vec2 center, in float radius)
     {
         float yd = center.y < a.min.y ? center.y - a.min.y :
                    center.y > a.max.y ? center.y - a.max.y :
@@ -368,6 +426,16 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
                    0.0f;
 
         return xd * xd + yd * yd < radius * radius;
+    }
+
+    /// <summary>
+    /// Evaluates whether a bounding area is negative
+    /// </summary>
+    /// <param name="b">bounding area</param>
+    /// <returns>evaluation</returns>
+    public static bool IsNegative(in Bounds2 b)
+    {
+        return b.max.y < b.min.y || b.max.x < b.min.x;
     }
 
     /// <summary>
@@ -400,6 +468,20 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     public static bool None(in Bounds2 b)
     {
         return Vec2.Approx(b.min, b.max);
+    }
+
+    /// <summary>
+    /// Scales a bounds from its center.
+    /// </summary>
+    /// <param name="b">bounds</param>
+    /// <param name="v">nonuniform scale</param>
+    /// <returns>scaled bounds</returns>
+    public static Bounds2 Scale(in Bounds2 b, in Vec2 v)
+    {
+        // TODO: Test
+        return Bounds2.FromCenterExtent(
+            Bounds2.Center(b),
+            Bounds2.ExtentSigned(b) * v);
     }
 
     /// <summary>
@@ -457,6 +539,47 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         sb.Append(' ');
         sb.Append('}');
         return sb;
+    }
+
+    /// <summary>
+    /// Returns a bounds where all components of the minimum
+    /// are less than those of the maximum, and that the
+    /// edges of the bounds do not equal each other.
+    /// </summary>
+    /// <param name="b">b</param>
+    /// <returns>verified bounds</returns>
+    public static Bounds2 Verified(in Bounds2 b)
+    {
+        Vec2 mn = b.min;
+        Vec2 mx = b.max;
+
+        float xMin = mn.x;
+        float yMin = mn.y;
+
+        float xMax = mx.x;
+        float yMax = mx.y;
+
+        float bxMin = xMin < xMax ? xMin : xMax;
+        float byMin = yMin < yMax ? yMin : yMax;
+
+        float bxMax = xMax > xMin ? xMax : xMin;
+        float byMax = yMax > yMin ? yMax : yMin;
+
+        if (Utils.Approx(bxMin, bxMax, Utils.Epsilon))
+        {
+            bxMin -= Utils.Epsilon * 2.0f;
+            bxMax += Utils.Epsilon * 2.0f;
+        }
+
+        if (Utils.Approx(byMin, byMax, Utils.Epsilon))
+        {
+            byMin -= Utils.Epsilon * 2.0f;
+            byMax += Utils.Epsilon * 2.0f;
+        }
+
+        return new Bounds2(
+            new Vec2(xMin, yMin),
+            new Vec2(xMax, yMax));
     }
 
     /// <summary>

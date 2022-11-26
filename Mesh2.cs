@@ -141,7 +141,7 @@ public class Mesh2
     {
         // TODO: Test.
         Bounds2 aabb = Mesh2.CalcBounds(this);
-        Vec2 dim = Bounds2.Extent(aabb);
+        Vec2 dim = Bounds2.ExtentSigned(aabb);
         Vec2 lb = aabb.Min;
 
         float lbx = lb.x;

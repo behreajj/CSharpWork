@@ -433,7 +433,7 @@ public class Quadtree
         in Bounds2 range,
         in SortedDictionary<float, Vec2> found)
     {
-        if (Bounds2.Intersect(q.bounds, range))
+        if (Bounds2.Intersects(q.bounds, range))
         {
             foreach (Quadtree child in q.children)
             {
@@ -472,7 +472,7 @@ public class Quadtree
         in float radius,
         in SortedDictionary<float, Vec2> found)
     {
-        if (Bounds2.Intersect(q.bounds, center, radius))
+        if (Bounds2.Intersects(q.bounds, center, radius))
         {
             foreach (Quadtree child in q.children)
             {

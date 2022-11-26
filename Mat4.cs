@@ -944,7 +944,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <param name="forward">forward axis</param>
     /// <param name="up">up axis</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromAxes( // 
+    public static Mat4 FromAxes(
         in Vec3 right,
         in Vec3 forward,
         in Vec3 up)
@@ -1022,12 +1022,12 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// Creates a rotation matrix from a quaternion.
     /// </summary>
-    /// <param name="source">quaternion</param>
+    /// <param name="q">quaternion</param>
     /// <returns>matrix</returns>
-    public static Mat4 FromRotation(in Quat source)
+    public static Mat4 FromRotation(in Quat q)
     {
-        float w = source.Real;
-        Vec3 i = source.Imag;
+        float w = q.Real;
+        Vec3 i = q.Imag;
         float x = i.x;
         float y = i.y;
         float z = i.z;
@@ -1148,7 +1148,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     {
         return new Mat4(
             cosa, 0.0f, sina, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f, //
+            0.0f, 1.0f, 0.0f, 0.0f,
             -sina, 0.0f, cosa, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f);
     }
