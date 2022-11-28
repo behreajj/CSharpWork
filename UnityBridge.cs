@@ -29,6 +29,24 @@ public static class UnityBridge
     }
 
     /// <summary>
+    /// Converts from an array of Unity colors to
+    /// an array of integers. The ClrChannel enumeration
+    /// signals the order for how integers should be packed.
+    /// </summary>
+    /// <param name="cs">colors</param>
+    /// <returns>conversion</returns>
+    public static Clr[] FromColor(in Color[] cs)
+    {
+        int len = cs.Length;
+        Clr[] target = new Clr[len];
+        for (int i = 0; i < len; ++i)
+        {
+            target[i] = UnityBridge.FromColor(cs[i]);
+        }
+        return target;
+    }
+
+    /// <summary>
     /// Converts from a Unity Color32 to a Clr.
     /// </summary>
     /// <param name="c">color</param>
@@ -38,6 +56,23 @@ public static class UnityBridge
         return new Clr(c.r, c.g, c.b, c.a);
     }
 
+    /// <summary>
+    /// Converts from an array of Unity colors to
+    /// an array of integers. The ClrChannel enumeration
+    /// signals the order for how integers should be packed.
+    /// </summary>
+    /// <param name="cs">colors</param>
+    /// <returns>conversion</returns>
+    public static Clr[] FromColor32(in Color32[] cs)
+    {
+        int len = cs.Length;
+        Clr[] target = new Clr[len];
+        for (int i = 0; i < len; ++i)
+        {
+            target[i] = UnityBridge.FromColor32(cs[i]);
+        }
+        return target;
+    }
 
     /// <summary>
     /// Converts from a Unity Gradient to a ClrGradient.
@@ -145,6 +180,24 @@ public static class UnityBridge
     }
 
     /// <summary>
+    /// Converts to an array of Unity colors from
+    /// an array of integers. The ClrChannel enumeration
+    /// signals the order for how integers should be packed.
+    /// </summary>
+    /// <param name="cs">colors</param>
+    /// <returns>conversion</returns>
+    public static Color[] ToColor(in Clr[] cs)
+    {
+        int len = cs.Length;
+        Color[] target = new Color[len];
+        for (int i = 0; i < len; ++i)
+        {
+            target[i] = UnityBridge.ToColor(cs[i]);
+        }
+        return target;
+    }
+
+    /// <summary>
     /// Converts to a Unity Color32 from a Clr.
     /// </summary>
     /// <param name="c">color</param>
@@ -156,6 +209,24 @@ public static class UnityBridge
             (byte)(Utils.Clamp(c.g, 0.0f, 1.0f) * 255.0f + 0.5f),
             (byte)(Utils.Clamp(c.b, 0.0f, 1.0f) * 255.0f + 0.5f),
             (byte)(Utils.Clamp(c.a, 0.0f, 1.0f) * 255.0f + 0.5f));
+    }
+
+    /// <summary>
+    /// Converts to an array of Unity colors from
+    /// an array of integers. The ClrChannel enumeration
+    /// signals the order for how integers should be packed.
+    /// </summary>
+    /// <param name="cs">colors</param>
+    /// <returns>conversion</returns>
+    public static Color32[] ToColor32(in Clr[] cs)
+    {
+        int len = cs.Length;
+        Color32[] target = new Color32[len];
+        for (int i = 0; i < len; ++i)
+        {
+            target[i] = UnityBridge.ToColor32(cs[i]);
+        }
+        return target;
     }
 
     /// <summary>

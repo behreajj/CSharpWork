@@ -8,7 +8,7 @@ using System.Text;
 /// Allows for smooth color transitions to be evaluated by a factor.
 /// </summary>
 [Serializable]
-public class ClrGradient : IEnumerable
+public class ClrGradient : IEnumerable<ClrKey>
 {
     /// <summary>
     /// The list of color keys in the gradient.
@@ -216,9 +216,18 @@ public class ClrGradient : IEnumerable
     /// Gets the enumerator for the keys of this gradient.
     /// </summary>
     /// <returns>enumerator</returns>
-    public IEnumerator GetEnumerator()
+    public IEnumerator<ClrKey> GetEnumerator()
     {
         return this.keys.GetEnumerator();
+    }
+
+    /// <summary>
+    /// Gets the enumerator for the keys of this gradient.
+    /// </summary>
+    /// <returns>enumerator</returns>
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return this.GetEnumerator();
     }
 
     /// <summary>

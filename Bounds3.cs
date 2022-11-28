@@ -314,6 +314,17 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     }
 
     /// <summary>
+    /// Creates an intersection of the two operands.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>intersection</returns>
+    public static Bounds3 FromIntersection(in Bounds3 a, in Bounds3 b)
+    {
+        return new Bounds3(Vec3.Max(a.min, b.min), Vec3.Min(a.max, b.max));
+    }
+
+    /// <summary>
     /// Creates a bounding volume to encompass an array of points.
     /// </summary>
     /// <param name="points">points</param>
@@ -354,17 +365,6 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
         ubz += Utils.Epsilon * 2.0f;
 
         return new Bounds3(lbx, lby, lbz, ubx, uby, ubz);
-    }
-
-    /// <summary>
-    /// Creates an intersection of the two operands.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>intersection</returns>
-    public static Bounds3 FromIntersection(in Bounds3 a, in Bounds3 b)
-    {
-        return new Bounds3(Vec3.Max(a.min, b.min), Vec3.Min(a.max, b.max));
     }
 
     /// <summary>

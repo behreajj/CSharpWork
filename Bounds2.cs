@@ -338,6 +338,17 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     }
 
     /// <summary>
+    /// Creates an intersection of the two operands.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>intersection</returns>
+    public static Bounds2 FromIntersection(in Bounds2 a, in Bounds2 b)
+    {
+        return new Bounds2(Vec2.Max(a.min, b.min), Vec2.Min(a.max, b.max));
+    }
+
+    /// <summary>
     /// Creates a bounding box to encompass an array of points.
     /// </summary>
     /// <param name="points">points</param>
@@ -371,17 +382,6 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         uby += Utils.Epsilon * 2.0f;
 
         return new Bounds2(lbx, lby, ubx, uby);
-    }
-
-    /// <summary>
-    /// Creates an intersection of the two operands.
-    /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
-    /// <returns>intersection</returns>
-    public static Bounds2 FromIntersection(in Bounds2 a, in Bounds2 b)
-    {
-        return new Bounds2(Vec2.Max(a.min, b.min), Vec2.Min(a.max, b.max));
     }
 
     /// <summary>

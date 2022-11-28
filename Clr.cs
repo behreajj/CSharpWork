@@ -502,6 +502,15 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     }
 
     /// <summary>
+    /// Returns the first color argument with the alpha
+    /// of the second.
+    /// </summary>
+    public static Clr CopyAlpha(in Clr a, in Clr b)
+    {
+        return new Clr(a._r, a._g, a._b, b._a);
+    }
+
+    /// <summary>
     /// Checks if two colors have equivalent alpha channels when converted to
     /// bytes in [0, 255]. Uses saturation arithmetic.
     /// </summary>
@@ -700,19 +709,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>mixed color</returns>
     public static Clr MixCieLab(in Clr o, in Clr d, in float t = 0.5f)
     {
-        Clr oLin = Clr.StandardToLinear(o);
-        Vec4 oXyz = Clr.LinearToCieXyz(oLin);
-        Vec4 oLab = Clr.CieXyzToCieLab(oXyz);
-
-        Clr dLin = Clr.StandardToLinear(d);
-        Vec4 dXyz = Clr.LinearToCieXyz(dLin);
-        Vec4 dLab = Clr.CieXyzToCieLab(dXyz);
-
-        Vec4 cLab = Vec4.Mix(oLab, dLab, t);
-        Vec4 cXyz = Clr.CieLabToCieXyz(cLab);
-        Clr cLin = Clr.CieXyzToLinear(cXyz);
-
-        return Clr.LinearToStandard(cLin);
+        Vec4 oLab = Clr.StandardToCieLab(o);
+        Vec4 dLab = Clr.StandardToCieLab(d);
+        return Clr.CieLabToStandard(Vec4.Mix(oLab, dLab, t));
     }
 
     /// <summary>
@@ -747,16 +746,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         in float t,
         in Func<float, float, float, float, float> easing)
     {
-        Clr oLin = Clr.StandardToLinear(o);
-        Vec4 oXyz = Clr.LinearToCieXyz(oLin);
-        Vec4 oLab = Clr.CieXyzToCieLab(oXyz);
+        Vec4 oLab = Clr.StandardToCieLab(o);
         float oa = oLab.x;
         float ob = oLab.y;
         float oChrSq = oa * oa + ob * ob;
 
-        Clr dLin = Clr.StandardToLinear(d);
-        Vec4 dXyz = Clr.LinearToCieXyz(dLin);
-        Vec4 dLab = Clr.CieXyzToCieLab(dXyz);
+        Vec4 dLab = Clr.StandardToCieLab(d);
         float da = dLab.x;
         float db = dLab.y;
         float dChrSq = da * da + db * db;
@@ -786,9 +781,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
             cLab = Clr.CieLchToCieLab(cLch);
         }
 
-        Vec4 cXyz = Clr.CieLabToCieXyz(cLab);
-        Clr cLin = Clr.CieXyzToLinear(cXyz);
-        return Clr.LinearToStandard(cLin);
+        return Clr.CieLabToStandard(cLab);
     }
 
     /// <summary>
@@ -835,6 +828,17 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     public static bool None(in Clr c)
     {
         return c._a <= 0.0f;
+    }
+
+    /// <summary>
+    /// Returns an opaque version of the color, i.e., where its alpha channel
+    /// is set to 1.0.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>opaque</returns>
+    public static Clr Opaque(in Clr c)
+    {
+        return new Clr(c._r, c._g, c._b, 1.0f);
     }
 
     /// <summary>

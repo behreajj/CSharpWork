@@ -165,7 +165,7 @@ public class Transform2
     /// <returns>this transform</returns>
     public Transform2 FlipX()
     {
-        this.Scale = new Vec2(-this.scale.x, this.scale.y);
+        this.Scale = Vec2.FlipX(this.scale);
         return this;
     }
 
@@ -176,7 +176,7 @@ public class Transform2
     /// <returns>this transform</returns>
     public Transform2 FlipY()
     {
-        this.Scale = new Vec2(this.scale.x, -this.scale.y);
+        this.Scale = Vec2.FlipY(this.scale);
         return this;
     }
 

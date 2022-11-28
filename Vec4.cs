@@ -524,7 +524,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Applies truncation-based modulo (fmod) to the left and right vectors.
+    /// Applies truncation-based modulo to the left and right vectors.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -535,7 +535,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Applies truncation-based modulo (fmod) to the left and right operands.
+    /// Applies truncation-based modulo to the left and right operands.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -554,7 +554,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Applies truncation-based modulo (fmod) to the left and right operands.
+    /// Applies truncation-based modulo to the left and right operands.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -945,7 +945,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     }
 
     /// <summary>
-    /// Finds first vector argument with the sign of the second vector argument.
+    /// Returns the first vector with the sign of the second.
     /// Returns zero where the sign is zero.
     /// </summary>
     /// <param name="a">the magnitude</param>

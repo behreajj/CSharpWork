@@ -1,8 +1,43 @@
+using System.Collections.Generic;
+
 /// <summary>
 /// Holds methods that operate on arrays of pixels held by images.
 /// </summary>
 public static class Pixels
 {
+    #region Generic
+
+    /// <summary>
+    /// Creates a checker pattern in an array of pixels.
+    /// </summary>
+    /// <param name="a">first color/param>
+    /// <param name="b">second color/param>
+    /// <param name="cols">columns/param>
+    /// <param name="rows">rows/param>
+    /// <param name="w">image width</param>
+    /// <param name="h">image height</param>
+    /// <param name="target">target pixels</param>
+    /// <returns>checker pattern</returns>
+    public static T[] Checker<T>(
+        in T a, in T b,
+        in int cols, in int rows, in int w, in int h,
+        in T[] target)
+    {
+        int limit = 2;
+        int vCols = cols < 2 ? 2 : cols > w / limit ? w / limit : cols;
+        int vRows = rows < 2 ? 2 : rows > h / limit ? h / limit : rows;
+        int wch = w / vCols;
+        int hchw = w * h / vRows;
+
+        int trgLen = target.Length;
+        for (int i = 0; i < trgLen; ++i)
+        {
+            // % 2 can be replaced by & 1 for even or odd.
+            target[i] = (i % w / wch + i / hchw & 1) == 0 ? a : b;
+        }
+        return target;
+    }
+
     /// <summary>
     /// Fills the pixels target array with a color.
     /// </summary>
@@ -109,23 +144,23 @@ public static class Pixels
         int trgLen = target.Length;
         int flipSign = flip ? 1 : -1;
 
-        for (int k = 0; k < trgLen; ++k)
+        for (int i = 0; i < trgLen; ++i)
         {
-            int cross = k % wSrc - pivot;
+            int cross = i % wSrc - pivot;
             if (flipSign * cross < 0)
             {
-                target[k] = source[k];
+                target[i] = source[i];
             }
             else
             {
                 int pxOpp = pivot - cross;
                 if (pxOpp > -1 && pxOpp < wSrc)
                 {
-                    target[k] = source[k / wSrc * wSrc + pxOpp];
+                    target[i] = source[i / wSrc * wSrc + pxOpp];
                 }
                 else
                 {
-                    target[k] = default(T);
+                    target[i] = default(T);
                 }
             }
         }
@@ -152,23 +187,23 @@ public static class Pixels
         int trgLen = target.Length;
         int flipSign = flip ? 1 : -1;
 
-        for (int k = 0; k < trgLen; ++k)
+        for (int i = 0; i < trgLen; ++i)
         {
-            int cross = k / wSrc - pivot;
+            int cross = i / wSrc - pivot;
             if (flipSign * cross < 0)
             {
-                target[k] = source[k];
+                target[i] = source[i];
             }
             else
             {
                 int pyOpp = pivot - cross;
                 if (pyOpp > -1 && pyOpp < hSrc)
                 {
-                    target[k] = source[pyOpp * wSrc + k % wSrc];
+                    target[i] = source[pyOpp * wSrc + i % wSrc];
                 }
                 else
                 {
-                    target[k] = default(T);
+                    target[i] = default(T);
                 }
             }
         }
@@ -268,8 +303,7 @@ public static class Pixels
     /// <returns>wrapped pixels</returns>
     public static T[] Wrap<T>(
         in T[] source, in int wSrc, in int hSrc,
-        in int dx, in int dy,
-        in int wTrg, in T[] target)
+        in int dx, in int dy, in int wTrg, in T[] target)
     {
         int trgLen = target.Length;
         for (int i = 0; i < trgLen; ++i)
@@ -284,4 +318,66 @@ public static class Pixels
         }
         return target;
     }
+
+    #endregion
+
+    #region Specific
+
+    /// <summary>
+    /// Adjusts the contrast of colors from a source pixels array by a factor.
+    /// Uses the CIE LAB color space. The adjustment factor is expected to be in
+    /// [-1.0, 1.0].
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="fac">factor</param>
+    /// <param name="target">target pixels</param>
+    /// <returns>wrapped pixels</returns>
+    public static Clr[] AdjustContrast(in Clr[] source, in float fac, in Clr[] target)
+    {
+        int srcLen = source.Length;
+        if (srcLen == target.Length)
+        {
+            float valAdjust = 1.0f + Utils.Clamp(fac, -1.0f, 1.0f);
+            if (Utils.Approx(valAdjust, 1.0f))
+            {
+                System.Array.Copy(source, 0, target, 0, srcLen);
+                return target;
+            }
+
+            Dictionary<Clr, Clr> dict = new Dictionary<Clr, Clr>();
+            for (int i = 0; i < srcLen; ++i)
+            {
+                Clr c = source[i];
+                if (Clr.Any(c))
+                {
+                    Clr key = Clr.Opaque(c);
+                    if (!dict.ContainsKey(key))
+                    {
+                        Vec4 lab = Clr.StandardToCieLab(key);
+                        Vec4 labAdj = new Vec4(lab.x, lab.y,
+                            (lab.z - 50.0f) * valAdjust + 50.0f, lab.w);
+                        dict.Add(key, Clr.CieLabToStandard(labAdj));
+                    }
+                }
+            }
+
+            if (dict.Count > 0)
+            {
+                for (int i = 0; i < srcLen; ++i)
+                {
+                    Clr c = source[i];
+                    target[i] = Clr.CopyAlpha(
+                        dict.GetValueOrDefault(Clr.Opaque(c),
+                            Clr.ClearBlack), c);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < srcLen; ++i) { target[i] = Clr.ClearBlack; }
+            }
+        }
+        return target;
+    }
+
+    #endregion
 }

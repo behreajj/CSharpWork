@@ -7,7 +7,7 @@ using System.Text;
 /// Organizes a 2D Bezier curve into a list of knots. Provides a function to
 /// retrieve a point and tangent on a curve from a step in the range [0.0, 1.0].
 /// </summary>
-public class Curve2 : IEnumerable
+public class Curve2 : IEnumerable<Knot2>
 {
     /// <summary>
     /// A flag for whether or not the curve is a closed loop.
@@ -197,9 +197,18 @@ public class Curve2 : IEnumerable
     /// Gets the enumerator for this curve.
     /// </summary>
     /// <returns>enumerator</returns>
-    public IEnumerator GetEnumerator()
+    public IEnumerator<Knot2> GetEnumerator()
     {
         return this.knots.GetEnumerator();
+    }
+
+    /// <summary>
+    /// Gets the enumerator for this curve.
+    /// </summary>
+    /// <returns>enumerator</returns>
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return this.GetEnumerator();
     }
 
     /// <summary>
