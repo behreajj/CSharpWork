@@ -77,6 +77,24 @@ public class ClrGradient : IEnumerable<ClrKey>
     }
 
     /// <summary>
+    /// Constructs a color gradient from a color key.
+    /// </summary>
+    /// <param name="key">color key</param>
+    public ClrGradient(in ClrKey key)
+    {
+        float step = key.Step;
+        if (step > Utils.Epsilon)
+        {
+            this.Insert(new ClrKey(0.0f, Clr.ClearBlack));
+        }
+        this.Insert(key);
+        if (step < 1.0 - Utils.Epsilon)
+        {
+            this.Insert(new ClrKey(1.0f, Clr.White));
+        }
+    }
+
+    /// <summary>
     /// Constructs a color gradient from a list of color keys.
     /// </summary>
     /// <param name="keys">color keys</param>
@@ -422,7 +440,8 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// <returns>color</returns>
     public static Clr Eval(in ClrGradient cg, in float step)
     {
-        return ClrGradient.Eval(cg, step, (x, y, z) => Clr.MixRgbaStandard(x, y, z));
+        return ClrGradient.Eval(cg, step,
+            (x, y, z) => Clr.MixRgbaStandard(x, y, z));
     }
 
     /// <summary>

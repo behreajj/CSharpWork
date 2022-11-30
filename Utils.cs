@@ -362,6 +362,8 @@ public static class Utils
     /// <returns>fractional portion</returns>
     public static float Fract(in float v)
     {
+        // TODO: Distinguish between FractTrunc and FractFloor?
+        // Make Fract an alias for FractTrunc?
         return v - MathF.Truncate(v);
     }
 

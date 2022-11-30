@@ -78,7 +78,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="g">green channel</param>
     /// <param name="b">blue channel</param>
     /// <param name="a">alpha channel</param>
-    public Clr(in byte r = 255, in byte g = 255, in byte b = 255, in byte a = 255)
+    public Clr(in byte r, in byte g, in byte b, in byte a = 255)
     {
         this._r = r * Utils.One255;
         this._g = g * Utils.One255;
@@ -94,7 +94,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="g">green channel</param>
     /// <param name="b">blue channel</param>
     /// <param name="a">alpha channel</param>
-    public Clr(in sbyte r = -1, in sbyte g = -1, in sbyte b = -1, in sbyte a = -1)
+    public Clr(in sbyte r, in sbyte g, in sbyte b, in sbyte a = -1)
     {
         this._r = (((int)r) & 0xff) * Utils.One255;
         this._g = (((int)g) & 0xff) * Utils.One255;
@@ -103,14 +103,13 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     }
 
     /// <summary>
-    /// Creates a color from single precision real numbers. Clamps values to a
-    /// range [0.0, 1.0] .
+    /// Creates a color from single precision real numbers.
     /// </summary>
     /// <param name="r">red channel</param>
     /// <param name="g">green channel</param>
     /// <param name="b">blue channel</param>
     /// <param name="a">alpha channel</param>
-    public Clr(in float r = 1.0f, in float g = 1.0f, in float b = 1.0f, in float a = 1.0f)
+    public Clr(in float r, in float g, in float b, in float a = 1.0f)
     {
         this._r = r;
         this._g = g;
@@ -488,6 +487,16 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     }
 
     /// <summary>
+    /// Returns a clear version of the color, i.e., where its alpha is 0.0.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>clear</returns>
+    public static Clr Clear(in Clr c)
+    {
+        return new Clr(c._r, c._g, c._b, 0.0f);
+    }
+
+    /// <summary>
     /// Tests to see if a color contains a value.
     /// </summary>
     /// <param name="c">color</param>
@@ -505,6 +514,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Returns the first color argument with the alpha
     /// of the second.
     /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>color</returns>
     public static Clr CopyAlpha(in Clr a, in Clr b)
     {
         return new Clr(a._r, a._g, a._b, b._a);
@@ -519,8 +531,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>evaluation</returns>
     public static bool EqAlphaSatArith(in Clr a, in Clr b)
     {
-        return (int)(Utils.Clamp(a._a, 0.0f, 1.0f) * 255.0f + 0.5f) ==
-               (int)(Utils.Clamp(b._a, 0.0f, 1.0f) * 255.0f + 0.5f);
+        return (int)(Utils.Clamp(a._a) * 255.0f + 0.5f) ==
+               (int)(Utils.Clamp(b._a) * 255.0f + 0.5f);
     }
 
     /// <summary>
@@ -532,12 +544,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>evaluation</returns>
     public static bool EqRgbSatArith(in Clr a, in Clr b)
     {
-        return (int)(Utils.Clamp(a._b, 0.0f, 1.0f) * 255.0f + 0.5f) ==
-               (int)(Utils.Clamp(b._b, 0.0f, 1.0f) * 255.0f + 0.5f) &&
-               (int)(Utils.Clamp(a._g, 0.0f, 1.0f) * 255.0f + 0.5f) ==
-               (int)(Utils.Clamp(b._g, 0.0f, 1.0f) * 255.0f + 0.5f) &&
-               (int)(Utils.Clamp(a._r, 0.0f, 1.0f) * 255.0f + 0.5f) ==
-               (int)(Utils.Clamp(b._r, 0.0f, 1.0f) * 255.0f + 0.5f);
+        return (int)(Utils.Clamp(a._b) * 255.0f + 0.5f) ==
+               (int)(Utils.Clamp(b._b) * 255.0f + 0.5f) &&
+               (int)(Utils.Clamp(a._g) * 255.0f + 0.5f) ==
+               (int)(Utils.Clamp(b._g) * 255.0f + 0.5f) &&
+               (int)(Utils.Clamp(a._r) * 255.0f + 0.5f) ==
+               (int)(Utils.Clamp(b._r) * 255.0f + 0.5f);
     }
 
     /// <summary>
@@ -831,8 +843,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     }
 
     /// <summary>
-    /// Returns an opaque version of the color, i.e., where its alpha channel
-    /// is set to 1.0.
+    /// Returns an opaque version of the color, i.e., where its alpha is 1.0.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>opaque</returns>
@@ -1013,7 +1024,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// component, a in the x component and b in the y component.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>lab color</returns>
+    /// <returns>CIE LAB color</returns>
     public static Vec4 StandardToCieLab(in Clr c)
     {
         return Clr.CieXyzToCieLab(
@@ -1030,7 +1041,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// to z; alpha, to w.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>lab color</returns>
+    /// <returns>CIE LCH color</returns>
     public static Vec4 StandardToCieLch(in Clr c)
     {
         return Clr.CieLabToCieLch(
@@ -1105,7 +1116,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>hexadecimal color</returns>
     public static int ToHexArgb(in Clr c)
     {
-        return Clr.ToHexArgbUnchecked(Clr.Clamp(c, 0.0f, 1.0f));
+        return Clr.ToHexArgbUnchecked(Clr.Clamp(c));
     }
 
     /// <summary>
@@ -1115,7 +1126,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>hexadecimal color</returns>
     public static int ToHexRgba(in Clr c)
     {
-        return Clr.ToHexRgbaUnchecked(Clr.Clamp(c, 0.0f, 1.0f));
+        return Clr.ToHexRgbaUnchecked(Clr.Clamp(c));
     }
 
     /// <summary>
