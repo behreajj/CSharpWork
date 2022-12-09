@@ -237,6 +237,43 @@ public class Octree
     }
 
     /// <summary>
+    /// Subdivides this octree. For cases where a minimum number of children
+    /// nodes is desired, independent of point insertion. The result will be
+    /// the child count raised to the power of iterations, e.g., 8,
+    /// 64, 512.
+    /// </summary>
+    /// <param name="iterations">iterations</param>
+    /// <returns>this octree</returns>
+    public Octree Subdivide(in int iterations = 1)
+    {
+        return this.Subdivide(iterations, this.capacity);
+    }
+
+    /// <summary>
+    /// Subdivides this octree. For cases where a minimum number of children
+    /// nodes is desired, independent of point insertion. The result will be
+    /// the child count raised to the power of iterations, e.g., 8,
+    /// 64, 512.
+    /// </summary>
+    /// <param name="iterations">iterations</param>
+    /// <param name="childCapacity">child capacity</param>
+    /// <returns>this octree</returns>
+    public Octree Subdivide(in int iterations, in int childCapacity)
+    {
+        if (iterations < 1) { return this; }
+        for (int i = 0; i < iterations; ++i)
+        {
+            foreach (Octree child in this.children)
+            {
+                child.Subdivide(iterations - 1, childCapacity);
+            }
+            if (Octree.IsLeaf(this)) { this.Split(childCapacity); }
+        }
+
+        return this;
+    }
+
+    /// <summary>
     /// Finds the average center in each leaf node.
     /// If include empty is true, then empty
     /// leaf nodes will append the center of their bounds instead.
@@ -279,8 +316,7 @@ public class Octree
             {
                 Vec3 sum = Vec3.Zero;
                 foreach (Vec3 v in o.points) { sum += v; }
-                Vec3 avg = sum / ptsLen;
-                target.Add(avg);
+                target.Add(sum / ptsLen);
             }
             else if (ptsLen > 0)
             {
@@ -326,76 +362,6 @@ public class Octree
             sum += Octree.CountPoints(child);
         }
         return sum;
-    }
-
-    /// <summary>
-    /// Creates an octree from an array of colors.
-    /// </summary>
-    /// <param name="colors">colors</param>
-    /// <param name="model">color model</param>
-    /// <param name="capacity">capacity</param>
-    /// <returns>octree</returns>
-    public static Octree FromColors(
-        in IEnumerable<Clr> colors,
-        in ClrModel model = ClrModel.CieLab,
-        in int capacity = Octree.DefaultCapacity)
-    {
-        Octree o;
-        switch (model)
-        {
-            case ClrModel.Standard:
-                {
-                    o = new Octree(Bounds3.UnitCubeUnsigned, capacity);
-                    foreach (Clr c in colors)
-                    {
-                        o.Insert(new Vec3(c.r, c.g, c.b));
-                    }
-                }
-                break;
-            case ClrModel.Linear:
-                {
-                    o = new Octree(Bounds3.UnitCubeUnsigned, capacity);
-                    foreach (Clr c in colors)
-                    {
-                        Clr l = Clr.StandardToLinear(c);
-                        o.Insert(new Vec3(l.r, l.g, l.b));
-                    }
-                }
-                break;
-            case ClrModel.CieXyz:
-                {
-                    o = new Octree(Bounds3.UnitCubeUnsigned, capacity);
-                    foreach (Clr c in colors)
-                    {
-                        Clr l = Clr.StandardToLinear(c);
-                        Vec4 v = Clr.LinearToCieXyz(l);
-                        o.Insert(v.xyz);
-                    }
-                }
-                break;
-            case ClrModel.Normal:
-                {
-                    o = new Octree(Bounds3.UnitCubeSigned, capacity);
-                    foreach (Clr c in colors)
-                    {
-                        o.Insert(Vec3.FromColor(c));
-                    }
-                }
-                break;
-            case ClrModel.CieLch:
-            case ClrModel.CieLab:
-            default:
-                {
-                    o = new Octree(Bounds3.Lab, capacity, Octree.RootLevel);
-                    foreach (Clr c in colors)
-                    {
-                        Vec4 lab = Clr.StandardToCieLab(c);
-                        o.Insert(lab.xyz);
-                    }
-                }
-                break;
-        }
-        return o;
     }
 
     /// <summary>

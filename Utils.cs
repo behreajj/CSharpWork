@@ -692,6 +692,27 @@ public static class Utils
     }
 
     /// <summary>
+    /// Finds the next power of 2 for a signed integer, i.e., multiplies
+    /// the next power by the integer's sign. Returns zero if the input
+    /// is zero.
+    /// </summary>
+    /// <param name="v">value</param>
+    /// <returns>next power of two</returns>
+    public static int NextPowerOf2(in int v)
+    {
+        if (v != 0)
+        {
+            int vSgn = 1;
+            int vAbs = v;
+            if (v < 0) { vAbs = -v; vSgn = -1; }
+            int p = 1;
+            while (p < vAbs) { p <<= 1; }
+            return p * vSgn;
+        }
+        return 0;
+    }
+
+    /// <summary>
     /// Finds the negation of a float holding a boolean value.
     /// </summary>
     /// <param name="v">input value</param>

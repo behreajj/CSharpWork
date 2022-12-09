@@ -279,8 +279,7 @@ public class Quadtree
             {
                 Vec2 sum = Vec2.Zero;
                 foreach (Vec2 v in q.points) { sum += v; }
-                Vec2 avg = sum / ptsLen;
-                target.Add(avg);
+                target.Add(sum / ptsLen);
             }
             else if (ptsLen > 0)
             {

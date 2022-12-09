@@ -209,7 +209,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// it, then converts the result to a color.
     /// </summary>
     /// <param name="c">the input color</param>
-    /// <returns>the negated color</returns>
+    /// <returns>negated color</returns>
     public static Clr operator ~(in Clr c)
     {
         return Clr.FromHexArgb(~Clr.ToHexArgb(c));
@@ -221,7 +221,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the color</returns>
+    /// <returns>color</returns>
     public static Clr operator &(in Clr a, in Clr b)
     {
         return Clr.FromHexArgb(Clr.ToHexArgb(a) & Clr.ToHexArgb(b));
@@ -233,7 +233,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the color</returns>
+    /// <returns>color</returns>
     public static Clr operator |(in Clr a, in Clr b)
     {
         return Clr.FromHexArgb(Clr.ToHexArgb(a) | Clr.ToHexArgb(b));
@@ -245,7 +245,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>the color</returns>
+    /// <returns>color</returns>
     public static Clr operator ^(in Clr a, in Clr b)
     {
         return Clr.FromHexArgb(Clr.ToHexArgb(a) ^ Clr.ToHexArgb(b));
@@ -254,7 +254,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <summary>
     /// Tests to see if all color channels are greater than zero.
     /// </summary>
-    /// <param name="c">the color</param>
+    /// <param name="c">color</param>
     /// <returns>evaluation</returns>
     public static bool All(in Clr c)
     {
@@ -268,7 +268,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// Tests to see if the alpha channel of the color is greater than zero,
     /// i.e., if it has some opacity.
     /// </summary>
-    /// <param name="c">the color</param>
+    /// <param name="c">color</param>
     /// <returns>evaluation</returns>
     public static bool Any(in Clr c)
     {
@@ -484,16 +484,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
             Utils.Clamp(c._g, lb, ub),
             Utils.Clamp(c._b, lb, ub),
             Utils.Clamp(c._a, lb, ub));
-    }
-
-    /// <summary>
-    /// Returns a clear version of the color, i.e., where its alpha is 0.0.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>clear</returns>
-    public static Clr Clear(in Clr c)
-    {
-        return new Clr(c._r, c._g, c._b, 0.0f);
     }
 
     /// <summary>
