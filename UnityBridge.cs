@@ -87,7 +87,7 @@ public static class UnityBridge
         int ckLen = colorKeys.Length;
         int akLen = alphaKeys.Length;
 
-        SortedSet<float> steps = new SortedSet<float>();
+        SortedSet<float> steps = new();
         for (int h = 0; h < ckLen; ++h) { steps.Add(colorKeys[h].time); }
         for (int i = 0; i < akLen; ++i) { steps.Add(alphaKeys[i].time); }
 
@@ -244,6 +244,19 @@ public static class UnityBridge
     }
 
     /// <summary>
+    /// Converts to a Unity Quaternion from an angle in radians.
+    /// </summary>
+    /// <param name="radians">radians</param>
+    /// <returns>conversion</returns>
+    public static Quaternion ToQuaternion(in float radians)
+    {
+        float rHalf = radians % Utils.Tau * 0.5f;
+        float cosa = Mathf.Cos(rHalf);
+        float sina = Mathf.Sin(rHalf);
+        return new Quaternion(cosa, 0.0f, 0.0f, sina);
+    }
+
+    /// <summary>
     /// Converts to a Unity Quaternion from a Quat.
     /// </summary>
     /// <param name="q">quaternion</param>
@@ -251,6 +264,36 @@ public static class UnityBridge
     public static Quaternion ToQuaternion(in Quat q)
     {
         return new Quaternion(q.x, q.y, q.z, q.w);
+    }
+
+    /// <summary>
+    /// Converts to a Unity Transform from a Transform3.
+    /// Sets the local position, rotation and scale of the Transform.
+    /// </summary>
+    /// <param name="t2">2D transform</param>
+    /// <param name="ut">Unity transform</param>
+    /// <returns>conversion</returns>
+    public static Transform ToTransform(in Transform2 t2, in Transform ut)
+    {
+        ut.localPosition = UnityBridge.ToVector3(t2.Location);
+        ut.localRotation = UnityBridge.ToQuaternion(t2.Rotation);
+        ut.localScale = UnityBridge.ToVector3(t2.Scale, 1.0f);
+        return ut;
+    }
+
+    /// <summary>
+    /// Converts to a Unity Transform from a Transform3.
+    /// Sets the local position, rotation and scale of the Transform.
+    /// </summary>
+    /// <param name="t3">3D transform</param>
+    /// <param name="ut">Unity transform</param>
+    /// <returns>conversion</returns>
+    public static Transform ToTransform(in Transform3 t3, in Transform ut)
+    {
+        ut.localPosition = UnityBridge.ToVector3(t3.Location);
+        ut.localRotation = UnityBridge.ToQuaternion(t3.Rotation);
+        ut.localScale = UnityBridge.ToVector3(t3.Scale);
+        return ut;
     }
 
     /// <summary>
@@ -271,6 +314,16 @@ public static class UnityBridge
     public static Vector3 ToVector3(in Vec3 v)
     {
         return new Vector3(v.x, v.y, v.z);
+    }
+
+    /// <summary>
+    /// Converts to a Unity Vector3 from a Vec2.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>conversion</returns>
+    public static Vector3 ToVector3(in Vec2 v, in float z = 0.0f)
+    {
+        return new Vector3(v.x, v.y, z);
     }
 
     /// <summary>
@@ -300,11 +353,11 @@ public static class UnityBridge
             float step = i * toStep;
             Clr c = ClrGradient.Eval(cg, step);
             alphaKeys[i] = new GradientAlphaKey(c.a, step);
-            Clr o = new Clr(c.r, c.g, c.b, 1.0f);
+            Clr o = Clr.Opaque(c);
             colorKeys[i] = new GradientColorKey(UnityBridge.ToColor(o), step);
         }
 
-        Gradient unityGradient = new Gradient();
+        Gradient unityGradient = new();
         unityGradient.SetKeys(colorKeys, alphaKeys);
         return unityGradient;
     }

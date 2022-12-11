@@ -79,23 +79,14 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     {
         get
         {
-            switch (i)
+            return i switch
             {
-                case 0:
-                case -4:
-                    return this._x;
-                case 1:
-                case -3:
-                    return this._y;
-                case 2:
-                case -2:
-                    return this._z;
-                case 3:
-                case -1:
-                    return this._w;
-                default:
-                    return 0.0f;
-            }
+                0 or -4 => this._x,
+                1 or -3 => this._y,
+                2 or -2 => this._z,
+                3 or -1 => this._w,
+                _ => 0.0f,
+            };
         }
     }
 
@@ -140,7 +131,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Vec4) { return this.Equals((Vec4)value); }
+        if (value is Vec4 vec) { return this.Equals(vec); }
         return false;
     }
 

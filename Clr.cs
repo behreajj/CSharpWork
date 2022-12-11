@@ -126,7 +126,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Clr) { return this.Equals((Clr)value); }
+        if (value is Clr clr) { return this.Equals(clr); }
         return false;
     }
 
@@ -775,7 +775,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
                 MathF.Atan2(db, da));
 
             float u = 1.0f - t;
-            Vec4 cLch = new Vec4(
+            Vec4 cLch = new(
                 easing(oHue, dHue, t, 1.0f),
                 u * oChr + t * dChr,
                 u * oLab.z + t * dLab.z,

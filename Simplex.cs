@@ -19,12 +19,6 @@ public static class Simplex
     private const float G4_4 = 0.5527864f;
 
     /// <summary>
-    /// Math.Sqrt(2.0) / Math.Sqrt(3.0). Used by rotation look up tables.
-    /// Approximately 0.8164966 .
-    /// </summary>
-    private const float Rt2Rt3 = 0.8164966f;
-
-    /// <summary>
     /// Factor by which 3D noise is scaled prior to return: 64.0 .
     /// </summary>
     private const float Scale2 = 64.0f;
@@ -122,62 +116,22 @@ public static class Simplex
         new Vec4 (-1.0f, -1.0f, -1.0f, 0.0f)
     };
 
-    private static readonly Vec3[] Grad3U = new Vec3[]
-    {
-        new Vec3 (1.0f, 0.0f, 1.0f),
-        new Vec3 (0.0f, 1.0f, 1.0f),
-        new Vec3 (-1.0f, 0.0f, 1.0f),
-        new Vec3 (0.0f, -1.0f, 1.0f),
-        new Vec3 (1.0f, 0.0f, -1.0f),
-        new Vec3 (0.0f, 1.0f, -1.0f),
-        new Vec3 (-1.0f, 0.0f, -1.0f),
-        new Vec3 (0.0f, -1.0f, -1.0f),
-        new Vec3 (Simplex.Rt2Rt3, Simplex.Rt2Rt3, Simplex.Rt2Rt3),
-        new Vec3 (-Simplex.Rt2Rt3, Simplex.Rt2Rt3, -Simplex.Rt2Rt3),
-        new Vec3 (-Simplex.Rt2Rt3, -Simplex.Rt2Rt3, Simplex.Rt2Rt3),
-        new Vec3 (Simplex.Rt2Rt3, -Simplex.Rt2Rt3, -Simplex.Rt2Rt3),
-        new Vec3 (-Simplex.Rt2Rt3, Simplex.Rt2Rt3, Simplex.Rt2Rt3),
-        new Vec3 (Simplex.Rt2Rt3, -Simplex.Rt2Rt3, Simplex.Rt2Rt3),
-        new Vec3 (Simplex.Rt2Rt3, -Simplex.Rt2Rt3, -Simplex.Rt2Rt3),
-        new Vec3 (-Simplex.Rt2Rt3, Simplex.Rt2Rt3, -Simplex.Rt2Rt3)
-    };
-
-    private static readonly Vec3[] Grad3V = new Vec3[]
-    {
-        new Vec3 (-Simplex.Rt2Rt3, Simplex.Rt2Rt3, Simplex.Rt2Rt3),
-        new Vec3 (-Simplex.Rt2Rt3, -Simplex.Rt2Rt3, Simplex.Rt2Rt3),
-        new Vec3 (Simplex.Rt2Rt3, -Simplex.Rt2Rt3, Simplex.Rt2Rt3),
-        new Vec3 (Simplex.Rt2Rt3, Simplex.Rt2Rt3, Simplex.Rt2Rt3),
-        new Vec3 (-Simplex.Rt2Rt3, -Simplex.Rt2Rt3, -Simplex.Rt2Rt3),
-        new Vec3 (Simplex.Rt2Rt3, -Simplex.Rt2Rt3, -Simplex.Rt2Rt3),
-        new Vec3 (Simplex.Rt2Rt3, Simplex.Rt2Rt3, -Simplex.Rt2Rt3),
-        new Vec3 (-Simplex.Rt2Rt3, Simplex.Rt2Rt3, -Simplex.Rt2Rt3),
-        new Vec3 (1.0f, -1.0f, 0.0f),
-        new Vec3 (1.0f, 1.0f, 0.0f),
-        new Vec3 (-1.0f, 1.0f, 0.0f),
-        new Vec3 (-1.0f, -1.0f, 0.0f),
-        new Vec3 (1.0f, 0.0f, 1.0f),
-        new Vec3 (-1.0f, 0.0f, 1.0f),
-        new Vec3 (0.0f, 1.0f, -1.0f),
-        new Vec3 (0.0f, -1.0f, -1.0f)
-    };
-
     private static readonly int[,] Permute = new int[,]
-    { { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, { 0, 2, 3, 1 }, //
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 3, 0 }, // 
-        { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 }, //
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 3, 2, 0 }, //
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
-        { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0, 2 }, { 0, 0, 0, 0 }, //
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 3, 0, 1 }, { 2, 3, 1, 0 }, //
-        { 1, 0, 2, 3 }, { 1, 0, 3, 2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
-        { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0, 0 }, { 2, 1, 3, 0 }, //
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
-        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
-        { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
-        { 3, 0, 1, 2 }, { 3, 0, 2, 1 }, { 0, 0, 0, 0 }, { 3, 1, 2, 0 }, //
-        { 2, 1, 0, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, //
+    { { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, { 0, 2, 3, 1 },
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 3, 0 },
+        { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 },
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 3, 2, 0 },
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+        { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0, 2 }, { 0, 0, 0, 0 },
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 3, 0, 1 }, { 2, 3, 1, 0 },
+        { 1, 0, 2, 3 }, { 1, 0, 3, 2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+        { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0, 0 }, { 2, 1, 3, 0 },
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+        { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+        { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
+        { 3, 0, 1, 2 }, { 3, 0, 2, 1 }, { 0, 0, 0, 0 }, { 3, 1, 2, 0 },
+        { 2, 1, 0, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
         { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 }
     };
 
@@ -208,34 +162,6 @@ public static class Simplex
     {
         return Simplex.Grad4Lut[Simplex.Hash(i, j, Simplex.Hash(k, l, seed)) &
             0x1f];
-    }
-
-    private static Vec2 GradRot2( //
-        int i = 0, //
-        int j = 0, //
-        int seed = Utils.HashBase, //
-        float cosa = 1.0f, //
-        float sina = 0.0f)
-    {
-        return Vec2.RotateZ(Simplex.Grad2Lut[Simplex.Hash(i, j, seed) & 0x7],
-            cosa, sina);
-    }
-
-    private static Vec3 GradRot3( //
-        int i = 0, //
-        int j = 0, //
-        int k = 0, //
-        int seed = Utils.HashBase, //
-        float cosa = 1.0f, //
-        float sina = 0.0f)
-    {
-        int h = Simplex.Hash(i, j, Simplex.Hash(k, seed, 0)) & 0xf;
-        Vec3 gu = Simplex.Grad3U[h];
-        Vec3 gv = Simplex.Grad3V[h];
-        return new Vec3(
-            cosa * gu.x + sina * gv.x,
-            cosa * gu.y + sina * gv.y,
-            cosa * gu.z + sina * gv.z);
     }
 
     private static int Hash(int a = 0, int b = 0, int c = 0)
@@ -344,11 +270,11 @@ public static class Simplex
         float t43 = 0.0f;
         float t44 = 0.0f;
 
-        Vec4 g0 = new Vec4();
-        Vec4 g1 = new Vec4();
-        Vec4 g2 = new Vec4();
-        Vec4 g3 = new Vec4();
-        Vec4 g4 = new Vec4();
+        Vec4 g0 = Vec4.Zero;
+        Vec4 g1 = Vec4.Zero;
+        Vec4 g2 = Vec4.Zero;
+        Vec4 g3 = Vec4.Zero;
+        Vec4 g4 = Vec4.Zero;
 
         float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0);
         if (t0 >= 0.0f)
@@ -547,10 +473,10 @@ public static class Simplex
         float n2 = 0.0f;
         float n3 = 0.0f;
 
-        Vec3 g0 = new Vec3();
-        Vec3 g1 = new Vec3();
-        Vec3 g2 = new Vec3();
-        Vec3 g3 = new Vec3();
+        Vec3 g0 = Vec3.Zero;
+        Vec3 g1 = Vec3.Zero;
+        Vec3 g2 = Vec3.Zero;
+        Vec3 g3 = Vec3.Zero;
 
         float t0 = 0.5f - (x0 * x0 + y0 * y0 + z0 * z0);
         if (t0 >= 0.0f)
@@ -671,9 +597,9 @@ public static class Simplex
         float n1 = 0.0f;
         float n2 = 0.0f;
 
-        Vec2 g0 = new Vec2();
-        Vec2 g1 = new Vec2();
-        Vec2 g2 = new Vec2();
+        Vec2 g0 = Vec2.Zero;
+        Vec2 g1 = Vec2.Zero;
+        Vec2 g2 = Vec2.Zero;
 
         float t0 = 0.5f - (x0 * x0 + y0 * y0);
         if (t0 >= 0.0f)

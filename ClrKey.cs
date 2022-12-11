@@ -50,7 +50,7 @@ public readonly struct ClrKey : IComparable<ClrKey>, IEquatable<ClrKey>
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is ClrKey) { return this.Equals((ClrKey)value); }
+        if (value is ClrKey key) { return this.Equals(key); }
         return false;
     }
 

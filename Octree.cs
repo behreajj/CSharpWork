@@ -33,7 +33,7 @@ public class Octree
     /// <summary>
     /// Children nodes.
     /// </summary>
-    protected readonly List<Octree> children = new List<Octree>(Octree.ChildCount);
+    protected readonly List<Octree> children = new(Octree.ChildCount);
 
     /// <summary>
     /// The number of elements a node can hold before
@@ -49,7 +49,7 @@ public class Octree
     /// <summary>
     /// Elements contained by the node if it is leaf.
     /// </summary>
-    protected readonly SortedSet<Vec3> points = new SortedSet<Vec3>();
+    protected readonly SortedSet<Vec3> points = new();
 
     /// <summary>
     /// The bounding volume.
@@ -106,7 +106,8 @@ public class Octree
 
         protected set
         {
-            this.level = value < Octree.RootLevel ? Octree.RootLevel : value;
+            this.level = value < Octree.RootLevel ?
+                Octree.RootLevel : value;
         }
     }
 
@@ -139,6 +140,33 @@ public class Octree
     public override string ToString()
     {
         return Octree.ToString(this);
+    }
+
+    /// <summary>
+    /// Removes empty child nodes from the octree.
+    /// Returns true if this octree node should be
+    /// removed, i.e., it has no children and
+    /// its points array is empty.
+    /// 
+    /// This should only be called after all points
+    /// have been inserted into the tree.
+    /// </summary>
+    /// <returns>evaluation</returns>
+    public bool Cull()
+    {
+        int cullThis = 0;
+        int lenChildren = this.children.Count;
+        for (int i = lenChildren - 1; i > -1; --i)
+        {
+            Octree child = this.children[i];
+            if (child.Cull())
+            {
+                this.children.RemoveAt(i);
+                ++cullThis;
+            }
+        }
+        return cullThis >= lenChildren &&
+            this.points.Count < 1;
     }
 
     /// <summary>
@@ -214,7 +242,8 @@ public class Octree
         Bounds3[] childrenBounds = Bounds3.Split(this.bounds, 0.5f, 0.5f, 0.5f);
         for (int i = 0; i < Octree.ChildCount; ++i)
         {
-            this.children.Add(new Octree(childrenBounds[i], childCapacity, nextLevel));
+            this.children.Add(new Octree(childrenBounds[i],
+                childCapacity, nextLevel));
         }
 
         // Pass on points to children.
@@ -237,7 +266,7 @@ public class Octree
     }
 
     /// <summary>
-    /// Subdivides this octree. For cases where a minimum number of children
+    /// Subdivides this node. For cases where a minimum number of children
     /// nodes is desired, independent of point insertion. The result will be
     /// the child count raised to the power of iterations, e.g., 8,
     /// 64, 512.
@@ -250,7 +279,7 @@ public class Octree
     }
 
     /// <summary>
-    /// Subdivides this octree. For cases where a minimum number of children
+    /// Subdivides this node. For cases where a minimum number of children
     /// nodes is desired, independent of point insertion. The result will be
     /// the child count raised to the power of iterations, e.g., 8,
     /// 64, 512.
@@ -260,6 +289,7 @@ public class Octree
     /// <returns>this octree</returns>
     public Octree Subdivide(in int iterations, in int childCapacity)
     {
+        // TODO: Quadtree version?
         if (iterations < 1) { return this; }
         for (int i = 0; i < iterations; ++i)
         {
@@ -285,7 +315,7 @@ public class Octree
         in Octree o,
         in bool includeEmpty = false)
     {
-        List<Vec3> result = new List<Vec3>();
+        List<Vec3> result = new();
         Octree.CentersMean(o, result, includeEmpty);
         return result.ToArray();
     }
@@ -299,7 +329,7 @@ public class Octree
     /// <param name="target">target</param>
     /// <param name="includeEmpty">include empty</param>
     /// <returns>target list</returns>
-    protected static List<Vec3> CentersMean(
+    internal static List<Vec3> CentersMean(
         in Octree o,
         in List<Vec3> target,
         in bool includeEmpty = false)
@@ -375,7 +405,7 @@ public class Octree
         in int capacity = Octree.DefaultCapacity)
     {
         Bounds3 b = Bounds3.FromPoints(points);
-        Octree o = new Octree(b, capacity);
+        Octree o = new(b, capacity);
         o.InsertAll(points);
         return o;
     }
@@ -417,7 +447,7 @@ public class Octree
         in Octree o,
         in Bounds3 range)
     {
-        SortedDictionary<float, Vec3> found = new SortedDictionary<float, Vec3>();
+        SortedList<float, Vec3> found = new(o.capacity);
         Octree.Query(o, range, found);
         Vec3[] arr = new Vec3[found.Count];
         found.Values.CopyTo(arr, 0);
@@ -436,7 +466,7 @@ public class Octree
         in Vec3 center,
         in float radius)
     {
-        SortedDictionary<float, Vec3> found = new SortedDictionary<float, Vec3>();
+        SortedList<float, Vec3> found = new(o.capacity);
         Octree.Query(o, center, radius, found);
         Vec3[] arr = new Vec3[found.Count];
         found.Values.CopyTo(arr, 0);
@@ -445,17 +475,18 @@ public class Octree
 
     /// <summary>
     /// Queries a node with a box range.
-    /// Appends results to a dictionary where the Chebyshev
-    /// distance is the key and the point is the value.
+    /// Appends results to a sorted collection where
+    /// the Chebyshev distance is the key and the point
+    /// is the value.
     /// </summary>
     /// <param name="o">octree</param>
     /// <param name="range">bounds</param>
     /// <param name="found">found dictionary</param>
     /// <returns>distance points dictionary</returns>
-    protected static SortedDictionary<float, Vec3> Query(
+    internal static SortedList<float, Vec3> Query(
         in Octree o,
         in Bounds3 range,
-        in SortedDictionary<float, Vec3> found)
+        in SortedList<float, Vec3> found)
     {
         if (Bounds3.Intersects(o.bounds, range))
         {
@@ -482,19 +513,20 @@ public class Octree
 
     /// <summary>
     /// Queries a node with a spherical range.
-    /// Appends results to a dictionary where the distance
-    /// squared is the key and the point is the value.
+    /// Appends results to a sorted collection where
+    /// the distance squared is the key and the point
+    /// is the value.
     /// </summary>
     /// <param name="o">octree</param>
     /// <param name="center">sphere center</param>
     /// <param name="radius">sphere radius</param>
     /// <param name="found">found dictionary</param>
     /// <returns>distance points dictionary</returns>
-    protected static SortedDictionary<float, Vec3> Query(
+    internal static SortedList<float, Vec3> Query(
         in Octree o,
         in Vec3 center,
         in float radius,
-        in SortedDictionary<float, Vec3> found)
+        in SortedList<float, Vec3> found)
     {
         if (Bounds3.Intersects(o.bounds, center, radius))
         {
@@ -505,6 +537,8 @@ public class Octree
 
             if (Octree.IsLeaf(o))
             {
+                // TODO: Optimize by taking rsq as an arg instead?
+                // Change would also effect Pixels calls for this.
                 float rsq = radius * radius;
                 foreach (Vec3 v in o.points)
                 {
@@ -584,5 +618,22 @@ public class Octree
         sb.Append(' ');
         sb.Append('}');
         return sb;
+    }
+
+    /// <summary>
+    /// Counts the total capacity of a node, including
+    /// the summed capacities of its children.
+    /// </summary>
+    /// <param name="o">octree</param>
+    /// <returns>sum</returns>
+    public static int TotalCapacity(in Octree o)
+    {
+        if (Octree.IsLeaf(o)) { return o.capacity; }
+        int sum = 0;
+        foreach (Octree child in o.children)
+        {
+            sum += Octree.TotalCapacity(child);
+        }
+        return sum;
     }
 }

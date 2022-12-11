@@ -46,17 +46,12 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     {
         get
         {
-            switch (i)
+            return i switch
             {
-                case 0:
-                case -2:
-                    return this.real;
-                case 1:
-                case -1:
-                    return this.imag;
-                default:
-                    return 0.0f;
-            }
+                0 or -2 => this.real,
+                1 or -1 => this.imag,
+                _ => 0.0f,
+            };
         }
     }
 
@@ -82,7 +77,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Complex) { return this.Equals((Complex)value); }
+        if (value is Complex complex) { return this.Equals(complex); }
         return false;
     }
 
@@ -179,7 +174,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>tuple</returns>
     public (float real, float imag) ToTuple()
     {
-        return (real: this.real, imag: this.imag);
+        return (this.real, this.imag);
     }
 
     /// <summary>

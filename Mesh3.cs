@@ -179,9 +179,9 @@ public class Mesh3
     /// <returns>this mesh</returns>
     public Mesh3 Clean()
     {
-        Dictionary<int, Vec3> usedCoords = new Dictionary<int, Vec3>();
-        Dictionary<int, Vec2> usedTexCoords = new Dictionary<int, Vec2>();
-        Dictionary<int, Vec3> usedNormals = new Dictionary<int, Vec3>();
+        Dictionary<int, Vec3> usedCoords = new();
+        Dictionary<int, Vec2> usedTexCoords = new();
+        Dictionary<int, Vec3> usedNormals = new();
 
         int facesLen = this.loops.Length;
         for (int i = 0; i < facesLen; ++i)
@@ -198,12 +198,12 @@ public class Mesh3
             }
         }
 
-        SortQuantized3 v3Cmp = new SortQuantized3();
-        SortQuantized2 v2Cmp = new SortQuantized2();
+        SortQuantized3 v3Cmp = new();
+        SortQuantized2 v2Cmp = new();
 
-        SortedSet<Vec3> coordsSet = new SortedSet<Vec3>(v3Cmp);
-        SortedSet<Vec2> texCoordsSet = new SortedSet<Vec2>(v2Cmp);
-        SortedSet<Vec3> normalsSet = new SortedSet<Vec3>(v3Cmp);
+        SortedSet<Vec3> coordsSet = new(v3Cmp);
+        SortedSet<Vec2> texCoordsSet = new(v2Cmp);
+        SortedSet<Vec3> normalsSet = new(v3Cmp);
 
         coordsSet.UnionWith(usedCoords.Values);
         texCoordsSet.UnionWith(usedTexCoords.Values);
@@ -382,7 +382,7 @@ public class Mesh3
     public Edge3[] GetEdgesDirected()
     {
         int loopsLen = this.loops.Length;
-        SortedSet<Edge3> result = new SortedSet<Edge3>();
+        SortedSet<Edge3> result = new();
 
         for (int i = 0; i < loopsLen; ++i)
         {
@@ -395,7 +395,7 @@ public class Mesh3
                 Index3 idxOrigin = indices[j];
                 Index3 idxDest = indices[(j + 1) % indicesLen];
 
-                Edge3 trial = new Edge3(
+                Edge3 trial = new(
                     new Vert3(
                         this.coords[idxOrigin.v],
                         this.texCoords[idxOrigin.vt],
@@ -424,7 +424,7 @@ public class Mesh3
     public Edge3[] GetEdgesUndirected()
     {
         int loopsLen = this.loops.Length;
-        Dictionary<int, Edge3> result = new Dictionary<int, Edge3>();
+        Dictionary<int, Edge3> result = new();
 
         for (int i = 0; i < loopsLen; ++i)
         {
@@ -551,7 +551,7 @@ public class Mesh3
     public Vert3[] GetVertices()
     {
         int len0 = this.loops.Length;
-        SortedSet<Vert3> result = new SortedSet<Vert3>();
+        SortedSet<Vert3> result = new();
         for (int i = 0; i < len0; ++i)
         {
             Loop3 loop = this.loops[i];
@@ -616,7 +616,7 @@ public class Mesh3
             for (int i = 0; i < vsLen; ++i) { this.coords[i] *= s; }
 
             int vnsLen = this.normals.Length;
-            for (int i = 0; i < vsLen; ++i)
+            for (int i = 0; i < vnsLen; ++i)
             {
                 this.normals[i] = Vec3.Normalize(this.normals[i] / s);
             }
@@ -782,9 +782,9 @@ public class Mesh3
         int vtCenterIdx = vtsOldLen + faceLen;
         int vnCenterIdx = vnsOldLen + faceLen;
 
-        Vec3 vCenter = new Vec3();
-        Vec2 vtCenter = new Vec2();
-        Vec3 vnCenter = new Vec3();
+        Vec3 vCenter = Vec3.Zero;
+        Vec2 vtCenter = Vec2.Zero;
+        Vec3 vnCenter = Vec3.Zero;
 
         for (int j = 0; j < faceLen; ++j)
         {
@@ -833,9 +833,9 @@ public class Mesh3
         this.loops = Loop3.Splice(this.loops, i, 1, fsNew);
 
         return (loopsNew: fsNew,
-            vsNew: vsNew,
-            vtsNew: vtsNew,
-            vnsNew: vnsNew);
+            vsNew,
+            vtsNew,
+            vnsNew);
     }
 
     /// <summary>
@@ -856,9 +856,9 @@ public class Mesh3
         int faceLen = face.Length;
 
         Loop3[] fsNew = new Loop3[faceLen];
-        Vec3 vCenter = new Vec3();
-        Vec2 vtCenter = new Vec2();
-        Vec3 vnCenter = new Vec3();
+        Vec3 vCenter = Vec3.Zero;
+        Vec2 vtCenter = Vec2.Zero;
+        Vec3 vnCenter = Vec3.Zero;
 
         int vCenterIdx = this.coords.Length;
         int vtCenterIdx = this.texCoords.Length;
@@ -978,9 +978,9 @@ public class Mesh3
         this.loops = Loop3.Splice(this.loops, i, 1, fsNew);
 
         return (loopsNew: fsNew,
-            vsNew: vsNew,
-            vtsNew: vtsNew,
-            vnsNew: vnsNew);
+            vsNew,
+            vtsNew,
+            vnsNew);
     }
 
     /// <summary>
@@ -994,10 +994,10 @@ public class Mesh3
             Vec2[] vtsNew,
             Vec3[] vnsNew) SubdivFacesCenter(in int itr = 1)
     {
-        List<Loop3> loopsNew = new List<Loop3>();
-        List<Vec3> vsNew = new List<Vec3>();
-        List<Vec2> vtsNew = new List<Vec2>();
-        List<Vec3> vnsNew = new List<Vec3>();
+        List<Loop3> loopsNew = new();
+        List<Vec3> vsNew = new();
+        List<Vec2> vtsNew = new();
+        List<Vec3> vnsNew = new();
 
         for (int i = 0; i < itr; ++i)
         {
@@ -1034,10 +1034,10 @@ public class Mesh3
             Vec2[] vtsNew,
             Vec3[] vnsNew) SubdivFacesFan(in int itr = 1)
     {
-        List<Loop3> loopsNew = new List<Loop3>();
-        List<Vec3> vsNew = new List<Vec3>();
-        List<Vec2> vtsNew = new List<Vec2>();
-        List<Vec3> vnsNew = new List<Vec3>();
+        List<Loop3> loopsNew = new();
+        List<Vec3> vsNew = new();
+        List<Vec2> vtsNew = new();
+        List<Vec3> vnsNew = new();
 
         for (int i = 0; i < itr; ++i)
         {
@@ -1074,10 +1074,10 @@ public class Mesh3
             Vec2[] vtsNew,
             Vec3[] vnsNew) SubdivFacesInscribe(in int itr = 1)
     {
-        List<Loop3> loopsNew = new List<Loop3>();
-        List<Vec3> vsNew = new List<Vec3>();
-        List<Vec2> vtsNew = new List<Vec2>();
-        List<Vec3> vnsNew = new List<Vec3>();
+        List<Loop3> loopsNew = new();
+        List<Vec3> vsNew = new();
+        List<Vec2> vtsNew = new();
+        List<Vec3> vnsNew = new();
 
         for (int i = 0; i < itr; ++i)
         {
@@ -1182,13 +1182,13 @@ public class Mesh3
     {
         Vec3[] coords = mesh.coords;
         int len = coords.Length;
-        float lbx = Single.MaxValue;
-        float lby = Single.MaxValue;
-        float lbz = Single.MaxValue;
+        float lbx = float.MaxValue;
+        float lby = float.MaxValue;
+        float lbz = float.MaxValue;
 
-        float ubx = Single.MinValue;
-        float uby = Single.MinValue;
-        float ubz = Single.MinValue;
+        float ubx = float.MinValue;
+        float uby = float.MinValue;
+        float ubz = float.MinValue;
 
         for (int i = 0; i < len; ++i)
         {
@@ -2430,7 +2430,7 @@ public class Mesh3
 
         // Cannot anticipate how many loops in the source mesh will not be
         // triangles, so this is an expanding list.
-        List<Loop3> loopsTrg = new List<Loop3>();
+        List<Loop3> loopsTrg = new();
 
         int loopSrcLen = loopsSrc.Length;
         for (int i = 0; i < loopSrcLen; ++i)
@@ -2455,7 +2455,7 @@ public class Mesh3
                     Index3 vert2 = fSrc[2 + m];
 
                     // Create a new triangle which connects them.
-                    Loop3 loopTrg = new Loop3(vert0, vert1, vert2);
+                    Loop3 loopTrg = new(vert0, vert1, vert2);
                     loopsTrg.Add(loopTrg);
                 }
             }

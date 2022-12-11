@@ -54,8 +54,8 @@ public static class Pixels
     public static (T[] pixels, int w, int h) ExpandToPow2<T>(
         in T[] source, in int w, in int h, in bool uniform = false)
     {
-        int wTrg = w;
-        int hTrg = h;
+        int wTrg;
+        int hTrg;
         if (uniform)
         {
             wTrg = Utils.NextPowerOf2(w);
@@ -90,10 +90,23 @@ public static class Pixels
             }
             else
             {
-                target[i] = default(T);
+                target[i] = default;
             }
         }
         return (pixels: target, w: wTrg, h: hTrg);
+    }
+
+    /// <summary>
+    /// Fills the pixels target array with a color.
+    /// </summary>
+    /// <param name="c">fill color</param>
+    /// <param name="target">target pixels</param>
+    /// <returns>filled array</returns>
+    public static T[] Fill<T>(in T[] target, in T c)
+    {
+        int len = target.Length;
+        for (int i = 0; i < len; ++i) { target[i] = c; }
+        return target;
     }
 
     /// <summary>
@@ -119,9 +132,7 @@ public static class Pixels
                 int yw = w * (i / wd2);
                 int idxSrc = x + yw;
                 int idxTrg = yw + wn1 - x;
-                T t = source[idxSrc];
-                source[idxSrc] = source[idxTrg];
-                source[idxTrg] = t;
+                (source[idxTrg], source[idxSrc]) = (source[idxSrc], source[idxTrg]);
             }
         }
         else if (srcLen == target.Length)
@@ -155,9 +166,7 @@ public static class Pixels
             for (int i = 0; i < lenHalf; ++i)
             {
                 int j = i % w + w * (hn1 - i / w);
-                T t = source[i];
-                source[i] = source[j];
-                source[j] = t;
+                (source[j], source[i]) = (source[i], source[j]);
             }
         }
         else if (srcLen == target.Length)
@@ -205,7 +214,7 @@ public static class Pixels
                 }
                 else
                 {
-                    target[i] = default(T);
+                    target[i] = default;
                 }
             }
         }
@@ -248,7 +257,7 @@ public static class Pixels
                 }
                 else
                 {
-                    target[i] = default(T);
+                    target[i] = default;
                 }
             }
         }
@@ -295,9 +304,7 @@ public static class Pixels
             int srcLenn1 = srcLen - 1;
             for (int i = 0; i < srcHalfLen; ++i)
             {
-                T t = source[i];
-                source[i] = source[srcLenn1 - i];
-                source[srcLenn1 - i] = t;
+                (source[srcLenn1 - i], source[i]) = (source[i], source[srcLenn1 - i]);
             }
         }
         else if (srcLen == target.Length)
@@ -387,7 +394,7 @@ public static class Pixels
         {
             if (alpha <= 0.0f)
             {
-                for (int i = 0; i < srcLen; ++i) { target[i] = Clr.ClearBlack; }
+                Pixels.Fill(target, Clr.ClearBlack);
                 return target;
             }
 
@@ -399,8 +406,8 @@ public static class Pixels
 
             for (int i = 0; i < srcLen; ++i)
             {
-                Clr srcHex = source[i];
-                target[i] = new Clr(srcHex.r, srcHex.g, srcHex.b, srcHex.a * alpha);
+                Clr c = source[i];
+                target[i] = new Clr(c.r, c.g, c.b, c.a * alpha);
             }
         }
         return target;
@@ -426,7 +433,7 @@ public static class Pixels
                 return target;
             }
 
-            Dictionary<Clr, Clr> dict = new Dictionary<Clr, Clr>();
+            Dictionary<Clr, Clr> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
                 Clr c = source[i];
@@ -447,7 +454,7 @@ public static class Pixels
             }
             else
             {
-                for (int i = 0; i < srcLen; ++i) { target[i] = Clr.ClearBlack; }
+                Pixels.Fill(target, Clr.ClearBlack);
             }
         }
         return target;
@@ -474,7 +481,7 @@ public static class Pixels
                 return target;
             }
 
-            Dictionary<Clr, Clr> dict = new Dictionary<Clr, Clr>();
+            Dictionary<Clr, Clr> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
                 Clr c = source[i];
@@ -484,7 +491,7 @@ public static class Pixels
                     if (!dict.ContainsKey(key))
                     {
                         Vec4 lab = Clr.StandardToCieLab(key);
-                        Vec4 labAdj = new Vec4(lab.x, lab.y,
+                        Vec4 labAdj = new(lab.x, lab.y,
                             (lab.z - 50.0f) * valAdjust + 50.0f, lab.w);
                         dict.Add(key, Clr.CieLabToStandard(labAdj));
                     }
@@ -493,17 +500,18 @@ public static class Pixels
 
             if (dict.Count > 0)
             {
+                Clr clearBlack = Clr.ClearBlack;
                 for (int i = 0; i < srcLen; ++i)
                 {
                     Clr c = source[i];
                     target[i] = Clr.CopyAlpha(
                         dict.GetValueOrDefault(Clr.Opaque(c),
-                            Clr.ClearBlack), c);
+                            clearBlack), c);
                 }
             }
             else
             {
-                for (int i = 0; i < srcLen; ++i) { target[i] = Clr.ClearBlack; }
+                Pixels.Fill(target, Clr.ClearBlack);
             }
         }
         return target;
@@ -569,7 +577,7 @@ public static class Pixels
         int bbrx = bx + bw - 1;
         int bbry = by + bh - 1;
 
-        Dictionary<Clr, Vec4> dict = new Dictionary<Clr, Vec4>();
+        Dictionary<Clr, Vec4> dict = new();
         dict.Add(Clr.ClearBlack, Vec4.Zero);
 
         // Blending only necessary at the intersection of a and b.
@@ -666,7 +674,7 @@ public static class Pixels
 
                     Vec4 orig = dict.GetValueOrDefault(aClr, zero);
                     Vec4 dest = dict.GetValueOrDefault(bClr, zero);
-                    Vec4 cLab = new Vec4(
+                    Vec4 cLab = new(
                         u * orig.x + t * dest.x,
                         u * orig.y + t * dest.y,
                         u * orig.z + t * dest.z, tuv);
@@ -696,7 +704,7 @@ public static class Pixels
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            Dictionary<Clr, Vec4> dict = new Dictionary<Clr, Vec4>();
+            Dictionary<Clr, Vec4> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
                 Clr srgb = source[i];
@@ -730,7 +738,8 @@ public static class Pixels
                     int yComp = ySrc + j / wKrn;
                     if (yComp > -1 && yComp < h && xComp > -1 && xComp < w)
                     {
-                        Vec4 labNgbr = dict.GetValueOrDefault(source[xComp + yComp * w], zero);
+                        Vec4 labNgbr = dict.GetValueOrDefault(
+                            source[xComp + yComp * w], zero);
                         lSum += labNgbr.z;
                         aSum += labNgbr.x;
                         bSum += labNgbr.y;
@@ -747,7 +756,7 @@ public static class Pixels
                     }
                 }
 
-                Vec4 labAvg = new Vec4(
+                Vec4 labAvg = new(
                     aSum * denom,
                     bSum * denom,
                     lSum * denom,
@@ -778,19 +787,6 @@ public static class Pixels
                 target[i] = Clr.Clamp(source[i], lb, ub);
             }
         }
-        return target;
-    }
-
-    /// <summary>
-    /// Fills the pixels target array with a color.
-    /// </summary>
-    /// <param name="c">fill color</param>
-    /// <param name="target">target pixels</param>
-    /// <returns>filled array</returns>
-    public static T[] Fill<T>(in T c, in T[] target)
-    {
-        int len = target.Length;
-        for (int i = 0; i < len; ++i) { target[i] = c; }
         return target;
     }
 
@@ -1079,7 +1075,7 @@ public static class Pixels
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            Dictionary<Clr, Clr> dict = new Dictionary<Clr, Clr>();
+            Dictionary<Clr, Clr> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
                 Clr c = source[i];
@@ -1099,17 +1095,18 @@ public static class Pixels
 
             if (dict.Count > 0)
             {
+                Clr clearBlack = Clr.ClearBlack;
                 for (int i = 0; i < srcLen; ++i)
                 {
                     Clr c = source[i];
                     target[i] = Clr.CopyAlpha(
                         dict.GetValueOrDefault(Clr.Opaque(c),
-                            Clr.ClearBlack), c);
+                            clearBlack), c);
                 }
             }
             else
             {
-                for (int i = 0; i < srcLen; ++i) { target[i] = Clr.ClearBlack; }
+                Pixels.Fill(target, Clr.ClearBlack);
             }
         }
         return target;
@@ -1207,14 +1204,14 @@ public static class Pixels
             float aSign = a ? -1.0f : 1.0f;
             float bSign = b ? -1.0f : 1.0f;
 
-            Dictionary<Clr, Clr> dict = new Dictionary<Clr, Clr>();
+            Dictionary<Clr, Clr> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
                 Clr c = source[i];
                 if (!dict.ContainsKey(c))
                 {
                     Vec4 lab = Clr.StandardToCieLab(c);
-                    Vec4 inv = new Vec4(
+                    Vec4 inv = new(
                         lab.x * aSign,
                         lab.y * bSign,
                         l ? 100.0f - lab.z : lab.z,
@@ -1452,8 +1449,8 @@ public static class Pixels
 
                 // Default to omitting pixels that are out-of-bounds, rather than
                 // wrapping with floor modulo or clamping.
-                if (pyOpp >= 0.0f && pyOpp <= hfn1 && pxOpp >= 0.0f && pxOpp
-                   <= wfn1)
+                if (pyOpp >= 0.0f && pyOpp <= hfn1 &&
+                    pxOpp >= 0.0f && pxOpp <= wfn1)
                 {
                     target[k] = Pixels.FilterBilinear(source, pxOpp, pyOpp, w, h);
                 }
@@ -1491,33 +1488,14 @@ public static class Pixels
     /// used, colors produced may not be in gamut.
     /// </summary>
     /// <param name="source">source pixels</param>
-    /// <param name="threshold">threshold</param>
-    /// <returns>palette</returns>
-    public static Clr[] PaletteExtract(in Clr[] source, in int threshold = 256)
-    {
-        // TODO: Better way to calculate this?
-        int cap = 2048;
-        return Pixels.PaletteExtract(source, threshold, cap);
-    }
-
-    /// <summary>
-    /// Extracts a palette from a source pixels array using an octree in CIE
-    /// LAB. The size of the palette depends on the capacity of each node in the
-    /// octree. Does not retain alpha component of image pixels. The threshold
-    /// describes the minimum number of unique colors in the image beneath which
-    /// it is preferable to not engage the octree. Once the octree has been
-    /// used, colors produced may not be in gamut.
-    /// </summary>
-    /// <param name="source">source pixels</param>
     /// <param name="capacity">node capacity</param>
     /// <param name="threshold">threshold</param>
     /// <returns>palette</returns>
-    public static Clr[] PaletteExtract(in Clr[] source, in int threshold, in int capacity)
+    public static Clr[] PaletteExtract(
+        in Clr[] source, in int capacity,
+        in int threshold = 256)
     {
-        // TODO: Change return type to a Palette?
-        // TODO: Create PaletteMap function.
-
-        SortedSet<Clr> uniqueColors = new SortedSet<Clr>();
+        SortedSet<Clr> uniqueColors = new();
         int srcLen = source.Length;
         for (int h = 0; h < srcLen; ++h)
         {
@@ -1543,15 +1521,17 @@ public static class Pixels
             return under;
         }
 
-        Octree oct = new Octree(Bounds3.Lab, capacity);
+        Octree oct = new(Bounds3.Lab, capacity);
         foreach (Clr unique in uniqueColors)
         {
             Vec4 v = Clr.StandardToCieLab(unique);
             oct.Insert(v.xyz);
         }
+        oct.Cull();
 
-        Vec3[] centers = Octree.CentersMean(oct, false);
-        int centersLen = centers.Length;
+        List<Vec3> centers = new();
+        Octree.CentersMean(oct, centers, false);
+        int centersLen = centers.Count;
         Clr[] over = new Clr[1 + centersLen];
         over[0] = Clr.ClearBlack;
         for (int j = 0; j < centersLen; ++j)
@@ -1560,6 +1540,82 @@ public static class Pixels
             over[1 + j] = Clr.CieLabToStandard(Vec4.Promote(center, 1.0f));
         }
         return over;
+    }
+
+    /// <summary>
+    /// Applies a palette to an array of pixels using an Octree to find the
+    /// nearest match in Euclidean space. Retains the original color's
+    /// transparency.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">target pixels</param>
+    /// <param name="palette">color palette</param>
+    /// <param name="radius">query radius</param>
+    /// <param name="capacity">node capacity</param>
+    /// <returns>palette map</returns>
+    public static Clr[] PaletteMap(
+        in Clr[] source, in Clr[] target, in Clr[] palette,
+        in float radius = 128.0f, in int capacity = 16)
+    {
+        int srcLen = source.Length;
+        if (srcLen == target.Length)
+        {
+            Octree oct = new(Bounds3.Lab, capacity);
+            oct.Subdivide(1, capacity);
+
+            Dictionary<Vec3, Clr> lookup = new();
+
+            int palLen = palette.Length;
+            for (int h = 0; h < palLen; ++h)
+            {
+                Clr c = palette[h];
+                if (Clr.Any(c))
+                {
+                    Vec4 lab = Clr.StandardToCieLab(c);
+                    Vec3 point = lab.xyz;
+                    oct.Insert(point);
+                    lookup.Add(point, c);
+                }
+            }
+            oct.Cull();
+
+            Clr clearBlack = Clr.ClearBlack;
+            Dictionary<Clr, Clr> dict = new();
+            SortedList<float, Vec3> found = new(32);
+            for (int i = 0; i < srcLen; ++i)
+            {
+                Clr srgb = source[i];
+                if (Clr.Any(srgb))
+                {
+                    Clr opaque = Clr.Opaque(srgb);
+                    if (dict.ContainsKey(opaque))
+                    {
+                        Clr match = dict.GetValueOrDefault(opaque, clearBlack);
+                        target[i] = Clr.CopyAlpha(match, srgb);
+                    }
+                    else
+                    {
+                        found.Clear();
+                        Vec4 lab = Clr.StandardToCieLab(opaque);
+                        Octree.Query(oct, lab.xyz, radius, found);
+                        if (found.Count > 0)
+                        {
+                            Vec3 nearest = found.Values[0];
+                            if (lookup.ContainsKey(nearest))
+                            {
+                                Clr match = lookup.GetValueOrDefault(nearest, clearBlack);
+                                target[i] = Clr.CopyAlpha(match, srgb);
+                                dict.Add(opaque, match);
+                            }
+                            else { target[i] = Clr.ClearBlack; }
+                        }
+                        else { target[i] = Clr.ClearBlack; }
+                    }
+                }
+                else { target[i] = Clr.ClearBlack; }
+            }
+        }
+        return target;
     }
 
     /// <summary>
@@ -1639,7 +1695,7 @@ public static class Pixels
                 {
                     Clr[] t0 = new Clr[srcLen];
                     System.Array.Copy(source, 0, t0, 0, srcLen);
-                    return (pixels: t0, w: w, h: h);
+                    return (pixels: t0, w, h);
                 }
             case 90:
                 {
@@ -1649,7 +1705,7 @@ public static class Pixels
             case 180:
                 {
                     Clr[] t180 = Pixels.Rotate180(source, new Clr[srcLen]);
-                    return (pixels: t180, w: w, h: h);
+                    return (pixels: t180, w, h);
                 }
             case 270:
                 {
@@ -1754,6 +1810,119 @@ public static class Pixels
     }
 
     /// <summary>
+    /// Skews the pixels of a source image horizontally. If the angle is
+    /// approximately 0 degrees, copies the source array. If the angle is
+    /// approximately 90 degrees, returns an empty array.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="w">image width/param>
+    /// <param name="h">image height</param>
+    /// <param name="radians">radians</param>
+    /// <returns>tuple</returns>
+    public static (Clr[] pixels, int w, int h) SkewXBilinear(
+        in Clr[] source, in int w, in int h, in float radians)
+    {
+        int srcLen = source.Length;
+        int deg = Utils.RemFloor(Utils.Round(radians * Utils.RadToDeg), 180);
+
+        switch (deg)
+        {
+            case 0:
+                {
+                    Clr[] t0 = new Clr[srcLen];
+                    System.Array.Copy(source, 0, t0, 0, srcLen);
+                    return (pixels: t0, w, h);
+                }
+            case 89:
+            case 90:
+            case 91:
+                {
+                    Clr[] t90 = Pixels.Fill(new Clr[srcLen], Clr.ClearBlack);
+                    return (pixels: t90, w, h);
+                }
+            default:
+                {
+                    float wSrcf = w;
+                    float hSrcf = h;
+
+                    float tana = MathF.Tan(radians);
+                    int wTrg = (int)(0.5f + wSrcf + MathF.Abs(tana) * hSrcf);
+                    float wTrgf = wTrg;
+                    float yCenter = hSrcf * 0.5f;
+                    float xDiff = (wSrcf - wTrgf) * 0.5f;
+
+                    int trgLen = wTrg * h;
+                    Clr[] target = new Clr[trgLen];
+                    for (int i = 0; i < trgLen; ++i)
+                    {
+                        float yTrg = i / wTrg;
+                        target[i] = Pixels.FilterBilinear(
+                            source, xDiff + i % wTrg + tana
+                           * (yTrg - yCenter), yTrg, w, h);
+                    }
+
+                    return (pixels: target, w: wTrg, h);
+                }
+        }
+    }
+
+    /// <summary>
+    /// Skews the pixels of a source image vertically. If the angle is
+    /// approximately 0 degrees, copies the source array. If the angle is
+    /// approximately 90 degrees, returns an empty array.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="w">image width/param>
+    /// <param name="h">image height</param>
+    /// <param name="radians">radians</param>
+    /// <returns>tuple</returns>
+    public static (Clr[] pixels, int w, int h) SkewYBilinear(
+    in Clr[] source, in int w, in int h, in float radians)
+    {
+        int srcLen = source.Length;
+        int deg = Utils.RemFloor(Utils.Round(radians * Utils.RadToDeg), 180);
+
+        switch (deg)
+        {
+            case 0:
+                {
+                    Clr[] t0 = new Clr[srcLen];
+                    System.Array.Copy(source, 0, t0, 0, srcLen);
+                    return (pixels: t0, w, h);
+                }
+            case 89:
+            case 90:
+            case 91:
+                {
+                    Clr[] t90 = Pixels.Fill(new Clr[srcLen], Clr.ClearBlack);
+                    return (pixels: t90, w, h);
+                }
+            default:
+                {
+                    float wSrcf = w;
+                    float hSrcf = h;
+
+                    float tana = MathF.Tan(radians);
+                    int hTrg = (int)(0.5f + hSrcf + MathF.Abs(tana) * wSrcf);
+                    float hTrgf = hTrg;
+                    float xCenter = wSrcf * 0.5f;
+                    float yDiff = (hSrcf - hTrgf) * 0.5f;
+
+                    int trgLen = w * hTrg;
+                    Clr[] target = new Clr[trgLen];
+                    for (int i = 0; i < trgLen; ++i)
+                    {
+                        float xTrg = i % w;
+                        target[i] = Pixels.FilterBilinear(
+                            source, xTrg, yDiff + i / w + tana
+                           * (xTrg - xCenter), w, h);
+                    }
+                    return (pixels: target, w, h);
+                }
+        }
+    }
+
+    /// <summary>
     /// Finds the minimum, maximum and mean lightness in a source pixels array.
     /// If factor is positive, stretches color to maximum lightness range in
     /// [0.0, 100.0]. If factor is negative, compresses color to mean. Assigns
@@ -1780,7 +1949,7 @@ public static class Pixels
             float lumMax = Single.MinValue;
             float lumSum = 0.0f;
 
-            Dictionary<Clr, Vec4> dict = new Dictionary<Clr, Vec4>();
+            Dictionary<Clr, Vec4> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
                 Clr c = source[i];
@@ -1838,12 +2007,13 @@ public static class Pixels
                         stretched.Add(kv.Key, Clr.CieLabToStandard(stretchedLab));
                     }
 
+                    Clr clearBlack = Clr.ClearBlack;
                     for (int i = 0; i < srcLen; ++i)
                     {
                         Clr c = source[i];
                         target[i] = Clr.CopyAlpha(
                             stretched.GetValueOrDefault(Clr.Opaque(c),
-                                Clr.ClearBlack), c);
+                                clearBlack), c);
                     }
                 }
                 else
@@ -1854,7 +2024,7 @@ public static class Pixels
             }
             else
             {
-                for (int i = 0; i < srcLen; ++i) { target[i] = Clr.ClearBlack; }
+                Pixels.Fill(target, Clr.ClearBlack);
             }
         }
         return target;
@@ -1891,7 +2061,7 @@ public static class Pixels
             }
 
             Vec4 tintLab = Clr.StandardToCieLab(tint);
-            Dictionary<Clr, Clr> dict = new Dictionary<Clr, Clr>();
+            Dictionary<Clr, Clr> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
                 Clr c = source[i];
@@ -1912,7 +2082,7 @@ public static class Pixels
             }
             else
             {
-                for (int i = 0; i < srcLen; ++i) { target[i] = Clr.ClearBlack; }
+                Pixels.Fill(target, Clr.ClearBlack);
             }
         }
         return target;
@@ -1939,7 +2109,7 @@ public static class Pixels
         {
             Clr[] trg0 = new Clr[srcLen];
             System.Array.Copy(source, 0, trg0, 0, srcLen);
-            return (pixels: trg0, w: w, h: h, x: tlx, y: tly);
+            return (pixels: trg0, w, h, x: tlx, y: tly);
         }
 
         int wn1 = w > 1 ? w - 1 : 0;
@@ -2028,7 +2198,7 @@ public static class Pixels
         {
             Clr[] trg1 = new Clr[srcLen];
             System.Array.Copy(source, 0, trg1, 0, srcLen);
-            return (pixels: trg1, w: w, h: h, x: tlx, y: tly);
+            return (pixels: trg1, w, h, x: tlx, y: tly);
         }
 
         int trgLen = wTrg * hTrg;

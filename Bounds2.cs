@@ -78,7 +78,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Bounds2) { return this.Equals((Bounds2)value); }
+        if (value is Bounds2 bounds) { return this.Equals(bounds); }
         return false;
     }
 
@@ -578,8 +578,8 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         }
 
         return new Bounds2(
-            new Vec2(xMin, yMin),
-            new Vec2(xMax, yMax));
+            new Vec2(bxMin, byMin),
+            new Vec2(bxMax, byMax));
     }
 
     /// <summary>

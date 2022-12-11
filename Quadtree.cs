@@ -33,7 +33,7 @@ public class Quadtree
     /// <summary>
     /// Children nodes.
     /// </summary>
-    protected readonly List<Quadtree> children = new List<Quadtree>(Quadtree.ChildCount);
+    protected readonly List<Quadtree> children = new(Quadtree.ChildCount);
 
     /// <summary>
     /// The number of elements a node can hold before
@@ -49,7 +49,7 @@ public class Quadtree
     /// <summary>
     /// Elements contained by the node if it is leaf.
     /// </summary>
-    protected readonly SortedSet<Vec2> points = new SortedSet<Vec2>();
+    protected readonly SortedSet<Vec2> points = new();
 
     /// <summary>
     /// The bounding volume.
@@ -106,7 +106,8 @@ public class Quadtree
 
         protected set
         {
-            this.level = value < Quadtree.RootLevel ? Quadtree.RootLevel : value;
+            this.level = value < Quadtree.RootLevel ?
+                Quadtree.RootLevel : value;
         }
     }
 
@@ -139,6 +140,33 @@ public class Quadtree
     public override string ToString()
     {
         return Quadtree.ToString(this);
+    }
+
+    /// <summary>
+    /// Removes empty child nodes from the quadtree.
+    /// Returns true if this quadtree node should be
+    /// removed, i.e., it has no children and
+    /// its points array is empty.
+    /// 
+    /// This should only be called after all points
+    /// have been inserted into the tree.
+    /// </summary>
+    /// <returns>evaluation</returns>
+    public bool Cull()
+    {
+        int cullThis = 0;
+        int lenChildren = this.children.Count;
+        for (int i = lenChildren - 1; i > -1; --i)
+        {
+            Quadtree child = this.children[i];
+            if (child.Cull())
+            {
+                this.children.RemoveAt(i);
+                ++cullThis;
+            }
+        }
+        return cullThis >= lenChildren &&
+            this.points.Count < 1;
     }
 
     /// <summary>
@@ -214,7 +242,8 @@ public class Quadtree
         Bounds2[] childrenBounds = Bounds2.Split(this.bounds, 0.5f, 0.5f);
         for (int i = 0; i < Quadtree.ChildCount; ++i)
         {
-            this.children.Add(new Quadtree(childrenBounds[i], childCapacity, nextLevel));
+            this.children.Add(new Quadtree(childrenBounds[i],
+                childCapacity, nextLevel));
         }
 
         // Pass on points to children.
@@ -248,7 +277,7 @@ public class Quadtree
         in Quadtree q,
         in bool includeEmpty = false)
     {
-        List<Vec2> result = new List<Vec2>();
+        List<Vec2> result = new();
         Quadtree.CentersMean(q, result, includeEmpty);
         return result.ToArray();
     }
@@ -262,7 +291,7 @@ public class Quadtree
     /// <param name="target">target</param>
     /// <param name="includeEmpty">include empty</param>
     /// <returns>target list</returns>
-    protected static List<Vec2> CentersMean(
+    internal static List<Vec2> CentersMean(
         in Quadtree q,
         in List<Vec2> target,
         in bool includeEmpty = false)
@@ -338,7 +367,7 @@ public class Quadtree
         in int capacity = Quadtree.DefaultCapacity)
     {
         Bounds2 b = Bounds2.FromPoints(points);
-        Quadtree o = new Quadtree(b, capacity);
+        Quadtree o = new(b, capacity);
         o.InsertAll(points);
         return o;
     }
@@ -392,7 +421,7 @@ public class Quadtree
         in Quadtree q,
         in Bounds2 range)
     {
-        SortedDictionary<float, Vec2> found = new SortedDictionary<float, Vec2>();
+        SortedList<float, Vec2> found = new(q.capacity);
         Quadtree.Query(q, range, found);
         Vec2[] arr = new Vec2[found.Count];
         found.Values.CopyTo(arr, 0);
@@ -411,7 +440,7 @@ public class Quadtree
         in Vec2 center,
         in float radius)
     {
-        SortedDictionary<float, Vec2> found = new SortedDictionary<float, Vec2>();
+        SortedList<float, Vec2> found = new(q.capacity);
         Quadtree.Query(q, center, radius, found);
         Vec2[] arr = new Vec2[found.Count];
         found.Values.CopyTo(arr, 0);
@@ -420,17 +449,18 @@ public class Quadtree
 
     /// <summary>
     /// Queries a node with a rectangular range.
-    /// Appends results to a dictionary where the Chebyshev
-    /// distance is the key and the point is the value.
+    /// Appends results to a sorted collection where
+    /// the Chebyshev distance is the key and the point
+    /// is the value.
     /// </summary>
     /// <param name="q">quadtree</param>
     /// <param name="range">bounds</param>
     /// <param name="found">found dictionary</param>
     /// <returns>distance points dictionary</returns>
-    protected static SortedDictionary<float, Vec2> Query(
+    internal static SortedList<float, Vec2> Query(
         in Quadtree q,
         in Bounds2 range,
-        in SortedDictionary<float, Vec2> found)
+        in SortedList<float, Vec2> found)
     {
         if (Bounds2.Intersects(q.bounds, range))
         {
@@ -457,19 +487,20 @@ public class Quadtree
 
     /// <summary>
     /// Queries a node with a circular range.
-    /// Appends results to a dictionary where the distance
-    /// squared is the key and the point is the value.
+    /// Appends results to a sorted collection where 
+    /// the distance squared is the key and the point 
+    /// is the value.
     /// </summary>
     /// <param name="q">quadtree</param>
     /// <param name="center">sphere center</param>
     /// <param name="radius">sphere radius</param>
     /// <param name="found">found dictionary</param>
     /// <returns>distance points dictionary</returns>
-    protected static SortedDictionary<float, Vec2> Query(
+    internal static SortedList<float, Vec2> Query(
         in Quadtree q,
         in Vec2 center,
         in float radius,
-        in SortedDictionary<float, Vec2> found)
+        in SortedList<float, Vec2> found)
     {
         if (Bounds2.Intersects(q.bounds, center, radius))
         {
@@ -547,5 +578,22 @@ public class Quadtree
         sb.Append(' ');
         sb.Append('}');
         return sb;
+    }
+
+    /// <summary>
+    /// Counts the total capacity of a node, including
+    /// the summed capacities of its children.
+    /// </summary>
+    /// <param name="q">quadtree</param>
+    /// <returns>sum</returns>
+    public static int TotalCapacity(in Quadtree q)
+    {
+        if (Quadtree.IsLeaf(q)) { return q.capacity; }
+        int sum = 0;
+        foreach (Quadtree child in q.children)
+        {
+            sum += Quadtree.TotalCapacity(child);
+        }
+        return sum;
     }
 }

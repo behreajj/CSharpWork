@@ -218,7 +218,7 @@ public class Transform3
     /// <returns>this transform</returns>
     public Transform3 RotateBy(in float radians, in Vec3 axis)
     {
-        this.rotation = this.rotation * Quat.FromAxisAngle(radians, axis);
+        this.rotation *= Quat.FromAxisAngle(radians, axis);
         return this;
     }
 

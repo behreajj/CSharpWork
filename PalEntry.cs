@@ -59,8 +59,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
             string trval = value.Trim();
             if (trval.Length > 0)
             {
-                this.name = trval.Substring(0,
-                    Utils.Min(trval.Length, PalEntry.NameCharLimit));
+                this.name = trval[..Utils.Min(trval.Length, PalEntry.NameCharLimit)];
             }
             else
             {
@@ -98,7 +97,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is PalEntry) { return this.Equals((PalEntry)value); }
+        if (value is PalEntry entry) { return this.Equals(entry); }
         return false;
     }
 

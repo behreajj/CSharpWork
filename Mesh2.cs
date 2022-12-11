@@ -160,7 +160,7 @@ public class Mesh2
         {
             Vec2 v = this.coords[i];
             float sStretch = (v.x - lbx) * xInv;
-            float tStretch = (v.y - lb.y) * yInv;
+            float tStretch = (v.y - lby) * yInv;
             float s = (sStretch - 0.5f) * sAspect + 0.5f;
             float t = (tStretch - 0.5f) * tAspect + 0.5f;
             this.texCoords[i] = new Vec2(s, 1.0f - t);
@@ -191,9 +191,9 @@ public class Mesh2
     {
         // TODO: Test.
 
-        // Transfer arrays to dictionaries where the face index is the key. */
-        Dictionary<int, Vec2> usedCoords = new Dictionary<int, Vec2>();
-        Dictionary<int, Vec2> usedTexCoords = new Dictionary<int, Vec2>();
+        // Transfer arrays to dictionaries where the face index is the key.
+        Dictionary<int, Vec2> usedCoords = new();
+        Dictionary<int, Vec2> usedTexCoords = new();
 
         // Visit all data arrays with the faces array. Any data not used by any
         // face will be left out.
@@ -213,9 +213,9 @@ public class Mesh2
         }
 
         // Use a sorted set to filter out similar vectors.
-        SortQuantized2 v2Cmp = new SortQuantized2();
-        SortedSet<Vec2> coordsSet = new SortedSet<Vec2>(v2Cmp);
-        SortedSet<Vec2> texCoordsSet = new SortedSet<Vec2>(v2Cmp);
+        SortQuantized2 v2Cmp = new();
+        SortedSet<Vec2> coordsSet = new(v2Cmp);
+        SortedSet<Vec2> texCoordsSet = new(v2Cmp);
 
         coordsSet.UnionWith(usedCoords.Values);
         texCoordsSet.UnionWith(usedTexCoords.Values);
@@ -381,7 +381,7 @@ public class Mesh2
     public Edge2[] GetEdgesDirected()
     {
         int loopsLen = this.loops.Length;
-        SortedSet<Edge2> result = new SortedSet<Edge2>();
+        SortedSet<Edge2> result = new();
 
         for (int i = 0; i < loopsLen; ++i)
         {
@@ -394,7 +394,7 @@ public class Mesh2
                 Index2 idxOrigin = indices[j];
                 Index2 idxDest = indices[(j + 1) % indicesLen];
 
-                Edge2 trial = new Edge2(
+                Edge2 trial = new(
                     new Vert2(
                         this.coords[idxOrigin.v],
                         this.texCoords[idxOrigin.vt]),
@@ -421,7 +421,7 @@ public class Mesh2
     public Edge2[] GetEdgesUndirected()
     {
         int loopsLen = this.loops.Length;
-        Dictionary<int, Edge2> result = new Dictionary<int, Edge2>();
+        Dictionary<int, Edge2> result = new();
 
         for (int i = 0; i < loopsLen; ++i)
         {
@@ -541,7 +541,7 @@ public class Mesh2
     public Vert2[] GetVertices()
     {
         int len0 = this.loops.Length;
-        SortedSet<Vert2> result = new SortedSet<Vert2>();
+        SortedSet<Vert2> result = new();
         for (int i = 0; i < len0; ++i)
         {
             Loop2 loop = this.loops[i];
@@ -590,8 +590,8 @@ public class Mesh2
         Loop2 centerLoop = loopsNew[loopLen] = new Loop2(loopLen);
 
         // Sum centers.
-        Vec2 vCenter = new Vec2();
-        Vec2 vtCenter = new Vec2();
+        Vec2 vCenter = Vec2.Zero;
+        Vec2 vtCenter = Vec2.Zero;
         for (int j = 0; j < loopLen; ++j)
         {
             Index2 curr = indices[j];
@@ -640,7 +640,7 @@ public class Mesh2
         this.texCoords = Vec2.Concat(this.texCoords, vtsNew);
         this.loops = Loop2.Splice(this.loops, i, 1, loopsNew);
 
-        return (loopsNew: loopsNew, vsNew: vsNew, vtsNew: vtsNew);
+        return (loopsNew, vsNew, vtsNew);
     }
 
     /// <summary>
@@ -811,8 +811,8 @@ public class Mesh2
         int faceLen = face.Length;
 
         Loop2[] fsNew = new Loop2[faceLen];
-        Vec2 vCenter = new Vec2();
-        Vec2 vtCenter = new Vec2();
+        Vec2 vCenter = Vec2.Zero;
+        Vec2 vtCenter = Vec2.Zero;
 
         int vCenterIdx = this.coords.Length;
         int vtCenterIdx = this.texCoords.Length;
@@ -930,9 +930,9 @@ public class Mesh2
             Vec2[] vsNew,
             Vec2[] vtsNew) SubdivFacesCenter(in int itr = 1)
     {
-        List<Loop2> loopsNew = new List<Loop2>();
-        List<Vec2> vsNew = new List<Vec2>();
-        List<Vec2> vtsNew = new List<Vec2>();
+        List<Loop2> loopsNew = new();
+        List<Vec2> vsNew = new();
+        List<Vec2> vtsNew = new();
 
         for (int i = 0; i < itr; ++i)
         {
@@ -966,9 +966,9 @@ public class Mesh2
             Vec2[] vsNew,
             Vec2[] vtsNew) SubdivFacesFan(in int itr = 1)
     {
-        List<Loop2> loopsNew = new List<Loop2>();
-        List<Vec2> vsNew = new List<Vec2>();
-        List<Vec2> vtsNew = new List<Vec2>();
+        List<Loop2> loopsNew = new();
+        List<Vec2> vsNew = new();
+        List<Vec2> vtsNew = new();
 
         for (int i = 0; i < itr; ++i)
         {
@@ -1002,9 +1002,9 @@ public class Mesh2
             Vec2[] vsNew,
             Vec2[] vtsNew) SubdivFacesInscribe(in int itr = 1)
     {
-        List<Loop2> loopsNew = new List<Loop2>();
-        List<Vec2> vsNew = new List<Vec2>();
-        List<Vec2> vtsNew = new List<Vec2>();
+        List<Loop2> loopsNew = new();
+        List<Vec2> vsNew = new();
+        List<Vec2> vtsNew = new();
 
         for (int i = 0; i < itr; ++i)
         {
@@ -1231,10 +1231,10 @@ public class Mesh2
     {
         Vec2[] coords = mesh.coords;
         int len = coords.Length;
-        float lbx = Single.MaxValue;
-        float lby = Single.MaxValue;
-        float ubx = Single.MinValue;
-        float uby = Single.MinValue;
+        float lbx = float.MaxValue;
+        float lby = float.MaxValue;
+        float ubx = float.MinValue;
+        float uby = float.MinValue;
         for (int i = 0; i < len; ++i)
         {
             Vec2 coord = coords[i];
@@ -1716,7 +1716,7 @@ public class Mesh2
 
         // Resize arrays of data.
         int vsLen = 8 + vtlRes + vblRes + vbrRes + vtrRes;
-        if (poly != PolyType.Ngon) { vsLen = vsLen + 4; }
+        if (poly != PolyType.Ngon) { vsLen += 4; }
 
         Vec2[] vs = target.coords = Vec2.Resize(target.coords, vsLen);
         Vec2[] vts = target.texCoords = Vec2.Resize(target.texCoords, vsLen);
@@ -1951,8 +1951,8 @@ public class Mesh2
                 1.0f - ((vi3 - 0.5f) * vScl + 0.5f));
 
             // For calculating the number of face indices.
-            int fsLen = 0;
-            int nonCornerFaces = 0;
+            int fsLen;
+            int nonCornerFaces;
             int vResTotal = vtlRes +
                 vblRes +
                 vbrRes +
@@ -2181,7 +2181,7 @@ public class Mesh2
 
         // Cannot anticipate how many loops in the source mesh will not be
         // triangles, so this is an expanding list.
-        List<Loop2> loopsTrg = new List<Loop2>();
+        List<Loop2> loopsTrg = new();
 
         int loopSrcLen = loopsSrc.Length;
         for (int i = 0; i < loopSrcLen; ++i)
@@ -2205,7 +2205,7 @@ public class Mesh2
                     Index2 vert2 = fSrc[2 + m];
 
                     // Create a new triangle which connects them.
-                    Loop2 loopTrg = new Loop2(vert0, vert1, vert2);
+                    Loop2 loopTrg = new(vert0, vert1, vert2);
                     loopsTrg.Add(loopTrg);
                 }
             }

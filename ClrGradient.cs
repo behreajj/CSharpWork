@@ -13,7 +13,7 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// <summary>
     /// The list of color keys in the gradient.
     /// </summary>
-    protected readonly List<ClrKey> keys = new List<ClrKey>(16);
+    protected readonly List<ClrKey> keys = new(16);
 
     /// <summary>
     /// Returns the number of color keys in this gradient.
@@ -263,7 +263,7 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// <returns>last key</returns>
     public ClrKey GetLast()
     {
-        return this.keys[this.keys.Count - 1];
+        return this.keys[^1];
     }
 
     /// <summary>
@@ -411,7 +411,7 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// <param name="cg">color gradient</param>
     /// <param name="step">step</param>
     /// <returns>index</returns>
-    static int BisectRight(in ClrGradient cg, in float step)
+    internal static int BisectRight(in ClrGradient cg, in float step)
     {
         int low = 0;
         List<ClrKey> keys = cg.keys;
@@ -662,7 +662,7 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// <returns>range</returns>
     public static float Range(in ClrGradient cg)
     {
-        return cg.keys[cg.keys.Count - 1].Step - cg.keys[0].Step;
+        return cg.keys[^1].Step - cg.keys[0].Step;
     }
 
     /// <summary>

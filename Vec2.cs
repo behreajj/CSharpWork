@@ -47,17 +47,12 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     {
         get
         {
-            switch (i)
+            return i switch
             {
-                case 0:
-                case -2:
-                    return this._x;
-                case 1:
-                case -1:
-                    return this._y;
-                default:
-                    return 0.0f;
-            }
+                0 or -2 => this._x,
+                1 or -1 => this._y,
+                _ => 0.0f,
+            };
         }
     }
 
@@ -94,7 +89,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Vec2) { return this.Equals((Vec2)value); }
+        if (value is Vec2 vec) { return this.Equals(vec); }
         return false;
     }
 

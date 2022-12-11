@@ -340,10 +340,7 @@ public class Knot2
     /// <returns>this knot</returns>
     public Knot2 Reverse()
     {
-        Vec2 temp = this.foreHandle;
-        this.foreHandle = this.rearHandle;
-        this.rearHandle = temp;
-
+        (this.rearHandle, this.foreHandle) = (this.foreHandle, this.rearHandle);
         return this;
     }
 

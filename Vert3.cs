@@ -66,7 +66,7 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Vert3) { return this.Equals((Vert3)value); }
+        if (value is Vert3 vert) { return this.Equals(vert); }
         return false;
     }
 

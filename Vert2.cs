@@ -51,7 +51,7 @@ public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Vert2) { return this.Equals((Vert2)value); }
+        if (value is Vert2 vert) { return this.Equals(vert); }
         return false;
     }
 

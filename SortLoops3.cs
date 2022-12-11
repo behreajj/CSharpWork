@@ -30,7 +30,7 @@ public class SortLoops3 : IComparer<Loop3>
 
     public int Compare(Loop3 a, Loop3 b)
     {
-        Vec3 aAvg = new Vec3();
+        Vec3 aAvg = Vec3.Zero;
         Index3[] aIdcs = a.Indices;
         int aLen = aIdcs.Length;
         for (int i = 0; i < aLen; ++i)
@@ -39,7 +39,7 @@ public class SortLoops3 : IComparer<Loop3>
         }
         aAvg /= aLen;
 
-        Vec3 bAvg = new Vec3();
+        Vec3 bAvg = Vec3.Zero;
         Index3[] bIdcs = b.Indices;
         int bLen = bIdcs.Length;
         for (int i = 0; i < bLen; ++i)

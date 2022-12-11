@@ -51,7 +51,7 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Edge3) { return this.Equals((Edge3)value); }
+        if (value is Edge3 edge) { return this.Equals(edge); }
         return false;
     }
 

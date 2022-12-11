@@ -17,7 +17,7 @@ public class Curve2 : IEnumerable<Knot2>
     /// <summary>
     ///  The list of knots contained by the curve.
     /// </summary>
-    protected readonly List<Knot2> knots = new List<Knot2>();
+    protected readonly List<Knot2> knots = new();
 
     /// <summary>
     /// A flag for whether or not the curve is a closed loop.
@@ -226,7 +226,7 @@ public class Curve2 : IEnumerable<Knot2>
     /// <returns>the knot</returns>
     public Knot2 GetLast()
     {
-        return this.knots[this.knots.Count - 1];
+        return this.knots[^1];
     }
 
     /// <summary>
@@ -623,7 +623,7 @@ public class Curve2 : IEnumerable<Knot2>
     public static (Vec2 coord, Vec2 tangent) EvalLast(in Curve2 c)
     {
         List<Knot2> kns = c.knots;
-        Knot2 kn = kns[kns.Count - 1];
+        Knot2 kn = kns[^1];
         return (
             coord: kn.Coord,
             tangent: Vec2.Normalize(kn.Coord - kn.RearHandle));
@@ -770,7 +770,7 @@ public class Curve2 : IEnumerable<Knot2>
         {
             Vec2 coPrev = prev.Coord;
             float angle = offsetAngle + i * toTheta;
-            Vec2 coCurr = new Vec2(
+            Vec2 coCurr = new(
                 cx + r * MathF.Cos(angle),
                 cy + r * MathF.Sin(angle));
 

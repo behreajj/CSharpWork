@@ -54,20 +54,13 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     {
         get
         {
-            switch (i)
+            return i switch
             {
-                case 0:
-                case -3:
-                    return this._v;
-                case 1:
-                case -2:
-                    return this._vt;
-                case 2:
-                case -1:
-                    return this._vn;
-                default:
-                    return 0;
-            }
+                0 or -3 => this._v,
+                1 or -2 => this._vt,
+                2 or -1 => this._vn,
+                _ => 0,
+            };
         }
     }
 
@@ -96,7 +89,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Index3) { return this.Equals((Index3)value); }
+        if (value is Index3 index) { return this.Equals(index); }
         return false;
     }
 

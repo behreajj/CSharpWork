@@ -220,7 +220,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Mat3) { return this.Equals((Mat3)value); }
+        if (value is Mat3 mat) { return this.Equals(mat); }
         return false;
     }
 

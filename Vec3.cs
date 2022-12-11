@@ -82,20 +82,13 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     {
         get
         {
-            switch (i)
+            return i switch
             {
-                case 0:
-                case -3:
-                    return this._x;
-                case 1:
-                case -2:
-                    return this._y;
-                case 2:
-                case -1:
-                    return this._z;
-                default:
-                    return 0.0f;
-            }
+                0 or -3 => this._x,
+                1 or -2 => this._y,
+                2 or -1 => this._z,
+                _ => 0.0f,
+            };
         }
     }
 
@@ -136,7 +129,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Vec3) { return this.Equals((Vec3)value); }
+        if (value is Vec3 vec) { return this.Equals(vec); }
         return false;
     }
 
@@ -1235,9 +1228,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             if (mSq > 0.0f)
             {
                 float mInv = Utils.InvSqrtUnchecked(mSq);
-                float xn = x * mInv;
-                float yn = y * mInv;
-                float zn = z * mInv;
                 return new Vec3(x * mInv, y * mInv, z * mInv);
             }
         }

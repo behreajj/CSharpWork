@@ -341,7 +341,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Mat4) { return this.Equals((Mat4)value); }
+        if (value is Mat4 mat) { return this.Equals(mat); }
         return false;
     }
 

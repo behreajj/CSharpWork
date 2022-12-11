@@ -18,7 +18,7 @@ public class Curve3 : IEnumerable<Knot3>
     /// <summary>
     ///  The list of knots contained by the curve.
     /// </summary>
-    protected readonly List<Knot3> knots = new List<Knot3>();
+    protected readonly List<Knot3> knots = new();
 
     /// <summary>
     /// A flag for whether or not the curve is a closed loop.
@@ -249,7 +249,7 @@ public class Curve3 : IEnumerable<Knot3>
     /// <returns>the knot</returns>
     public Knot3 GetLast()
     {
-        return this.knots[this.knots.Count - 1];
+        return this.knots[^1];
     }
 
     /// <summary>
@@ -541,8 +541,10 @@ public class Curve3 : IEnumerable<Knot3>
     /// <param name="c">2D curve</param>
     public static implicit operator Curve3(in Curve2 c)
     {
-        Curve3 result = new Curve3();
-        result.closedLoop = c.ClosedLoop;
+        Curve3 result = new()
+        {
+            closedLoop = c.ClosedLoop
+        };
         foreach (Knot2 kn in c) { result.Append(kn); }
         return result;
     }
@@ -624,7 +626,7 @@ public class Curve3 : IEnumerable<Knot3>
     public static (Vec3 coord, Vec3 tangent) EvalLast(in Curve3 c)
     {
         List<Knot3> kns = c.knots;
-        Knot3 kn = kns[kns.Count - 1];
+        Knot3 kn = kns[^1];
         return (
             coord: kn.Coord,
             tangent: Vec3.Normalize(kn.Coord - kn.RearHandle));
@@ -713,7 +715,7 @@ public class Curve3 : IEnumerable<Knot3>
                     for (int i = 0; i < len; ++i)
                     {
                         Clr c = colors[i];
-                        Vec3 v = new Vec3(c.r, c.g, c.b);
+                        Vec3 v = new(c.r, c.g, c.b);
                         Knot3 kn = knots[i];
                         kn.Coord = v;
                         kn.ForeHandle = v;
@@ -727,7 +729,7 @@ public class Curve3 : IEnumerable<Knot3>
                     {
                         Clr c = colors[i];
                         Clr l = Clr.StandardToLinear(c);
-                        Vec3 v = new Vec3(l.r, l.g, l.b);
+                        Vec3 v = new(l.r, l.g, l.b);
                         Knot3 kn = knots[i];
                         kn.Coord = v;
                         kn.ForeHandle = v;

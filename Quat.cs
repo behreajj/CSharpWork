@@ -148,23 +148,14 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     {
         get
         {
-            switch (i)
+            return i switch
             {
-                case 0:
-                case -4:
-                    return this.real;
-                case 1:
-                case -3:
-                    return this.imag.x;
-                case 2:
-                case -2:
-                    return this.imag.y;
-                case 3:
-                case -1:
-                    return this.imag.z;
-                default:
-                    return 0.0f;
-            }
+                0 or -4 => this.real,
+                1 or -3 => this.imag.x,
+                2 or -2 => this.imag.y,
+                3 or -1 => this.imag.z,
+                _ => 0.0f,
+            };
         }
     }
 
@@ -202,7 +193,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     {
         if (Object.ReferenceEquals(this, value)) { return true; }
         if (value is null) { return false; }
-        if (value is Quat) { return this.Equals((Quat)value); }
+        if (value is Quat quat) { return this.Equals(quat); }
         return false;
     }
 
@@ -290,9 +281,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     public (float w, float x, float y, float z) ToTuple()
     {
         return (w: this.real,
-            x: this.imag.x,
-            y: this.imag.y,
-            z: this.imag.z);
+            this.imag.x, this.imag.y, this.imag.z);
     }
 
     /// <summary>
@@ -301,7 +290,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <param name="real">real number</param>
     public static implicit operator Quat(in float real)
     {
-        return new Quat(real, new Vec3(0.0f, 0.0f, 0.0f));
+        return new Quat(real, Vec3.Zero);
     }
 
     /// <summary>
@@ -833,7 +822,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
                 iy * w + ix * qz - iw * qy - iz * qx,
                 iz * w + iy * qx - iw * qz - ix * qy);
         }
-        return new Vec3();
+        return Vec3.Zero;
     }
 
     /// <summary>
@@ -1268,7 +1257,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         if (wAsin == 0.0f)
         {
             return (
-                angle: angle,
+                angle,
                 axis: Vec3.Forward);
         }
 
@@ -1282,20 +1271,20 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         if (amSq <= 0.0f)
         {
             return (
-                angle: angle,
+                angle,
                 axis: Vec3.Forward);
         }
 
         if (Utils.Approx(amSq, 1.0f))
         {
             return (
-                angle: angle,
+                angle,
                 axis: new Vec3(ax, ay, az));
         }
 
         float mInv = Utils.InvSqrtUnchecked(amSq);
         return (
-            angle: angle,
+            angle,
             axis: new Vec3(ax * mInv, ay * mInv, az * mInv));
     }
 
@@ -1321,7 +1310,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         float vy = zw + zw + xy + xy;
         float vz = xz + xz - (yw + yw);
 
-        float azimuth = MathF.Atan2(vy, vx);
         float mSq = vx * vx + vy * vy + vz * vz;
         float inUnsigned = (mSq > 0.0f) ?
             MathF.Acos(vz / MathF.Sqrt(mSq)) :
@@ -1367,7 +1355,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     {
         get
         {
-            return new Quat(1.0f, new Vec3(0.0f, 0.0f, 0.0f));
+            return new Quat(1.0f, Vec3.Zero);
         }
     }
 }

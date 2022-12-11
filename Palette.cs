@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,7 +8,7 @@ using System.Text;
 /// Stores name and author of the palette.
 /// </summary>
 [Serializable]
-public class Palette
+public class Palette : IEnumerable
 {
     /// <summary>
     /// Character limit for author name.
@@ -50,8 +51,7 @@ public class Palette
             string trval = value.Trim();
             if (trval.Length > 0)
             {
-                this.author = trval.Substring(0,
-                    Utils.Min(trval.Length, Palette.AuthorCharLimit));
+                this.author = trval[..Utils.Min(trval.Length, Palette.AuthorCharLimit)];
             }
         }
     }
@@ -78,8 +78,7 @@ public class Palette
             string trval = value.Trim();
             if (trval.Length > 0)
             {
-                this.name = trval.Substring(0,
-                    Utils.Min(trval.Length, Palette.NameCharLimit));
+                this.name = trval[..Utils.Min(trval.Length, Palette.NameCharLimit)];
             }
         }
     }
@@ -187,6 +186,15 @@ public class Palette
             result[i] = this.entries[i].Color;
         }
         return result;
+    }
+
+    /// <summary>
+    /// Gets the enumerator for this curve.
+    /// </summary>
+    /// <returns>enumerator</returns>
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return this.entries.GetEnumerator();
     }
 
     /// <summary>
@@ -332,9 +340,7 @@ public class Palette
             // Shift right hand entries forward.
             for (int j = 0, k = aLen; j < bLen; ++j, ++k)
             {
-                PalEntry temp = cEntries[j];
-                cEntries[j] = cEntries[k];
-                cEntries[k] = temp;
+                (cEntries[k], cEntries[j]) = (cEntries[j], cEntries[k]);
             }
 
             for (int i = 0; i < aLen; ++i)
@@ -620,7 +626,7 @@ public class Palette
         PalEntry[] sourceEntries = source.entries;
         int len = sourceEntries.Length;
         int index = 0;
-        Dictionary<PalEntry, int> clrDict = new Dictionary<PalEntry, int>(len);
+        Dictionary<PalEntry, int> clrDict = new(len);
         for (int i = 0; i < len; ++i)
         {
             PalEntry sourcePalEntry = sourceEntries[i];
