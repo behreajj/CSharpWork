@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 /// <summary>
@@ -244,6 +245,175 @@ public static class UnityBridge
     }
 
     /// <summary>
+    /// Converts to a Unity Mesh from a Mesh2.
+    /// Flips the mesh to match Unity's coordinate system.
+    /// </summary>
+    /// <param name="m">mesh</param>
+    /// <returns>conversion</returns>
+    public static Mesh ToMesh(in Mesh2 m)
+    {
+        Loop2[] loops = m.Loops;
+        Vec2[] vs = m.Coords;
+        Vec2[] vts = m.TexCoords;
+
+        int loopsLen = loops.Length;
+        int uniformLen = 0;
+        for (int i = 0; i < loopsLen; ++i)
+        {
+            int loopLen = loops[i].Length;
+            if (loopLen != 3)
+            {
+                throw new NotSupportedException(
+                    "Only triangular faces are supported.");
+            }
+            uniformLen += loopLen;
+        }
+        if (uniformLen < 3) { return new Mesh(); }
+
+        Vector3[] vsUnity = new Vector3[uniformLen];
+        Vector2[] vtsUnity = new Vector2[uniformLen];
+        Vector3[] vnsUnity = new Vector3[uniformLen];
+        int[] triangles = new int[uniformLen];
+
+        float lbx = float.MaxValue;
+        float lby = float.MaxValue;
+
+        float ubx = float.MinValue;
+        float uby = float.MinValue;
+
+        for (int k = 0, i = 0; i < loopsLen; ++i)
+        {
+            Loop2 loop = loops[i];
+            Index2[] indices = loop.Indices;
+            int indicesLen = indices.Length;
+            for (int j = indicesLen - 1; j > -1; --j, ++k)
+            {
+                Index2 index = indices[j];
+                Vec2 v = vs[index.v];
+                Vec2 vt = vts[index.vt];
+
+                triangles[k] = k;
+                vsUnity[k] = UnityBridge.ToVector3(v, 0.0f);
+                vtsUnity[k] = new Vector2(vt.x, 1.0f - vt.y);
+                vnsUnity[k] = Vector3.back;
+
+                float x = v.x;
+                float y = v.y;
+                if (x < lbx) { lbx = x; }
+                if (x > ubx) { ubx = x; }
+                if (y < lby) { lby = y; }
+                if (y > uby) { uby = y; }
+            }
+        }
+
+        Mesh um = new()
+        {
+            name = "Mesh2",
+            vertices = vsUnity,
+            uv = vtsUnity,
+            normals = vnsUnity,
+            triangles = triangles,
+            bounds = new Bounds(
+            new Vector3((lbx + ubx) * 0.5f,
+                        (lby + uby) * 0.5f, 0.0f),
+            new Vector3(ubx - lbx,
+                        uby - lby, 0.0f))
+        };
+        um.RecalculateTangents();
+        um.Optimize();
+        return um;
+    }
+
+    /// <summary>
+    /// Converts to a Unity Mesh from a Mesh3.
+    /// </summary>
+    /// <param name="m">mesh</param>
+    /// <returns>conversion</returns>
+    public static Mesh ToMesh(in Mesh3 m)
+    {
+        // TODO: TEST
+        Loop3[] loops = m.Loops;
+        Vec3[] vs = m.Coords;
+        Vec2[] vts = m.TexCoords;
+        Vec3[] vns = m.Normals;
+
+        int loopsLen = loops.Length;
+        int uniformLen = 0;
+        for (int i = 0; i < loopsLen; ++i)
+        {
+            int loopLen = loops[i].Length;
+            if (loopLen != 3)
+            {
+                throw new NotSupportedException(
+                    "Only triangular faces are supported.");
+            }
+            uniformLen += loopLen;
+        }
+        if (uniformLen < 3) { return new Mesh(); }
+
+        Vector3[] vsUnity = new Vector3[uniformLen];
+        Vector2[] vtsUnity = new Vector2[uniformLen];
+        Vector3[] vnsUnity = new Vector3[uniformLen];
+        int[] triangles = new int[uniformLen];
+
+        float lbx = float.MaxValue;
+        float lby = float.MaxValue;
+        float lbz = float.MaxValue;
+
+        float ubx = float.MinValue;
+        float uby = float.MinValue;
+        float ubz = float.MinValue;
+
+        for (int k = 0, i = 0; i < loopsLen; ++i)
+        {
+            Loop3 loop = loops[i];
+            Index3[] indices = loop.Indices;
+            int indicesLen = indices.Length;
+            for (int j = 0; j < indicesLen; ++j, ++k)
+            {
+                Index3 index = indices[j];
+                Vec3 v = vs[index.v];
+                Vec2 vt = vts[index.vt];
+                Vec3 vn = vns[index.vn];
+
+                triangles[k] = k;
+                vsUnity[k] = UnityBridge.ToVector3(v);
+                vtsUnity[k] = UnityBridge.ToVector2(vt);
+                vnsUnity[k] = UnityBridge.ToVector3(vn);
+
+                float x = v.x;
+                float y = v.y;
+                float z = v.z;
+                if (x < lbx) { lbx = x; }
+                if (x > ubx) { ubx = x; }
+                if (y < lby) { lby = y; }
+                if (y > uby) { uby = y; }
+                if (z < lbz) { lby = z; }
+                if (z > ubz) { uby = z; }
+            }
+        }
+
+        Mesh um = new()
+        {
+            name = "Mesh3",
+            vertices = vsUnity,
+            uv = vtsUnity,
+            normals = vnsUnity,
+            triangles = triangles,
+            bounds = new Bounds(
+            new Vector3((lbx + ubx) * 0.5f,
+                        (lby + uby) * 0.5f,
+                        (lbz + ubz) * 0.5f),
+            new Vector3(ubx - lbx,
+                        uby - lby,
+                        ubz - lbz))
+        };
+        um.RecalculateTangents();
+        um.Optimize();
+        return um;
+    }
+
+    /// <summary>
     /// Converts to a Unity Quaternion from an angle in radians.
     /// </summary>
     /// <param name="radians">radians</param>
@@ -307,6 +477,22 @@ public static class UnityBridge
     }
 
     /// <summary>
+    /// Converts to an array of Unity Vector2s from an array of Vec2s.
+    /// </summary>
+    /// <param name="vs">vectors</param>
+    /// <returns>conversion</returns>
+    public static Vector2[] ToVector2(in Vec2[] vs)
+    {
+        int vsLen = vs.Length;
+        Vector2[] uvs = new Vector2[vsLen];
+        for (int i = 0; i < vsLen; ++i)
+        {
+            uvs[i] = UnityBridge.ToVector2(vs[i]);
+        }
+        return uvs;
+    }
+
+    /// <summary>
     /// Converts to a Unity Vector3 from a Vec3.
     /// </summary>
     /// <param name="v">vector</param>
@@ -320,10 +506,44 @@ public static class UnityBridge
     /// Converts to a Unity Vector3 from a Vec2.
     /// </summary>
     /// <param name="v">vector</param>
+    /// <param name="z">z component</param>
     /// <returns>conversion</returns>
     public static Vector3 ToVector3(in Vec2 v, in float z = 0.0f)
     {
         return new Vector3(v.x, v.y, z);
+    }
+
+    /// <summary>
+    /// Converts to an array of Unity Vector3s from an array of Vec3s.
+    /// </summary>
+    /// <param name="vs">vectors</param>
+    /// <returns>conversion</returns>
+    public static Vector3[] ToVector3(in Vec3[] vs)
+    {
+        int vsLen = vs.Length;
+        Vector3[] uvs = new Vector3[vsLen];
+        for (int i = 0; i < vsLen; ++i)
+        {
+            uvs[i] = UnityBridge.ToVector3(vs[i]);
+        }
+        return uvs;
+    }
+
+    /// <summary>
+    /// Converts to an array of Unity Vector3s from an array of Vec3s.
+    /// </summary>
+    /// <param name="vs">vectors</param>
+    /// <param name="z">z component</param>
+    /// <returns>conversion</returns>
+    public static Vector3[] ToVector3(in Vec2[] vs, in float z = 0.0f)
+    {
+        int vsLen = vs.Length;
+        Vector3[] uvs = new Vector3[vsLen];
+        for (int i = 0; i < vsLen; ++i)
+        {
+            uvs[i] = UnityBridge.ToVector3(vs[i], z);
+        }
+        return uvs;
     }
 
     /// <summary>

@@ -21,14 +21,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     public const float CieLchHueShade = 0.85555553f;
 
     /// <summary>
-    /// The red color channel.
+    /// The alpha (transparency) channel.
     /// </summary>
-    private readonly float _r;
-
-    /// <summary>
-    /// The green color channel.
-    /// </summary>
-    private readonly float _g;
+    private readonly float _a;
 
     /// <summary>
     /// The blue color channel.
@@ -36,9 +31,14 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     private readonly float _b;
 
     /// <summary>
-    /// The alpha (transparency) channel.
+    /// The green color channel.
     /// </summary>
-    private readonly float _a;
+    private readonly float _g;
+
+    /// <summary>
+    /// The red color channel.
+    /// </summary>
+    private readonly float _r;
 
     /// <summary>
     /// Returns the number of elements in this color.
@@ -47,16 +47,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     public int Length { get { return 4; } }
 
     /// <summary>
-    /// The red color channel.
+    /// The alpha color channel.
     /// </summary>
-    /// <value>red</value>
-    public float r { get { return this._r; } }
-
-    /// <summary>
-    /// The green color channel.
-    /// </summary>
-    /// <value>green</value>
-    public float g { get { return this._g; } }
+    /// <value>alpha</value>
+    public float a { get { return this._a; } }
 
     /// <summary>
     /// The blue color channel.
@@ -65,10 +59,16 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     public float b { get { return this._b; } }
 
     /// <summary>
-    /// The alpha color channel.
+    /// The green color channel.
     /// </summary>
-    /// <value>alpha</value>
-    public float a { get { return this._a; } }
+    /// <value>green</value>
+    public float g { get { return this._g; } }
+
+    /// <summary>
+    /// The red color channel.
+    /// </summary>
+    /// <value>red</value>
+    public float r { get { return this._r; } }
 
     /// <summary>
     /// Creates a color from unsigned bytes. Converts each to a single precision
@@ -96,10 +96,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <param name="a">alpha channel</param>
     public Clr(in sbyte r, in sbyte g, in sbyte b, in sbyte a = -1)
     {
-        this._r = (((int)r) & 0xff) * Utils.One255;
-        this._g = (((int)g) & 0xff) * Utils.One255;
-        this._b = (((int)b) & 0xff) * Utils.One255;
-        this._a = (((int)a) & 0xff) * Utils.One255;
+        this._r = (r & 0xff) * Utils.One255;
+        this._g = (g & 0xff) * Utils.One255;
+        this._b = (b & 0xff) * Utils.One255;
+        this._a = (a & 0xff) * Utils.One255;
     }
 
     /// <summary>
@@ -1207,7 +1207,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         int r = (int)(Utils.Clamp(c._r, 0.0f, 1.0f) * 255.0f + 0.5f);
         int g = (int)(Utils.Clamp(c._g, 0.0f, 1.0f) * 255.0f + 0.5f);
         int b = (int)(Utils.Clamp(c._b, 0.0f, 1.0f) * 255.0f + 0.5f);
-        sb.AppendFormat("{0:X6}", (r << 0x10 | g << 0x08 | b));
+        sb.AppendFormat("{0:X6}", r << 0x10 | g << 0x08 | b);
         return sb;
     }
 

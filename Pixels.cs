@@ -187,12 +187,11 @@ public static class Pixels
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
     /// <param name="w">image width</param>
-    /// <param name="h">image height</param>
     /// <param name="pivot">pivot</param>
     /// <param name="flip">flip reflection flag</param>
     /// <returns>mirrored pixels</returns>
     public static T[] MirrorX<T>(
-        in T[] source, in T[] target, in int w, in int h,
+        in T[] source, in T[] target, in int w,
         in int pivot = -1, in bool flip = false)
     {
         int trgLen = target.Length;
@@ -577,8 +576,10 @@ public static class Pixels
         int bbrx = bx + bw - 1;
         int bbry = by + bh - 1;
 
-        Dictionary<Clr, Vec4> dict = new();
-        dict.Add(Clr.ClearBlack, Vec4.Zero);
+        Dictionary<Clr, Vec4> dict = new()
+        {
+            { Clr.ClearBlack, Vec4.Zero }
+        };
 
         // Blending only necessary at the intersection of a and b.
         int dx = ax > bx ? ax : bx;
@@ -1411,7 +1412,7 @@ public static class Pixels
 
         if (dxZero)
         {
-            return Pixels.MirrorX(source, target, w, h,
+            return Pixels.MirrorX(source, target, w,
                 Utils.Round(bx), flip ? ay > by : by > ay);
         }
 
@@ -1984,7 +1985,7 @@ public static class Pixels
                     float tDenom = t * (100.0f / diff);
                     float lumMintDenom = lumMin * tDenom;
 
-                    Dictionary<Clr, Clr> stretched = new Dictionary<Clr, Clr>();
+                    Dictionary<Clr, Clr> stretched = new();
                     foreach (KeyValuePair<Clr, Vec4> kv in dict)
                     {
                         Vec4 sourceLab = kv.Value;

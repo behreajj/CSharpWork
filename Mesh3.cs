@@ -776,7 +776,7 @@ public class Mesh3
         Vec3[] vsNew = new Vec3[faceLen + 1];
         Vec2[] vtsNew = new Vec2[vsNew.Length];
         Vec3[] vnsNew = new Vec3[vsNew.Length];
-        Loop3[] fsNew = new Loop3[faceLen];
+        Loop3[] loopsNew = new Loop3[faceLen];
 
         int vCenterIdx = vsOldLen + faceLen;
         int vtCenterIdx = vtsOldLen + faceLen;
@@ -808,7 +808,7 @@ public class Mesh3
             vtsNew[j] = Vec2.Mix(vtCurr, this.texCoords[vtNextIdx]);
             vnsNew[j] = Vec3.Normalize(vnCurr + this.normals[vnNextIdx]);
 
-            fsNew[j] = new Loop3(
+            loopsNew[j] = new Loop3(
                 new Index3(vCenterIdx, vtCenterIdx, vnCenterIdx),
                 new Index3(vsOldLen + j, vtsOldLen + j, vnsOldLen + j),
                 new Index3(vNextIdx, vtNextIdx, vnNextIdx),
@@ -830,12 +830,9 @@ public class Mesh3
         this.coords = Vec3.Concat(this.coords, vsNew);
         this.texCoords = Vec2.Concat(this.texCoords, vtsNew);
         this.normals = Vec3.Concat(this.normals, vnsNew);
-        this.loops = Loop3.Splice(this.loops, i, 1, fsNew);
+        this.loops = Loop3.Splice(this.loops, i, 1, loopsNew);
 
-        return (loopsNew: fsNew,
-            vsNew,
-            vtsNew,
-            vnsNew);
+        return (loopsNew, vsNew, vtsNew, vnsNew);
     }
 
     /// <summary>
@@ -855,7 +852,7 @@ public class Mesh3
         Index3[] face = this.loops[i].Indices;
         int faceLen = face.Length;
 
-        Loop3[] fsNew = new Loop3[faceLen];
+        Loop3[] loopsNew = new Loop3[faceLen];
         Vec3 vCenter = Vec3.Zero;
         Vec2 vtCenter = Vec2.Zero;
         Vec3 vnCenter = Vec3.Zero;
@@ -883,7 +880,7 @@ public class Mesh3
             vtCenter += vtCurr;
             vnCenter += vnCurr;
 
-            fsNew[j] = new Loop3(
+            loopsNew[j] = new Loop3(
                 new Index3(vCenterIdx, vtCenterIdx, vnCenterIdx),
                 new Index3(vCurrIdx, vtCurrIdx, vnCurrIdx),
                 new Index3(vertNext.v, vertNext.vt, vertNext.vn));
@@ -900,9 +897,9 @@ public class Mesh3
         this.coords = Vec3.Append(this.coords, vCenter);
         this.texCoords = Vec2.Append(this.texCoords, vtCenter);
         this.normals = Vec3.Append(this.normals, vnCenter);
-        this.loops = Loop3.Splice(this.loops, i, 1, fsNew);
+        this.loops = Loop3.Splice(this.loops, i, 1, loopsNew);
 
-        return (loopsNew: fsNew,
+        return (loopsNew,
             vsNew: new Vec3[] { vCenter },
             vtsNew: new Vec2[] { vtCenter },
             vnsNew: new Vec3[] { vnCenter });
@@ -934,7 +931,7 @@ public class Mesh3
         Vec3[] vsNew = new Vec3[faceLen];
         Vec2[] vtsNew = new Vec2[faceLen];
         Vec3[] vnsNew = new Vec3[faceLen];
-        Loop3[] fsNew = new Loop3[faceLen + 1];
+        Loop3[] loopsNew = new Loop3[faceLen + 1];
         Index3[] cfIdcs = new Index3[3];
 
         for (int j = 0; j < faceLen; ++j)
@@ -961,7 +958,7 @@ public class Mesh3
             int vtSubdivIdx = vtsOldLen + j;
             int vnSubdivIdx = vnsOldLen + j;
 
-            fsNew[j] = new Loop3(
+            loopsNew[j] = new Loop3(
                 new Index3(vSubdivIdx, vtSubdivIdx, vnSubdivIdx),
                 new Index3(vNextIdx, vtNextIdx, vnNextIdx),
                 new Index3(vsOldLen + k, vtsOldLen + k, vnsOldLen + k));
@@ -970,17 +967,14 @@ public class Mesh3
         }
 
         // Center face.
-        fsNew[faceLen] = new Loop3(cfIdcs);
+        loopsNew[faceLen] = new Loop3(cfIdcs);
 
         this.coords = Vec3.Concat(this.coords, vsNew);
         this.texCoords = Vec2.Concat(this.texCoords, vtsNew);
         this.normals = Vec3.Concat(this.normals, vnsNew);
-        this.loops = Loop3.Splice(this.loops, i, 1, fsNew);
+        this.loops = Loop3.Splice(this.loops, i, 1, loopsNew);
 
-        return (loopsNew: fsNew,
-            vsNew,
-            vtsNew,
-            vnsNew);
+        return (loopsNew, vsNew, vtsNew, vnsNew);
     }
 
     /// <summary>

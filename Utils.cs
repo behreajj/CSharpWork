@@ -880,12 +880,12 @@ public static class Utils
 
     /// <summary>
     /// Applies the modulo operator (%) to the operands, implicitly using the
-    /// formula fmod ( a, b ) := a - b trunc ( a / b ) .
+    /// formula a - b trunc ( a / b ) .
     ///
     /// When the left operand is negative and the right operand is positive, the
     /// result will be negative. For periodic values, such as an angle, where
     /// the direction of change could be either clockwise or counterclockwise,
-    /// use mod.
+    /// use RemFloor.
     ///
     /// If the right operand is one, use fract ( a ) or a - trunc ( a ) instead.
     /// </summary>
@@ -1082,7 +1082,7 @@ public static class Utils
     }
 
     /// <summary>
-    /// A specialized version of mod which wraps an angle in degrees to the
+    /// A specialized version of RemFloor which wraps an angle in degrees to the
     /// range [0.0, 360.0) .
     /// </summary>
     /// <param name="deg">angle in degrees</param>
@@ -1093,7 +1093,7 @@ public static class Utils
     }
 
     /// <summary>
-    /// A specialized version of mod which wraps an angle in radians to the
+    /// A specialized version of RemFloor which wraps an angle in radians to the
     /// range [0.0, TAU) .
     /// </summary>
     /// <param name="rad">angle in radians</param>

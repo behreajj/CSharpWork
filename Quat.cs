@@ -694,7 +694,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>quaternion</returns>
     public static Quat FromAngle(in float radians)
     {
-        float rHalf = (radians % Utils.Tau) * 0.5f;
+        float rHalf = radians % Utils.Tau * 0.5f;
         float cosa = MathF.Cos(rHalf);
         float sina = MathF.Sin(rHalf);
         return new Quat(cosa, 0.0f, 0.0f, sina);
@@ -715,7 +715,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         float amSq = ax * ax + ay * ay + az * az;
         if (amSq > 0.0f)
         {
-            float rHalf = (radians % Utils.Tau) * 0.5f;
+            float rHalf = radians % Utils.Tau * 0.5f;
             float amInv = MathF.Sin(rHalf) / MathF.Sqrt(amSq);
             return new Quat(MathF.Cos(rHalf), new Vec3(
                     ax * amInv,
@@ -1087,7 +1087,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>rotated quaternion</returns>
     public static Quat RotateX(in Quat q, in float radians)
     {
-        float rHalf = (radians % Utils.Tau) * 0.5f;
+        float rHalf = radians % Utils.Tau * 0.5f;
         float cosa = MathF.Cos(rHalf);
         float sina = MathF.Sin(rHalf);
         return Quat.RotateX(q, cosa, sina);
@@ -1123,7 +1123,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>rotated quaternion</returns>
     public static Quat RotateY(in Quat q, in float radians)
     {
-        float rHalf = (radians % Utils.Tau) * 0.5f;
+        float rHalf = radians % Utils.Tau * 0.5f;
         float cosa = MathF.Cos(rHalf);
         float sina = MathF.Sin(rHalf);
         return Quat.RotateY(q, cosa, sina);
@@ -1159,7 +1159,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>rotated quaternion</returns>
     public static Quat RotateZ(in Quat q, in float radians)
     {
-        float rHalf = (radians % Utils.Tau) * 0.5f;
+        float rHalf = radians % Utils.Tau * 0.5f;
         float cosa = MathF.Cos(rHalf);
         float sina = MathF.Sin(rHalf);
         return Quat.RotateZ(q, cosa, sina);

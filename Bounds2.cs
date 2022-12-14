@@ -474,11 +474,23 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// Scales a bounds from its center.
     /// </summary>
     /// <param name="b">bounds</param>
+    /// <param name="v">scale</param>
+    /// <returns>scaled bounds</returns>
+    public static Bounds2 Scale(in Bounds2 b, in float v)
+    {
+        return Bounds2.FromCenterExtent(
+            Bounds2.Center(b),
+            Bounds2.ExtentSigned(b) * v);
+    }
+
+    /// <summary>
+    /// Scales a bounds from its center.
+    /// </summary>
+    /// <param name="b">bounds</param>
     /// <param name="v">nonuniform scale</param>
     /// <returns>scaled bounds</returns>
     public static Bounds2 Scale(in Bounds2 b, in Vec2 v)
     {
-        // TODO: Test
         return Bounds2.FromCenterExtent(
             Bounds2.Center(b),
             Bounds2.ExtentSigned(b) * v);

@@ -742,13 +742,13 @@ public class Mesh2
 
         Vec2[] vsNew = new Vec2[faceLen + 1];
         Vec2[] vtsNew = new Vec2[vsNew.Length];
-        Loop2[] fsNew = new Loop2[faceLen];
+        Loop2[] loopsNew = new Loop2[faceLen];
 
         int vCenterIdx = vsOldLen + faceLen;
         int vtCenterIdx = vtsOldLen + faceLen;
 
-        Vec2 vCenter = new Vec2();
-        Vec2 vtCenter = new Vec2();
+        Vec2 vCenter = Vec2.Zero;
+        Vec2 vtCenter = Vec2.Zero;
 
         for (int j = 0; j < faceLen; ++j)
         {
@@ -768,7 +768,7 @@ public class Mesh2
             vsNew[j] = Vec2.Mix(vCurr, this.coords[vNextIdx]);
             vtsNew[j] = Vec2.Mix(vtCurr, this.texCoords[vtNextIdx]);
 
-            fsNew[j] = new Loop2(
+            loopsNew[j] = new Loop2(
                 new Index2(vCenterIdx, vtCenterIdx),
                 new Index2(vsOldLen + j, vtsOldLen + j),
                 new Index2(vNextIdx, vtNextIdx),
@@ -787,11 +787,9 @@ public class Mesh2
 
         this.coords = Vec2.Concat(this.coords, vsNew);
         this.texCoords = Vec2.Concat(this.texCoords, vtsNew);
-        this.loops = Loop2.Splice(this.loops, i, 1, fsNew);
+        this.loops = Loop2.Splice(this.loops, i, 1, loopsNew);
 
-        return (loopsNew: fsNew,
-            vsNew: vsNew,
-            vtsNew: vtsNew);
+        return (loopsNew, vsNew, vtsNew);
     }
 
     /// <summary>
@@ -810,7 +808,7 @@ public class Mesh2
         Index2[] face = this.loops[i].Indices;
         int faceLen = face.Length;
 
-        Loop2[] fsNew = new Loop2[faceLen];
+        Loop2[] loopsNew = new Loop2[faceLen];
         Vec2 vCenter = Vec2.Zero;
         Vec2 vtCenter = Vec2.Zero;
 
@@ -833,7 +831,7 @@ public class Mesh2
             vCenter += vCurr;
             vtCenter += vtCurr;
 
-            fsNew[j] = new Loop2(
+            loopsNew[j] = new Loop2(
                 new Index2(vCenterIdx, vtCenterIdx),
                 new Index2(vCurrIdx, vtCurrIdx),
                 new Index2(vertNext.v, vertNext.vt));
@@ -848,9 +846,9 @@ public class Mesh2
 
         this.coords = Vec2.Append(this.coords, vCenter);
         this.texCoords = Vec2.Append(this.texCoords, vtCenter);
-        this.loops = Loop2.Splice(this.loops, i, 1, fsNew);
+        this.loops = Loop2.Splice(this.loops, i, 1, loopsNew);
 
-        return (loopsNew: fsNew,
+        return (loopsNew,
             vsNew: new Vec2[] { vCenter },
             vtsNew: new Vec2[] { vtCenter });
     }
@@ -878,7 +876,7 @@ public class Mesh2
 
         Vec2[] vsNew = new Vec2[faceLen];
         Vec2[] vtsNew = new Vec2[faceLen];
-        Loop2[] fsNew = new Loop2[faceLen + 1];
+        Loop2[] loopsNew = new Loop2[faceLen + 1];
         Index2[] cfIdcs = new Index2[3];
 
         for (int j = 0; j < faceLen; ++j)
@@ -900,7 +898,7 @@ public class Mesh2
             int vSubdivIdx = vsOldLen + j;
             int vtSubdivIdx = vtsOldLen + j;
 
-            fsNew[j] = new Loop2(
+            loopsNew[j] = new Loop2(
                 new Index2(vSubdivIdx, vtSubdivIdx),
                 new Index2(vNextIdx, vtNextIdx),
                 new Index2(vsOldLen + k, vtsOldLen + k));
@@ -909,15 +907,13 @@ public class Mesh2
         }
 
         // Center face.
-        fsNew[faceLen] = new Loop2(cfIdcs);
+        loopsNew[faceLen] = new Loop2(cfIdcs);
 
         this.coords = Vec2.Concat(this.coords, vsNew);
         this.texCoords = Vec2.Concat(this.texCoords, vtsNew);
-        this.loops = Loop2.Splice(this.loops, i, 1, fsNew);
+        this.loops = Loop2.Splice(this.loops, i, 1, loopsNew);
 
-        return (loopsNew: fsNew,
-            vsNew: vsNew,
-            vtsNew: vtsNew);
+        return (loopsNew, vsNew, vtsNew);
     }
 
     /// <summary>
@@ -1249,6 +1245,128 @@ public class Mesh2
     }
 
     /// <summary>
+    /// Creates a mesh from the non-transparent pixels of an image.
+    /// Mesh is either a quad or tri grid; it is not optimized to
+    /// remove interior and colinear vertices. Intended for use
+    /// with images that have a low color count and low resolution.
+    /// </summary>
+    /// <param name="source">pixels</param>
+    /// <param name="target">target mesh</param>
+    /// <param name="w">image width</param>
+    /// <param name="h">image height</param>
+    /// <param name="poly">polygon type</param>
+    /// <returns>mesh</returns>
+    public static Mesh2 FromPixels(
+         in Clr[] source, in Mesh2 target,
+        in int w, in int h,
+        in PolyType poly = PolyType.Tri)
+    {
+        int srcLen = source.Length;
+        List<int> indices = new();
+        for (int i = 0; i < srcLen; ++i)
+        {
+            if (Clr.Any(source[i])) { indices.Add(i); }
+        }
+
+        float right = w > h ? 0.5f : 0.5f * (w / (float)h);
+        float top = w <= h ? 0.5f : 0.5f * (h / (float)w);
+        return Mesh2.FromPixels(
+            indices, target, w,
+            -right, top, right, -top,
+            1.0f / w, 1.0f / h, poly);
+    }
+
+    /// <summary>
+    /// Internal helper method to create a mesh from a list of indices and other
+    /// conversion data. Makes no optimizations to the mesh by, e.g., removing
+	/// interior or colinear vertices.
+    /// </summary>
+    /// <param name="indices">pixel indices</param>
+    /// <param name="target">target mesh</param>
+    /// <param name="w">image width</param>
+    /// <param name="left">left edge</param>
+    /// <param name="top">top edge</param>
+    /// <param name="right">right edge</param>
+    /// <param name="bottom">bottom edge</param>
+    /// <param name="tou">width to uv conversion</param>
+    /// <param name="tov">height to uv conversion</param>
+    /// <param name="poly">polygon type</param>
+    /// <returns>mesh</returns>
+    internal static Mesh2 FromPixels(
+        in List<int> indices, in Mesh2 target, in int w,
+        in float left, in float top, in float right, in float bottom,
+        in float tou, in float tov,
+        in PolyType poly = PolyType.Tri)
+    {
+        int idcsLen = indices.Count;
+        bool isTri = poly == PolyType.Tri;
+        int fsLen = isTri ? idcsLen * 2 : idcsLen;
+        int vsLen = idcsLen * 4;
+        int vtsLen = vsLen;
+
+        Vec2[] vs = target.coords = Vec2.Resize(target.coords, vsLen);
+        Vec2[] vts = target.texCoords = Vec2.Resize(target.texCoords, vtsLen);
+        Loop2[] fs = target.loops = Loop2.Resize(target.loops, fsLen, 4, true);
+
+        for (int i = 0, j00 = 0; i < idcsLen; ++i, j00 += 4)
+        {
+            int j10 = j00 + 1;
+            int j11 = j00 + 2;
+            int j01 = j00 + 3;
+
+            int idx = indices[i];
+            int x = idx % w;
+            int y = idx / w;
+
+            float u0 = x * tou;
+            float v0 = y * tov;
+            float u1 = (x + 1) * tou;
+            float v1 = (y + 1) * tov;
+
+            vts[j00] = new Vec2(u0, 1.0f - v0);
+            vts[j10] = new Vec2(u1, 1.0f - v0);
+            vts[j11] = new Vec2(u1, 1.0f - v1);
+            vts[j01] = new Vec2(u0, 1.0f - v1);
+
+            float x0 = (1.0f - u0) * left + u0 * right;
+            float y0 = (1.0f - v0) * bottom + v0 * top;
+            float x1 = (1.0f - u1) * left + u1 * right;
+            float y1 = (1.0f - v1) * bottom + v1 * top;
+
+            vs[j00] = new Vec2(x0, y0);
+            vs[j10] = new Vec2(x1, y0);
+            vs[j11] = new Vec2(x1, y1);
+            vs[j01] = new Vec2(x0, y1);
+
+            // TODO: Split into separate loop?
+            if (isTri)
+            {
+                Loop2.Tri(
+                    new Index2(j11, j11),
+                    new Index2(j01, j01),
+                    new Index2(j00, j00),
+                    fs[i + i]);
+                Loop2.Tri(
+                    new Index2(j00, j00),
+                    new Index2(j10, j10),
+                    new Index2(j11, j11),
+                    fs[i + i + 1]);
+            }
+            else
+            {
+                Loop2.Quad(
+                    new Index2(j00, j00),
+                    new Index2(j01, j01),
+                    new Index2(j11, j11),
+                    new Index2(j10, j10),
+                    fs[i]);
+            }
+        }
+
+        return target;
+    }
+
+    /// <summary>
     /// Generates a grid of hexagons arranged in rings around a central cell.
     /// The number of cells follows the formula n = 1 + (rings - 1) * 3 * rings,
     /// meaning 1 ring: 1 cell; 2 rings: 7 cells; 3 rings: 19 cells; 4 rings: 37
@@ -1540,7 +1658,7 @@ public class Mesh2
                     for (int i = 0, j = 1; i < seg; ++i, ++j)
                     {
                         int k = 1 + j % seg;
-                        float theta = i * toTheta;
+                        float theta = offset + i * toTheta;
                         float cosTheta = MathF.Cos(theta);
                         float sinTheta = MathF.Sin(theta);
                         vs[j] = new Vec2(
@@ -1968,6 +2086,7 @@ public class Mesh2
                 fsLen = nonCornerFaces + fResTotal;
                 fs = target.loops = Loop2.Resize(target.loops, fsLen, 3, true);
 
+                // TODO: Replace with Loop2 Quad
                 fs[0].Indices = new Index2[]
                 {
                     new Index2 (tlTnCrnrIdx, tlTnCrnrIdx),

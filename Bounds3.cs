@@ -464,11 +464,23 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// Scales a bounds from its center.
     /// </summary>
     /// <param name="b">bounds</param>
+    /// <param name="v">scale</param>
+    /// <returns>scaled bounds</returns>
+    public static Bounds3 Scale(in Bounds3 b, in float v)
+    {
+        return Bounds3.FromCenterExtent(
+            Bounds3.Center(b),
+            Bounds3.ExtentSigned(b) * v);
+    }
+
+    /// <summary>
+    /// Scales a bounds from its center.
+    /// </summary>
+    /// <param name="b">bounds</param>
     /// <param name="v">nonuniform scale</param>
     /// <returns>scaled bounds</returns>
     public static Bounds3 Scale(in Bounds3 b, in Vec3 v)
     {
-        // TODO: Test
         return Bounds3.FromCenterExtent(
             Bounds3.Center(b),
             Bounds3.ExtentSigned(b) * v);

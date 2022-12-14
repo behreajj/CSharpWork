@@ -376,7 +376,8 @@ public class Transform3
     /// <returns>point</returns>
     public static Vec3 InvMulPoint(in Transform3 transform, in Vec3 point)
     {
-        return Quat.InvMulVector(transform.rotation, (point - transform.location) / transform.scale);
+        return Quat.InvMulVector(transform.rotation,
+            (point - transform.location) / transform.scale);
     }
 
     /// <summary>
