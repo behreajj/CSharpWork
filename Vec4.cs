@@ -1176,6 +1176,16 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         float iToStep = 1.0f / (rval - 1.0f);
         float jToStep = 1.0f / (cval - 1.0f);
 
+        float lbx = lowerBound._x;
+        float lby = lowerBound._y;
+        float lbz = lowerBound._z;
+        float lbw = lowerBound._w;
+
+        float ubx = upperBound._x;
+        float uby = upperBound._y;
+        float ubz = upperBound._z;
+        float ubw = upperBound._w;
+
         Vec4[,,,] result = new Vec4[sval, lval, rval, cval];
 
         int rcval = rval * cval;
@@ -1190,14 +1200,16 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
             int i = n / cval;
             int j = n % cval;
 
-            result[g, h, i, j] = Vec4.Mix(
-                lowerBound,
-                upperBound,
-                new Vec4(
-                    j * jToStep,
-                    i * iToStep,
-                    h * hToStep,
-                    g * gToStep));
+            float jFac = j * jToStep;
+            float iFac = i * iToStep;
+            float hFac = h * hToStep;
+            float gFac = g * gToStep;
+
+            result[g, h, i, j] = new Vec4(
+                (1.0f - jFac) * lbx + jFac * ubx,
+                (1.0f - iFac) * lby + iFac * uby,
+                (1.0f - hFac) * lbz + hFac * ubz,
+                (1.0f - gFac) * lbw + gFac * ubw);
         }
 
         return result;

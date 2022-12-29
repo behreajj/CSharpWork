@@ -289,7 +289,6 @@ public class Octree
     /// <returns>this octree</returns>
     public Octree Subdivide(in int iterations, in int childCapacity)
     {
-        // TODO: Quadtree version?
         if (iterations < 1) { return this; }
         for (int i = 0; i < iterations; ++i)
         {
@@ -537,8 +536,6 @@ public class Octree
 
             if (Octree.IsLeaf(o))
             {
-                // TODO: Optimize by taking rsq as an arg instead?
-                // Change would also effect Pixels calls for this.
                 float rsq = radius * radius;
                 foreach (Vec3 v in o.points)
                 {

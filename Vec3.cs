@@ -1270,6 +1270,14 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float iToStep = 1.0f / (rval - 1.0f);
         float jToStep = 1.0f / (cval - 1.0f);
 
+        float lbx = lowerBound._x;
+        float lby = lowerBound._y;
+        float lbz = lowerBound._z;
+
+        float ubx = upperBound._x;
+        float uby = upperBound._y;
+        float ubz = upperBound._z;
+
         Vec3[,,] result = new Vec3[lval, rval, cval];
 
         int rcval = rval * cval;
@@ -1281,13 +1289,14 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             int i = m / cval;
             int j = m % cval;
 
-            result[h, i, j] = Vec3.Mix(
-                lowerBound,
-                upperBound,
-                new Vec3(
-                    j * jToStep,
-                    i * iToStep,
-                    h * hToStep));
+            float jFac = j * jToStep;
+            float iFac = i * iToStep;
+            float hFac = h * hToStep;
+
+            result[h, i, j] = new Vec3(
+                (1.0f - jFac) * lbx + jFac * ubx,
+                (1.0f - iFac) * lby + iFac * uby,
+                (1.0f - hFac) * lbz + hFac * ubz);
         }
 
         return result;

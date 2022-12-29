@@ -644,6 +644,50 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     }
 
     /// <summary>
+    /// Generates a 3D array of colors representing
+    /// a grid in standard RGB.
+    /// </summary>
+    /// <param name="cols">number of columns</param>
+    /// <param name="rows">number of rows</param>
+    /// <param name="layers">number of layers</param>
+    /// <param name="alpha">alpha channel</param>
+    /// <returns>array</returns>
+    public static Clr[,,] GridStandard(
+        in int cols = 8,
+        in int rows = 8,
+        in int layers = 8,
+        in float alpha = 1.0f)
+    {
+        int lval = layers < 2 ? 2 : layers;
+        int rval = rows < 2 ? 2 : rows;
+        int cval = cols < 2 ? 2 : cols;
+
+        float hToStep = 1.0f / (lval - 1.0f);
+        float iToStep = 1.0f / (rval - 1.0f);
+        float jToStep = 1.0f / (cval - 1.0f);
+
+        Clr[,,] result = new Clr[lval, rval, cval];
+
+        int rcval = rval * cval;
+        int len3 = lval * rcval;
+        for (int k = 0; k < len3; ++k)
+        {
+            int h = k / rcval;
+            int m = k - h * rcval;
+            int i = m / cval;
+            int j = m % cval;
+
+            result[h, i, j] = new Clr(
+                j * jToStep,
+                i * iToStep,
+                h * hToStep,
+                alpha);
+        }
+
+        return result;
+    }
+
+    /// <summary>
     /// Returns the relative luminance of the color.
     /// Assumes the color is in linear RGB.
     /// </summary>
@@ -727,7 +771,8 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>mixed color</returns>
     public static Clr MixCieLch(in Clr o, in Clr d, in float t = 0.5f)
     {
-        return Clr.MixCieLch(o, d, t, (x, y, z, w) => Utils.LerpAngleNear(x, y, z, w));
+        return Clr.MixCieLch(o, d, t,
+            (x, y, z, w) => Utils.LerpAngleNear(x, y, z, w));
     }
 
     /// <summary>

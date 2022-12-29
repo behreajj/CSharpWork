@@ -561,12 +561,18 @@ public class Mesh2
         return arr;
     }
 
-    public (Loop2[] loopsNew, Vec2[] vsNew, Vec2[] vtsNew) InsetFace(
-        in int faceIndex = 0,
-        in float fac = 0.5f)
+    /// <summary>
+    /// Insets a face by calculating its center then easing from the face's
+    /// vertices toward the center by the factor. The factor is expected to be
+    /// in the range [0.0, 1.0] . When it is less than 0.0, the face remains
+    /// unchanged. When it is greater than 1.0, the face is subdivided by
+    /// center. Returns a tuple containing the new data created.
+    /// </summary>
+    /// <param name="faceIdx">face index</param>
+    /// <param name="fac">factor</param>
+    /// <returns>tuple</returns>
+    public (Loop2[] loopsNew, Vec2[] vsNew, Vec2[] vtsNew) InsetFace(in int faceIdx = 0, in float fac = 0.5f)
     {
-        // TODO: Add comment.
-
         if (fac <= 0.0f)
         {
             return (loopsNew: new Loop2[0],
@@ -575,11 +581,11 @@ public class Mesh2
         }
         if (fac >= 1.0f)
         {
-            return this.SubdivFaceFan(faceIndex);
+            return this.SubdivFaceFan(faceIdx);
         }
 
         int loopsLen = this.loops.Length;
-        int i = Utils.RemFloor(faceIndex, loopsLen);
+        int i = Utils.RemFloor(faceIdx, loopsLen);
         Loop2 loop = this.loops[i];
         Index2[] indices = loop.Indices;
         int loopLen = indices.Length;
@@ -726,14 +732,14 @@ public class Mesh2
     /// midpoints to the center. This generates a quadrilateral for the number
     /// of edges in the face. Returns a tuple containing the new data created.
     /// </summary>
-    /// <param name="faceIndex">face index</param>
+    /// <param name="faceIdx">face index</param>
     /// <returns>tuple</returns>
     public (Loop2[] loopsNew,
             Vec2[] vsNew,
-            Vec2[] vtsNew) SubdivFaceCenter(in int faceIndex = 0)
+            Vec2[] vtsNew) SubdivFaceCenter(in int faceIdx = 0)
     {
         int facesLen = this.loops.Length;
-        int i = Utils.RemFloor(faceIndex, facesLen);
+        int i = Utils.RemFloor(faceIdx, facesLen);
         Index2[] face = this.loops[i].Indices;
         int faceLen = face.Length;
 
@@ -797,14 +803,14 @@ public class Mesh2
     /// vertices to the center. This generates a triangle for the number of
     /// edges in the face.
     /// </summary>
-    /// <param name="faceIndex">the face index</param>
-    /// <returns>new data</returns>
+    /// <param name="faceIdx">the face index</param>
+    /// <returns>tuple</returns>
     public (Loop2[] loopsNew,
             Vec2[] vsNew,
-            Vec2[] vtsNew) SubdivFaceFan(in int faceIndex = 0)
+            Vec2[] vtsNew) SubdivFaceFan(in int faceIdx = 0)
     {
         int facesLen = this.loops.Length;
-        int i = Utils.RemFloor(faceIndex, facesLen);
+        int i = Utils.RemFloor(faceIdx, facesLen);
         Index2[] face = this.loops[i].Indices;
         int faceLen = face.Length;
 
@@ -860,14 +866,14 @@ public class Mesh2
     /// original. This is best suited to meshes made of triangles. Returns a
     /// tuple containing the new data created.
     /// </summary>
-    /// <param name="faceIndex">face index</param>
+    /// <param name="faceIdx">face index</param>
     /// <returns>tuple</returns>
     public (Loop2[] loopsNew,
             Vec2[] vsNew,
-            Vec2[] vtsNew) SubdivFaceInscribe(in int faceIndex = 0)
+            Vec2[] vtsNew) SubdivFaceInscribe(in int faceIdx = 0)
     {
         int facesLen = this.loops.Length;
-        int i = Utils.RemFloor(faceIndex, facesLen);
+        int i = Utils.RemFloor(faceIdx, facesLen);
         Index2[] face = this.loops[i].Indices;
         int faceLen = face.Length;
 
@@ -1103,7 +1109,7 @@ public class Mesh2
                 target: target,
                 sectors: sectors,
                 radius: radius,
-                rotation: startAngle,
+                angle: startAngle,
                 poly: PolyType.Ngon);
             target.InsetFace(0, oculFac);
             target.DeleteFaces(-1, 1);
@@ -1559,22 +1565,23 @@ public class Mesh2
     /// <param name="target">target mesh</param>
     /// <param name="sectors">number of sides</param>
     /// <param name="radius">radius</param>
-    /// <param name="rotation">rotation</param>
+    /// <param name="angle">rotation</param>
     /// <param name="poly">polygon type</param>
     /// <returns>polygon</returns>
     public static Mesh2 Polygon(
         in Mesh2 target,
         in int sectors = 32,
         in float radius = 0.5f,
-        float rotation = Utils.HalfPi,
+        float angle = Utils.HalfPi,
         in PolyType poly = PolyType.Tri)
     {
-        int seg = Utils.Max(3, sectors);
-        int newLen = poly == PolyType.Ngon ? seg : poly == PolyType.Quad ?
-            seg + seg + 1 : seg + 1;
-        float rad = MathF.Max(Utils.Epsilon, radius);
-        float offset = Utils.WrapRadians(rotation);
-        float toTheta = Utils.Tau / seg;
+        int sectVrf = Utils.Max(3, sectors);
+        int newLen = poly == PolyType.Ngon ? sectVrf :
+                     poly == PolyType.Quad ? sectVrf + sectVrf + 1 :
+                     sectVrf + 1;
+        float radVrf = MathF.Max(Utils.Epsilon, radius);
+        float angVrf = Utils.WrapRadians(angle);
+        float toTheta = Utils.Tau / sectVrf;
 
         Vec2[] vs = target.coords = Vec2.Resize(target.coords, newLen);
         Vec2[] vts = target.texCoords = Vec2.Resize(target.texCoords,
@@ -1584,16 +1591,16 @@ public class Mesh2
         {
             case PolyType.Ngon:
                 {
-                    target.loops = Loop2.Resize(target.loops, 1, seg, true);
+                    target.loops = Loop2.Resize(target.loops, 1, sectVrf, true);
 
-                    for (int i = 0; i < seg; ++i)
+                    for (int i = 0; i < sectVrf; ++i)
                     {
-                        float theta = offset + i * toTheta;
+                        float theta = angVrf + i * toTheta;
                         float cosTheta = MathF.Cos(theta);
                         float sinTheta = MathF.Sin(theta);
                         vs[i] = new Vec2(
-                            rad * cosTheta,
-                            rad * sinTheta);
+                            radVrf * cosTheta,
+                            radVrf * sinTheta);
                         vts[i] = new Vec2(
                             cosTheta * 0.5f + 0.5f,
                             0.5f - sinTheta * 0.5f);
@@ -1603,20 +1610,20 @@ public class Mesh2
                 break;
             case PolyType.Quad:
                 {
-                    target.loops = Loop2.Resize(target.loops, seg, 4, true);
+                    target.loops = Loop2.Resize(target.loops, sectVrf, 4, true);
 
                     vs[0] = Vec2.Zero;
                     vts[0] = Vec2.UvCenter;
 
                     // Find corners.
-                    for (int i = 0, j = 1; i < seg; ++i, j += 2)
+                    for (int i = 0, j = 1; i < sectVrf; ++i, j += 2)
                     {
-                        float theta = offset + i * toTheta;
+                        float theta = angVrf + i * toTheta;
                         float cosTheta = MathF.Cos(theta);
                         float sinTheta = MathF.Sin(theta);
                         vs[j] = new Vec2(
-                            rad * cosTheta,
-                            rad * sinTheta);
+                            radVrf * cosTheta,
+                            radVrf * sinTheta);
                         vts[j] = new Vec2(
                             cosTheta * 0.5f + 0.5f,
                             0.5f - sinTheta * 0.5f);
@@ -1624,7 +1631,7 @@ public class Mesh2
 
                     // Find midpoints.
                     int last = newLen - 1;
-                    for (int i = 0, j = 1, k = 2; i < seg; ++i, j += 2, k += 2)
+                    for (int i = 0, j = 1, k = 2; i < sectVrf; ++i, j += 2, k += 2)
                     {
                         int m = (j + 2) % last;
                         vs[k] = Vec2.Mix(vs[j], vs[m]);
@@ -1632,7 +1639,7 @@ public class Mesh2
                     }
 
                     // Find faces.
-                    for (int i = 0, j = 0; i < seg; ++i, j += 2)
+                    for (int i = 0, j = 0; i < sectVrf; ++i, j += 2)
                     {
                         int s = 1 + Utils.RemFloor(j - 1, last);
                         int t = 1 + j % last;
@@ -1650,20 +1657,20 @@ public class Mesh2
             case PolyType.Tri:
             default:
                 {
-                    target.loops = Loop2.Resize(target.loops, seg, 3, true);
+                    target.loops = Loop2.Resize(target.loops, sectVrf, 3, true);
 
                     vs[0] = Vec2.Zero;
                     vts[0] = Vec2.UvCenter;
 
-                    for (int i = 0, j = 1; i < seg; ++i, ++j)
+                    for (int i = 0, j = 1; i < sectVrf; ++i, ++j)
                     {
-                        int k = 1 + j % seg;
-                        float theta = offset + i * toTheta;
+                        int k = 1 + j % sectVrf;
+                        float theta = angVrf + i * toTheta;
                         float cosTheta = MathF.Cos(theta);
                         float sinTheta = MathF.Sin(theta);
                         vs[j] = new Vec2(
-                            rad * cosTheta,
-                            rad * sinTheta);
+                            radVrf * cosTheta,
+                            radVrf * sinTheta);
                         vts[j] = new Vec2(
                             cosTheta * 0.5f + 0.5f,
                             0.5f - sinTheta * 0.5f);
@@ -1781,7 +1788,7 @@ public class Mesh2
         float wInv = 1.0f / w;
         float hInv = 1.0f / h;
 
-        // Calculate UV scalar.
+        // Calculate UV scalar. Stretch is default.
         float uScl = 1.0f;
         float vScl = 1.0f;
         if (profile == UvProfiles.Rect.Contain)
@@ -2086,46 +2093,30 @@ public class Mesh2
                 fsLen = nonCornerFaces + fResTotal;
                 fs = target.loops = Loop2.Resize(target.loops, fsLen, 3, true);
 
-                // TODO: Replace with Loop2 Quad
-                fs[0].Indices = new Index2[]
-                {
-                    new Index2 (tlTnCrnrIdx, tlTnCrnrIdx),
-                    new Index2 (blInCrnrIdx, blInCrnrIdx),
-                    new Index2 (brInCrnrIdx, brInCrnrIdx),
-                    new Index2 (trInCrnrIdx, trInCrnrIdx)
-                };
-
-                fs[1].Indices = new Index2[]
-                {
-                    new Index2 (tlCrnrIdxEnd, tlCrnrIdxEnd),
-                    new Index2 (blCrnrIdxStr, blCrnrIdxStr),
-                    new Index2 (blInCrnrIdx, blInCrnrIdx),
-                    new Index2 (tlTnCrnrIdx, tlTnCrnrIdx)
-                };
-
-                fs[2].Indices = new Index2[]
-                {
-                    new Index2 (blInCrnrIdx, blInCrnrIdx),
-                    new Index2 (blCrnrIdxEnd, blCrnrIdxEnd),
-                    new Index2 (brCrnrIdxStr, brCrnrIdxStr),
-                    new Index2 (brInCrnrIdx, brInCrnrIdx)
-                };
-
-                fs[3].Indices = new Index2[]
-                {
-                    new Index2 (trInCrnrIdx, trInCrnrIdx),
-                    new Index2 (brInCrnrIdx, brInCrnrIdx),
-                    new Index2 (brCrnrIdxEnd, brCrnrIdxEnd),
-                    new Index2 (trCrnrIdxStr, trCrnrIdxStr)
-                };
-
-                fs[4].Indices = new Index2[]
-                {
-                    new Index2 (tlCrnrIdxStr, tlCrnrIdxStr),
-                    new Index2 (tlTnCrnrIdx, tlTnCrnrIdx),
-                    new Index2 (trInCrnrIdx, trInCrnrIdx),
-                    new Index2 (trCrnrIdxEnd, trCrnrIdxEnd)
-                };
+                Loop2.Quad(new Index2(tlTnCrnrIdx, tlTnCrnrIdx),
+                    new Index2(blInCrnrIdx, blInCrnrIdx),
+                    new Index2(brInCrnrIdx, brInCrnrIdx),
+                    new Index2(trInCrnrIdx, trInCrnrIdx), fs[0]);
+                Loop2.Quad(
+                    new Index2(tlCrnrIdxEnd, tlCrnrIdxEnd),
+                    new Index2(blCrnrIdxStr, blCrnrIdxStr),
+                    new Index2(blInCrnrIdx, blInCrnrIdx),
+                    new Index2(tlTnCrnrIdx, tlTnCrnrIdx), fs[1]);
+                Loop2.Quad(
+                    new Index2(blInCrnrIdx, blInCrnrIdx),
+                    new Index2(blCrnrIdxEnd, blCrnrIdxEnd),
+                    new Index2(brCrnrIdxStr, brCrnrIdxStr),
+                    new Index2(brInCrnrIdx, brInCrnrIdx), fs[2]);
+                Loop2.Quad(
+                    new Index2(trInCrnrIdx, trInCrnrIdx),
+                    new Index2(brInCrnrIdx, brInCrnrIdx),
+                    new Index2(brCrnrIdxEnd, brCrnrIdxEnd),
+                    new Index2(trCrnrIdxStr, trCrnrIdxStr), fs[3]);
+                Loop2.Quad(
+                    new Index2(tlCrnrIdxStr, tlCrnrIdxStr),
+                    new Index2(tlTnCrnrIdx, tlTnCrnrIdx),
+                    new Index2(trInCrnrIdx, trInCrnrIdx),
+                    new Index2(trCrnrIdxEnd, trCrnrIdxEnd), fs[4]);
             }
             else
             {

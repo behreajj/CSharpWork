@@ -1072,6 +1072,12 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         float iToStep = 1.0f / (rval - 1.0f);
         float jToStep = 1.0f / (cval - 1.0f);
 
+        float lbx = lowerBound._x;
+        float lby = lowerBound._y;
+
+        float ubx = upperBound._x;
+        float uby = upperBound._y;
+
         Vec2[,] result = new Vec2[rval, cval];
 
         int len2 = cval * rval;
@@ -1079,12 +1085,13 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         {
             int i = k / cval;
             int j = k % cval;
-            result[i, j] = Vec2.Mix(
-                lowerBound,
-                upperBound,
-                new Vec2(
-                    j * jToStep,
-                    i * iToStep));
+
+            float jFac = j * jToStep;
+            float iFac = i * iToStep;
+
+            result[i, j] = new Vec2(
+                (1.0f - jFac) * lbx + jFac * ubx,
+                (1.0f - iFac) * lby + iFac * uby);
         }
 
         return result;

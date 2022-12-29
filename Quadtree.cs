@@ -400,6 +400,43 @@ public class Quadtree
     }
 
     /// <summary>
+    /// Subdivides this node. For cases where a minimum number of children
+    /// nodes is desired, independent of point insertion. The result will be
+    /// the child count raised to the power of iterations, e.g., 4,
+    /// 16, 64.
+    /// </summary>
+    /// <param name="iterations">iterations</param>
+    /// <returns>this quadtree</returns>
+    public Quadtree Subdivide(in int iterations = 1)
+    {
+        return this.Subdivide(iterations, this.capacity);
+    }
+
+    /// <summary>
+    /// Subdivides this node. For cases where a minimum number of children
+    /// nodes is desired, independent of point insertion. The result will be
+    /// the child count raised to the power of iterations, e.g., 4,
+    /// 16, 64.
+    /// </summary>
+    /// <param name="iterations">iterations</param>
+    /// <param name="childCapacity">child capacity</param>
+    /// <returns>this quadtree</returns>
+    public Quadtree Subdivide(in int iterations, in int childCapacity)
+    {
+        if (iterations < 1) { return this; }
+        for (int i = 0; i < iterations; ++i)
+        {
+            foreach (Quadtree child in this.children)
+            {
+                child.Subdivide(iterations - 1, childCapacity);
+            }
+            if (Quadtree.IsLeaf(this)) { this.Split(childCapacity); }
+        }
+
+        return this;
+    }
+
+    /// <summary>
     /// Returns a string representation of a quadtree.
     /// </summary>
     /// <param name="q">quadtree</param>

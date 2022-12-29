@@ -517,9 +517,109 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Blends backdrop and overlay pixels. Forms a union of the bounding area
-    /// of the two inputs. Returns a tuple containing the blended pixels, the
-    /// image's width and height, and the top left corner x and y.
+    /// Blends backdrop and overlay pixels using a function provided by the
+    /// caller. Forms a union of the bounding area of the two inputs.
+    /// Returns a tuple containing the blended pixels, the image's width and
+    /// height, and the top left corner x and y.
+    /// </summary>
+    /// <param name="apx">under image pixels</param>
+    /// <param name="bpx">over image pixels</param>
+    /// <param name="aw">under width</param>
+    /// <param name="ah">under height</param>
+    /// <param name="bw">over width</param>
+    /// <param name="bh">over height</param>
+    /// <param name="func">blend function</param>
+    /// <returns>tuple</returns>
+    public static (Clr[] pixels, int w, int h, int x, int y) Blend(
+        in Clr[] apx, in Clr[] bpx,
+        in int aw, in int ah, in int bw, in int bh,
+        in Func<Clr, Clr, Clr> func)
+    {
+        int wLrg = aw > bw ? aw : bw;
+        int hLrg = ah > bh ? ah : bh;
+
+        // The 0.5 is to bias the rounding.
+        float cx = 0.5f + wLrg * 0.5f;
+        float cy = 0.5f + hLrg * 0.5f;
+
+        int ax = aw == wLrg ? 0 : (int)(cx - aw * 0.5f);
+        int ay = ah == hLrg ? 0 : (int)(cy - ah * 0.5f);
+        int bx = bw == wLrg ? 0 : (int)(cx - bw * 0.5f);
+        int by = bh == hLrg ? 0 : (int)(cy - bh * 0.5f);
+
+        return Pixels.Blend(apx, bpx,
+            aw, ah, bw, bh,
+            ax, ay, bx, by, func);
+    }
+
+    /// <summary>
+    /// Blends backdrop and overlay pixels using a function provided by the
+    /// caller. Forms a union of the bounding area of the two inputs.
+    /// Returns a tuple containing the blended pixels, the image's width and
+    /// height, and the top left corner x and y.
+    /// </summary>
+    /// <param name="apx">under image pixels</param>
+    /// <param name="bpx">over image pixels</param>
+    /// <param name="aw">under width</param>
+    /// <param name="ah">under height</param>
+    /// <param name="bw">over width</param>
+    /// <param name="bh">over height</param>
+    /// <param name="ax">under top left corner x</param>
+    /// <param name="ay">under top left corner y</param>
+    /// <param name="bx">over top left corner x</param>
+    /// <param name="by">over top left corner y</param>
+    /// <param name="func">blend function</param>
+    /// <returns>tuple</returns>
+    public static (Clr[] pixels, int w, int h, int x, int y) Blend(
+        in Clr[] apx, in Clr[] bpx,
+        in int aw, in int ah, in int bw, in int bh,
+        in int ax, in int ay, in int bx, in int by,
+        in Func<Clr, Clr, Clr> func)
+    {
+        int cx = ax < bx ? ax : bx;
+        int cy = ay < by ? ay : by;
+        int cw = aw > bw ? aw : bw;
+        int ch = ah > bh ? ah : bh;
+        int cLen = cw * ch;
+
+        int axud = ax - cx;
+        int ayud = ay - cy;
+        int bxud = bx - cx;
+        int byud = by - cy;
+
+        Clr[] target = new Clr[cLen];
+        for (int i = 0; i < cLen; ++i)
+        {
+            int x = i % cw;
+            int y = i / cw;
+
+            Clr aClr = Clr.ClearBlack;
+            int axs = x - axud;
+            int ays = y - ayud;
+            if (ays > -1 && ays < ah && axs > -1 && axs < aw)
+            {
+                aClr = apx[axs + ays * aw];
+            }
+
+            Clr bClr = Clr.ClearBlack;
+            int bxs = x - bxud;
+            int bys = y - byud;
+            if (bys > -1 && bys < bh && bxs > -1 && bxs < bw)
+            {
+                bClr = bpx[bxs + bys * bw];
+            }
+
+            target[i] = func(aClr, bClr);
+        }
+
+        return (pixels: target, w: cw, h: ch, x: cx, y: cy);
+    }
+
+    /// <summary>
+    /// Blends backdrop and overlay pixels in CIE LAB. Forms a union
+    /// of the bounding area of the two inputs. Returns a tuple
+    /// containing the blended pixels, the image's width and height,
+    /// and the top left corner x and y.
     /// </summary>
     /// <param name="apx">under image pixels</param>
     /// <param name="bpx">over image pixels</param>
@@ -550,9 +650,10 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Blends backdrop and overlay pixels. Forms a union of the bounding area
-    /// of the two inputs. Returns a tuple containing the blended pixels, the
-    /// image's width and height, and the top left corner x and y.
+    /// Blends backdrop and overlay pixels in CIE LAB. Forms a union
+    /// of the bounding area of the two inputs. Returns a tuple
+    /// containing the blended pixels, the image's width and height,
+    /// and the top left corner x and y.
     /// </summary>
     /// <param name="apx">under image pixels</param>
     /// <param name="bpx">over image pixels</param>
