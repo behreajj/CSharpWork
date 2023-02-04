@@ -442,6 +442,96 @@ public class Curve2 : IEnumerable<Knot2>
     }
 
     /// <summary>
+    /// Sets a curve to an ease animation curve.
+    /// </summary>
+    /// <param name="target">output curve</param>
+    /// <returns>ease animation</returns>
+    public static Curve2 AnimEase(in Curve2 target)
+    {
+        target.Resize(2);
+        target.closedLoop = false;
+        target.knots[0].Set(0.0f, 0.0f,
+            0.25f, 0.1f,
+            -0.25f, -0.1f);
+        target.knots[1].Set(1.0f, 1.0f,
+            0.25f, 1.0f,
+            1.75f, 1.0f);
+        return target;
+    }
+
+    /// <summary>
+    /// Sets a curve to an ease-in animation curve.
+    /// </summary>
+    /// <param name="target">output curve</param>
+    /// <returns>ease-in animation</returns>
+    public static Curve2 AnimEaseIn(in Curve2 target)
+    {
+        target.Resize(2);
+        target.closedLoop = false;
+        target.knots[0].Set(0.0f, 0.0f,
+            0.42f, 0.0f,
+            -0.42f, 0.0f);
+        target.knots[1].Set(1.0f, 1.0f,
+            1.0f, 1.0f,
+            1.0f, 1.0f);
+        return target;
+    }
+
+    /// <summary>
+    /// Sets a curve to an ease-out animation curve.
+    /// </summary>
+    /// <param name="target">output curve</param>
+    /// <returns>ease-out animation</returns>
+    public static Curve2 AnimEaseOut(in Curve2 target)
+    {
+        target.Resize(2);
+        target.closedLoop = false;
+        target.knots[0].Set(0.0f, 0.0f,
+            0.0f, 0.0f,
+            0.0f, 0.0f);
+        target.knots[1].Set(1.0f, 1.0f,
+            0.58f, 1.0f,
+            1.42f, 1.0f);
+        return target;
+    }
+
+    /// <summary>
+    /// Sets a curve to an ease-in-out animation curve.
+    /// </summary>
+    /// <param name="target">output curve</param>
+    /// <returns>ease-in-out animation</returns>
+    public static Curve2 AnimEaseInOut(in Curve2 target)
+    {
+        target.Resize(2);
+        target.closedLoop = false;
+        target.knots[0].Set(0.0f, 0.0f,
+            0.42f, 0.0f,
+            -0.42f, 0.0f);
+        target.knots[1].Set(1.0f, 1.0f,
+            0.58f, 1.0f,
+            1.42f, 1.0f);
+        return target;
+    }
+
+    /// <summary>
+    /// Sets a curve to a linear animation curve.
+    /// </summary>
+    /// <param name="target">output curve</param>
+    /// <returns>linear animation</returns>
+    public static Curve2 AnimLinear(in Curve2 target)
+    {
+        target.Resize(2);
+        target.closedLoop = false;
+        target.knots[0].Set(0.0f, 0.0f,
+            Utils.OneThird, Utils.OneThird,
+            -Utils.OneThird, -Utils.OneThird);
+        target.knots[1].Set(1.0f, 1.0f,
+            Utils.TwoThirds, Utils.TwoThirds,
+            Utils.FourThirds, Utils.FourThirds);
+        return target;
+    }
+
+    /// <summary>
     /// Sets a curve to approximate a circle.
     /// </summary>
     /// <param name="target">output curve</param>

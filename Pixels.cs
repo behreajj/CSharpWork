@@ -58,14 +58,14 @@ public static class Pixels
         int hTrg;
         if (uniform)
         {
-            wTrg = Utils.NextPowerOf2(w);
-            hTrg = Utils.NextPowerOf2(h);
-        }
-        else
-        {
             int u = Utils.NextPowerOf2(Utils.Max(w, h));
             wTrg = u;
             hTrg = u;
+        }
+        else
+        {
+            wTrg = Utils.NextPowerOf2(w);
+            hTrg = Utils.NextPowerOf2(h);
         }
 
         int trgLen = wTrg * hTrg;
@@ -338,6 +338,96 @@ public static class Pixels
             }
         }
         return target;
+    }
+
+    /// <summary>
+    /// Skews the pixels of a source image horizontally by an integer rise. The
+    /// run specifies the number of pixels to skip on the x axis for each rise.
+    /// If the rise or run are zero, copies the source array.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="wSrc">image width/param>
+    /// <param name="hSrc">image height</param>
+    /// <param name="rise">rise, or step/param>
+    /// <param name="run">run, or skip/param>
+    /// <returns>tuple</returns>
+    public static (T[] pixels, int w, int h) SkewXInteger<T>(
+        in T[] source,
+        in int wSrc, in int hSrc,
+        in int rise = 1, in int run = 1)
+    {
+        int srcLen = source.Length;
+        if (rise == 0 || run == 0)
+        {
+            T[] t0 = new T[srcLen];
+            System.Array.Copy(source, 0, t0, 0, srcLen);
+            return (pixels: t0, w: wSrc, h: hSrc);
+        }
+
+        int absRun = run < 0 ? -run : run;
+        int sgnRise = run < 0 ? -rise : rise;
+        int absRise = sgnRise < 0 ? -sgnRise : sgnRise;
+
+        int hn1Run = (hSrc - 1) / absRun;
+        int offset = sgnRise < 0 ? 0 : hn1Run * sgnRise;
+        int wTrg = wSrc + hn1Run * absRise;
+        T[] target = new T[wTrg * hSrc];
+
+        for (int i = 0; i < srcLen; ++i)
+        {
+            int xSrc = i % wSrc;
+            int ySrc = i / wSrc;
+            int shift = sgnRise * (ySrc / absRun);
+            int xTrg = xSrc + offset - shift;
+            target[xTrg + ySrc * wTrg] = source[i];
+        }
+
+        return (pixels: target, w: wTrg, h: hSrc);
+    }
+
+    /// <summary>
+    /// Skews the pixels of a source image vertically by an integer rise. The
+    /// run specifies the number of pixels to skip on the y axis for each rise.
+    /// If the rise or run are zero, copies the source array.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="wSrc">image width/param>
+    /// <param name="hSrc">image height</param>
+    /// <param name="rise">rise, or step/param>
+    /// <param name="run">run, or skip/param>
+    /// <returns>tuple</returns>
+    public static (T[] pixels, int w, int h) SkewYInteger<T>(
+        in T[] source,
+        in int wSrc, in int hSrc,
+        in int rise = 1, in int run = 1)
+    {
+        int srcLen = source.Length;
+        if (rise == 0 || run == 0)
+        {
+            T[] t0 = new T[srcLen];
+            System.Array.Copy(source, 0, t0, 0, srcLen);
+            return (pixels: t0, w: wSrc, h: hSrc);
+        }
+
+        int absRun = run < 0 ? -run : run;
+        int sgnRise = run < 0 ? -rise : rise;
+        int absRise = sgnRise < 0 ? -sgnRise : sgnRise;
+
+        int wn1Run = (wSrc - 1) / absRun;
+        int offset = sgnRise < 0 ? 0 : wn1Run * sgnRise;
+        int hTrg = hSrc + wn1Run * absRise;
+        T[] target = new T[wSrc * hTrg];
+
+        for (int i = 0; i < srcLen; ++i)
+        {
+            int xSrc = i % wSrc;
+            int ySrc = i / wSrc;
+            int shift = sgnRise * (xSrc / absRun);
+            int yTrg = ySrc + offset - shift;
+            target[xSrc + yTrg * wSrc] = source[i];
+        }
+
+        return (pixels: target, w: wSrc, h: hTrg);
     }
 
     /// <summary>
@@ -820,7 +910,6 @@ public static class Pixels
             int wKrn = 1 + stepVal * 2;
             int krnLen = wKrn * wKrn;
             float denom = 1.0f / krnLen;
-            Vec4 zero = Vec4.Zero;
 
             for (int i = 0; i < srcLen; ++i)
             {
@@ -840,8 +929,7 @@ public static class Pixels
                     int yComp = ySrc + j / wKrn;
                     if (yComp > -1 && yComp < h && xComp > -1 && xComp < w)
                     {
-                        Vec4 labNgbr = dict.GetValueOrDefault(
-                            source[xComp + yComp * w], zero);
+                        Vec4 labNgbr = dict[source[xComp + yComp * w]];
                         lSum += labNgbr.z;
                         aSum += labNgbr.x;
                         bSum += labNgbr.y;
@@ -851,7 +939,7 @@ public static class Pixels
                     {
                         // When the kernel is out of bounds, sample the
                         // central color but do not tally alpha.
-                        Vec4 labCtr = dict.GetValueOrDefault(srgb, zero);
+                        Vec4 labCtr = dict[srgb];
                         lSum += labCtr.z;
                         aSum += labCtr.x;
                         bSum += labCtr.y;
@@ -893,94 +981,45 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Internal helper function to sample a source image with a bilinear color
-    /// mix. Clamps the result to [0.0, 1.0].
+    /// Filters an array of colors according to a filter
+    /// function. The lower bound and upper bound are both
+    /// inclusive. Returns a dictionary wherein the key
+    /// is a color that passed the filter and the value
+    /// is an array of indices that reference that color's
+    /// occurrence in the source array.
     /// </summary>
     /// <param name="source">source pixels</param>
-    /// <returns>mixed color</returns>
-    static Clr FilterBilinear(
-        in Clr[] source, in float xSrc, in float ySrc,
-        in int wSrc, in int hSrc)
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
+    /// <param name="f">filter function</param>
+    /// <returns>dictionary</returns>
+    public static Dictionary<Clr, List<int>> Filter(
+        in Clr[] source,
+        in float lb, in float ub,
+        in Func<Clr, float, float, bool> f)
     {
-        bool yPos = ySrc > 0.0f;
-        bool yNeg = ySrc < 0.0f;
-        int yi = (int)ySrc;
-        int yf = yPos ? yi : yNeg ? yi - 1 : 0;
-        int yc = yPos ? yi + 1 : yNeg ? yi : 0;
-
-        bool yfInBounds = yf > -1 && yf < hSrc;
-        bool ycInBounds = yc > -1 && yc < hSrc;
-
-        bool xPos = xSrc > 0.0f;
-        bool xNeg = xSrc < 0.0f;
-        int xi = (int)xSrc;
-        int xf = xPos ? xi : xNeg ? xi - 1 : 0;
-        int xc = xPos ? xi + 1 : xNeg ? xi : 0;
-
-        bool xfInBounds = xf > -1 && xf < wSrc;
-        bool xcInBounds = xc > -1 && xc < wSrc;
-
-        // Pixel corners colors.
-        Clr c00 = xfInBounds && yfInBounds ? source[xf + yf * wSrc] : Clr.ClearBlack;
-        Clr c10 = xcInBounds && yfInBounds ? source[xc + yf * wSrc] : Clr.ClearBlack;
-        Clr c11 = xcInBounds && ycInBounds ? source[xc + yc * wSrc] : Clr.ClearBlack;
-        Clr c01 = xfInBounds && ycInBounds ? source[xf + yc * wSrc] : Clr.ClearBlack;
-
-        float xErr = xSrc - xf;
-
-        float a0 = 0.0f;
-        float r0 = 0.0f;
-        float g0 = 0.0f;
-        float b0 = 0.0f;
-
-        float a00 = c00.a;
-        float a10 = c10.a;
-        if (a00 > 0.0f || a10 > 0.0f)
+        int srcLen = source.Length;
+        HashSet<Clr> visited = new(256);
+        Dictionary<Clr, bool> included = new(256);
+        Dictionary<Clr, List<int>> dict = new(256);
+        for (int i = 0; i < srcLen; ++i)
         {
-            float u = 1.0f - xErr;
-            a0 = u * a00 + xErr * a10;
-            if (a0 > 0.0f)
+            Clr c = source[i];
+            bool include;
+            if (visited.Contains(c))
             {
-                r0 = u * c00.r + xErr * c10.r;
-                g0 = u * c00.g + xErr * c10.g;
-                b0 = u * c00.b + xErr * c10.b;
+                include = included[c];
             }
-        }
-
-        float a1 = 0.0f;
-        float r1 = 0.0f;
-        float g1 = 0.0f;
-        float b1 = 0.0f;
-
-        float a01 = c01.a;
-        float a11 = c11.a;
-        if (a01 > 0.0f || a11 > 0.0f)
-        {
-            float u = 1.0f - xErr;
-            a1 = u * a01 + xErr * a11;
-            if (a1 > 0.0f)
+            else
             {
-                r1 = u * c01.r + xErr * c11.r;
-                g1 = u * c01.g + xErr * c11.g;
-                b1 = u * c01.b + xErr * c11.b;
+                include = f(c, lb, ub);
+                if (include) { dict.Add(c, new(32)); }
+                visited.Add(c);
+                included.Add(c, include);
             }
+            if (include) { dict[c].Add(i); }
         }
-
-        if (a0 > 0.0f || a1 > 0.0f)
-        {
-            float yErr = ySrc - yf;
-            float u = 1.0f - yErr;
-            float a2 = u * a0 + yErr * a1;
-            if (a2 > 0.0f)
-            {
-                return Clr.Clamp(new Clr(
-                    u * r0 + yErr * r1,
-                    u * g0 + yErr * g1,
-                    u * b0 + yErr * b1, a2));
-            }
-        }
-
-        return Clr.ClearBlack;
+        return dict;
     }
 
     /// <summary>
@@ -1324,8 +1363,7 @@ public static class Pixels
 
             for (int i = 0; i < srcLen; ++i)
             {
-                Clr c = source[i];
-                target[i] = dict.GetValueOrDefault(c, Clr.ClearBlack);
+                target[i] = dict[source[i]];
             }
         }
         return target;
@@ -1554,7 +1592,7 @@ public static class Pixels
                 if (pyOpp >= 0.0f && pyOpp <= hfn1 &&
                     pxOpp >= 0.0f && pxOpp <= wfn1)
                 {
-                    target[k] = Pixels.FilterBilinear(source, pxOpp, pyOpp, w, h);
+                    target[k] = Pixels.SampleBilinear(source, pxOpp, pyOpp, w, h);
                 }
                 else
                 {
@@ -1681,7 +1719,6 @@ public static class Pixels
             }
             oct.Cull();
 
-            Clr clearBlack = Clr.ClearBlack;
             Dictionary<Clr, Clr> dict = new();
             SortedList<float, Vec3> found = new(32);
             for (int i = 0; i < srcLen; ++i)
@@ -1692,8 +1729,7 @@ public static class Pixels
                     Clr opaque = Clr.Opaque(srgb);
                     if (dict.ContainsKey(opaque))
                     {
-                        Clr match = dict.GetValueOrDefault(opaque, clearBlack);
-                        target[i] = Clr.CopyAlpha(match, srgb);
+                        target[i] = Clr.CopyAlpha(dict[opaque], srgb);
                     }
                     else
                     {
@@ -1705,7 +1741,7 @@ public static class Pixels
                             Vec3 nearest = found.Values[0];
                             if (lookup.ContainsKey(nearest))
                             {
-                                Clr match = lookup.GetValueOrDefault(nearest, clearBlack);
+                                Clr match = lookup[nearest];
                                 target[i] = Clr.CopyAlpha(match, srgb);
                                 dict.Add(opaque, match);
                             }
@@ -1768,7 +1804,7 @@ public static class Pixels
         Clr[] target = new Clr[trgLen];
         for (int i = 0; i < trgLen; ++i)
         {
-            target[i] = Pixels.FilterBilinear(source,
+            target[i] = Pixels.SampleBilinear(source,
                 tx * (i % wTrg), ty * (i / wTrg),
                 wSrc, hSrc);
         }
@@ -1863,7 +1899,7 @@ public static class Pixels
         {
             float ySgn = i / wTrg - yTrgCenter;
             float xSgn = i % wTrg - xTrgCenter;
-            target[i] = Pixels.FilterBilinear(
+            target[i] = Pixels.SampleBilinear(
                 source,
                 xSrcCenter + cosa * xSgn - sina * ySgn,
                 ySrcCenter + cosa * ySgn + sina * xSgn,
@@ -1871,6 +1907,97 @@ public static class Pixels
         }
 
         return (pixels: target, w: wTrg, h: hTrg);
+    }
+
+    /// <summary>
+    /// Internal helper function to sample a source image with a bilinear color
+    /// mix. Clamps the result to [0.0, 1.0].
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <returns>mixed color</returns>
+    static Clr SampleBilinear(
+        in Clr[] source, in float xSrc, in float ySrc,
+        in int wSrc, in int hSrc)
+    {
+        bool yPos = ySrc > 0.0f;
+        bool yNeg = ySrc < 0.0f;
+        int yi = (int)ySrc;
+        int yf = yPos ? yi : yNeg ? yi - 1 : 0;
+        int yc = yPos ? yi + 1 : yNeg ? yi : 0;
+
+        bool yfInBounds = yf > -1 && yf < hSrc;
+        bool ycInBounds = yc > -1 && yc < hSrc;
+
+        bool xPos = xSrc > 0.0f;
+        bool xNeg = xSrc < 0.0f;
+        int xi = (int)xSrc;
+        int xf = xPos ? xi : xNeg ? xi - 1 : 0;
+        int xc = xPos ? xi + 1 : xNeg ? xi : 0;
+
+        bool xfInBounds = xf > -1 && xf < wSrc;
+        bool xcInBounds = xc > -1 && xc < wSrc;
+
+        // Pixel corners colors.
+        Clr c00 = xfInBounds && yfInBounds ? source[xf + yf * wSrc] : Clr.ClearBlack;
+        Clr c10 = xcInBounds && yfInBounds ? source[xc + yf * wSrc] : Clr.ClearBlack;
+        Clr c11 = xcInBounds && ycInBounds ? source[xc + yc * wSrc] : Clr.ClearBlack;
+        Clr c01 = xfInBounds && ycInBounds ? source[xf + yc * wSrc] : Clr.ClearBlack;
+
+        float xErr = xSrc - xf;
+
+        float a0 = 0.0f;
+        float r0 = 0.0f;
+        float g0 = 0.0f;
+        float b0 = 0.0f;
+
+        float a00 = c00.a;
+        float a10 = c10.a;
+        if (a00 > 0.0f || a10 > 0.0f)
+        {
+            float u = 1.0f - xErr;
+            a0 = u * a00 + xErr * a10;
+            if (a0 > 0.0f)
+            {
+                r0 = u * c00.r + xErr * c10.r;
+                g0 = u * c00.g + xErr * c10.g;
+                b0 = u * c00.b + xErr * c10.b;
+            }
+        }
+
+        float a1 = 0.0f;
+        float r1 = 0.0f;
+        float g1 = 0.0f;
+        float b1 = 0.0f;
+
+        float a01 = c01.a;
+        float a11 = c11.a;
+        if (a01 > 0.0f || a11 > 0.0f)
+        {
+            float u = 1.0f - xErr;
+            a1 = u * a01 + xErr * a11;
+            if (a1 > 0.0f)
+            {
+                r1 = u * c01.r + xErr * c11.r;
+                g1 = u * c01.g + xErr * c11.g;
+                b1 = u * c01.b + xErr * c11.b;
+            }
+        }
+
+        if (a0 > 0.0f || a1 > 0.0f)
+        {
+            float yErr = ySrc - yf;
+            float u = 1.0f - yErr;
+            float a2 = u * a0 + yErr * a1;
+            if (a2 > 0.0f)
+            {
+                return Clr.Clamp(new Clr(
+                    u * r0 + yErr * r1,
+                    u * g0 + yErr * g1,
+                    u * b0 + yErr * b1, a2));
+            }
+        }
+
+        return Clr.ClearBlack;
     }
 
     /// <summary>
@@ -1925,9 +2052,10 @@ public static class Pixels
         in Clr[] source, in int w, in int h, in float radians)
     {
         int srcLen = source.Length;
-        int deg = Utils.RemFloor(Utils.Round(radians * Utils.RadToDeg), 180);
+        int deg = Utils.Round(radians * Utils.RadToDeg);
+        int deg180 = Utils.RemFloor(deg, 180);
 
-        switch (deg)
+        switch (deg180)
         {
             case 0:
                 {
@@ -1935,9 +2063,11 @@ public static class Pixels
                     System.Array.Copy(source, 0, t0, 0, srcLen);
                     return (pixels: t0, w, h);
                 }
+            case 88:
             case 89:
             case 90:
             case 91:
+            case 92:
                 {
                     Clr[] t90 = Pixels.Fill(new Clr[srcLen], Clr.ClearBlack);
                     return (pixels: t90, w, h);
@@ -1958,7 +2088,7 @@ public static class Pixels
                     for (int i = 0; i < trgLen; ++i)
                     {
                         float yTrg = i / wTrg;
-                        target[i] = Pixels.FilterBilinear(
+                        target[i] = Pixels.SampleBilinear(
                             source, xDiff + i % wTrg + tana
                            * (yTrg - yCenter), yTrg, w, h);
                     }
@@ -1982,9 +2112,10 @@ public static class Pixels
     in Clr[] source, in int w, in int h, in float radians)
     {
         int srcLen = source.Length;
-        int deg = Utils.RemFloor(Utils.Round(radians * Utils.RadToDeg), 180);
+        int deg = Utils.Round(radians * Utils.RadToDeg);
+        int deg180 = Utils.RemFloor(deg, 180);
 
-        switch (deg)
+        switch (deg180)
         {
             case 0:
                 {
@@ -1992,9 +2123,11 @@ public static class Pixels
                     System.Array.Copy(source, 0, t0, 0, srcLen);
                     return (pixels: t0, w, h);
                 }
+            case 88:
             case 89:
             case 90:
             case 91:
+            case 92:
                 {
                     Clr[] t90 = Pixels.Fill(new Clr[srcLen], Clr.ClearBlack);
                     return (pixels: t90, w, h);
@@ -2015,7 +2148,7 @@ public static class Pixels
                     for (int i = 0; i < trgLen; ++i)
                     {
                         float xTrg = i % w;
-                        target[i] = Pixels.FilterBilinear(
+                        target[i] = Pixels.SampleBilinear(
                             source, xTrg, yDiff + i / w + tana
                            * (xTrg - xCenter), w, h);
                     }
@@ -2085,6 +2218,7 @@ public static class Pixels
                     float lumAvg = lumSum / dictLen;
                     float tDenom = t * (100.0f / diff);
                     float lumMintDenom = lumMin * tDenom;
+                    float tLumAvg = t * lumAvg;
 
                     Dictionary<Clr, Clr> stretched = new();
                     foreach (KeyValuePair<Clr, Vec4> kv in dict)
@@ -2094,15 +2228,18 @@ public static class Pixels
                         if (gtZero)
                         {
                             stretchedLab = new Vec4(
-                                sourceLab.x, sourceLab.y,
-                                u * sourceLab.z + sourceLab.z * tDenom - lumMintDenom,
+                                sourceLab.x,
+                                sourceLab.y,
+                                u * sourceLab.z +
+                                sourceLab.z * tDenom - lumMintDenom,
                                 sourceLab.w);
                         }
                         else if (ltZero)
                         {
                             stretchedLab = new Vec4(
-                                sourceLab.x, sourceLab.y,
-                                u * stretchedLab.z + t * lumAvg,
+                                sourceLab.x,
+                                sourceLab.y,
+                                u * stretchedLab.z + tLumAvg,
                                 sourceLab.w);
                         }
 
@@ -2186,6 +2323,38 @@ public static class Pixels
             {
                 Pixels.Fill(target, Clr.ClearBlack);
             }
+        }
+        return target;
+    }
+
+    /// <summary>
+    /// Tone maps all colors in an array according to ACES curve.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">target pixels</param>
+    /// <returns>tone mapped array</returns>
+    public static Clr[] ToneMapAces(in Clr[] source, in Clr[] target)
+    {
+        int srcLen = source.Length;
+        if (srcLen == target.Length)
+        {
+            for (int i = 0; i < srcLen; ++i) { target[i] = Clr.ToneMapAces(source[i]); }
+        }
+        return target;
+    }
+
+    /// <summary>
+    /// Tone maps all colors in an array according to Hable.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">target pixels</param>
+    /// <returns>tone mapped array</returns>
+    public static Clr[] ToneMapHable(in Clr[] source, in Clr[] target)
+    {
+        int srcLen = source.Length;
+        if (srcLen == target.Length)
+        {
+            for (int i = 0; i < srcLen; ++i) { target[i] = Clr.ToneMapHable(source[i]); }
         }
         return target;
     }

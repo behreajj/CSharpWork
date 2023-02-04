@@ -301,9 +301,11 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         }
         else
         {
-            return new Vec4(
-                Utils.OneTau * Utils.WrapRadians(MathF.Atan2(b, a)),
-                MathF.Sqrt(chromaSq), lab.z, lab.w);
+            float hue = MathF.Atan2(b, a);
+            hue = hue < -0.0f ? hue + Utils.Tau : hue;
+            hue *= Utils.OneTau;
+            float chroma = MathF.Sqrt(chromaSq);
+            return new Vec4(hue, chroma, lab.z, lab.w);
         }
     }
 
@@ -1254,6 +1256,78 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         int b = (int)(Utils.Clamp(c._b, 0.0f, 1.0f) * 255.0f + 0.5f);
         sb.AppendFormat("{0:X6}", r << 0x10 | g << 0x08 | b);
         return sb;
+    }
+
+    /// <summary>
+    /// For colors which exceed the range [0.0, 1.0], applies ACES
+    /// tone mapping algorithm. See https://64.github.io/tonemapping/ .
+    /// Assumes that the input color is in gamma sRGB, and that the
+    /// expected return of should be as well.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>tone mapped color</returns>
+    public static Clr ToneMapAces(in Clr c)
+    {
+        Clr cl = Clr.StandardToLinear(c);
+
+        float rFrwrd = 0.59719f * cl._r + 0.35458f * cl._g + 0.04823f * cl._b;
+        float gFrwrd = 0.07600f * cl._r + 0.90834f * cl._g + 0.01566f * cl._b;
+        float bFrwrd = 0.02840f * cl._r + 0.13383f * cl._g + 0.83777f * cl._b;
+
+        float ar = rFrwrd * (rFrwrd + 0.0245786f) - 0.000090537f;
+        float ag = gFrwrd * (gFrwrd + 0.0245786f) - 0.000090537f;
+        float ab = bFrwrd * (bFrwrd + 0.0245786f) - 0.000090537f;
+
+        float br = rFrwrd * (0.983729f * rFrwrd + 0.4329510f) + 0.238081f;
+        float bg = gFrwrd * (0.983729f * gFrwrd + 0.4329510f) + 0.238081f;
+        float bb = bFrwrd * (0.983729f * bFrwrd + 0.4329510f) + 0.238081f;
+
+        float cr = Utils.Div(ar, br);
+        float cg = Utils.Div(ag, bg);
+        float cb = Utils.Div(ab, bb);
+
+        float rBckwd = 1.60475f * cr - 0.53108f * cg - 0.07367f * cb;
+        float gBckwd = -0.10208f * cr + 1.10813f * cg - 0.00605f * cb;
+        float bBckwd = -0.00327f * cr - 0.07276f * cg + 1.07602f * cb;
+
+        return Clr.LinearToStandard(Clr.Clamp(new Clr(rBckwd, gBckwd, bBckwd, c.a)));
+    }
+
+    /// <summary>
+    /// For colors which exceed the range [0.0, 1.0], applies Uncharted 2, or Hable,
+    /// tone mapping algorithm. See https://64.github.io/tonemapping/ .
+    /// Assumes that the input color is in gamma sRGB, and that the
+    /// expected return of should be as well.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>tone mapped color</returns>
+    public static Clr ToneMapHable(in Clr c)
+    {
+        Clr cl = Clr.StandardToLinear(c);
+
+        float A = 0.15f;
+        float B = 0.50f;
+        float C = 0.10f;
+        float D = 0.20f;
+        float E = 0.02f;
+        float F = 0.30f;
+        float W = 11.2f;
+        float whiteScale = 1.0f / (((W * (A * W + C * B) + D * E)
+            / (W * (A * W + B) + D * F)) - E / F);
+
+        float exposureBias = 2.0f;
+        float er = cl._r * exposureBias;
+        float eg = cl._g * exposureBias;
+        float eb = cl._b * exposureBias;
+
+        float xr = ((er * (A * er + C * B) + D * E) / (er * (A * er + B) + D * F)) - E / F;
+        float xg = ((eg * (A * eg + C * B) + D * E) / (eg * (A * eg + B) + D * F)) - E / F;
+        float xb = ((eb * (A * eb + C * B) + D * E) / (eb * (A * eb + B) + D * F)) - E / F;
+
+        return Clr.LinearToStandard(Clr.Clamp(new Clr(
+            xr * whiteScale,
+            xg * whiteScale,
+            xb * whiteScale, c.a)));
     }
 
     /// <summary>

@@ -686,14 +686,17 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
 
     /// <summary>
     /// Finds the determinant of the matrix.
+    /// Equivalent to the scalar triple product of the matrix's
+    /// rows or columns: dot(i, cross(j, k)). See
+    /// https://en.wikipedia.org/wiki/Triple_product .
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>determinant</returns>
     public static float Determinant(in Mat3 m)
     {
-        return m._m00 * (m._m22 * m._m11 - m._m12 * m._m21) +
-            m._m01 * (m._m12 * m._m20 - m._m22 * m._m10) +
-            m._m02 * (m._m21 * m._m10 - m._m11 * m._m20);
+        return m._m00 * (m._m11 * m._m22 - m._m12 * m._m21) +
+               m._m01 * (m._m12 * m._m20 - m._m10 * m._m22) +
+               m._m02 * (m._m10 * m._m21 - m._m11 * m._m20);
     }
 
     /// <summary>
