@@ -1020,6 +1020,39 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
+    /// Creates a reflection matrix from a plane represented
+    /// by an axis. The vector will be normalized by the function.
+    /// </summary>
+    /// <param name="v">axis</param>
+    /// <returns>matrix</returns>
+    public static Mat4 FromReflection(in Vec3 v)
+    {
+        float mSq = Vec3.MagSq(v);
+        if (mSq != 0.0f)
+        {
+            float mInv = Utils.InvSqrtUnchecked(mSq);
+            float ax = v.x * mInv;
+            float ay = v.y * mInv;
+            float az = v.z * mInv;
+
+            float x = -(ax + ax);
+            float y = -(ay + ay);
+            float z = -(az + az);
+
+            float axay = x * ay;
+            float axaz = x * az;
+            float ayaz = y * az;
+
+            return new Mat4(
+                x * ax + 1.0f, axay, axaz, 0.0f,
+                axay, y * ay + 1.0f, ayaz, 0.0f,
+                axaz, ayaz, z * az + 1.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f);
+        }
+        return Mat4.Identity;
+    }
+
+    /// <summary>
     /// Creates a rotation matrix from a quaternion.
     /// </summary>
     /// <param name="q">quaternion</param>
@@ -1236,6 +1269,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// Creates skew, or shear, matrix from an angle and axes. Vectors a and b
     /// are expected to be orthonormal, i.e. perpendicular and of unit length.
+    /// If the angle is a multiple of 90 degrees, returns the identity.
     /// </summary>
     /// <param name="radians">angle in radians</param>
     /// <param name="a">skew axis</param>
@@ -1243,6 +1277,12 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <returns>skew matrix</returns>
     public static Mat4 FromSkew(in float radians, in Vec3 a, in Vec3 b)
     {
+        // TODO: Validate and normalize axes?
+        if (Utils.Approx(Utils.RemFloor(radians, MathF.PI), 0.0f))
+        {
+            return Mat4.Identity;
+        }
+
         float t = MathF.Tan(radians);
         float tax = a.x * t;
         float tay = a.y * t;
@@ -1316,7 +1356,8 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     }
 
     /// <summary>
-    /// Inverts the input matrix.
+    /// Inverts the input matrix. Returns the identity
+    /// if the matrix's determinant is zero.
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>inverse</returns>
@@ -1688,7 +1729,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// Returns the identity matrix, [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
     /// 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] .
     /// </summary>
-    /// <value>the identity matrix</value>
+    /// <value>identity matrix</value>
     public static Mat4 Identity
     {
         get

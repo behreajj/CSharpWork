@@ -1065,6 +1065,59 @@ public static class Utils
     }
 
     /// <summary>
+    /// Finds an approximate integer ratio to reprsent a real number.
+    /// The steps defines the maximum iteration of a search loop,
+    /// while the tolerance governs an early return.
+    /// Returns a tuple containing the antecedent and consequent.
+    /// </summary>
+    /// <param name="number">input value</param>
+    /// <param name="steps">lower bound</param>
+    /// <param name="tol">tolerance</param>
+    /// <returns>ratio</returns>
+    public static (int antecedent, int consequent) ToRatio(
+        in float number,
+        in int steps = 10,
+        in float tol = 0.0005f)
+    {
+        int sgnNum = 0;
+        if (number == 0.0f) { return (0, 0); }
+        if (number > 0.0f) { sgnNum = 1; }
+        if (number < -0.0f) { sgnNum = -1; }
+
+        int cVerif = steps < 1 ? 1 : steps;
+        float pVerif = MathF.Max(Utils.Epsilon, tol);
+
+        float absNum = MathF.Abs(number);
+        int integer = (int)absNum;
+        float fraction = absNum - integer;
+
+        int a0 = integer;
+        int a1 = 1;
+        int b0 = 1;
+        int b1 = 0;
+
+        int counter = 0;
+        while (fraction > pVerif && counter < cVerif)
+        {
+            float newNum = 1.0f / fraction;
+            integer = (int)newNum;
+            fraction = newNum - integer;
+
+            int t0 = a0;
+            a0 = integer * a0 + b0;
+            b0 = t0;
+
+            int t1 = a1;
+            a1 = integer * a1 + b1;
+            b1 = t1;
+
+            ++counter;
+        }
+
+        return (antecedent: sgnNum * a0, consequent: a1);
+    }
+
+    /// <summary>
     /// Wraps a value around a periodic range as defined by an upper and lower
     /// bound: lower bounds inclusive; upper bounds exclusive. Due to single
     /// precision accuracy, results will be inexact. In cases where the lower

@@ -3,7 +3,7 @@ using System.Text;
 
 /// <summary>
 /// A readonly struct. Supports conversion
-/// to and from integers where color channels are in the format 0xAARRGGBB.
+/// to and from integers.
 /// </summary>
 [Serializable]
 public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
@@ -47,25 +47,25 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     public int Length { get { return 4; } }
 
     /// <summary>
-    /// The alpha color channel.
+    /// The alpha channel.
     /// </summary>
     /// <value>alpha</value>
     public float a { get { return this._a; } }
 
     /// <summary>
-    /// The blue color channel.
+    /// The blue channel.
     /// </summary>
     /// <value>blue</value>
     public float b { get { return this._b; } }
 
     /// <summary>
-    /// The green color channel.
+    /// The green channel.
     /// </summary>
     /// <value>green</value>
     public float g { get { return this._g; } }
 
     /// <summary>
-    /// The red color channel.
+    /// The red channel.
     /// </summary>
     /// <value>red</value>
     public float r { get { return this._r; } }
@@ -276,40 +276,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     }
 
     /// <summary>
-    /// Converts a color from CIE LAB to CIE LCH.
-    /// The z component of the input vector is
-    /// expected to hold the luminance, while x
-    /// is expected to hold a and y, b.
-    ///
-    /// In the return vector, hue is assigned to
-    /// the x component; chroma, to y; luminance,
-    /// to z; alpha, to w.
-    /// </summary>
-    /// <param name="lab">CIE LAB color</param>
-    /// <returns>CIE LCH color</returns>
-    public static Vec4 CieLabToCieLch(in Vec4 lab)
-    {
-        float a = lab.x;
-        float b = lab.y;
-        float chromaSq = a * a + b * b;
-        if (chromaSq < Utils.Epsilon)
-        {
-            float fac = Utils.Clamp(lab.z * 0.01f, 0.0f, 1.0f);
-            float hue = Utils.LerpAngleNear(
-                Clr.CieLchHueShade, Clr.CieLchHueDay, fac, 1.0f);
-            return new Vec4(hue, 0.0f, lab.z, lab.w);
-        }
-        else
-        {
-            float hue = MathF.Atan2(b, a);
-            hue = hue < -0.0f ? hue + Utils.Tau : hue;
-            hue *= Utils.OneTau;
-            float chroma = MathF.Sqrt(chromaSq);
-            return new Vec4(hue, chroma, lab.z, lab.w);
-        }
-    }
-
-    /// <summary>
     /// Converts from CIE LAB to standard RGB (SRGB).
     /// The z component of the input vector is
     /// expected to hold the luminance, while x
@@ -317,7 +283,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="lab">CIE LAB color</param>
     /// <returns>sRGB color</returns>
-    public static Clr CieLabToStandard(in Vec4 lab)
+    public static Clr CieLabToStandard(in Lab lab)
     {
         return Clr.LinearToStandard(
             Clr.CieXyzToLinear(
@@ -332,15 +298,15 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="lab">CIE LAB color</param>
     /// <returns>CIE XYZ color</returns>
-    public static Vec4 CieLabToCieXyz(in Vec4 lab)
+    public static Vec4 CieLabToCieXyz(in Lab lab)
     {
         double offset = 16.0d / 116.0d;
         double one116 = 1.0d / 116.0d;
         double one7787 = 1.0d / 7.787d;
 
-        double a = (lab.z + 16.0d) * one116;
-        double b = lab.x * 0.002d + a;
-        double c = a - lab.y * 0.005d;
+        double a = (lab.L + 16.0d) * one116;
+        double b = lab.A * 0.002d + a;
+        double c = a - lab.B * 0.005d;
 
         double acb = a * a * a;
         if (acb > 0.008856d) { a = acb; }
@@ -358,31 +324,7 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
             (float)(b * 0.95047d),
             (float)a,
             (float)(c * 1.08883d),
-            lab.w);
-    }
-
-    /// <summary>
-    /// Converts a color from CIE LCH to CIE LAB.
-    ///
-    /// Luminance is expected to be in [0.0, 100.0].
-    /// Chroma is expected to be in [0.0, 135.0].
-    /// Hue is expected to be in [0.0, 1.0].
-    ///
-    /// The input vector is expected to store hue
-    /// in the x component; chroma, in the y;
-    /// luminance in the z; alpha in the w.
-    /// </summary>
-    /// <param name="lch">CIE LCH color</param>
-    /// <returns>CIE LAB color</returns>
-    public static Vec4 CieLchToCieLab(in Vec4 lch)
-    {
-        float hRad = lch.x * Utils.Tau;
-        float chroma = MathF.Max(0.0f, lch.y);
-        return new Vec4(
-            chroma * MathF.Cos(hRad),
-            chroma * MathF.Sin(hRad),
-            lch.z,
-            lch.w);
+            lab.Alpha);
     }
 
     /// <summary>
@@ -399,62 +341,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="lch">CIE LCH color</param>
     /// <returns>CIE LAB color</returns>
-    public static Clr CieLchToStandard(in Vec4 lch)
+    public static Clr CieLchToStandard(in Lch lch)
     {
         return Clr.LinearToStandard(
             Clr.CieXyzToLinear(
                 Clr.CieLabToCieXyz(
-                    Clr.CieLchToCieLab(lch))));
-    }
-
-    /// <summary>
-    /// Converts a color from CIE XYZ to CIE LAB.
-    /// Stores alpha in the w component,
-    /// luminance in the z component,
-    /// a in the x component and b in the y component.
-    /// </summary>
-    /// <param name="v">CIE XYZ color</param>
-    /// <returns>CIE LAB color</returns>
-    public static Vec4 CieXyzToCieLab(in Vec4 v)
-    {
-        double oneThird = 1.0d / 3.0d;
-        double offset = 16.0d / 116.0d;
-
-        double a = v.x * 1.0521110608435826d;
-        if (a > 0.008856d)
-        {
-            a = Math.Pow(a, oneThird);
-        }
-        else
-        {
-            a = 7.787d * a + offset;
-        }
-
-        double b = v.y;
-        if (b > 0.008856d)
-        {
-            b = Math.Pow(b, oneThird);
-        }
-        else
-        {
-            b = 7.787d * b + offset;
-        }
-
-        double c = v.z * 0.9184170164304805d;
-        if (c > 0.008856d)
-        {
-            c = Math.Pow(c, oneThird);
-        }
-        else
-        {
-            c = 7.787d * c + offset;
-        }
-
-        return new Vec4(
-            (float)(500.0d * (a - b)), // a
-            (float)(200.0d * (b - c)), // b
-            (float)(116.0d * b - 16.0d), // l
-            v.w);
+                    Lab.FromLch(lch))));
     }
 
     /// <summary>
@@ -757,9 +649,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <returns>mixed color</returns>
     public static Clr MixCieLab(in Clr o, in Clr d, in float t = 0.5f)
     {
-        Vec4 oLab = Clr.StandardToCieLab(o);
-        Vec4 dLab = Clr.StandardToCieLab(d);
-        return Clr.CieLabToStandard(Vec4.Mix(oLab, dLab, t));
+        Lab oLab = Clr.StandardToCieLab(o);
+        Lab dLab = Clr.StandardToCieLab(d);
+        return Clr.CieLabToStandard(Lab.Mix(oLab, dLab, t));
     }
 
     /// <summary>
@@ -795,21 +687,21 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         in float t,
         in Func<float, float, float, float, float> easing)
     {
-        Vec4 oLab = Clr.StandardToCieLab(o);
-        float oa = oLab.x;
-        float ob = oLab.y;
+        Lab oLab = Clr.StandardToCieLab(o);
+        float oa = oLab.A;
+        float ob = oLab.B;
         float oChrSq = oa * oa + ob * ob;
 
-        Vec4 dLab = Clr.StandardToCieLab(d);
-        float da = dLab.x;
-        float db = dLab.y;
+        Lab dLab = Clr.StandardToCieLab(d);
+        float da = dLab.A;
+        float db = dLab.B;
         float dChrSq = da * da + db * db;
 
-        Vec4 cLab;
+        Lab cLab;
 
         if (oChrSq < Utils.Epsilon || dChrSq < Utils.Epsilon)
         {
-            cLab = Vec4.Mix(oLab, dLab, t);
+            cLab = Lab.Mix(oLab, dLab, t);
         }
         else
         {
@@ -822,12 +714,12 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
                 MathF.Atan2(db, da));
 
             float u = 1.0f - t;
-            Vec4 cLch = new(
+            Lch cLch = new(
                 easing(oHue, dHue, t, 1.0f),
                 u * oChr + t * dChr,
-                u * oLab.z + t * dLab.z,
-                u * oLab.w + t * dLab.w);
-            cLab = Clr.CieLchToCieLab(cLch);
+                u * oLab.L + t * dLab.L,
+                u * oLab.Alpha + t * dLab.Alpha);
+            cLab = Lab.FromLch(cLch);
         }
 
         return Clr.CieLabToStandard(cLab);
@@ -1029,22 +921,6 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     }
 
     /// <summary>
-    /// Creates a random color from red, green, blue and alpha channels.
-    /// </summary>
-    /// <param name="rng">the random number generator</param>
-    /// <param name="lb">the lower bound</param>
-    /// <param name="ub">the upper bound</param>
-    /// <returns>color</returns>
-    public static Clr RandomRgba(in Random rng, in float lb = 0.0f, in float ub = 1.0f)
-    {
-        return new Clr(
-            Utils.Mix(lb, ub, (float)rng.NextDouble()),
-            Utils.Mix(lb, ub, (float)rng.NextDouble()),
-            Utils.Mix(lb, ub, (float)rng.NextDouble()),
-            Utils.Mix(lb, ub, (float)rng.NextDouble()));
-    }
-
-    /// <summary>
     /// Returns the relative luminance of the color.
     /// Converts the color from standard RGB to linear.
     /// </summary>
@@ -1062,9 +938,9 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>CIE LAB color</returns>
-    public static Vec4 StandardToCieLab(in Clr c)
+    public static Lab StandardToCieLab(in Clr c)
     {
-        return Clr.CieXyzToCieLab(
+        return Lab.FromCieXyz(
             Clr.LinearToCieXyz(
                 Clr.StandardToLinear(c)));
     }
@@ -1079,10 +955,10 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>CIE LCH color</returns>
-    public static Vec4 StandardToCieLch(in Clr c)
+    public static Lch StandardToCieLch(in Clr c)
     {
-        return Clr.CieLabToCieLch(
-            Clr.CieXyzToCieLab(
+        return Lch.FromLab(
+            Lab.FromCieXyz(
                 Clr.LinearToCieXyz(
                     Clr.StandardToLinear(c))));
     }
@@ -1261,26 +1137,22 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
     /// <summary>
     /// For colors which exceed the range [0.0, 1.0], applies ACES
     /// tone mapping algorithm. See https://64.github.io/tonemapping/ .
-    /// Assumes that the input color is in gamma sRGB, and that the
-    /// expected return of should be as well.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>tone mapped color</returns>
-    public static Clr ToneMapAces(in Clr c)
+    public static Clr ToneMapAcesLinear(in Clr c)
     {
-        Clr cl = Clr.StandardToLinear(c);
-
-        float rFrwrd = 0.59719f * cl._r + 0.35458f * cl._g + 0.04823f * cl._b;
-        float gFrwrd = 0.07600f * cl._r + 0.90834f * cl._g + 0.01566f * cl._b;
-        float bFrwrd = 0.02840f * cl._r + 0.13383f * cl._g + 0.83777f * cl._b;
+        float rFrwrd = 0.59719f * c._r + 0.35458f * c._g + 0.04823f * c._b;
+        float gFrwrd = 0.07600f * c._r + 0.90834f * c._g + 0.01566f * c._b;
+        float bFrwrd = 0.02840f * c._r + 0.13383f * c._g + 0.83777f * c._b;
 
         float ar = rFrwrd * (rFrwrd + 0.0245786f) - 0.000090537f;
         float ag = gFrwrd * (gFrwrd + 0.0245786f) - 0.000090537f;
         float ab = bFrwrd * (bFrwrd + 0.0245786f) - 0.000090537f;
 
-        float br = rFrwrd * (0.983729f * rFrwrd + 0.4329510f) + 0.238081f;
-        float bg = gFrwrd * (0.983729f * gFrwrd + 0.4329510f) + 0.238081f;
-        float bb = bFrwrd * (0.983729f * bFrwrd + 0.4329510f) + 0.238081f;
+        float br = rFrwrd * (0.983729f * rFrwrd + 0.432951f) + 0.238081f;
+        float bg = gFrwrd * (0.983729f * gFrwrd + 0.432951f) + 0.238081f;
+        float bb = bFrwrd * (0.983729f * bFrwrd + 0.432951f) + 0.238081f;
 
         float cr = Utils.Div(ar, br);
         float cg = Utils.Div(ag, bg);
@@ -1290,21 +1162,37 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
         float gBckwd = -0.10208f * cr + 1.10813f * cg - 0.00605f * cb;
         float bBckwd = -0.00327f * cr - 0.07276f * cg + 1.07602f * cb;
 
-        return Clr.LinearToStandard(Clr.Clamp(new Clr(rBckwd, gBckwd, bBckwd, c.a)));
+        return new Clr(
+            Utils.Clamp(rBckwd, 0.0f, 1.0f),
+            Utils.Clamp(gBckwd, 0.0f, 1.0f),
+            Utils.Clamp(bBckwd, 0.0f, 1.0f),
+            Utils.Clamp(c.a, 0.0f, 1.0f));
     }
 
     /// <summary>
-    /// For colors which exceed the range [0.0, 1.0], applies Uncharted 2, or Hable,
+    /// For colors which exceed the range [0.0, 1.0], applies ACES
     /// tone mapping algorithm. See https://64.github.io/tonemapping/ .
     /// Assumes that the input color is in gamma sRGB, and that the
     /// expected return of should be as well.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>tone mapped color</returns>
-    public static Clr ToneMapHable(in Clr c)
+    public static Clr ToneMapAcesStandard(in Clr c)
     {
-        Clr cl = Clr.StandardToLinear(c);
+        return Clr.LinearToStandard(
+            Clr.ToneMapAcesLinear(
+                Clr.StandardToLinear(c)));
+    }
 
+    /// <summary>
+    /// For colors which exceed the range [0.0, 1.0], applies
+    /// Uncharted 2, or Hable, tone mapping algorithm. See
+    /// https://64.github.io/tonemapping/ .
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>tone mapped color</returns>
+    public static Clr ToneMapHableLinear(in Clr c)
+    {
         float A = 0.15f;
         float B = 0.50f;
         float C = 0.10f;
@@ -1316,18 +1204,35 @@ public readonly struct Clr : IComparable<Clr>, IEquatable<Clr>
             / (W * (A * W + B) + D * F)) - E / F);
 
         float exposureBias = 2.0f;
-        float er = cl._r * exposureBias;
-        float eg = cl._g * exposureBias;
-        float eb = cl._b * exposureBias;
+        float er = c._r * exposureBias;
+        float eg = c._g * exposureBias;
+        float eb = c._b * exposureBias;
 
         float xr = ((er * (A * er + C * B) + D * E) / (er * (A * er + B) + D * F)) - E / F;
         float xg = ((eg * (A * eg + C * B) + D * E) / (eg * (A * eg + B) + D * F)) - E / F;
         float xb = ((eb * (A * eb + C * B) + D * E) / (eb * (A * eb + B) + D * F)) - E / F;
 
-        return Clr.LinearToStandard(Clr.Clamp(new Clr(
-            xr * whiteScale,
-            xg * whiteScale,
-            xb * whiteScale, c.a)));
+        return new Clr(
+            Utils.Clamp(xr * whiteScale, 0.0f, 1.0f),
+            Utils.Clamp(xg * whiteScale, 0.0f, 1.0f),
+            Utils.Clamp(xb * whiteScale, 0.0f, 1.0f),
+            Utils.Clamp(c.a, 0.0f, 1.0f));
+    }
+
+    /// <summary>
+    /// For colors which exceed the range [0.0, 1.0], applies
+    /// Uncharted 2, or Hable, tone mapping algorithm. See
+    /// https://64.github.io/tonemapping/ . Assumes that the
+    /// input color is in gamma sRGB, and that the
+    /// expected return of should be as well.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>tone mapped color</returns>
+    public static Clr ToneMapHableStandard(in Clr c)
+    {
+        return Clr.LinearToStandard(
+            Clr.ToneMapHableLinear(
+                Clr.StandardToLinear(c)));
     }
 
     /// <summary>

@@ -511,12 +511,16 @@ public static class Pixels
     /// <param name="target">target pixels</param>
     /// <param name="adjust">adjustment</param>
     /// <returns>adjusted pixels</returns>
-    public static Clr[] AdjustCieLch(in Clr[] source, in Clr[] target, in Vec4 adjust)
+    public static Clr[] AdjustCieLch(in Clr[] source, in Clr[] target, in Lch adjust)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            if (Vec4.None(adjust))
+            // LCH None method is different from Vec4 None method.
+            if (adjust.Alpha == 0.0f &&
+                adjust.L == 0.0f &&
+                adjust.C == 0.0f &&
+                adjust.H == 0.0f)
             {
                 System.Array.Copy(source, 0, target, 0, srcLen);
                 return target;
@@ -528,7 +532,7 @@ public static class Pixels
                 Clr c = source[i];
                 if (Clr.Any(c) && !dict.ContainsKey(c))
                 {
-                    Vec4 lch = Clr.StandardToCieLch(c);
+                    Lch lch = Clr.StandardToCieLch(c);
                     dict.Add(c, Clr.CieLchToStandard(lch + adjust));
                 }
             }
@@ -579,9 +583,12 @@ public static class Pixels
                     Clr key = Clr.Opaque(c);
                     if (!dict.ContainsKey(key))
                     {
-                        Vec4 lab = Clr.StandardToCieLab(key);
-                        Vec4 labAdj = new(lab.x, lab.y,
-                            (lab.z - 50.0f) * valAdjust + 50.0f, lab.w);
+                        Lab lab = Clr.StandardToCieLab(key);
+                        Lab labAdj = new(
+                            l: (lab.L - 50.0f) * valAdjust + 50.0f,
+                            a: lab.A,
+                            b: lab.B,
+                            alpha: lab.Alpha);
                         dict.Add(key, Clr.CieLabToStandard(labAdj));
                     }
                 }
@@ -767,9 +774,9 @@ public static class Pixels
         int bbrx = bx + bw - 1;
         int bbry = by + bh - 1;
 
-        Dictionary<Clr, Vec4> dict = new()
+        Dictionary<Clr, Lab> dict = new()
         {
-            { Clr.ClearBlack, Vec4.Zero }
+            { Clr.ClearBlack, Lab.ClearBlack }
         };
 
         // Blending only necessary at the intersection of a and b.
@@ -828,7 +835,7 @@ public static class Pixels
         int bxud = bx - cx;
         int byud = by - cy;
 
-        Vec4 zero = Vec4.Zero;
+        Lab clearBlack = Lab.ClearBlack;
         Clr[] target = new Clr[cLen];
         for (int i = 0; i < cLen; ++i)
         {
@@ -864,12 +871,13 @@ public static class Pixels
                     float uv = u * v;
                     float tuv = t + uv;
 
-                    Vec4 orig = dict.GetValueOrDefault(aClr, zero);
-                    Vec4 dest = dict.GetValueOrDefault(bClr, zero);
-                    Vec4 cLab = new(
-                        u * orig.x + t * dest.x,
-                        u * orig.y + t * dest.y,
-                        u * orig.z + t * dest.z, tuv);
+                    Lab orig = dict.GetValueOrDefault(aClr, clearBlack);
+                    Lab dest = dict.GetValueOrDefault(bClr, clearBlack);
+                    Lab cLab = new(
+                        l: u * orig.L + t * dest.L,
+                        a: u * orig.A + t * dest.A,
+                        b: u * orig.B + t * dest.B,
+                        alpha: tuv);
                     target[i] = Clr.CieLabToStandard(cLab);
                 }
             }
@@ -896,7 +904,7 @@ public static class Pixels
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            Dictionary<Clr, Vec4> dict = new();
+            Dictionary<Clr, Lab> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
                 Clr srgb = source[i];
@@ -929,28 +937,28 @@ public static class Pixels
                     int yComp = ySrc + j / wKrn;
                     if (yComp > -1 && yComp < h && xComp > -1 && xComp < w)
                     {
-                        Vec4 labNgbr = dict[source[xComp + yComp * w]];
-                        lSum += labNgbr.z;
-                        aSum += labNgbr.x;
-                        bSum += labNgbr.y;
-                        tSum += labNgbr.w;
+                        Lab labNgbr = dict[source[xComp + yComp * w]];
+                        lSum += labNgbr.L;
+                        aSum += labNgbr.A;
+                        bSum += labNgbr.B;
+                        tSum += labNgbr.Alpha;
                     }
                     else
                     {
                         // When the kernel is out of bounds, sample the
                         // central color but do not tally alpha.
-                        Vec4 labCtr = dict[srgb];
-                        lSum += labCtr.z;
-                        aSum += labCtr.x;
-                        bSum += labCtr.y;
+                        Lab labCtr = dict[srgb];
+                        lSum += labCtr.L;
+                        aSum += labCtr.A;
+                        bSum += labCtr.B;
                     }
                 }
 
-                Vec4 labAvg = new(
-                    aSum * denom,
-                    bSum * denom,
-                    lSum * denom,
-                    tSum * denom);
+                Lab labAvg = new(
+                    l: lSum * denom,
+                    a: aSum * denom,
+                    b: bSum * denom,
+                    alpha: tSum * denom);
                 target[i] = Clr.CieLabToStandard(labAvg);
             }
         }
@@ -1351,12 +1359,12 @@ public static class Pixels
                 Clr c = source[i];
                 if (!dict.ContainsKey(c))
                 {
-                    Vec4 lab = Clr.StandardToCieLab(c);
-                    Vec4 inv = new(
-                        lab.x * aSign,
-                        lab.y * bSign,
-                        l ? 100.0f - lab.z : lab.z,
-                        alpha ? 1.0f - lab.w : lab.w);
+                    Lab lab = Clr.StandardToCieLab(c);
+                    Lab inv = new(
+                        l: l ? 100.0f - lab.L : lab.L,
+                        a: lab.A * aSign,
+                        b: lab.B * bSign,
+                        alpha: alpha ? 1.0f - lab.Alpha : lab.Alpha);
                     dict.Add(c, Clr.CieLabToStandard(inv));
                 }
             }
@@ -1664,8 +1672,8 @@ public static class Pixels
         Octree oct = new(Bounds3.Lab, capacity);
         foreach (Clr unique in uniqueColors)
         {
-            Vec4 v = Clr.StandardToCieLab(unique);
-            oct.Insert(v.xyz);
+            Lab lab = Clr.StandardToCieLab(unique);
+            oct.Insert(new(x: lab.A, y: lab.B, z: lab.L));
         }
         oct.Cull();
 
@@ -1677,7 +1685,8 @@ public static class Pixels
         for (int j = 0; j < centersLen; ++j)
         {
             Vec3 center = centers[j];
-            over[1 + j] = Clr.CieLabToStandard(Vec4.Promote(center, 1.0f));
+            Lab lab = new(l: center.z, a: center.x, b: center.y, alpha: 1.0f);
+            over[1 + j] = Clr.CieLabToStandard(lab);
         }
         return over;
     }
@@ -1711,8 +1720,8 @@ public static class Pixels
                 Clr c = palette[h];
                 if (Clr.Any(c))
                 {
-                    Vec4 lab = Clr.StandardToCieLab(c);
-                    Vec3 point = lab.xyz;
+                    Lab lab = Clr.StandardToCieLab(c);
+                    Vec3 point = new(x: lab.A, y: lab.B, z: lab.L);
                     oct.Insert(point);
                     lookup.Add(point, c);
                 }
@@ -1734,8 +1743,9 @@ public static class Pixels
                     else
                     {
                         found.Clear();
-                        Vec4 lab = Clr.StandardToCieLab(opaque);
-                        Octree.Query(oct, lab.xyz, radius, found);
+                        Lab lab = Clr.StandardToCieLab(opaque);
+                        Vec3 point = new(x: lab.A, y: lab.B, z: lab.L);
+                        Octree.Query(oct, point, radius, found);
                         if (found.Count > 0)
                         {
                             Vec3 nearest = found.Values[0];
@@ -1914,34 +1924,35 @@ public static class Pixels
     /// mix. Clamps the result to [0.0, 1.0].
     /// </summary>
     /// <param name="source">source pixels</param>
+    /// <param name="xSrc">x source</param>
+    /// <param name="ySrc">y source</param>
+    /// <param name="wSrc">image width</param>
+    /// <param name="hSrc">image height</param>
     /// <returns>mixed color</returns>
     static Clr SampleBilinear(
         in Clr[] source, in float xSrc, in float ySrc,
         in int wSrc, in int hSrc)
     {
-        bool yPos = ySrc > 0.0f;
-        bool yNeg = ySrc < 0.0f;
+        // Find the truncation, floor and ceiling.
         int yi = (int)ySrc;
-        int yf = yPos ? yi : yNeg ? yi - 1 : 0;
-        int yc = yPos ? yi + 1 : yNeg ? yi : 0;
+        int yf = (ySrc > 0.0f) ? yi : (ySrc < -0.0f) ? yi - 1 : 0;
+        int yc = yf + 1;
 
         bool yfInBounds = yf > -1 && yf < hSrc;
         bool ycInBounds = yc > -1 && yc < hSrc;
 
-        bool xPos = xSrc > 0.0f;
-        bool xNeg = xSrc < 0.0f;
         int xi = (int)xSrc;
-        int xf = xPos ? xi : xNeg ? xi - 1 : 0;
-        int xc = xPos ? xi + 1 : xNeg ? xi : 0;
+        int xf = (xSrc > 0.0f) ? xi : (xSrc < -0.0f) ? xi - 1 : 0;
+        int xc = xf + 1;
 
         bool xfInBounds = xf > -1 && xf < wSrc;
         bool xcInBounds = xc > -1 && xc < wSrc;
 
         // Pixel corners colors.
-        Clr c00 = xfInBounds && yfInBounds ? source[xf + yf * wSrc] : Clr.ClearBlack;
-        Clr c10 = xcInBounds && yfInBounds ? source[xc + yf * wSrc] : Clr.ClearBlack;
-        Clr c11 = xcInBounds && ycInBounds ? source[xc + yc * wSrc] : Clr.ClearBlack;
-        Clr c01 = xfInBounds && ycInBounds ? source[xf + yc * wSrc] : Clr.ClearBlack;
+        Clr c00 = yfInBounds && xfInBounds ? source[yf * wSrc + xf] : Clr.ClearBlack;
+        Clr c10 = yfInBounds && xcInBounds ? source[yf * wSrc + xc] : Clr.ClearBlack;
+        Clr c11 = ycInBounds && xcInBounds ? source[yc * wSrc + xc] : Clr.ClearBlack;
+        Clr c01 = ycInBounds && xfInBounds ? source[yc * wSrc + xf] : Clr.ClearBlack;
 
         float xErr = xSrc - xf;
 
@@ -2184,7 +2195,7 @@ public static class Pixels
             float lumMax = Single.MinValue;
             float lumSum = 0.0f;
 
-            Dictionary<Clr, Vec4> dict = new();
+            Dictionary<Clr, Lab> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
                 Clr c = source[i];
@@ -2193,10 +2204,10 @@ public static class Pixels
                     Clr key = Clr.Opaque(c);
                     if (!dict.ContainsKey(key))
                     {
-                        Vec4 lab = Clr.StandardToCieLab(key);
+                        Lab lab = Clr.StandardToCieLab(key);
                         dict.Add(key, lab);
 
-                        float lum = lab.z;
+                        float lum = lab.L;
                         if (lum < lumMin) { lumMin = lum; }
                         if (lum > lumMax) { lumMax = lum; }
                         lumSum += lum;
@@ -2221,26 +2232,25 @@ public static class Pixels
                     float tLumAvg = t * lumAvg;
 
                     Dictionary<Clr, Clr> stretched = new();
-                    foreach (KeyValuePair<Clr, Vec4> kv in dict)
+                    foreach (KeyValuePair<Clr, Lab> kv in dict)
                     {
-                        Vec4 sourceLab = kv.Value;
-                        Vec4 stretchedLab = sourceLab;
+                        Lab sourceLab = kv.Value;
+                        Lab stretchedLab = sourceLab;
                         if (gtZero)
                         {
-                            stretchedLab = new Vec4(
-                                sourceLab.x,
-                                sourceLab.y,
-                                u * sourceLab.z +
-                                sourceLab.z * tDenom - lumMintDenom,
-                                sourceLab.w);
+                            stretchedLab = new(
+                                l: u * sourceLab.L + sourceLab.L * tDenom - lumMintDenom,
+                                a: sourceLab.A,
+                                b: sourceLab.B,
+                                alpha: sourceLab.Alpha);
                         }
                         else if (ltZero)
                         {
-                            stretchedLab = new Vec4(
-                                sourceLab.x,
-                                sourceLab.y,
-                                u * stretchedLab.z + tLumAvg,
-                                sourceLab.w);
+                            stretchedLab = new(
+                                l: u * stretchedLab.L + tLumAvg,
+                                a: sourceLab.A,
+                                b: sourceLab.B,
+                                alpha: sourceLab.Alpha);
                         }
 
                         stretched.Add(kv.Key, Clr.CieLabToStandard(stretchedLab));
@@ -2299,14 +2309,14 @@ public static class Pixels
                 return target;
             }
 
-            Vec4 tintLab = Clr.StandardToCieLab(tint);
+            Lab tintLab = Clr.StandardToCieLab(tint);
             Dictionary<Clr, Clr> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
                 Clr c = source[i];
                 if (Clr.Any(c) && !dict.ContainsKey(c))
                 {
-                    Vec4 mixedLab = Vec4.Mix(Clr.StandardToCieLab(c), tintLab, fac);
+                    Lab mixedLab = Lab.Mix(Clr.StandardToCieLab(c), tintLab, fac);
                     dict.Add(c, Clr.CieLabToStandard(mixedLab));
                 }
             }
@@ -2338,7 +2348,10 @@ public static class Pixels
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            for (int i = 0; i < srcLen; ++i) { target[i] = Clr.ToneMapAces(source[i]); }
+            for (int i = 0; i < srcLen; ++i)
+            {
+                target[i] = Clr.ToneMapAcesStandard(source[i]);
+            }
         }
         return target;
     }
@@ -2354,7 +2367,10 @@ public static class Pixels
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            for (int i = 0; i < srcLen; ++i) { target[i] = Clr.ToneMapHable(source[i]); }
+            for (int i = 0; i < srcLen; ++i)
+            {
+                target[i] = Clr.ToneMapHableStandard(source[i]);
+            }
         }
         return target;
     }

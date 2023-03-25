@@ -93,11 +93,11 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Constructs a vector from float values.
+    /// Constructs a vector from single precision real numbers.
     /// </summary>
-    /// <param name="x">the x component</param>
-    /// <param name="y">the y component</param>
-    /// <param name="z">the z component</param>
+    /// <param name="x">x component</param>
+    /// <param name="y">y component</param>
+    /// <param name="z">z component</param>
     public Vec3(in float x, in float y, in float z)
     {
         this._x = x;
@@ -109,9 +109,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Constructs a vector from boolean values, where true is 1.0 and false is
     /// 0.0 .
     /// </summary>
-    /// <param name="x">the x component</param>
-    /// <param name="y">the y component</param>
-    /// <param name="z">the z component</param>
+    /// <param name="x">x component</param>
+    /// <param name="y">y component</param>
+    /// <param name="z">z component</param>
     public Vec3(in bool x, in bool y, in bool z)
     {
         this._x = x ? 1.0f : 0.0f;
@@ -159,8 +159,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <summary>
     /// Compares this vector to another in compliance with the IComparable
     /// interface. Returns 1 when a component of this vector is greater than
-    /// another; -1 when lesser. Prioritizes the highest dimension first: z, y,
-    /// x . Returns 0 as a last resort.
+    /// another; -1 when lesser. Returns 0 as a last resort.
+    /// Prioritizes the highest dimension first: z, y, x. 
     /// </summary>
     /// <param name="v">the comparisand</param>
     /// <returns>evaluation</returns>
@@ -363,7 +363,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Negates vector
+    /// Negates the vector.
     /// </summary>
     /// <param name="v">vector</param>
     /// <returns>negation</returns>
@@ -1617,7 +1617,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             Utils.Mix(-MathF.PI, MathF.PI,
                 (float)rng.NextDouble()),
 
-            Utils.Mix(MathF.PI, 0.0f,
+            Utils.Mix(-Utils.HalfPi, Utils.HalfPi,
                 (float)rng.NextDouble()),
 
             Utils.Mix(rhoMin, rhoMax,

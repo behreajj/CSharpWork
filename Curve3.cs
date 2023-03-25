@@ -772,8 +772,8 @@ public class Curve3 : IEnumerable<Knot3>
                     for (int i = 0; i < len; ++i)
                     {
                         Clr c = colors[i];
-                        Vec4 lab = Clr.StandardToCieLab(c);
-                        Vec3 v = lab.xyz;
+                        Lab lab = Clr.StandardToCieLab(c);
+                        Vec3 v = new(x: lab.A, y: lab.B, z: lab.L);
                         Knot3 kn = knots[i];
                         kn.Coord = v;
                         kn.ForeHandle = v;

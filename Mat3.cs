@@ -771,6 +771,34 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     }
 
     /// <summary>
+    /// Creates a reflection matrix from a plane represented
+    /// by an axis. The vector will be normalized by the function.
+    /// </summary>
+    /// <param name="v">axis</param>
+    /// <returns>matrix</returns>
+    public static Mat3 FromReflection(in Vec2 v)
+    {
+        float mSq = Vec2.MagSq(v);
+        if (mSq != 0.0f)
+        {
+            float mInv = Utils.InvSqrtUnchecked(mSq);
+            float ax = v.x * mInv;
+            float ay = v.y * mInv;
+
+            float x = -(ax + ax);
+            float y = -(ay + ay);
+
+            float axay = x * ay;
+
+            return new Mat3(
+                x * ax + 1.0f, axay, 0.0f,
+                axay, y * ay + 1.0f, 0.0f,
+                0.0f, 0.0f, 1.0f);
+        }
+        return Mat3.Identity;
+    }
+
+    /// <summary>
     /// Creates a rotation matrix from an angle in radians around the z axis.
     /// </summary>
     /// <param name="radians">angle</param>
@@ -832,6 +860,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <summary>
     /// Creates skew, or shear, matrix from an angle and axes. Vectors a and b
     /// are expected to be orthonormal, i.e. perpendicular and of unit length.
+    /// If the angle is a multiple of 90 degrees, returns the identity.
     /// </summary>
     /// <param name="radians">angle in radians</param>
     /// <param name="a">skew axis</param>
@@ -839,6 +868,12 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <returns>skew matrix</returns>
     public static Mat3 FromSkew(in float radians, in Vec2 a, in Vec2 b)
     {
+        // TODO: Validate and normalize axes?
+        if (Utils.Approx(Utils.RemFloor(radians, MathF.PI), 0.0f))
+        {
+            return Mat3.Identity;
+        }
+
         float t = MathF.Tan(radians);
         float tax = a.x * t;
         float tay = a.y * t;
@@ -863,7 +898,8 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     }
 
     /// <summary>
-    /// Inverts the input matrix.
+    /// Inverts the input matrix. Returns the identity
+    /// if the matrix's determinant is zero.
     /// </summary>
     /// <param name="m">matrix</param>
     /// <returns>the inverse</returns>
@@ -1035,7 +1071,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// Returns the identity matrix, [ 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
     /// 1.0] .
     /// </summary>
-    /// <value>the identity matrix</value>
+    /// <value>identity matrix</value>
     public static Mat3 Identity
     {
         get

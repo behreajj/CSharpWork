@@ -7,7 +7,7 @@ using System;
 public static class ClrBlends
 {
     /// <summary>
-    /// Blends two colors in CIE LCH. The under color's lightness
+    /// Blends two colors in LCH. The under color's lightness
     /// is retained while its hue and saturation are blended according
     /// to the transparency of the over and under color.
     /// </summary>
@@ -22,21 +22,21 @@ public static class ClrBlends
         if (v <= 0.0f) { return over; }
         if (t <= 0.0f) { return under; }
 
-        Vec4 uLch = Clr.StandardToCieLch(under);
-        Vec4 oLch = Clr.StandardToCieLch(over);
+        Lch uLch = Clr.StandardToCieLch(under);
+        Lch oLch = Clr.StandardToCieLch(over);
 
         float u = 1.0f - t;
         float tuv = MathF.Min(1.0f, t + u * v);
+        float cc = u * uLch.C + t * oLch.C;
+        float ch = u * uLch.H + t * oLch.H;
+        ch -= MathF.Floor(ch);
 
-        Vec4 cLch = new(
-                u * uLch.x + t * oLch.x,
-                u * uLch.y + t * oLch.y,
-                uLch.z, tuv);
+        Lch cLch = new(l: uLch.L, c: cc, h: ch, alpha: tuv);
         return Clr.CieLchToStandard(cLch);
     }
 
     /// <summary>
-    /// Blends two colors in CIE LCH. The under color's lightness
+    /// Blends two colors in LCH. The under color's lightness
     /// and chroma are retained while its hue is blended according
     /// to the transparency of the over and under color.
     /// </summary>
@@ -51,20 +51,20 @@ public static class ClrBlends
         if (v <= 0.0f) { return over; }
         if (t <= 0.0f) { return under; }
 
-        Vec4 uLch = Clr.StandardToCieLch(under);
-        Vec4 oLch = Clr.StandardToCieLch(over);
+        Lch uLch = Clr.StandardToCieLch(under);
+        Lch oLch = Clr.StandardToCieLch(over);
 
         float u = 1.0f - t;
         float tuv = MathF.Min(1.0f, t + u * v);
+        float ch = u * uLch.H + t * oLch.H;
+        ch -= MathF.Floor(ch);
 
-        Vec4 cLch = new(
-                u * uLch.x + t * oLch.x,
-                uLch.y, uLch.z, tuv);
+        Lch cLch = new(l: uLch.L, c: uLch.C, h: ch, alpha: tuv);
         return Clr.CieLchToStandard(cLch);
     }
 
     /// <summary>
-    /// Blends two colors in CIE LCH. The under color's hue
+    /// Blends two colors in LCH. The under color's hue
     /// and chroma are retained while its lightness is blended
     /// according to the transparency of the over and under color.
     /// </summary>
@@ -79,20 +79,19 @@ public static class ClrBlends
         if (v <= 0.0f) { return over; }
         if (t <= 0.0f) { return under; }
 
-        Vec4 uLch = Clr.StandardToCieLch(under);
-        Vec4 oLch = Clr.StandardToCieLch(over);
+        Lch uLch = Clr.StandardToCieLch(under);
+        Lch oLch = Clr.StandardToCieLch(over);
 
         float u = 1.0f - t;
         float tuv = MathF.Min(1.0f, t + u * v);
+        float cl = u * uLch.L + t * oLch.L;
 
-        Vec4 cLch = new(uLch.x, uLch.y,
-                u * uLch.z + t * oLch.z,
-                tuv);
+        Lch cLch = new(l: cl, c: uLch.C, h: uLch.H, alpha: tuv);
         return Clr.CieLchToStandard(cLch);
     }
 
     /// <summary>
-    /// Blends two colors in CIE LCH. The under color's hue
+    /// Blends two colors in LCH. The under color's hue
     /// and lightness are retained while its chroma is blended
     /// according to the transparency of the over and under color.
     /// </summary>
@@ -107,15 +106,14 @@ public static class ClrBlends
         if (v <= 0.0f) { return over; }
         if (t <= 0.0f) { return under; }
 
-        Vec4 uLch = Clr.StandardToCieLch(under);
-        Vec4 oLch = Clr.StandardToCieLch(over);
+        Lch uLch = Clr.StandardToCieLch(under);
+        Lch oLch = Clr.StandardToCieLch(over);
 
         float u = 1.0f - t;
         float tuv = MathF.Min(1.0f, t + u * v);
+        float cc = u * uLch.C + t * oLch.C;
 
-        Vec4 cLch = new(uLch.x,
-                u * uLch.y + t * oLch.y,
-                uLch.z, tuv);
+        Lch cLch = new(l: uLch.L, c: cc, h: uLch.H, alpha: tuv);
         return Clr.CieLchToStandard(cLch);
     }
 }
