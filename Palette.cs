@@ -119,7 +119,7 @@ public class Palette : IEnumerable
     /// <param name="name">name</param>
     /// <param name="author">author</param>
     /// <param name="colors">colors</param>
-    public Palette(in string name, in string author, params Clr[] colors)
+    public Palette(in string name, in string author, params Rgb[] colors)
     {
         this.Name = name;
         this.Author = author;
@@ -148,7 +148,7 @@ public class Palette : IEnumerable
     /// <param name="color">color</param>
     /// <param name="name">name</param>
     /// <returns>this palette</returns>
-    public Palette AppendColor(in Clr color, in String name = "")
+    public Palette AppendColor(in Rgb color, in String name = "")
     {
         this.entries = PalEntry.Append(this.entries,
             new PalEntry(color, name));
@@ -177,10 +177,10 @@ public class Palette : IEnumerable
     /// Gets all the colors in the palette.
     /// </summary>
     /// <returns>colors</returns>
-    public Clr[] GetColors()
+    public Rgb[] GetColors()
     {
         int len = this.entries.Length;
-        Clr[] result = new Clr[len];
+        Rgb[] result = new Rgb[len];
         for (int i = 0; i < len; ++i)
         {
             result[i] = this.entries[i].Color;
@@ -202,7 +202,7 @@ public class Palette : IEnumerable
     /// </summary>
     /// <param name="i">index</param>
     /// <returns>color</returns>
-    public Clr GetPalEntryColor(in int i)
+    public Rgb GetPalEntryColor(in int i)
     {
         return this.entries[i].Color;
     }
@@ -224,7 +224,7 @@ public class Palette : IEnumerable
     /// <param name="c">color</param>
     /// <param name="df">default value</param>
     /// <returns>index</returns>
-    public int IndexOf(in Clr c, in int df = -1)
+    public int IndexOf(in Rgb c, in int df = -1)
     {
         int i = Array.IndexOf(this.entries, new PalEntry(c, ""));
         return i > -1 ? i : df;
@@ -237,7 +237,7 @@ public class Palette : IEnumerable
     /// <param name="color">color</param>
     /// <param name="name">name</param>
     /// <returns>this palette</returns>
-    public Palette InsertColor(in int index, in Clr color, in String name = "")
+    public Palette InsertColor(in int index, in Rgb color, in String name = "")
     {
         this.entries = PalEntry.Insert(this.entries, index,
             new PalEntry(color, name));
@@ -251,7 +251,7 @@ public class Palette : IEnumerable
     /// <param name="color">color</param>
     /// <param name="name">name</param>
     /// <returns>this palette</returns>
-    public Palette PrependColor(in Clr color, in String name = "")
+    public Palette PrependColor(in Rgb color, in String name = "")
     {
         this.entries = PalEntry.Prepend(this.entries,
             new PalEntry(color, name));
@@ -266,7 +266,7 @@ public class Palette : IEnumerable
     /// </summary>
     /// <param name="index">index</param>
     /// <returns>removed entry</returns>
-    public Clr RemoveColorAt(in int index)
+    public Rgb RemoveColorAt(in int index)
     {
         (PalEntry[], PalEntry) result = PalEntry.RemoveAt(this.entries, index);
         this.entries = result.Item1;
@@ -277,7 +277,7 @@ public class Palette : IEnumerable
         }
         else
         {
-            return Clr.ClearBlack;
+            return global::Rgb.ClearBlack;
         }
     }
 
@@ -295,7 +295,7 @@ public class Palette : IEnumerable
     /// </summary>
     /// <param name="i">index</param>
     /// <param name="color">color</param>
-    public void SetPalEntryColor(in int i, in Clr color)
+    public void SetPalEntryColor(in int i, in Rgb color)
     {
         this.entries[i].Color = color;
     }
@@ -430,12 +430,12 @@ public class Palette : IEnumerable
     {
         target.entries = PalEntry.Resize(target.entries, 6);
         PalEntry[] entries = target.entries;
-        entries[0].Set(Clr.Red, "Red");
-        entries[1].Set(Clr.Yellow, "Yellow");
-        entries[2].Set(Clr.Green, "Green");
-        entries[3].Set(Clr.Cyan, "Cyan");
-        entries[4].Set(Clr.Blue, "Blue");
-        entries[5].Set(Clr.Magenta, "Magenta");
+        entries[0].Set(global::Rgb.Red, "Red");
+        entries[1].Set(global::Rgb.Yellow, "Yellow");
+        entries[2].Set(global::Rgb.Green, "Green");
+        entries[3].Set(global::Rgb.Cyan, "Cyan");
+        entries[4].Set(global::Rgb.Blue, "Blue");
+        entries[5].Set(global::Rgb.Magenta, "Magenta");
 
         target.Name = "Rgb";
         target.Author = "Anonymous";

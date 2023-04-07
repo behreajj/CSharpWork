@@ -697,7 +697,7 @@ public class Curve3 : IEnumerable<Knot3>
     /// <returns>curve</returns>
     public static Curve3 FromColors(
         in Curve3 target,
-        in Clr[] colors,
+        in Rgb[] colors,
         in ClrModel model = ClrModel.CieLab,
         in bool closedLoop = false)
     {
@@ -714,7 +714,7 @@ public class Curve3 : IEnumerable<Knot3>
                 {
                     for (int i = 0; i < len; ++i)
                     {
-                        Clr c = colors[i];
+                        Rgb c = colors[i];
                         Vec3 v = new(c.r, c.g, c.b);
                         Knot3 kn = knots[i];
                         kn.Coord = v;
@@ -727,8 +727,8 @@ public class Curve3 : IEnumerable<Knot3>
                 {
                     for (int i = 0; i < len; ++i)
                     {
-                        Clr c = colors[i];
-                        Clr l = Clr.StandardToLinear(c);
+                        Rgb c = colors[i];
+                        Rgb l = Rgb.StandardToLinear(c);
                         Vec3 v = new(l.r, l.g, l.b);
                         Knot3 kn = knots[i];
                         kn.Coord = v;
@@ -741,9 +741,9 @@ public class Curve3 : IEnumerable<Knot3>
                 {
                     for (int i = 0; i < len; ++i)
                     {
-                        Clr c = colors[i];
-                        Clr l = Clr.StandardToLinear(c);
-                        Vec4 xyza = Clr.LinearToCieXyz(l);
+                        Rgb c = colors[i];
+                        Rgb l = Rgb.StandardToLinear(c);
+                        Vec4 xyza = Rgb.LinearToCieXyz(l);
                         Vec3 v = xyza.xyz;
                         Knot3 kn = knots[i];
                         kn.Coord = v;
@@ -756,7 +756,7 @@ public class Curve3 : IEnumerable<Knot3>
                 {
                     for (int i = 0; i < len; ++i)
                     {
-                        Clr c = colors[i];
+                        Rgb c = colors[i];
                         Vec3 v = Vec3.FromColor(c);
                         Knot3 kn = knots[i];
                         kn.Coord = v;
@@ -771,8 +771,8 @@ public class Curve3 : IEnumerable<Knot3>
                 {
                     for (int i = 0; i < len; ++i)
                     {
-                        Clr c = colors[i];
-                        Lab lab = Clr.StandardToCieLab(c);
+                        Rgb c = colors[i];
+                        Lab lab = Rgb.StandardToCieLab(c);
                         Vec3 v = new(x: lab.A, y: lab.B, z: lab.L);
                         Knot3 kn = knots[i];
                         kn.Coord = v;

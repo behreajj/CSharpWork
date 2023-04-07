@@ -1217,7 +1217,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>direction</returns>
-    public static Vec3 FromColor(in Clr c)
+    public static Vec3 FromColor(in Rgb c)
     {
         if (c.a > 0)
         {
@@ -1564,6 +1564,16 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
+    /// Creates a random vector.
+    /// </summary>
+    /// <param name="rng">random number generator</param>
+    /// <returns>random vector</returns>
+    public static Vec3 Random(in System.Random rng)
+    {
+        return Vec3.RandomSpherical(rng);
+    }
+
+    /// <summary>
     /// Creates a random point in the Cartesian coordinate system given a lower
     /// and an upper bound.
     /// </summary>
@@ -1583,8 +1593,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a random point in the Cartesian coordinate system given a lower
-    /// and an upper bound.
+    /// Creates a random point in the Cartesian coordinate system
+    /// given a lower and an upper bound.
     /// </summary>
     /// <param name="rng">random number generator</param>
     /// <param name="lb">lower bound</param>
@@ -1602,26 +1612,27 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a vector at a random azimuth, inclination and radius.
+    /// Creates a vector that lies on a sphere.
+    /// Finds three random numbers with normal distribution,
+    /// then normalizes them.
     /// </summary>
     /// <param name="rng">random number generator</param>
-    /// <param name="rhoMin">minimum radius</param>
-    /// <param name="rhoMax">maximum radius</param>
-    /// <returns>output vector</returns>
+    /// <param name="radius">radius</param>
+    /// <returns>random vector</returns>
     public static Vec3 RandomSpherical(
         in System.Random rng,
-        in float rhoMin = 1.0f,
-        in float rhoMax = 1.0f)
+        in float radius = 1.0f)
     {
-        return Vec3.FromSpherical(
-            Utils.Mix(-MathF.PI, MathF.PI,
-                (float)rng.NextDouble()),
-
-            Utils.Mix(-Utils.HalfPi, Utils.HalfPi,
-                (float)rng.NextDouble()),
-
-            Utils.Mix(rhoMin, rhoMax,
-                (float)rng.NextDouble()));
+        float x = Utils.NextGaussian(rng);
+        float y = Utils.NextGaussian(rng);
+        float z = Utils.NextGaussian(rng);
+        float sqMag = x * x + y * y + z * z;
+        if (sqMag != 0.0f)
+        {
+            float scalar = radius / MathF.Sqrt(sqMag);
+            return new(x * scalar, y * scalar, z * scalar);
+        }
+        return Vec3.Zero;
     }
 
     /// <summary>

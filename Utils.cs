@@ -692,6 +692,36 @@ public static class Utils
     }
 
     /// <summary>
+    /// Generates a random number with normal distribution.
+    /// Based on the Box-Muller transform as described here:
+    /// https://www.wikiwand.com/en/Box%E2%80%93Muller_transform
+    /// Could generate a tuple of numbers, but only returns the
+    /// x coordinate.
+    /// </summary>
+    /// <param name="rng">input value</param>
+    /// <param name="sigma">standard deviation</param>
+    /// <param name="mu">mean</param>
+    /// <returns>random number</returns>
+    public static float NextGaussian(
+        in System.Random rng,
+        in float sigma = 1.0f,
+        in float mu = 0.0f)
+    {
+        double u1, u2;
+        do
+        {
+            u1 = rng.NextDouble();
+        } while (u1 <= Utils.Epsilon);
+        u2 = rng.NextDouble();
+
+        double mag = sigma * Math.Sqrt(-2.0d * Math.Log(u1));
+        double tau = 6.283185307179586d;
+        double x = mag * Math.Cos(tau * u2) + mu;
+        // double y = mag * Math.Sin(tau * u2) + mu;
+        return (float)x;
+    }
+
+    /// <summary>
     /// Finds the next power of 2 for a signed integer, i.e., multiplies
     /// the next power by the integer's sign. Returns zero if the input
     /// is zero.

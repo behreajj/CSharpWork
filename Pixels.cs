@@ -16,8 +16,8 @@ public static class Pixels
     /// <param name="h">image height</param>
     /// <param name="a">first color/param>
     /// <param name="b">second color/param>
-    /// <param name="cols">columns/param>
-    /// <param name="rows">rows/param>
+    /// <param name="cols">columns</param>
+    /// <param name="rows">rows</param>
     /// <returns>checker pattern</returns>
     public static T[] Checker<T>(
         in T[] target,
@@ -38,6 +38,53 @@ public static class Pixels
             target[i] = (i % w / wch + i / hchw & 1) == 0 ? a : b;
         }
         return target;
+    }
+
+    /// <summary>
+    /// Crops an image to a region defined by a top left
+    /// and bottom right corner.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="wSrc">source image width</param>
+    /// <param name="hSrc">source image height</param>
+    /// <param name="xtl">top left corner x</param>
+    /// <param name="ytl">top left corner y</param>
+    /// <param name="xbr">bottom right corner x</param>
+    /// <param name="ybr">bottom right corner y</param>
+    /// <returns>checker pattern</returns>
+    public static (T[] pixels, int w, int h, int x, int y) Crop<T>(
+        in T[] source,
+        in int wSrc, in int hSrc,
+        in int xtl, in int ytl,
+        in int xbr, in int ybr)
+    {
+        int xtlVrf = xtl < 0 ? 0 : xtl > wSrc - 2 ? wSrc - 2 : xtl;
+        int ytlVrf = ytl < 0 ? 0 : ytl > hSrc - 2 ? hSrc - 2 : ytl;
+        int xbrVrf = xbr < 1 ? 1 : xbr > wSrc - 1 ? wSrc - 1 : xbr;
+        int ybrVrf = ybr < 1 ? 1 : ybr > hSrc - 1 ? hSrc - 1 : ybr;
+
+        // Swap pixels if in wrong order.
+        xtlVrf = Math.Min(xtlVrf, xbrVrf);
+        ytlVrf = Math.Min(ytlVrf, ybrVrf);
+        xbrVrf = Math.Max(xtlVrf, xbrVrf);
+        ybrVrf = Math.Max(ytlVrf, ybrVrf);
+
+        int wTrg = Math.Max(1, 1 + xbrVrf - xtlVrf);
+        int hTrg = Math.Max(1, 1 + ybrVrf - ytlVrf);
+
+        int trgLen = wTrg * hTrg;
+        T[] target = new T[trgLen];
+        for (int i = 0; i < trgLen; ++i)
+        {
+            int xTrg = i % wTrg;
+            int yTrg = i / wTrg;
+            int xSrc = xtlVrf + xTrg;
+            int ySrc = ytlVrf + yTrg;
+            int j = xSrc + ySrc * wSrc;
+            target[i] = source[j];
+        }
+
+        return (pixels: target, w: wTrg, h: hTrg, x: xtlVrf, y: ytlVrf);
     }
 
     /// <summary>
@@ -476,14 +523,14 @@ public static class Pixels
     /// <param name="target">target pixels</param>
     /// <param name="alpha">alpha</param>
     /// <returns>adjusted pixels</returns>
-    public static Clr[] AdjustAlpha(in Clr[] source, in Clr[] target, in float alpha)
+    public static Rgb[] AdjustAlpha(in Rgb[] source, in Rgb[] target, in float alpha)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
             if (alpha <= 0.0f)
             {
-                Pixels.Fill(target, Clr.ClearBlack);
+                Pixels.Fill(target, Rgb.ClearBlack);
                 return target;
             }
 
@@ -495,8 +542,8 @@ public static class Pixels
 
             for (int i = 0; i < srcLen; ++i)
             {
-                Clr c = source[i];
-                target[i] = new Clr(c.r, c.g, c.b, c.a * alpha);
+                Rgb c = source[i];
+                target[i] = new Rgb(c.r, c.g, c.b, c.a * alpha);
             }
         }
         return target;
@@ -511,7 +558,7 @@ public static class Pixels
     /// <param name="target">target pixels</param>
     /// <param name="adjust">adjustment</param>
     /// <returns>adjusted pixels</returns>
-    public static Clr[] AdjustCieLch(in Clr[] source, in Clr[] target, in Lch adjust)
+    public static Rgb[] AdjustCieLch(in Rgb[] source, in Rgb[] target, in Lch adjust)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
@@ -526,28 +573,28 @@ public static class Pixels
                 return target;
             }
 
-            Dictionary<Clr, Clr> dict = new();
+            Dictionary<Rgb, Rgb> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
-                Clr c = source[i];
-                if (Clr.Any(c) && !dict.ContainsKey(c))
+                Rgb c = source[i];
+                if (Rgb.Any(c) && !dict.ContainsKey(c))
                 {
-                    Lch lch = Clr.StandardToCieLch(c);
-                    dict.Add(c, Clr.CieLchToStandard(lch + adjust));
+                    Lch lch = Rgb.StandardToCieLch(c);
+                    dict.Add(c, Rgb.CieLchToStandard(lch + adjust));
                 }
             }
 
             if (dict.Count > 0)
             {
-                for (int i = 0; i < srcLen; ++i)
+                for (int j = 0; j < srcLen; ++j)
                 {
-                    Clr c = source[i];
-                    target[i] = dict.GetValueOrDefault(c, Clr.ClearBlack);
+                    Rgb c = source[j];
+                    target[j] = dict.GetValueOrDefault(c, Rgb.ClearBlack);
                 }
             }
             else
             {
-                Pixels.Fill(target, Clr.ClearBlack);
+                Pixels.Fill(target, Rgb.ClearBlack);
             }
         }
         return target;
@@ -562,7 +609,7 @@ public static class Pixels
     /// <param name="target">target pixels</param>
     /// <param name="fac">factor</param>
     /// <returns>adjusted pixels</returns>
-    public static Clr[] AdjustContrast(in Clr[] source, in Clr[] target, in float fac)
+    public static Rgb[] AdjustContrast(in Rgb[] source, in Rgb[] target, in float fac)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
@@ -574,40 +621,40 @@ public static class Pixels
                 return target;
             }
 
-            Dictionary<Clr, Clr> dict = new();
+            Dictionary<Rgb, Rgb> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
-                Clr c = source[i];
-                if (Clr.Any(c))
+                Rgb c = source[i];
+                if (Rgb.Any(c))
                 {
-                    Clr key = Clr.Opaque(c);
+                    Rgb key = Rgb.Opaque(c);
                     if (!dict.ContainsKey(key))
                     {
-                        Lab lab = Clr.StandardToCieLab(key);
+                        Lab lab = Rgb.StandardToCieLab(key);
                         Lab labAdj = new(
                             l: (lab.L - 50.0f) * valAdjust + 50.0f,
                             a: lab.A,
                             b: lab.B,
                             alpha: lab.Alpha);
-                        dict.Add(key, Clr.CieLabToStandard(labAdj));
+                        dict.Add(key, Rgb.CieLabToStandard(labAdj));
                     }
                 }
             }
 
             if (dict.Count > 0)
             {
-                Clr clearBlack = Clr.ClearBlack;
-                for (int i = 0; i < srcLen; ++i)
+                Rgb clearBlack = Rgb.ClearBlack;
+                for (int j = 0; j < srcLen; ++j)
                 {
-                    Clr c = source[i];
-                    target[i] = Clr.CopyAlpha(
-                        dict.GetValueOrDefault(Clr.Opaque(c),
+                    Rgb c = source[j];
+                    target[j] = Rgb.CopyAlpha(
+                        dict.GetValueOrDefault(Rgb.Opaque(c),
                             clearBlack), c);
                 }
             }
             else
             {
-                Pixels.Fill(target, Clr.ClearBlack);
+                Pixels.Fill(target, Rgb.ClearBlack);
             }
         }
         return target;
@@ -627,10 +674,10 @@ public static class Pixels
     /// <param name="bh">over height</param>
     /// <param name="func">blend function</param>
     /// <returns>tuple</returns>
-    public static (Clr[] pixels, int w, int h, int x, int y) Blend(
-        in Clr[] apx, in Clr[] bpx,
+    public static (Rgb[] pixels, int w, int h, int x, int y) Blend(
+        in Rgb[] apx, in Rgb[] bpx,
         in int aw, in int ah, in int bw, in int bh,
-        in Func<Clr, Clr, Clr> func)
+        in Func<Rgb, Rgb, Rgb> func)
     {
         int wLrg = aw > bw ? aw : bw;
         int hLrg = ah > bh ? ah : bh;
@@ -667,11 +714,11 @@ public static class Pixels
     /// <param name="by">over top left corner y</param>
     /// <param name="func">blend function</param>
     /// <returns>tuple</returns>
-    public static (Clr[] pixels, int w, int h, int x, int y) Blend(
-        in Clr[] apx, in Clr[] bpx,
+    public static (Rgb[] pixels, int w, int h, int x, int y) Blend(
+        in Rgb[] apx, in Rgb[] bpx,
         in int aw, in int ah, in int bw, in int bh,
         in int ax, in int ay, in int bx, in int by,
-        in Func<Clr, Clr, Clr> func)
+        in Func<Rgb, Rgb, Rgb> func)
     {
         int cx = ax < bx ? ax : bx;
         int cy = ay < by ? ay : by;
@@ -684,13 +731,13 @@ public static class Pixels
         int bxud = bx - cx;
         int byud = by - cy;
 
-        Clr[] target = new Clr[cLen];
+        Rgb[] target = new Rgb[cLen];
         for (int i = 0; i < cLen; ++i)
         {
             int x = i % cw;
             int y = i / cw;
 
-            Clr aClr = Clr.ClearBlack;
+            Rgb aClr = Rgb.ClearBlack;
             int axs = x - axud;
             int ays = y - ayud;
             if (ays > -1 && ays < ah && axs > -1 && axs < aw)
@@ -698,7 +745,7 @@ public static class Pixels
                 aClr = apx[axs + ays * aw];
             }
 
-            Clr bClr = Clr.ClearBlack;
+            Rgb bClr = Rgb.ClearBlack;
             int bxs = x - bxud;
             int bys = y - byud;
             if (bys > -1 && bys < bh && bxs > -1 && bxs < bw)
@@ -725,8 +772,8 @@ public static class Pixels
     /// <param name="bw">over width</param>
     /// <param name="bh">over height</param>
     /// <returns>tuple</returns>
-    public static (Clr[] pixels, int w, int h, int x, int y) BlendCieLab(
-        in Clr[] apx, in Clr[] bpx,
+    public static (Rgb[] pixels, int w, int h, int x, int y) BlendCieLab(
+        in Rgb[] apx, in Rgb[] bpx,
         in int aw, in int ah, in int bw, in int bh)
     {
         int wLrg = aw > bw ? aw : bw;
@@ -763,8 +810,8 @@ public static class Pixels
     /// <param name="bx">over top left corner x</param>
     /// <param name="by">over top left corner y</param>
     /// <returns>tuple</returns>
-    public static (Clr[] pixels, int w, int h, int x, int y) BlendCieLab(
-        in Clr[] apx, in Clr[] bpx,
+    public static (Rgb[] pixels, int w, int h, int x, int y) BlendCieLab(
+        in Rgb[] apx, in Rgb[] bpx,
         in int aw, in int ah, in int bw, in int bh,
         in int ax, in int ay, in int bx, in int by)
     {
@@ -774,9 +821,9 @@ public static class Pixels
         int bbrx = bx + bw - 1;
         int bbry = by + bh - 1;
 
-        Dictionary<Clr, Lab> dict = new()
+        Dictionary<Rgb, Lab> dict = new()
         {
-            { Clr.ClearBlack, Lab.ClearBlack }
+            { Rgb.ClearBlack, Lab.ClearBlack }
         };
 
         // Blending only necessary at the intersection of a and b.
@@ -803,18 +850,18 @@ public static class Pixels
 
                 int axs = x - axid;
                 int ays = y - ayid;
-                Clr aClr = apx[axs + ays * aw];
+                Rgb aClr = apx[axs + ays * aw];
                 if (!dict.ContainsKey(aClr))
                 {
-                    dict.Add(aClr, Clr.StandardToCieLab(aClr));
+                    dict.Add(aClr, Rgb.StandardToCieLab(aClr));
                 }
 
                 int bxs = x - bxid;
                 int bys = y - byid;
-                Clr bClr = bpx[bxs + bys * bw];
+                Rgb bClr = bpx[bxs + bys * bw];
                 if (!dict.ContainsKey(bClr))
                 {
-                    dict.Add(bClr, Clr.StandardToCieLab(bClr));
+                    dict.Add(bClr, Rgb.StandardToCieLab(bClr));
                 }
             }
         }
@@ -836,13 +883,13 @@ public static class Pixels
         int byud = by - cy;
 
         Lab clearBlack = Lab.ClearBlack;
-        Clr[] target = new Clr[cLen];
+        Rgb[] target = new Rgb[cLen];
         for (int i = 0; i < cLen; ++i)
         {
             int x = i % cw;
             int y = i / ch;
 
-            Clr aClr = Clr.ClearBlack;
+            Rgb aClr = Rgb.ClearBlack;
             int axs = x - axud;
             int ays = y - ayud;
             if (ays > -1 && ays < ah && axs > -1 && axs < aw)
@@ -850,7 +897,7 @@ public static class Pixels
                 aClr = apx[axs + ays * aw];
             }
 
-            Clr bClr = Clr.ClearBlack;
+            Rgb bClr = Rgb.ClearBlack;
             int bxs = x - bxud;
             int bys = y - byud;
             if (bys > -1 && bys < bh && bxs > -1 && bxs < bw)
@@ -878,7 +925,7 @@ public static class Pixels
                         a: u * orig.A + t * dest.A,
                         b: u * orig.B + t * dest.B,
                         alpha: tuv);
-                    target[i] = Clr.CieLabToStandard(cLab);
+                    target[i] = Rgb.CieLabToStandard(cLab);
                 }
             }
         }
@@ -897,20 +944,20 @@ public static class Pixels
     /// <param name="h">image height</param>
     /// <param name="step">kernel step</param>
     /// <returns>blurred pixels</returns>
-    public static Clr[] BlurBoxCieLab(
-        in Clr[] source, in Clr[] target,
+    public static Rgb[] BlurBoxCieLab(
+        in Rgb[] source, in Rgb[] target,
         in int w, in int h, in int step = 1)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            Dictionary<Clr, Lab> dict = new();
+            Dictionary<Rgb, Lab> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
-                Clr srgb = source[i];
+                Rgb srgb = source[i];
                 if (!dict.ContainsKey(srgb))
                 {
-                    dict.Add(srgb, Clr.StandardToCieLab(srgb));
+                    dict.Add(srgb, Rgb.StandardToCieLab(srgb));
                 }
             }
 
@@ -924,7 +971,7 @@ public static class Pixels
                 // Subtract step to center the kernel in the inner for loop.
                 int xSrc = i % w - stepVal;
                 int ySrc = i / w - stepVal;
-                Clr srgb = source[i];
+                Rgb srgb = source[i];
 
                 float lSum = 0.0f;
                 float aSum = 0.0f;
@@ -959,7 +1006,7 @@ public static class Pixels
                     a: aSum * denom,
                     b: bSum * denom,
                     alpha: tSum * denom);
-                target[i] = Clr.CieLabToStandard(labAvg);
+                target[i] = Rgb.CieLabToStandard(labAvg);
             }
         }
         return target;
@@ -973,8 +1020,8 @@ public static class Pixels
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>clamped array</returns>
-    public static Clr[] Clamp(
-        in Clr[] source, in Clr[] target,
+    public static Rgb[] Clamp(
+        in Rgb[] source, in Rgb[] target,
         in float lb = 0.0f, in float ub = 1.0f)
     {
         int srcLen = source.Length;
@@ -982,7 +1029,7 @@ public static class Pixels
         {
             for (int i = 0; i < srcLen; ++i)
             {
-                target[i] = Clr.Clamp(source[i], lb, ub);
+                target[i] = Rgb.Clamp(source[i], lb, ub);
             }
         }
         return target;
@@ -1001,18 +1048,18 @@ public static class Pixels
     /// <param name="ub">upper bound</param>
     /// <param name="f">filter function</param>
     /// <returns>dictionary</returns>
-    public static Dictionary<Clr, List<int>> Filter(
-        in Clr[] source,
+    public static Dictionary<Rgb, List<int>> Filter(
+        in Rgb[] source,
         in float lb, in float ub,
-        in Func<Clr, float, float, bool> f)
+        in Func<Rgb, float, float, bool> f)
     {
         int srcLen = source.Length;
-        HashSet<Clr> visited = new(256);
-        Dictionary<Clr, bool> included = new(256);
-        Dictionary<Clr, List<int>> dict = new(256);
+        HashSet<Rgb> visited = new(256);
+        Dictionary<Rgb, bool> included = new(256);
+        Dictionary<Rgb, List<int>> dict = new(256);
         for (int i = 0; i < srcLen; ++i)
         {
-            Clr c = source[i];
+            Rgb c = source[i];
             bool include;
             if (visited.Contains(c))
             {
@@ -1040,11 +1087,11 @@ public static class Pixels
     /// <param name="h">image height</param>
     /// <param name="cg">color gradient</param>
     /// <returns>conic gradient</returns>
-    public static Clr[] GradientConic(
-        in Clr[] target, in int w, in int h, in ClrGradient cg)
+    public static Rgb[] GradientConic(
+        in Rgb[] target, in int w, in int h, in ClrGradient cg)
     {
         return Pixels.GradientConic(target, w, h, cg,
-            (x, y, z) => Clr.MixRgbaStandard(x, y, z));
+            (x, y, z) => Rgb.MixRgbaStandard(x, y, z));
     }
 
     /// <summary>
@@ -1060,9 +1107,9 @@ public static class Pixels
     /// <param name="radians">radians</param>
     /// <param name="orig">origin</param>
     /// <returns>conic gradient</returns>
-    public static Clr[] GradientConic(
-        in Clr[] target, in int w, in int h,
-        in ClrGradient cg, in Func<Clr, Clr, float, Clr> easing,
+    public static Rgb[] GradientConic(
+        in Rgb[] target, in int w, in int h,
+        in ClrGradient cg, in Func<Rgb, Rgb, float, Rgb> easing,
         in Vec2 orig, in float radians = 0.0f)
     {
         return Pixels.GradientConic(target, w, h, cg, easing,
@@ -1083,9 +1130,9 @@ public static class Pixels
     /// <param name="xOrig">x origin</param>
     /// <param name="yOrig">y origin</param>
     /// <returns>conic gradient</returns>
-    public static Clr[] GradientConic(
-        in Clr[] target, in int w, in int h,
-        in ClrGradient cg, in Func<Clr, Clr, float, Clr> easing,
+    public static Rgb[] GradientConic(
+        in Rgb[] target, in int w, in int h,
+        in ClrGradient cg, in Func<Rgb, Rgb, float, Rgb> easing,
         in float xOrig = 0.0f, in float yOrig = 0.0f,
         in float radians = 0.0f)
     {
@@ -1120,11 +1167,11 @@ public static class Pixels
     /// <param name="h">image height</param>
     /// <param name="cg">color gradient</param>
     /// <returns>linear gradient</returns>
-    public static Clr[] GradientLinear(
-            in Clr[] target, in int w, in int h, in ClrGradient cg)
+    public static Rgb[] GradientLinear(
+            in Rgb[] target, in int w, in int h, in ClrGradient cg)
     {
         return Pixels.GradientLinear(target, w, h, cg,
-            (x, y, z) => Clr.MixRgbaStandard(x, y, z));
+            (x, y, z) => Rgb.MixRgbaStandard(x, y, z));
     }
 
     /// <summary>
@@ -1140,9 +1187,9 @@ public static class Pixels
     /// <param name="orig">origin</param>
     /// <param name="dest">destination</param>
     /// <returns>linear gradient</returns>
-    public static Clr[] GradientLinear(
-            in Clr[] target, in int w, in int h,
-            in ClrGradient cg, in Func<Clr, Clr, float, Clr> easing,
+    public static Rgb[] GradientLinear(
+            in Rgb[] target, in int w, in int h,
+            in ClrGradient cg, in Func<Rgb, Rgb, float, Rgb> easing,
             in Vec2 orig, in Vec2 dest)
     {
         return Pixels.GradientLinear(target, w, h, cg, easing,
@@ -1164,9 +1211,9 @@ public static class Pixels
     /// <param name="xDest">x destination</param>
     /// <param name="yDest">y destination</param>
     /// <returns>linear gradient</returns>
-    public static Clr[] GradientLinear(
-        in Clr[] target, in int w, in int h,
-        in ClrGradient cg, in Func<Clr, Clr, float, Clr> easing,
+    public static Rgb[] GradientLinear(
+        in Rgb[] target, in int w, in int h,
+        in ClrGradient cg, in Func<Rgb, Rgb, float, Rgb> easing,
         in float xOrig = -1.0f, in float yOrig = 0.0f,
         in float xDest = 1.0f, in float yDest = 0.0f)
     {
@@ -1201,11 +1248,11 @@ public static class Pixels
     /// <param name="target">target pixels</param>
     /// <param name="cg">color gradient</param>
     /// <returns>gradient map</returns>
-    public static Clr[] GradientMap(
-        in Clr[] source, in Clr[] target, in ClrGradient cg)
+    public static Rgb[] GradientMap(
+        in Rgb[] source, in Rgb[] target, in ClrGradient cg)
     {
         return Pixels.GradientMap(source, target, cg,
-            (x, y, z) => Clr.MixRgbaStandard(x, y, z));
+            (x, y, z) => Rgb.MixRgbaStandard(x, y, z));
     }
 
     /// <summary>
@@ -1217,23 +1264,23 @@ public static class Pixels
     /// <param name="cg">color gradient</param>
     /// <param name="easing">easing function</param>
     /// <returns>gradient map</returns>
-    public static Clr[] GradientMap(
-        in Clr[] source, in Clr[] target,
-        in ClrGradient cg, in Func<Clr, Clr, float, Clr> easing)
+    public static Rgb[] GradientMap(
+        in Rgb[] source, in Rgb[] target,
+        in ClrGradient cg, in Func<Rgb, Rgb, float, Rgb> easing)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            Dictionary<Clr, Clr> dict = new();
+            Dictionary<Rgb, Rgb> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
-                Clr c = source[i];
-                if (Clr.Any(c))
+                Rgb c = source[i];
+                if (Rgb.Any(c))
                 {
-                    Clr key = Clr.Opaque(c);
+                    Rgb key = Rgb.Opaque(c);
                     if (!dict.ContainsKey(key))
                     {
-                        float lum = Clr.StandardLuminance(key);
+                        float lum = Rgb.StandardLuminance(key);
                         float fac = lum <= 0.0031308f ?
                             lum * 12.92f :
                             MathF.Pow(lum, 1.0f / 2.4f) * 1.055f - 0.055f;
@@ -1244,18 +1291,18 @@ public static class Pixels
 
             if (dict.Count > 0)
             {
-                Clr clearBlack = Clr.ClearBlack;
+                Rgb clearBlack = Rgb.ClearBlack;
                 for (int i = 0; i < srcLen; ++i)
                 {
-                    Clr c = source[i];
-                    target[i] = Clr.CopyAlpha(
-                        dict.GetValueOrDefault(Clr.Opaque(c),
+                    Rgb c = source[i];
+                    target[i] = Rgb.CopyAlpha(
+                        dict.GetValueOrDefault(Rgb.Opaque(c),
                             clearBlack), c);
                 }
             }
             else
             {
-                Pixels.Fill(target, Clr.ClearBlack);
+                Pixels.Fill(target, Rgb.ClearBlack);
             }
         }
         return target;
@@ -1275,9 +1322,9 @@ public static class Pixels
     /// <param name="yOrig">y origin</param>
     /// <param name="radius">radius</param>
     /// <returns>linear gradient</returns>
-    public static Clr[] GradientRadial(
-        in Clr[] target, in int w, in int h,
-        in ClrGradient cg, in Func<Clr, Clr, float, Clr> easing,
+    public static Rgb[] GradientRadial(
+        in Rgb[] target, in int w, in int h,
+        in ClrGradient cg, in Func<Rgb, Rgb, float, Rgb> easing,
         in float xOrig, in float yOrig, in float radius)
     {
         float hInv2 = 2.0f / (h - 1.0f);
@@ -1306,8 +1353,8 @@ public static class Pixels
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
     /// <returns>inverted pixels</returns>
-    public static Clr[] InvertCieLab(
-        in Clr[] source, in Clr[] target)
+    public static Rgb[] InvertCieLab(
+        in Rgb[] source, in Rgb[] target)
     {
         return Pixels.InvertCieLab(source, target,
             true, true, true, false);
@@ -1320,8 +1367,8 @@ public static class Pixels
     /// <param name="target">target pixels</param>
     /// <param name="inv">inversion</param>
     /// <returns>inverted pixels</returns>
-    public static Clr[] InvertCieLab(
-        in Clr[] source, in Clr[] target, in Vec4 inv)
+    public static Rgb[] InvertCieLab(
+        in Rgb[] source, in Rgb[] target, in Vec4 inv)
     {
         return Pixels.InvertCieLab(source, target,
             inv.z != 0.0f, inv.x != 0.0f, inv.y != 0.0f, inv.w != 0.0f);
@@ -1337,8 +1384,8 @@ public static class Pixels
     /// <param name="b">invert b</param>
     /// <param name="alpha">invert alpha</param>
     /// <returns>inverted pixels</returns>
-    public static Clr[] InvertCieLab(
-        in Clr[] source, in Clr[] target,
+    public static Rgb[] InvertCieLab(
+        in Rgb[] source, in Rgb[] target,
         in bool l, in bool a, in bool b, in bool alpha)
     {
         int srcLen = source.Length;
@@ -1353,19 +1400,19 @@ public static class Pixels
             float aSign = a ? -1.0f : 1.0f;
             float bSign = b ? -1.0f : 1.0f;
 
-            Dictionary<Clr, Clr> dict = new();
+            Dictionary<Rgb, Rgb> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
-                Clr c = source[i];
+                Rgb c = source[i];
                 if (!dict.ContainsKey(c))
                 {
-                    Lab lab = Clr.StandardToCieLab(c);
+                    Lab lab = Rgb.StandardToCieLab(c);
                     Lab inv = new(
                         l: l ? 100.0f - lab.L : lab.L,
                         a: lab.A * aSign,
                         b: lab.B * bSign,
                         alpha: alpha ? 1.0f - lab.Alpha : lab.Alpha);
-                    dict.Add(c, Clr.CieLabToStandard(inv));
+                    dict.Add(c, Rgb.CieLabToStandard(inv));
                 }
             }
 
@@ -1389,8 +1436,8 @@ public static class Pixels
     /// <param name="bw">over width</param>
     /// <param name="bh">over height</param>
     /// <returns>tuple</returns>
-    public static (Clr[] pixels, int w, int h, int x, int y) Mask(
-            in Clr[] apx, in Clr[] bpx,
+    public static (Rgb[] pixels, int w, int h, int x, int y) Mask(
+            in Rgb[] apx, in Rgb[] bpx,
             in int aw, in int ah, in int bw, in int bh)
     {
         int wLrg = aw > bw ? aw : bw;
@@ -1426,8 +1473,8 @@ public static class Pixels
     /// <param name="bx">over top left corner x</param>
     /// <param name="by">over top left corner y</param>
     /// <returns>tuple</returns>
-    public static (Clr[] pixels, int w, int h, int x, int y) Mask(
-        in Clr[] apx, in Clr[] bpx,
+    public static (Rgb[] pixels, int w, int h, int x, int y) Mask(
+        in Rgb[] apx, in Rgb[] bpx,
         in int aw, in int ah, in int bw, in int bh,
         in int ax, in int ay, in int bx, in int by)
     {
@@ -1452,7 +1499,7 @@ public static class Pixels
         int bxd = bx - cx;
         int byd = by - cy;
 
-        Clr[] target = new Clr[cLen];
+        Rgb[] target = new Rgb[cLen];
         for (int i = 0; i < cLen; ++i)
         {
             int x = i % cw;
@@ -1461,26 +1508,26 @@ public static class Pixels
             int bys = y - byd;
             if (bys > -1 && bys < bh && bxs > -1 && bxs < bw)
             {
-                Clr bClr = bpx[bxs + bys * bw];
+                Rgb bClr = bpx[bxs + bys * bw];
                 if (bClr.a > 0.0f)
                 {
                     int axs = x - axd;
                     int ays = y - ayd;
                     if (ays > -1 && ays < ah && axs > -1 && axs < aw)
                     {
-                        Clr aClr = apx[axs + ays * aw];
+                        Rgb aClr = apx[axs + ays * aw];
                         if (aClr.a > 0.0f)
                         {
-                            target[i] = new Clr(aClr.r, aClr.g, aClr.b,
+                            target[i] = new Rgb(aClr.r, aClr.g, aClr.b,
                                aClr.a * bClr.a);
                         }
-                        else { target[i] = Clr.ClearBlack; }
+                        else { target[i] = Rgb.ClearBlack; }
                     }
-                    else { target[i] = Clr.ClearBlack; }
+                    else { target[i] = Rgb.ClearBlack; }
                 }
-                else { target[i] = Clr.ClearBlack; }
+                else { target[i] = Rgb.ClearBlack; }
             }
-            else { target[i] = Clr.ClearBlack; }
+            else { target[i] = Rgb.ClearBlack; }
         }
         return (pixels: target, w: cw, h: ch, x: cx, y: cy);
     }
@@ -1499,8 +1546,8 @@ public static class Pixels
     /// <param name="dest">destination</param>
     /// <param name="flip">flip mirror</param>
     /// <returns>palette</returns>    
-    public static Clr[] MirrorBilinear(
-        in Clr[] source, in Clr[] target,
+    public static Rgb[] MirrorBilinear(
+        in Rgb[] source, in Rgb[] target,
         in int w, in int h,
         in Vec2 orig, in Vec2 dest,
         in bool flip = false)
@@ -1527,8 +1574,8 @@ public static class Pixels
     /// <param name="yDest">y destination</param>
     /// <param name="flip">flip mirror</param>
     /// <returns>palette</returns>    
-    public static Clr[] MirrorBilinear(
-        in Clr[] source, in Clr[] target,
+    public static Rgb[] MirrorBilinear(
+        in Rgb[] source, in Rgb[] target,
         in int w, in int h,
         in float xOrig = -1.0f, in float yOrig = 0.0f,
         in float xDest = 1.0f, in float yDest = 0.0f,
@@ -1604,7 +1651,7 @@ public static class Pixels
                 }
                 else
                 {
-                    target[k] = Clr.ClearBlack;
+                    target[k] = Rgb.ClearBlack;
                 }
             }
         }
@@ -1617,12 +1664,12 @@ public static class Pixels
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
     /// <returns>opaque array</returns>
-    public static Clr[] Opaque(in Clr[] source, in Clr[] target)
+    public static Rgb[] Opaque(in Rgb[] source, in Rgb[] target)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            for (int i = 0; i < srcLen; ++i) { target[i] = Clr.Opaque(source[i]); }
+            for (int i = 0; i < srcLen; ++i) { target[i] = Rgb.Opaque(source[i]); }
         }
         return target;
     }
@@ -1639,18 +1686,18 @@ public static class Pixels
     /// <param name="capacity">node capacity</param>
     /// <param name="threshold">threshold</param>
     /// <returns>palette</returns>
-    public static Clr[] PaletteExtract(
-        in Clr[] source, in int capacity,
+    public static Rgb[] PaletteExtract(
+        in Rgb[] source, in int capacity,
         in int threshold = 256)
     {
-        SortedSet<Clr> uniqueColors = new();
+        SortedSet<Rgb> uniqueColors = new();
         int srcLen = source.Length;
         for (int h = 0; h < srcLen; ++h)
         {
-            Clr c = source[h];
-            if (Clr.Any(c))
+            Rgb c = source[h];
+            if (Rgb.Any(c))
             {
-                uniqueColors.Add(Clr.Opaque(c));
+                uniqueColors.Add(Rgb.Opaque(c));
             }
         }
 
@@ -1659,10 +1706,10 @@ public static class Pixels
         int uniquesLen = uniqueColors.Count;
         if (uniquesLen < valThresh)
         {
-            Clr[] under = new Clr[1 + uniquesLen];
-            under[0] = Clr.ClearBlack;
+            Rgb[] under = new Rgb[1 + uniquesLen];
+            under[0] = Rgb.ClearBlack;
             int i = 0;
-            foreach (Clr unique in uniqueColors)
+            foreach (Rgb unique in uniqueColors)
             {
                 under[++i] = unique;
             }
@@ -1670,9 +1717,9 @@ public static class Pixels
         }
 
         Octree oct = new(Bounds3.Lab, capacity);
-        foreach (Clr unique in uniqueColors)
+        foreach (Rgb unique in uniqueColors)
         {
-            Lab lab = Clr.StandardToCieLab(unique);
+            Lab lab = Rgb.StandardToCieLab(unique);
             oct.Insert(new(x: lab.A, y: lab.B, z: lab.L));
         }
         oct.Cull();
@@ -1680,13 +1727,13 @@ public static class Pixels
         List<Vec3> centers = new();
         Octree.CentersMean(oct, centers, false);
         int centersLen = centers.Count;
-        Clr[] over = new Clr[1 + centersLen];
-        over[0] = Clr.ClearBlack;
+        Rgb[] over = new Rgb[1 + centersLen];
+        over[0] = Rgb.ClearBlack;
         for (int j = 0; j < centersLen; ++j)
         {
             Vec3 center = centers[j];
             Lab lab = new(l: center.z, a: center.x, b: center.y, alpha: 1.0f);
-            over[1 + j] = Clr.CieLabToStandard(lab);
+            over[1 + j] = Rgb.CieLabToStandard(lab);
         }
         return over;
     }
@@ -1702,8 +1749,8 @@ public static class Pixels
     /// <param name="radius">query radius</param>
     /// <param name="capacity">node capacity</param>
     /// <returns>palette map</returns>
-    public static Clr[] PaletteMap(
-        in Clr[] source, in Clr[] target, in Clr[] palette,
+    public static Rgb[] PaletteMap(
+        in Rgb[] source, in Rgb[] target, in Rgb[] palette,
         in float radius = 128.0f, in int capacity = 16)
     {
         int srcLen = source.Length;
@@ -1712,15 +1759,15 @@ public static class Pixels
             Octree oct = new(Bounds3.Lab, capacity);
             oct.Subdivide(1, capacity);
 
-            Dictionary<Vec3, Clr> lookup = new();
+            Dictionary<Vec3, Rgb> lookup = new();
 
             int palLen = palette.Length;
             for (int h = 0; h < palLen; ++h)
             {
-                Clr c = palette[h];
-                if (Clr.Any(c))
+                Rgb c = palette[h];
+                if (Rgb.Any(c))
                 {
-                    Lab lab = Clr.StandardToCieLab(c);
+                    Lab lab = Rgb.StandardToCieLab(c);
                     Vec3 point = new(x: lab.A, y: lab.B, z: lab.L);
                     oct.Insert(point);
                     lookup.Add(point, c);
@@ -1728,22 +1775,22 @@ public static class Pixels
             }
             oct.Cull();
 
-            Dictionary<Clr, Clr> dict = new();
+            Dictionary<Rgb, Rgb> dict = new();
             SortedList<float, Vec3> found = new(32);
             for (int i = 0; i < srcLen; ++i)
             {
-                Clr srgb = source[i];
-                if (Clr.Any(srgb))
+                Rgb srgb = source[i];
+                if (Rgb.Any(srgb))
                 {
-                    Clr opaque = Clr.Opaque(srgb);
+                    Rgb opaque = Rgb.Opaque(srgb);
                     if (dict.ContainsKey(opaque))
                     {
-                        target[i] = Clr.CopyAlpha(dict[opaque], srgb);
+                        target[i] = Rgb.CopyAlpha(dict[opaque], srgb);
                     }
                     else
                     {
                         found.Clear();
-                        Lab lab = Clr.StandardToCieLab(opaque);
+                        Lab lab = Rgb.StandardToCieLab(opaque);
                         Vec3 point = new(x: lab.A, y: lab.B, z: lab.L);
                         Octree.Query(oct, point, radius, found);
                         if (found.Count > 0)
@@ -1751,16 +1798,16 @@ public static class Pixels
                             Vec3 nearest = found.Values[0];
                             if (lookup.ContainsKey(nearest))
                             {
-                                Clr match = lookup[nearest];
-                                target[i] = Clr.CopyAlpha(match, srgb);
+                                Rgb match = lookup[nearest];
+                                target[i] = Rgb.CopyAlpha(match, srgb);
                                 dict.Add(opaque, match);
                             }
-                            else { target[i] = Clr.ClearBlack; }
+                            else { target[i] = Rgb.ClearBlack; }
                         }
-                        else { target[i] = Clr.ClearBlack; }
+                        else { target[i] = Rgb.ClearBlack; }
                     }
                 }
-                else { target[i] = Clr.ClearBlack; }
+                else { target[i] = Rgb.ClearBlack; }
             }
         }
         return target;
@@ -1774,12 +1821,89 @@ public static class Pixels
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
     /// <returns>premultiplied array</returns>
-    public static Clr[] Premul(in Clr[] source, in Clr[] target)
+    public static Rgb[] Premul(in Rgb[] source, in Rgb[] target)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            for (int i = 0; i < srcLen; ++i) { target[i] = Clr.Premul(source[i]); }
+            for (int i = 0; i < srcLen; ++i) { target[i] = Rgb.Premul(source[i]); }
+        }
+        return target;
+    }
+
+    /// <summary>
+    /// Replaces the colors in the source pixels that approximately
+    /// match the fromColor within a tolerance. Two colors are converted
+    /// to LAB, then the distance between them is compared against the
+    /// tolerance.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">target pixels</param>
+    /// <param name="fromColor">from color</param>
+    /// <param name="toColor">to color</param>
+    /// <returns>replaced array</returns>
+    public static Rgb[] ReplaceColorApprox(
+        in Rgb[] source, in Rgb[] target,
+        in Rgb fromColor, in Rgb toColor,
+        in float tolerance = 0.0f)
+    {
+        if (tolerance <= 0.0f)
+        {
+            return Pixels.ReplaceColorExact(source, target, fromColor, toColor);
+        }
+
+        int srcLen = source.Length;
+        if (srcLen == target.Length)
+        {
+            Lab fromLab = Rgb.StandardToCieLab(fromColor);
+            Dictionary<Rgb, Rgb> dict = new();
+            for (int i = 0; i < srcLen; ++i)
+            {
+                Rgb srcClr = source[i];
+                if (dict.ContainsKey(srcClr))
+                {
+                    target[i] = dict[source[i]];
+                }
+                else
+                {
+                    Lab srcLab = Rgb.StandardToCieLab(srcClr);
+                    Rgb trgClr = Lab.DistEuclideanAlpha(srcLab, fromLab) <= tolerance ?
+                        toColor : srcClr;
+                    dict.Add(srcClr, trgClr);
+                    target[i] = trgClr;
+                }
+            }
+        }
+        return target;
+    }
+
+    /// <summary>
+    /// Replaces the colors in the source pixels that equal
+    /// the fromColor with the toColor.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">target pixels</param>
+    /// <param name="fromColor">from color</param>
+    /// <param name="toColor">to color</param>
+    /// <returns>replaced array</returns>
+    public static Rgb[] ReplaceColorExact(
+        in Rgb[] source, in Rgb[] target,
+        in Rgb fromColor, in Rgb toColor)
+    {
+        int srcLen = source.Length;
+        if (srcLen == target.Length)
+        {
+            for (int i = 0; i < srcLen; ++i)
+            {
+                if (Rgb.EqRgbSatArith(source[i], fromColor))
+                {
+                    source[i] = toColor;
+                }
+                else
+                {
+                    source[i] = target[i];
+                }
+            }
         }
         return target;
     }
@@ -1794,15 +1918,15 @@ public static class Pixels
     /// <param name="wTrg">rescaled width</param>
     /// <param name="hTrg">rescaled height</param>
     /// <returns>resized array</returns>
-    public static Clr[] ResizeBilinear(
-        in Clr[] source,
+    public static Rgb[] ResizeBilinear(
+        in Rgb[] source,
         in int wSrc, in int hSrc,
         in int wTrg, in int hTrg)
     {
         int srcLen = source.Length;
         if (wSrc == wTrg && hSrc == hTrg)
         {
-            Clr[] sameSize = new Clr[srcLen];
+            Rgb[] sameSize = new Rgb[srcLen];
             System.Array.Copy(source, 0, sameSize, 0, srcLen);
             return sameSize;
         }
@@ -1811,7 +1935,7 @@ public static class Pixels
         float ty = (hSrc - 1.0f) / (hTrg - 1.0f);
 
         int trgLen = wTrg * hTrg;
-        Clr[] target = new Clr[trgLen];
+        Rgb[] target = new Rgb[trgLen];
         for (int i = 0; i < trgLen; ++i)
         {
             target[i] = Pixels.SampleBilinear(source,
@@ -1831,8 +1955,8 @@ public static class Pixels
     /// <param name="h">image height</param>
     /// <param name="radians">angle in radians</param>
     /// <returns>rotated pixels</returns>
-    public static (Clr[] pixels, int w, int h) RotateBilinear(
-        in Clr[] source, in int w, in int h, in float radians)
+    public static (Rgb[] pixels, int w, int h) RotateBilinear(
+        in Rgb[] source, in int w, in int h, in float radians)
     {
         int srcLen = source.Length;
         int deg = Utils.RemFloor(Utils.Round(radians * Utils.RadToDeg), 360);
@@ -1841,23 +1965,23 @@ public static class Pixels
         {
             case 0:
                 {
-                    Clr[] t0 = new Clr[srcLen];
+                    Rgb[] t0 = new Rgb[srcLen];
                     System.Array.Copy(source, 0, t0, 0, srcLen);
                     return (pixels: t0, w, h);
                 }
             case 90:
                 {
-                    Clr[] t90 = Pixels.Rotate90(source, new Clr[srcLen], w, h);
+                    Rgb[] t90 = Pixels.Rotate90(source, new Rgb[srcLen], w, h);
                     return (pixels: t90, w: h, h: w);
                 }
             case 180:
                 {
-                    Clr[] t180 = Pixels.Rotate180(source, new Clr[srcLen]);
+                    Rgb[] t180 = Pixels.Rotate180(source, new Rgb[srcLen]);
                     return (pixels: t180, w, h);
                 }
             case 270:
                 {
-                    Clr[] t270 = Pixels.Rotate270(source, new Clr[srcLen], w, h);
+                    Rgb[] t270 = Pixels.Rotate270(source, new Rgb[srcLen], w, h);
                     return (pixels: t270, w: h, h: w);
                 }
             default:
@@ -1880,8 +2004,8 @@ public static class Pixels
     /// <param name="cosa">cosine of the angle</param>
     /// <param name="sina">sine of the angle</param>
     /// <returns>rotated pixels</returns>
-    public static (Clr[] pixels, int w, int h) RotateBilinear(
-        in Clr[] source, in int w, in int h,
+    public static (Rgb[] pixels, int w, int h) RotateBilinear(
+        in Rgb[] source, in int w, in int h,
         in float cosa, in float sina)
     {
         // Do not generalize to pass in filter as a function,
@@ -1904,7 +2028,7 @@ public static class Pixels
         float yTrgCenter = hTrgf * 0.5f;
 
         int trgLen = wTrg * hTrg;
-        Clr[] target = new Clr[trgLen];
+        Rgb[] target = new Rgb[trgLen];
         for (int i = 0; i < trgLen; ++i)
         {
             float ySgn = i / wTrg - yTrgCenter;
@@ -1929,8 +2053,8 @@ public static class Pixels
     /// <param name="wSrc">image width</param>
     /// <param name="hSrc">image height</param>
     /// <returns>mixed color</returns>
-    static Clr SampleBilinear(
-        in Clr[] source, in float xSrc, in float ySrc,
+    static Rgb SampleBilinear(
+        in Rgb[] source, in float xSrc, in float ySrc,
         in int wSrc, in int hSrc)
     {
         // Find the truncation, floor and ceiling.
@@ -1949,10 +2073,10 @@ public static class Pixels
         bool xcInBounds = xc > -1 && xc < wSrc;
 
         // Pixel corners colors.
-        Clr c00 = yfInBounds && xfInBounds ? source[yf * wSrc + xf] : Clr.ClearBlack;
-        Clr c10 = yfInBounds && xcInBounds ? source[yf * wSrc + xc] : Clr.ClearBlack;
-        Clr c11 = ycInBounds && xcInBounds ? source[yc * wSrc + xc] : Clr.ClearBlack;
-        Clr c01 = ycInBounds && xfInBounds ? source[yc * wSrc + xf] : Clr.ClearBlack;
+        Rgb c00 = yfInBounds && xfInBounds ? source[yf * wSrc + xf] : Rgb.ClearBlack;
+        Rgb c10 = yfInBounds && xcInBounds ? source[yf * wSrc + xc] : Rgb.ClearBlack;
+        Rgb c11 = ycInBounds && xcInBounds ? source[yc * wSrc + xc] : Rgb.ClearBlack;
+        Rgb c01 = ycInBounds && xfInBounds ? source[yc * wSrc + xf] : Rgb.ClearBlack;
 
         float xErr = xSrc - xf;
 
@@ -2001,14 +2125,14 @@ public static class Pixels
             float a2 = u * a0 + yErr * a1;
             if (a2 > 0.0f)
             {
-                return Clr.Clamp(new Clr(
+                return Rgb.Clamp(new Rgb(
                     u * r0 + yErr * r1,
                     u * g0 + yErr * g1,
                     u * b0 + yErr * b1, a2));
             }
         }
 
-        return Clr.ClearBlack;
+        return Rgb.ClearBlack;
     }
 
     /// <summary>
@@ -2020,8 +2144,8 @@ public static class Pixels
     /// <param name="w">image width/param>
     /// <param name="h">image height</param>
     /// <returns>tuple</returns>
-    public static (Clr[] pixels, int w, int h) ScaleBilinear(
-    in Clr[] source, in int w, in int h, in float scalar)
+    public static (Rgb[] pixels, int w, int h) ScaleBilinear(
+    in Rgb[] source, in int w, in int h, in float scalar)
     {
         float sVrf = MathF.Abs(scalar);
         int wTrg = Utils.Max(1, (int)(0.5f + w * sVrf));
@@ -2039,8 +2163,8 @@ public static class Pixels
     /// <param name="w">image width/param>
     /// <param name="h">image height</param>
     /// <returns>tuple</returns>
-    public static (Clr[] pixels, int w, int h) ScaleBilinear(
-    in Clr[] source, in int w, in int h, in Vec2 scalar)
+    public static (Rgb[] pixels, int w, int h) ScaleBilinear(
+    in Rgb[] source, in int w, in int h, in Vec2 scalar)
     {
         Vec2 sVrf = Vec2.Abs(scalar);
         int wTrg = Utils.Max(1, (int)(0.5f + w * sVrf.x));
@@ -2059,8 +2183,8 @@ public static class Pixels
     /// <param name="h">image height</param>
     /// <param name="radians">radians</param>
     /// <returns>tuple</returns>
-    public static (Clr[] pixels, int w, int h) SkewXBilinear(
-        in Clr[] source, in int w, in int h, in float radians)
+    public static (Rgb[] pixels, int w, int h) SkewXBilinear(
+        in Rgb[] source, in int w, in int h, in float radians)
     {
         int srcLen = source.Length;
         int deg = Utils.Round(radians * Utils.RadToDeg);
@@ -2070,7 +2194,7 @@ public static class Pixels
         {
             case 0:
                 {
-                    Clr[] t0 = new Clr[srcLen];
+                    Rgb[] t0 = new Rgb[srcLen];
                     System.Array.Copy(source, 0, t0, 0, srcLen);
                     return (pixels: t0, w, h);
                 }
@@ -2080,7 +2204,7 @@ public static class Pixels
             case 91:
             case 92:
                 {
-                    Clr[] t90 = Pixels.Fill(new Clr[srcLen], Clr.ClearBlack);
+                    Rgb[] t90 = Pixels.Fill(new Rgb[srcLen], Rgb.ClearBlack);
                     return (pixels: t90, w, h);
                 }
             default:
@@ -2095,7 +2219,7 @@ public static class Pixels
                     float xDiff = (wSrcf - wTrgf) * 0.5f;
 
                     int trgLen = wTrg * h;
-                    Clr[] target = new Clr[trgLen];
+                    Rgb[] target = new Rgb[trgLen];
                     for (int i = 0; i < trgLen; ++i)
                     {
                         float yTrg = i / wTrg;
@@ -2119,8 +2243,8 @@ public static class Pixels
     /// <param name="h">image height</param>
     /// <param name="radians">radians</param>
     /// <returns>tuple</returns>
-    public static (Clr[] pixels, int w, int h) SkewYBilinear(
-    in Clr[] source, in int w, in int h, in float radians)
+    public static (Rgb[] pixels, int w, int h) SkewYBilinear(
+    in Rgb[] source, in int w, in int h, in float radians)
     {
         int srcLen = source.Length;
         int deg = Utils.Round(radians * Utils.RadToDeg);
@@ -2130,7 +2254,7 @@ public static class Pixels
         {
             case 0:
                 {
-                    Clr[] t0 = new Clr[srcLen];
+                    Rgb[] t0 = new Rgb[srcLen];
                     System.Array.Copy(source, 0, t0, 0, srcLen);
                     return (pixels: t0, w, h);
                 }
@@ -2140,7 +2264,7 @@ public static class Pixels
             case 91:
             case 92:
                 {
-                    Clr[] t90 = Pixels.Fill(new Clr[srcLen], Clr.ClearBlack);
+                    Rgb[] t90 = Pixels.Fill(new Rgb[srcLen], Rgb.ClearBlack);
                     return (pixels: t90, w, h);
                 }
             default:
@@ -2155,7 +2279,7 @@ public static class Pixels
                     float yDiff = (hSrcf - hTrgf) * 0.5f;
 
                     int trgLen = w * hTrg;
-                    Clr[] target = new Clr[trgLen];
+                    Rgb[] target = new Rgb[trgLen];
                     for (int i = 0; i < trgLen; ++i)
                     {
                         float xTrg = i % w;
@@ -2178,8 +2302,8 @@ public static class Pixels
     /// <param name="target">target pixels</param>
     /// <param name="fac">factor</param>
     /// <returns>adjusted pixels</returns>
-    public static Clr[] StretchContrast(
-        in Clr[] source, in Clr[] target, in float fac)
+    public static Rgb[] StretchContrast(
+        in Rgb[] source, in Rgb[] target, in float fac)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
@@ -2195,16 +2319,16 @@ public static class Pixels
             float lumMax = Single.MinValue;
             float lumSum = 0.0f;
 
-            Dictionary<Clr, Lab> dict = new();
+            Dictionary<Rgb, Lab> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
-                Clr c = source[i];
-                if (Clr.Any(c))
+                Rgb c = source[i];
+                if (Rgb.Any(c))
                 {
-                    Clr key = Clr.Opaque(c);
+                    Rgb key = Rgb.Opaque(c);
                     if (!dict.ContainsKey(key))
                     {
-                        Lab lab = Clr.StandardToCieLab(key);
+                        Lab lab = Rgb.StandardToCieLab(key);
                         dict.Add(key, lab);
 
                         float lum = lab.L;
@@ -2231,8 +2355,8 @@ public static class Pixels
                     float lumMintDenom = lumMin * tDenom;
                     float tLumAvg = t * lumAvg;
 
-                    Dictionary<Clr, Clr> stretched = new();
-                    foreach (KeyValuePair<Clr, Lab> kv in dict)
+                    Dictionary<Rgb, Rgb> stretched = new();
+                    foreach (KeyValuePair<Rgb, Lab> kv in dict)
                     {
                         Lab sourceLab = kv.Value;
                         Lab stretchedLab = sourceLab;
@@ -2253,15 +2377,15 @@ public static class Pixels
                                 alpha: sourceLab.Alpha);
                         }
 
-                        stretched.Add(kv.Key, Clr.CieLabToStandard(stretchedLab));
+                        stretched.Add(kv.Key, Rgb.CieLabToStandard(stretchedLab));
                     }
 
-                    Clr clearBlack = Clr.ClearBlack;
-                    for (int i = 0; i < srcLen; ++i)
+                    Rgb clearBlack = Rgb.ClearBlack;
+                    for (int j = 0; j < srcLen; ++j)
                     {
-                        Clr c = source[i];
-                        target[i] = Clr.CopyAlpha(
-                            stretched.GetValueOrDefault(Clr.Opaque(c),
+                        Rgb c = source[j];
+                        target[j] = Rgb.CopyAlpha(
+                            stretched.GetValueOrDefault(Rgb.Opaque(c),
                                 clearBlack), c);
                     }
                 }
@@ -2273,7 +2397,7 @@ public static class Pixels
             }
             else
             {
-                Pixels.Fill(target, Clr.ClearBlack);
+                Pixels.Fill(target, Rgb.ClearBlack);
             }
         }
         return target;
@@ -2287,9 +2411,9 @@ public static class Pixels
     /// <param name="tint">tint color</param>
     /// <param name="fac">factor</param>
     /// <returns>tinted pixels</returns>
-    public static Clr[] TintCieLab(
-        in Clr[] source, in Clr[] target,
-        in Clr tint, in float fac = 0.5f)
+    public static Rgb[] TintCieLab(
+        in Rgb[] source, in Rgb[] target,
+        in Rgb tint, in float fac = 0.5f)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
@@ -2304,34 +2428,34 @@ public static class Pixels
             {
                 for (int i = 0; i < srcLen; ++i)
                 {
-                    target[i] = Clr.CopyAlpha(tint, source[i]);
+                    target[i] = Rgb.CopyAlpha(tint, source[i]);
                 }
                 return target;
             }
 
-            Lab tintLab = Clr.StandardToCieLab(tint);
-            Dictionary<Clr, Clr> dict = new();
+            Lab tintLab = Rgb.StandardToCieLab(tint);
+            Dictionary<Rgb, Rgb> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
-                Clr c = source[i];
-                if (Clr.Any(c) && !dict.ContainsKey(c))
+                Rgb c = source[i];
+                if (Rgb.Any(c) && !dict.ContainsKey(c))
                 {
-                    Lab mixedLab = Lab.Mix(Clr.StandardToCieLab(c), tintLab, fac);
-                    dict.Add(c, Clr.CieLabToStandard(mixedLab));
+                    Lab mixedLab = Lab.Mix(Rgb.StandardToCieLab(c), tintLab, fac);
+                    dict.Add(c, Rgb.CieLabToStandard(mixedLab));
                 }
             }
 
             if (dict.Count > 0)
             {
+                Rgb clearBlack = Rgb.ClearBlack;
                 for (int i = 0; i < srcLen; ++i)
                 {
-                    Clr c = source[i];
-                    target[i] = dict.GetValueOrDefault(c, Clr.ClearBlack);
+                    target[i] = dict.GetValueOrDefault(source[i], clearBlack);
                 }
             }
             else
             {
-                Pixels.Fill(target, Clr.ClearBlack);
+                Pixels.Fill(target, Rgb.ClearBlack);
             }
         }
         return target;
@@ -2343,14 +2467,14 @@ public static class Pixels
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
     /// <returns>tone mapped array</returns>
-    public static Clr[] ToneMapAces(in Clr[] source, in Clr[] target)
+    public static Rgb[] ToneMapAces(in Rgb[] source, in Rgb[] target)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
             for (int i = 0; i < srcLen; ++i)
             {
-                target[i] = Clr.ToneMapAcesStandard(source[i]);
+                target[i] = Rgb.ToneMapAcesStandard(source[i]);
             }
         }
         return target;
@@ -2362,14 +2486,14 @@ public static class Pixels
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
     /// <returns>tone mapped array</returns>
-    public static Clr[] ToneMapHable(in Clr[] source, in Clr[] target)
+    public static Rgb[] ToneMapHable(in Rgb[] source, in Rgb[] target)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
             for (int i = 0; i < srcLen; ++i)
             {
-                target[i] = Clr.ToneMapHableStandard(source[i]);
+                target[i] = Rgb.ToneMapHableStandard(source[i]);
             }
         }
         return target;
@@ -2387,14 +2511,14 @@ public static class Pixels
     /// <param name="tlx">top left corner x</param>
     /// <param name="tly">top left corner y</param>
     /// <returns>tuple</returns>
-    public static (Clr[] pixels, int w, int h, int x, int y) TrimAlpha(
-        in Clr[] source, in int w, in int h, in int tlx = 0, in int tly = 0)
+    public static (Rgb[] pixels, int w, int h, int x, int y) TrimAlpha(
+        in Rgb[] source, in int w, in int h, in int tlx = 0, in int tly = 0)
     {
         int srcLen = source.Length;
 
         if (w < 2 && h < 2)
         {
-            Clr[] trg0 = new Clr[srcLen];
+            Rgb[] trg0 = new Rgb[srcLen];
             System.Array.Copy(source, 0, trg0, 0, srcLen);
             return (pixels: trg0, w, h, x: tlx, y: tly);
         }
@@ -2416,7 +2540,7 @@ public static class Pixels
             while (goTop && x < wn1)
             {
                 ++x;
-                if (Clr.Any(source[wtop + x]))
+                if (Rgb.Any(source[wtop + x]))
                 {
                     minRight = x;
                     minBottom = top;
@@ -2435,7 +2559,7 @@ public static class Pixels
             while (goLeft && y > top)
             {
                 --y;
-                if (Clr.Any(source[y * w + left]))
+                if (Rgb.Any(source[y * w + left]))
                 {
                     minBottom = y;
                     goLeft = false;
@@ -2454,7 +2578,7 @@ public static class Pixels
             while (goBottom && x > left)
             {
                 --x;
-                if (Clr.Any(source[wbottom + x]))
+                if (Rgb.Any(source[wbottom + x]))
                 {
                     minRight = x;
                     goBottom = false;
@@ -2472,7 +2596,7 @@ public static class Pixels
             while (goRight && y > top)
             {
                 --y;
-                if (Clr.Any(source[y * w + right]))
+                if (Rgb.Any(source[y * w + right]))
                 {
                     goRight = false;
                 }
@@ -2483,13 +2607,13 @@ public static class Pixels
         int hTrg = 1 + bottom - top;
         if (wTrg < 1 || hTrg < 1)
         {
-            Clr[] trg1 = new Clr[srcLen];
+            Rgb[] trg1 = new Rgb[srcLen];
             System.Array.Copy(source, 0, trg1, 0, srcLen);
             return (pixels: trg1, w, h, x: tlx, y: tly);
         }
 
         int trgLen = wTrg * hTrg;
-        Clr[] target = new Clr[trgLen];
+        Rgb[] target = new Rgb[trgLen];
         for (int i = 0; i < trgLen; ++i)
         {
             target[i] = source[w * (top + i / wTrg) + left + i % wTrg];
@@ -2505,12 +2629,12 @@ public static class Pixels
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
     /// <returns>premultiplied array</returns>
-    public static Clr[] Unpremul(in Clr[] source, in Clr[] target)
+    public static Rgb[] Unpremul(in Rgb[] source, in Rgb[] target)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            for (int i = 0; i < srcLen; ++i) { target[i] = Clr.Unpremul(source[i]); }
+            for (int i = 0; i < srcLen; ++i) { target[i] = Rgb.Unpremul(source[i]); }
         }
         return target;
     }

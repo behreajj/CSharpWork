@@ -11,7 +11,7 @@ public readonly struct ClrKey : IComparable<ClrKey>, IEquatable<ClrKey>
     /// <summary>
     /// The key's color.
     /// </summary>
-    private readonly Clr color;
+    private readonly Rgb color;
 
     /// <summary>
     /// The key's step, expected to be in the range [0.0, 1.0] .
@@ -28,14 +28,14 @@ public readonly struct ClrKey : IComparable<ClrKey>, IEquatable<ClrKey>
     /// The key's color.
     /// </summary>
     /// <value>color</value>
-    public Clr Color { get { return this.color; } }
+    public Rgb Color { get { return this.color; } }
 
     /// <summary>
     /// Constructs a key from a step and color.
     /// </summary>
     /// <param name="step">step</param>
     /// <param name="color">color</param>
-    public ClrKey(in float step, Clr color)
+    public ClrKey(in float step, Rgb color)
     {
         this.step = Utils.Clamp(step, 0.0f, 1.0f);
         this.color = color;
@@ -190,7 +190,7 @@ public readonly struct ClrKey : IComparable<ClrKey>, IEquatable<ClrKey>
         sb.Append("{ step: ");
         Utils.ToFixed(sb, key.step, places);
         sb.Append(", color: ");
-        Clr.ToString(sb, key.color, places);
+        Rgb.ToString(sb, key.color, places);
         sb.Append(' ');
         sb.Append('}');
         return sb;

@@ -1263,7 +1263,7 @@ public class Mesh2
     /// <param name="poly">polygon type</param>
     /// <returns>mesh</returns>
     public static Mesh2 FromPixels(
-         in Clr[] source, in Mesh2 target,
+         in Rgb[] source, in Mesh2 target,
         in int w, in int h,
         in PolyType poly = PolyType.Tri)
     {
@@ -1271,7 +1271,7 @@ public class Mesh2
         List<int> indices = new();
         for (int i = 0; i < srcLen; ++i)
         {
-            if (Clr.Any(source[i])) { indices.Add(i); }
+            if (Rgb.Any(source[i])) { indices.Add(i); }
         }
 
         float right = w > h ? 0.5f : 0.5f * (w / (float)h);

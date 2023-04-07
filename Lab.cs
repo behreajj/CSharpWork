@@ -331,16 +331,43 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     {
         // Alternatively, see
         // https://github.com/svgeesus/svgeesus.github.io/blob/master/Color/OKLab-notes.md
-        return Lab.DistEuclidean(a, b);
+        return Lab.DistEuclideanAlpha(a, b);
     }
 
     /// <summary>
     /// Finds the Euclidean distance between two colors.
+    /// Includes the colors' alpha channel in the calculation.
+    /// Since the alpha range is considerably less than
+    /// that of the other channels, a scalar is provided
+    /// to increase its weight.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <param name="alphaScalar">alpha scalar</param>
+    /// <returns>Euclidean distance</returns>
+    public static float DistEuclideanAlpha(
+        in Lab a, in Lab b,
+        in float alphaScalar = 100.0f)
+    {
+        float dt = alphaScalar * (b.alpha - a.alpha);
+        float dl = b.l - a.l;
+        float da = b.a - a.a;
+        float db = b.b - a.b;
+        return MathF.Sqrt(
+            dt * dt +
+            dl * dl +
+            da * da +
+            db * db);
+    }
+
+    /// <summary>
+    /// Finds the Euclidean distance between two colors.
+    /// Does not include the colors' alpha channel in the calculation.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>Euclidean distance</returns>
-    public static float DistEuclidean(in Lab a, in Lab b)
+    public static float DistEuclideanNoAlpha(in Lab a, in Lab b)
     {
         float dl = b.l - a.l;
         float da = b.a - a.a;

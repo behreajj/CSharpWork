@@ -15,7 +15,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// <summary>
     /// The entry's color.
     /// </summary>
-    protected Clr color;
+    protected Rgb color;
 
     /// <summary>
     /// The entry's name.
@@ -28,7 +28,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// zero, clear black is used instead.
     /// </summary>
     /// <value>color</value>
-    public Clr Color
+    public Rgb Color
     {
         get
         {
@@ -37,7 +37,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
 
         set
         {
-            this.color = Clr.None(value) ? Clr.ClearBlack : value;
+            this.color = Rgb.None(value) ? Rgb.ClearBlack : value;
         }
     }
 
@@ -63,7 +63,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
             }
             else
             {
-                this.name = Clr.ToHexWeb(this.color);
+                this.name = Rgb.ToHexWeb(this.color);
             }
         }
     }
@@ -73,7 +73,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// </summary>
     public PalEntry()
     {
-        this.Color = Clr.ClearBlack;
+        this.Color = Rgb.ClearBlack;
         this.Name = "Empty";
     }
 
@@ -82,7 +82,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// </summary>
     /// <param name="color">color</param>
     /// <param name="name">name</param>
-    public PalEntry(in Clr color, in string name = "")
+    public PalEntry(in Rgb color, in string name = "")
     {
         this.Color = color;
         this.Name = name;
@@ -107,7 +107,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// <returns>hash code</returns>
     public override int GetHashCode()
     {
-        if (Clr.None(this.color)) { return 0; }
+        if (Rgb.None(this.color)) { return 0; }
         return this.color.GetHashCode();
     }
 
@@ -129,14 +129,14 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     {
         if (pe is null) { return 1; }
 
-        bool leftZeroAlpha = Clr.None(this.color);
-        bool rightZeroAlpha = Clr.None(pe.color);
+        bool leftZeroAlpha = Rgb.None(this.color);
+        bool rightZeroAlpha = Rgb.None(pe.color);
         if (leftZeroAlpha && rightZeroAlpha) { return 0; }
         if (leftZeroAlpha) { return -1; }
         if (rightZeroAlpha) { return 1; }
 
-        int left = Clr.ToHexArgb(this.color);
-        int right = Clr.ToHexArgb(pe.color);
+        int left = Rgb.ToHexArgb(this.color);
+        int right = Rgb.ToHexArgb(pe.color);
         return (left < right) ? -1 : (left > right) ? 1 : 0;
     }
 
@@ -158,7 +158,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// <param name="color">color</param>
     /// <param name="name">name</param>
     /// <returns>this entry</returns>
-    public PalEntry Set(in Clr color, in string name)
+    public PalEntry Set(in Rgb color, in string name)
     {
         this.Color = color;
         this.Name = name;
@@ -169,7 +169,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// Converts a color to a palette entry.
     /// </summary>
     /// <param name="c">color</param>
-    public static implicit operator PalEntry(in Clr c)
+    public static implicit operator PalEntry(in Rgb c)
     {
         return new PalEntry(c, "");
     }
@@ -316,7 +316,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// <returns>string builder</returns>
     public static StringBuilder ToGplString(in StringBuilder sb, in PalEntry pe)
     {
-        Clr c = pe.Color;
+        Rgb c = pe.Color;
         int r = (int)(Utils.Clamp(c.r, 0.0f, 1.0f) * 255.0f + 0.5f);
         int g = (int)(Utils.Clamp(c.g, 0.0f, 1.0f) * 255.0f + 0.5f);
         int b = (int)(Utils.Clamp(c.b, 0.0f, 1.0f) * 255.0f + 0.5f);
@@ -350,7 +350,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// <returns>string builder</returns>
     public static StringBuilder ToPalString(in StringBuilder sb, in PalEntry pe)
     {
-        Clr c = pe.Color;
+        Rgb c = pe.Color;
         int r = (int)(0.5f + 255.0f * Utils.Clamp(c.r, 0.0f, 1.0f));
         int g = (int)(0.5f + 255.0f * Utils.Clamp(c.g, 0.0f, 1.0f));
         int b = (int)(0.5f + 255.0f * Utils.Clamp(c.b, 0.0f, 1.0f));
@@ -388,7 +388,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
         in int places = 4)
     {
         sb.Append("{ color: ");
-        Clr.ToString(sb, pe.Color, places);
+        Rgb.ToString(sb, pe.Color, places);
         sb.Append(", name: \"");
         sb.Append(pe.Name);
         sb.Append('\"');

@@ -1422,6 +1422,16 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
+    /// Creates a random vector.
+    /// </summary>
+    /// <param name="rng">random number generator</param>
+    /// <returns>random vector</returns>
+    public static Vec2 Random(in System.Random rng)
+    {
+        return Vec2.RandomPolar(rng);
+    }
+
+    /// <summary>
     /// Creates a random point in the Cartesian coordinate system given a lower
     /// and an upper bound.
     /// </summary>
@@ -1440,8 +1450,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a random point in the Cartesian coordinate system given a lower
-    /// and an upper bound.
+    /// Creates a random point in the Cartesian coordinate system
+    /// given a lower and an upper bound.
     /// </summary>
     /// <param name="rng">random number generator</param>
     /// <param name="lb">lower bound</param>
@@ -1458,22 +1468,26 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Creates a vector at a random heading and radius.
+    /// Creates a vector that lies on a circle.
+    /// Finds three random numbers with normal distribution,
+    /// then normalizes them.
     /// </summary>
     /// <param name="rng">random number generator</param>
-    /// <param name="rhoMin">minimum radius</param>
-    /// <param name="rhoMax">maximum radius</param>
-    /// <returns>output vector</returns>
+    /// <param name="radius">radius</param>
+    /// <returns>random vector</returns>
     public static Vec2 RandomPolar(
         in System.Random rng,
-        in float rhoMin = 1.0f,
-        in float rhoMax = 1.0f)
+        in float radius = 1.0f)
     {
-        return Vec2.FromPolar(
-            Utils.Mix(-MathF.PI, MathF.PI,
-                (float)rng.NextDouble()),
-            Utils.Mix(rhoMin, rhoMax,
-                (float)rng.NextDouble()));
+        float x = Utils.NextGaussian(rng);
+        float y = Utils.NextGaussian(rng);
+        float sqMag = x * x + y * y;
+        if (sqMag != 0.0f)
+        {
+            float scalar = radius / MathF.Sqrt(sqMag);
+            return new(x * scalar, y * scalar);
+        }
+        return Vec2.Zero;
     }
 
     /// <summary>

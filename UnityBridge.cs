@@ -24,9 +24,9 @@ public static class UnityBridge
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>conversion</returns>
-    public static Clr FromColor(in Color c)
+    public static Rgb FromColor(in Color c)
     {
-        return new Clr(c.r, c.g, c.b, c.a);
+        return new Rgb(c.r, c.g, c.b, c.a);
     }
 
     /// <summary>
@@ -36,10 +36,10 @@ public static class UnityBridge
     /// </summary>
     /// <param name="cs">colors</param>
     /// <returns>conversion</returns>
-    public static Clr[] FromColor(in Color[] cs)
+    public static Rgb[] FromColor(in Color[] cs)
     {
         int len = cs.Length;
-        Clr[] target = new Clr[len];
+        Rgb[] target = new Rgb[len];
         for (int i = 0; i < len; ++i)
         {
             target[i] = UnityBridge.FromColor(cs[i]);
@@ -52,9 +52,9 @@ public static class UnityBridge
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>conversion</returns>
-    public static Clr FromColor32(in Color32 c)
+    public static Rgb FromColor32(in Color32 c)
     {
-        return new Clr(c.r, c.g, c.b, c.a);
+        return new Rgb(c.r, c.g, c.b, c.a);
     }
 
     /// <summary>
@@ -64,10 +64,10 @@ public static class UnityBridge
     /// </summary>
     /// <param name="cs">colors</param>
     /// <returns>conversion</returns>
-    public static Clr[] FromColor32(in Color32[] cs)
+    public static Rgb[] FromColor32(in Color32[] cs)
     {
         int len = cs.Length;
-        Clr[] target = new Clr[len];
+        Rgb[] target = new Rgb[len];
         for (int i = 0; i < len; ++i)
         {
             target[i] = UnityBridge.FromColor32(cs[i]);
@@ -175,7 +175,7 @@ public static class UnityBridge
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>conversion</returns>
-    public static Color ToColor(in Clr c)
+    public static Color ToColor(in Rgb c)
     {
         return new Color(c.r, c.g, c.b, c.a);
     }
@@ -187,7 +187,7 @@ public static class UnityBridge
     /// </summary>
     /// <param name="cs">colors</param>
     /// <returns>conversion</returns>
-    public static Color[] ToColor(in Clr[] cs)
+    public static Color[] ToColor(in Rgb[] cs)
     {
         int len = cs.Length;
         Color[] target = new Color[len];
@@ -203,7 +203,7 @@ public static class UnityBridge
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>conversion</returns>
-    public static Color32 ToColor32(in Clr c)
+    public static Color32 ToColor32(in Rgb c)
     {
         return new Color32(
             (byte)(Utils.Clamp(c.r, 0.0f, 1.0f) * 255.0f + 0.5f),
@@ -219,7 +219,7 @@ public static class UnityBridge
     /// </summary>
     /// <param name="cs">colors</param>
     /// <returns>conversion</returns>
-    public static Color32[] ToColor32(in Clr[] cs)
+    public static Color32[] ToColor32(in Rgb[] cs)
     {
         int len = cs.Length;
         Color32[] target = new Color32[len];
@@ -571,9 +571,9 @@ public static class UnityBridge
         for (int i = 0; i < keyCount; ++i)
         {
             float step = i * toStep;
-            Clr c = ClrGradient.Eval(cg, step);
+            Rgb c = ClrGradient.Eval(cg, step);
             alphaKeys[i] = new GradientAlphaKey(c.a, step);
-            Clr o = Clr.Opaque(c);
+            Rgb o = Rgb.Opaque(c);
             colorKeys[i] = new GradientColorKey(UnityBridge.ToColor(o), step);
         }
 
