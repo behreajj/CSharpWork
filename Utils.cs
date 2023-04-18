@@ -208,8 +208,8 @@ public static class Utils
         // flexibility in terms of how you deal with zero sign.
         // return Utils.Abs (mag) * Utils.Sign (sign);
         return (sign < -0.0f) ? -MathF.Abs(mag) :
-               (sign > 0.0f) ? MathF.Abs(mag) :
-               0.0f;
+            (sign > 0.0f) ? MathF.Abs(mag) :
+            0.0f;
     }
 
     /// <summary>
@@ -220,7 +220,7 @@ public static class Utils
     /// <returns>cotangent</returns>
     public static float Cot(in float radians)
     {
-        double rd = (double)radians;
+        double rd = radians;
         double sint = Math.Sin(rd);
         return (sint != 0.0d) ? (float)(Math.Cos(rd) / sint) : 0.0f;
     }
@@ -426,10 +426,10 @@ public static class Utils
         float o = Utils.RemFloor(origin, range);
         float d = Utils.RemFloor(dest, range);
         float diff = d - o;
-        float halfRange = range * 0.5f;
 
         if (diff == 0.0f) { return o; }
 
+        float halfRange = range * 0.5f;
         if (o < d && diff > halfRange)
         {
             return Utils.RemFloor(
@@ -707,12 +707,12 @@ public static class Utils
         in float sigma = 1.0f,
         in float mu = 0.0f)
     {
-        double u1, u2;
+        double u1;
         do
         {
             u1 = rng.NextDouble();
         } while (u1 <= Utils.Epsilon);
-        u2 = rng.NextDouble();
+        double u2 = rng.NextDouble();
 
         double mag = sigma * Math.Sqrt(-2.0d * Math.Log(u1));
         double tau = 6.283185307179586d;
@@ -825,7 +825,7 @@ public static class Utils
     {
         if (levels > 0)
         {
-            float lf = (float)levels;
+            float lf = levels;
             return MathF.Floor(0.5f + v * lf) / lf;
         }
         return v;
@@ -842,7 +842,7 @@ public static class Utils
     {
         if (levels > 1)
         {
-            float lf = (float)levels;
+            float lf = levels;
             return MathF.Max(0.0f,
                 (MathF.Ceiling(v * lf) - 1.0f) / (lf - 1.0f));
         }
@@ -992,7 +992,7 @@ public static class Utils
         // Dispense with v and places edge cases.
         if (float.IsNaN(v)) { return sb.Append("0.0"); }
         if (places < 0) { return sb.Append((int)v); }
-        if (places < 1) { return sb.Append((float)((int)v)); }
+        if (places < 1) { return sb.Append((float)(int)v); }
         if (v <= float.MinValue || v >= float.MaxValue)
         {
             return sb.Append(v);
@@ -1040,7 +1040,7 @@ public static class Utils
         {
             frac *= 10.0f;
             int tr = (int)frac;
-            frac -= (float)tr;
+            frac -= tr;
             sb.Append(tr);
         }
         return sb;

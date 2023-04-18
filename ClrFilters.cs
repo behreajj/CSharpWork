@@ -16,7 +16,7 @@ public static class ClrFilters
     /// <returns>evaluation</returns>
     public static bool FilterAlpha(in Rgb c, in float lb = 0.0f, in float ub = 1.0f)
     {
-        return c.a >= lb && c.a <= ub;
+        return c.Alpha >= lb && c.Alpha <= ub;
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ public static class ClrFilters
     /// <returns>evaluation</returns>
     public static bool FilterBlue(in Rgb c, in float lb = 0.0f, in float ub = 1.0f)
     {
-        return c.b >= lb && c.b <= ub;
+        return c.B >= lb && c.B <= ub;
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public static class ClrFilters
     /// <returns>evaluation</returns>
     public static bool FilterGreen(in Rgb c, in float lb = 0.0f, in float ub = 1.0f)
     {
-        return c.g >= lb && c.g <= ub;
+        return c.G >= lb && c.G <= ub;
     }
 
     /// <summary>
@@ -102,6 +102,6 @@ public static class ClrFilters
     /// <returns>evaluation</returns>
     public static bool FilterRed(in Rgb c, in float lb = 0.0f, in float ub = 1.0f)
     {
-        return c.r >= lb && c.r <= ub;
+        return c.R >= lb && c.R <= ub;
     }
 }

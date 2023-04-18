@@ -27,7 +27,6 @@ public class SortLoops3 : IComparer<Loop3>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
     /// <returns>evaluation</returns>
-
     public int Compare(Loop3 a, Loop3 b)
     {
         Vec3 aAvg = Vec3.Zero;
@@ -35,7 +34,7 @@ public class SortLoops3 : IComparer<Loop3>
         int aLen = aIdcs.Length;
         for (int i = 0; i < aLen; ++i)
         {
-            aAvg += this.coords[aIdcs[i].v];
+            aAvg += this.coords[aIdcs[i].V];
         }
         aAvg /= aLen;
 
@@ -44,7 +43,7 @@ public class SortLoops3 : IComparer<Loop3>
         int bLen = bIdcs.Length;
         for (int i = 0; i < bLen; ++i)
         {
-            bAvg += this.coords[bIdcs[i].v];
+            bAvg += this.coords[bIdcs[i].V];
         }
         bAvg /= bLen;
 

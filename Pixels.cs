@@ -41,53 +41,6 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Crops an image to a region defined by a top left
-    /// and bottom right corner.
-    /// </summary>
-    /// <param name="source">source pixels</param>
-    /// <param name="wSrc">source image width</param>
-    /// <param name="hSrc">source image height</param>
-    /// <param name="xtl">top left corner x</param>
-    /// <param name="ytl">top left corner y</param>
-    /// <param name="xbr">bottom right corner x</param>
-    /// <param name="ybr">bottom right corner y</param>
-    /// <returns>checker pattern</returns>
-    public static (T[] pixels, int w, int h, int x, int y) Crop<T>(
-        in T[] source,
-        in int wSrc, in int hSrc,
-        in int xtl, in int ytl,
-        in int xbr, in int ybr)
-    {
-        int xtlVrf = xtl < 0 ? 0 : xtl > wSrc - 2 ? wSrc - 2 : xtl;
-        int ytlVrf = ytl < 0 ? 0 : ytl > hSrc - 2 ? hSrc - 2 : ytl;
-        int xbrVrf = xbr < 1 ? 1 : xbr > wSrc - 1 ? wSrc - 1 : xbr;
-        int ybrVrf = ybr < 1 ? 1 : ybr > hSrc - 1 ? hSrc - 1 : ybr;
-
-        // Swap pixels if in wrong order.
-        xtlVrf = Math.Min(xtlVrf, xbrVrf);
-        ytlVrf = Math.Min(ytlVrf, ybrVrf);
-        xbrVrf = Math.Max(xtlVrf, xbrVrf);
-        ybrVrf = Math.Max(ytlVrf, ybrVrf);
-
-        int wTrg = Math.Max(1, 1 + xbrVrf - xtlVrf);
-        int hTrg = Math.Max(1, 1 + ybrVrf - ytlVrf);
-
-        int trgLen = wTrg * hTrg;
-        T[] target = new T[trgLen];
-        for (int i = 0; i < trgLen; ++i)
-        {
-            int xTrg = i % wTrg;
-            int yTrg = i / wTrg;
-            int xSrc = xtlVrf + xTrg;
-            int ySrc = ytlVrf + yTrg;
-            int j = xSrc + ySrc * wSrc;
-            target[i] = source[j];
-        }
-
-        return (pixels: target, w: wTrg, h: hTrg, x: xtlVrf, y: ytlVrf);
-    }
-
-    /// <summary>
     /// Expands the image to the nearest greater power of two.
     /// Centers the source image within the expanded dimensions.
     /// Returns a tuple with the expanded pixels and the 
@@ -125,8 +78,8 @@ public static class Pixels
             return (pixels: target, w: wTrg, h: hTrg);
         }
 
-        int xtl = (int)(0.5f + wTrg * 0.5f) - (int)(0.5f + w * 0.5f);
-        int ytl = (int)(0.5f + hTrg * 0.5f) - (int)(0.5f + h * 0.5f);
+        int xtl = (int)(wTrg * 0.5f + 0.5f) - (int)(w * 0.5f + 0.5f);
+        int ytl = (int)(hTrg * 0.5f + 0.5f) - (int)(h * 0.5f + 0.5f);
         for (int i = 0; i < trgLen; ++i)
         {
             int xSrc = (i % wTrg) - xtl;
@@ -146,13 +99,13 @@ public static class Pixels
     /// <summary>
     /// Fills the pixels target array with a color.
     /// </summary>
-    /// <param name="c">fill color</param>
+    /// <param name="source">fill color</param>
     /// <param name="target">target pixels</param>
     /// <returns>filled array</returns>
-    public static T[] Fill<T>(in T[] target, in T c)
+    public static T[] Fill<T>(in T source, in T[] target)
     {
         int len = target.Length;
-        for (int i = 0; i < len; ++i) { target[i] = c; }
+        for (int i = 0; i < len; ++i) { target[i] = source; }
         return target;
     }
 
@@ -225,6 +178,57 @@ public static class Pixels
             }
         }
         return target;
+    }
+
+    /// <summary>
+    /// Gets a region defined by a top left and bottom right corner.
+    /// May return an empty array if coordinates are invalid. Same
+    /// as getting a cropped copy of an image.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="wSrc">source image width</param>
+    /// <param name="hSrc">source image height</param>
+    /// <param name="xtl">top left corner x</param>
+    /// <param name="ytl">top left corner y</param>
+    /// <param name="xbr">bottom right corner x</param>
+    /// <param name="ybr">bottom right corner y</param>
+    /// <returns>cropped region</returns>
+    public static (T[] pixels, int w, int h, int x, int y) GetRegion<T>(
+        in T[] source,
+        in int wSrc, in int hSrc,
+        in int xtl, in int ytl,
+        in int xbr, in int ybr)
+    {
+        int xtlVrf = xtl < 0 ? 0 : xtl > wSrc - 1 ? wSrc - 1 : xtl;
+        int ytlVrf = ytl < 0 ? 0 : ytl > hSrc - 1 ? hSrc - 1 : ytl;
+        int xbrVrf = xbr < 0 ? 0 : xbr > wSrc - 1 ? wSrc - 1 : xbr;
+        int ybrVrf = ybr < 0 ? 0 : ybr > hSrc - 1 ? hSrc - 1 : ybr;
+
+        // Swap pixels if in wrong order.
+        xtlVrf = Math.Min(xtlVrf, xbrVrf);
+        ytlVrf = Math.Min(ytlVrf, ybrVrf);
+        xbrVrf = Math.Max(xtlVrf, xbrVrf);
+        ybrVrf = Math.Max(ytlVrf, ybrVrf);
+
+        int wTrg = 1 + xbrVrf - xtlVrf;
+        int hTrg = 1 + ybrVrf - ytlVrf;
+        if (wTrg > 0 && hTrg > 0)
+        {
+            int trgLen = wTrg * hTrg;
+            T[] target = new T[trgLen];
+            for (int i = 0; i < trgLen; ++i)
+            {
+                int xTrg = i % wTrg;
+                int yTrg = i / wTrg;
+                int xSrc = xtlVrf + xTrg;
+                int ySrc = ytlVrf + yTrg;
+                int j = xSrc + ySrc * wSrc;
+                target[i] = source[j];
+            }
+            return (pixels: target, w: wTrg, h: hTrg, x: xtlVrf, y: ytlVrf);
+        }
+
+        return (pixels: new T[0], w: 0, h: 0, x: 0, y: 0);
     }
 
     /// <summary>
@@ -347,10 +351,9 @@ public static class Pixels
         if (source == target)
         {
             int srcHalfLen = srcLen / 2;
-            int srcLenn1 = srcLen - 1;
-            for (int i = 0; i < srcHalfLen; ++i)
+            for (int i = 0, j = srcLen - 1; i < srcHalfLen; ++i, --j)
             {
-                (source[srcLenn1 - i], source[i]) = (source[i], source[srcLenn1 - i]);
+                (source[j], source[i]) = (source[i], source[j]);
             }
         }
         else if (srcLen == target.Length)
@@ -385,6 +388,132 @@ public static class Pixels
             }
         }
         return target;
+    }
+
+    /// <summary>
+    /// Sets a region of pixels on the target array
+    /// from the source.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">source pixels</param>
+    /// <param name="wSrc">source image width</param>
+    /// <param name="hSrc">source image height</param>
+    /// <param name="wTrg">source image width</param>
+    /// <param name="hTrg">source image height</param>
+    public static void SetRegion<T>(
+        in T[] source, in T[] target,
+        in int wSrc, in int hSrc,
+        in int wTrg, in int hTrg)
+    {
+        Pixels.SetRegion(
+            source, target,
+            wSrc, hSrc,
+            wTrg, hTrg,
+            0, 0, wTrg - 1, hTrg - 1);
+    }
+
+    /// <summary>
+    /// Sets a region defined by a "write" top left and bottom right
+    /// corners on the target array from the source.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">source pixels</param>
+    /// <param name="wSrc">source image width</param>
+    /// <param name="hSrc">source image height</param>
+    /// <param name="wTrg">source image width</param>
+    /// <param name="hTrg">source image height</param>
+    /// <param name="xtlWrite">top left corner x</param>
+    /// <param name="ytlWrite">top left corner y</param>
+    /// <param name="xbrWrite">bottom right corner x</param>
+    /// <param name="ybrWrite">bottom right corner y</param>
+    public static void SetRegion<T>(
+        in T[] source, in T[] target,
+        in int wSrc, in int hSrc,
+        in int wTrg, in int hTrg,
+        in int xtlWrite, in int ytlWrite,
+        in int xbrWrite, in int ybrWrite)
+    {
+        Pixels.SetRegion(
+            source, target,
+            wSrc, hSrc,
+            wTrg, hTrg,
+            xtlWrite, ytlWrite, xbrWrite, ybrWrite,
+            0, 0, wSrc - 1, hSrc - 1);
+    }
+
+    /// <summary>
+    /// Sets a region defined by a "write" top left and bottom right
+    /// corners on the target array from the source. The "read" corners
+    /// specify a region from the source image.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">source pixels</param>
+    /// <param name="wSrc">source image width</param>
+    /// <param name="hSrc">source image height</param>
+    /// <param name="wTrg">source image width</param>
+    /// <param name="hTrg">source image height</param>
+    /// <param name="xtlWrite">top left corner x</param>
+    /// <param name="ytlWrite">top left corner y</param>
+    /// <param name="xbrWrite">bottom right corner x</param>
+    /// <param name="ybrWrite">bottom right corner y</param>
+    /// <param name="xtlRead">top left corner x</param>
+    /// <param name="ytlRead">top left corner y</param>
+    /// <param name="xbrRead">bottom right corner x</param>
+    /// <param name="ybrRead">bottom right corner y</param>
+    public static void SetRegion<T>(
+        in T[] source, in T[] target,
+        in int wSrc, in int hSrc,
+        in int wTrg, in int hTrg,
+        in int xtlWrite, in int ytlWrite,
+        in int xbrWrite, in int ybrWrite,
+        in int xtlRead, in int ytlRead,
+        in int xbrRead, in int ybrRead)
+    {
+        // TODO: Test
+
+        int xtlWrVrf = xtlWrite < 0 ? 0 : xtlWrite > wTrg - 1 ? wTrg - 1 : xtlWrite;
+        int ytlWrVrf = ytlWrite < 0 ? 0 : ytlWrite > hTrg - 1 ? hTrg - 1 : ytlWrite;
+        int xbrWrVrf = xbrWrite < 0 ? 0 : xbrWrite > wTrg - 1 ? wTrg - 1 : xbrWrite;
+        int ybrWrVrf = ybrWrite < 0 ? 0 : ybrWrite > hTrg - 1 ? hTrg - 1 : ybrWrite;
+
+        xtlWrVrf = Math.Min(xtlWrVrf, xbrWrVrf);
+        ytlWrVrf = Math.Min(ytlWrVrf, ybrWrVrf);
+        xbrWrVrf = Math.Max(xtlWrVrf, xbrWrVrf);
+        ybrWrVrf = Math.Max(ytlWrVrf, ybrWrVrf);
+
+        int xtlRdVrf = xtlRead < 0 ? 0 : xtlRead > wSrc - 1 ? wSrc - 1 : xtlRead;
+        int ytlRdVrf = ytlRead < 0 ? 0 : ytlRead > hSrc - 1 ? hSrc - 1 : ytlRead;
+        int xbrRdVrf = xbrRead < 0 ? 0 : xbrRead > wSrc - 1 ? wSrc - 1 : xbrRead;
+        int ybrRdVrf = ybrRead < 0 ? 0 : ybrRead > hSrc - 1 ? hSrc - 1 : ybrRead;
+
+        xtlRdVrf = Math.Min(xtlRdVrf, xbrRdVrf);
+        ytlRdVrf = Math.Min(ytlRdVrf, ybrRdVrf);
+        xbrRdVrf = Math.Max(xtlRdVrf, xbrRdVrf);
+        ybrRdVrf = Math.Max(ytlRdVrf, ybrRdVrf);
+
+        int wReg = Math.Min(1 + xbrWrVrf - xtlWrVrf,
+                            1 + xbrRdVrf - xtlRdVrf);
+        int hReg = Math.Min(1 + ybrWrVrf - ytlWrVrf,
+                            1 + ybrRdVrf - ytlRdVrf);
+
+        if (wReg > 0 && hReg > 0)
+        {
+            int trgLen = wReg * hReg;
+            for (int i = 0; i < trgLen; ++i)
+            {
+                int xReg = i % wReg;
+                int yReg = i / wReg;
+                int xSrc = xtlWrVrf + xReg;
+                int ySrc = ytlWrVrf + yReg;
+                int j = xSrc + ySrc * wTrg;
+
+                int xTrg = xtlRdVrf + xReg;
+                int yTrg = ytlRdVrf + yReg;
+                int k = xTrg + yTrg * wSrc;
+
+                target[j] = source[k];
+            }
+        }
     }
 
     /// <summary>
@@ -530,7 +659,7 @@ public static class Pixels
         {
             if (alpha <= 0.0f)
             {
-                Pixels.Fill(target, Rgb.ClearBlack);
+                Pixels.Fill(Rgb.ClearBlack, target);
                 return target;
             }
 
@@ -543,7 +672,7 @@ public static class Pixels
             for (int i = 0; i < srcLen; ++i)
             {
                 Rgb c = source[i];
-                target[i] = new Rgb(c.r, c.g, c.b, c.a * alpha);
+                target[i] = new Rgb(c.R, c.G, c.B, c.Alpha * alpha);
             }
         }
         return target;
@@ -594,7 +723,7 @@ public static class Pixels
             }
             else
             {
-                Pixels.Fill(target, Rgb.ClearBlack);
+                Pixels.Fill(Rgb.ClearBlack, target);
             }
         }
         return target;
@@ -654,7 +783,7 @@ public static class Pixels
             }
             else
             {
-                Pixels.Fill(target, Rgb.ClearBlack);
+                Pixels.Fill(Rgb.ClearBlack, target);
             }
         }
         return target;
@@ -683,8 +812,8 @@ public static class Pixels
         int hLrg = ah > bh ? ah : bh;
 
         // The 0.5 is to bias the rounding.
-        float cx = 0.5f + wLrg * 0.5f;
-        float cy = 0.5f + hLrg * 0.5f;
+        float cx = wLrg * 0.5f + 0.5f;
+        float cy = hLrg * 0.5f + 0.5f;
 
         int ax = aw == wLrg ? 0 : (int)(cx - aw * 0.5f);
         int ay = ah == hLrg ? 0 : (int)(cy - ah * 0.5f);
@@ -780,8 +909,8 @@ public static class Pixels
         int hLrg = ah > bh ? ah : bh;
 
         // The 0.5 is to bias the rounding.
-        float cx = 0.5f + wLrg * 0.5f;
-        float cy = 0.5f + hLrg * 0.5f;
+        float cx = wLrg * 0.5f + 0.5f;
+        float cy = hLrg * 0.5f + 0.5f;
 
         int ax = aw == wLrg ? 0 : (int)(cx - aw * 0.5f);
         int ay = ah == hLrg ? 0 : (int)(cy - ah * 0.5f);
@@ -905,12 +1034,12 @@ public static class Pixels
                 bClr = bpx[bxs + bys * bw];
             }
 
-            float t = bClr.a;
+            float t = bClr.Alpha;
             if (t >= 1.0f) { target[i] = bClr; }
             else if (t <= 0.0f) { target[i] = aClr; }
             else
             {
-                float v = aClr.a;
+                float v = aClr.Alpha;
                 if (v <= 0.0f) { target[i] = bClr; }
                 else
                 {
@@ -1078,86 +1207,6 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Generates a conic gradient, where the factor rotates on the z axis
-    /// around an origin point. Best used with square images; for other aspect
-    /// ratios, the origin should be adjusted accordingly.
-    /// </summary>
-    /// <param name="target">target pixels</param>
-    /// <param name="w">image width</param>
-    /// <param name="h">image height</param>
-    /// <param name="cg">color gradient</param>
-    /// <returns>conic gradient</returns>
-    public static Rgb[] GradientConic(
-        in Rgb[] target, in int w, in int h, in ClrGradient cg)
-    {
-        return Pixels.GradientConic(target, w, h, cg,
-            (x, y, z) => Rgb.MixRgbaStandard(x, y, z));
-    }
-
-    /// <summary>
-    /// Generates a conic gradient, where the factor rotates on the z axis
-    /// around an origin point. Best used with square images; for other aspect
-    /// ratios, the origin should be adjusted accordingly.
-    /// </summary>
-    /// <param name="target">target pixels</param>
-    /// <param name="w">image width</param>
-    /// <param name="h">image height</param>
-    /// <param name="cg">color gradient</param>
-    /// <param name="easing">easing function</param>
-    /// <param name="radians">radians</param>
-    /// <param name="orig">origin</param>
-    /// <returns>conic gradient</returns>
-    public static Rgb[] GradientConic(
-        in Rgb[] target, in int w, in int h,
-        in ClrGradient cg, in Func<Rgb, Rgb, float, Rgb> easing,
-        in Vec2 orig, in float radians = 0.0f)
-    {
-        return Pixels.GradientConic(target, w, h, cg, easing,
-            orig.x, orig.y, radians);
-    }
-
-    /// <summary>
-    /// Generates a conic gradient, where the factor rotates on the z axis
-    /// around an origin point. Best used with square images; for other aspect
-    /// ratios, the origin should be adjusted accordingly.
-    /// </summary>
-    /// <param name="target">target pixels</param>
-    /// <param name="w">image width</param>
-    /// <param name="h">image height</param>
-    /// <param name="cg">color gradient</param>
-    /// <param name="easing">easing function</param>
-    /// <param name="radians">radians</param>
-    /// <param name="xOrig">x origin</param>
-    /// <param name="yOrig">y origin</param>
-    /// <returns>conic gradient</returns>
-    public static Rgb[] GradientConic(
-        in Rgb[] target, in int w, in int h,
-        in ClrGradient cg, in Func<Rgb, Rgb, float, Rgb> easing,
-        in float xOrig = 0.0f, in float yOrig = 0.0f,
-        in float radians = 0.0f)
-    {
-        float aspect = w / (float)h;
-        float wInv = aspect / (w - 1.0f);
-        float hInv = 1.0f / (h - 1.0f);
-        float xo = (xOrig * 0.5f + 0.5f) * aspect * 2.0f - 1.0f;
-        float yo = yOrig;
-        float rd = radians;
-
-        int trgLen = target.Length;
-        for (int i = 0; i < trgLen; ++i)
-        {
-            float xn = wInv * (i % w);
-            float yn = hInv * (i / w);
-            float fac = Utils.OneTau * Utils.WrapRadians(
-                MathF.Atan2(
-                    1.0f - (yn + yn + yo),
-                    xn + xn - xo - 1.0f) - rd);
-            target[i] = ClrGradient.Eval(cg, fac, easing);
-        }
-        return target;
-    }
-
-    /// <summary>
     /// Generates a linear gradient from an origin point to a destination point.
     /// The origin and destination should be in the range [-1.0, 1.0]. The
     /// scalar projection is clamped to [0.0, 1.0].
@@ -1171,7 +1220,7 @@ public static class Pixels
             in Rgb[] target, in int w, in int h, in ClrGradient cg)
     {
         return Pixels.GradientLinear(target, w, h, cg,
-            (x, y, z) => Rgb.MixRgbaStandard(x, y, z));
+            (x, y, z) => Lab.Mix(x, y, z));
     }
 
     /// <summary>
@@ -1189,11 +1238,11 @@ public static class Pixels
     /// <returns>linear gradient</returns>
     public static Rgb[] GradientLinear(
             in Rgb[] target, in int w, in int h,
-            in ClrGradient cg, in Func<Rgb, Rgb, float, Rgb> easing,
+            in ClrGradient cg, in Func<Lab, Lab, float, Lab> easing,
             in Vec2 orig, in Vec2 dest)
     {
         return Pixels.GradientLinear(target, w, h, cg, easing,
-            orig.x, orig.y, dest.x, dest.y);
+            orig.X, orig.Y, dest.X, dest.Y);
     }
 
     /// <summary>
@@ -1213,7 +1262,7 @@ public static class Pixels
     /// <returns>linear gradient</returns>
     public static Rgb[] GradientLinear(
         in Rgb[] target, in int w, in int h,
-        in ClrGradient cg, in Func<Rgb, Rgb, float, Rgb> easing,
+        in ClrGradient cg, in Func<Lab, Lab, float, Lab> easing,
         in float xOrig = -1.0f, in float yOrig = 0.0f,
         in float xDest = 1.0f, in float yDest = 0.0f)
     {
@@ -1230,12 +1279,23 @@ public static class Pixels
         float bxwInv2 = 2.0f / (w - 1.0f) * bxbbinv;
         float byhInv2 = 2.0f / (h - 1.0f) * bybbinv;
 
+        Dictionary<float, Rgb> visited = new();
         int trgLen = target.Length;
         for (int i = 0; i < trgLen; ++i)
         {
             float fac = Utils.Clamp(xobx + bxbbinv - bxwInv2 * (i % w)
                                  + (yoby + byhInv2 * (i / w) - bybbinv));
-            target[i] = ClrGradient.Eval(cg, fac, easing);
+            if (visited.ContainsKey(fac))
+            {
+                target[i] = visited[fac];
+            }
+            else
+            {
+                Lab lab = ClrGradient.Eval(cg, fac, easing);
+                Rgb rgb = Rgb.CieLabToStandard(lab);
+                target[i] = rgb;
+                visited[fac] = rgb;
+            }
         }
         return target;
     }
@@ -1252,7 +1312,7 @@ public static class Pixels
         in Rgb[] source, in Rgb[] target, in ClrGradient cg)
     {
         return Pixels.GradientMap(source, target, cg,
-            (x, y, z) => Rgb.MixRgbaStandard(x, y, z));
+            (x, y, z) => Lab.Mix(x, y, z));
     }
 
     /// <summary>
@@ -1266,7 +1326,7 @@ public static class Pixels
     /// <returns>gradient map</returns>
     public static Rgb[] GradientMap(
         in Rgb[] source, in Rgb[] target,
-        in ClrGradient cg, in Func<Rgb, Rgb, float, Rgb> easing)
+        in ClrGradient cg, in Func<Lab, Lab, float, Lab> easing)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
@@ -1284,7 +1344,8 @@ public static class Pixels
                         float fac = lum <= 0.0031308f ?
                             lum * 12.92f :
                             MathF.Pow(lum, 1.0f / 2.4f) * 1.055f - 0.055f;
-                        dict.Add(key, ClrGradient.Eval(cg, fac, easing));
+                        Lab lab = ClrGradient.Eval(cg, fac, easing);
+                        dict.Add(key, Rgb.CieLabToStandard(lab));
                     }
                 }
             }
@@ -1302,7 +1363,7 @@ public static class Pixels
             }
             else
             {
-                Pixels.Fill(target, Rgb.ClearBlack);
+                Pixels.Fill(Rgb.ClearBlack, target);
             }
         }
         return target;
@@ -1324,7 +1385,7 @@ public static class Pixels
     /// <returns>linear gradient</returns>
     public static Rgb[] GradientRadial(
         in Rgb[] target, in int w, in int h,
-        in ClrGradient cg, in Func<Rgb, Rgb, float, Rgb> easing,
+        in ClrGradient cg, in Func<Lab, Lab, float, Lab> easing,
         in float xOrig, in float yOrig, in float radius)
     {
         float hInv2 = 2.0f / (h - 1.0f);
@@ -1336,13 +1397,115 @@ public static class Pixels
         float yon1 = yOrig - 1.0f;
         float xop1 = xOrig + 1.0f;
 
+        Dictionary<float, Rgb> visited = new();
         int trgLen = target.Length;
         for (int i = 0; i < trgLen; ++i)
         {
             float ay = yon1 + hInv2 * (i / w);
             float ax = xop1 - wInv2 * (i % w);
             float fac = 1.0f - (ax * ax + ay * ay) * rsqInv;
-            target[i] = ClrGradient.Eval(cg, fac, easing);
+            if (visited.ContainsKey(fac))
+            {
+                target[i] = visited[fac];
+            }
+            else
+            {
+                Lab lab = ClrGradient.Eval(cg, fac, easing);
+                Rgb rgb = Rgb.CieLabToStandard(lab);
+                target[i] = rgb;
+                visited[fac] = rgb;
+            }
+        }
+        return target;
+    }
+
+    /// <summary>
+    /// Generates a sweep gradient, where the factor rotates on the z axis
+    /// around an origin point. Best used with square images; for other aspect
+    /// ratios, the origin should be adjusted accordingly.
+    /// </summary>
+    /// <param name="target">target pixels</param>
+    /// <param name="w">image width</param>
+    /// <param name="h">image height</param>
+    /// <param name="cg">color gradient</param>
+    /// <returns>sweep gradient</returns>
+    public static Rgb[] GradientSweep(
+        in Rgb[] target, in int w, in int h, in ClrGradient cg)
+    {
+        return Pixels.GradientSweep(target, w, h, cg,
+            (x, y, z) => Lab.Mix(x, y, z));
+    }
+
+    /// <summary>
+    /// Generates a sweep gradient, where the factor rotates on the z axis
+    /// around an origin point. Best used with square images; for other aspect
+    /// ratios, the origin should be adjusted accordingly.
+    /// </summary>
+    /// <param name="target">target pixels</param>
+    /// <param name="w">image width</param>
+    /// <param name="h">image height</param>
+    /// <param name="cg">color gradient</param>
+    /// <param name="easing">easing function</param>
+    /// <param name="radians">radians</param>
+    /// <param name="orig">origin</param>
+    /// <returns>sweep gradient</returns>
+    public static Rgb[] GradientSweep(
+        in Rgb[] target, in int w, in int h,
+        in ClrGradient cg, in Func<Lab, Lab, float, Lab> easing,
+        in Vec2 orig, in float radians = 0.0f)
+    {
+        return Pixels.GradientSweep(target, w, h, cg, easing,
+            orig.X, orig.Y, radians);
+    }
+
+    /// <summary>
+    /// Generates a sweep gradient, where the factor rotates on the z axis
+    /// around an origin point. Best used with square images; for other aspect
+    /// ratios, the origin should be adjusted accordingly.
+    /// </summary>
+    /// <param name="target">target pixels</param>
+    /// <param name="w">image width</param>
+    /// <param name="h">image height</param>
+    /// <param name="cg">color gradient</param>
+    /// <param name="easing">easing function</param>
+    /// <param name="radians">radians</param>
+    /// <param name="xOrig">x origin</param>
+    /// <param name="yOrig">y origin</param>
+    /// <returns>sweep gradient</returns>
+    public static Rgb[] GradientSweep(
+        in Rgb[] target, in int w, in int h,
+        in ClrGradient cg, in Func<Lab, Lab, float, Lab> easing,
+        in float xOrig = 0.0f, in float yOrig = 0.0f,
+        in float radians = 0.0f)
+    {
+        float aspect = w / (float)h;
+        float wInv = aspect / (w - 1.0f);
+        float hInv = 1.0f / (h - 1.0f);
+        float xo = (xOrig * 0.5f + 0.5f) * aspect * 2.0f - 1.0f;
+        float yo = yOrig;
+        float rd = radians;
+
+        Dictionary<float, Rgb> visited = new();
+        int trgLen = target.Length;
+        for (int i = 0; i < trgLen; ++i)
+        {
+            float xn = wInv * (i % w);
+            float yn = hInv * (i / w);
+            float fac = Utils.OneTau * Utils.WrapRadians(
+                MathF.Atan2(
+                    1.0f - (yn + yn + yo),
+                    xn + xn - xo - 1.0f) - rd);
+            if (visited.ContainsKey(fac))
+            {
+                target[i] = visited[fac];
+            }
+            else
+            {
+                Lab lab = ClrGradient.Eval(cg, fac, easing);
+                Rgb rgb = Rgb.CieLabToStandard(lab);
+                target[i] = rgb;
+                visited[fac] = rgb;
+            }
         }
         return target;
     }
@@ -1371,7 +1534,7 @@ public static class Pixels
         in Rgb[] source, in Rgb[] target, in Vec4 inv)
     {
         return Pixels.InvertCieLab(source, target,
-            inv.z != 0.0f, inv.x != 0.0f, inv.y != 0.0f, inv.w != 0.0f);
+            inv.Z != 0.0f, inv.X != 0.0f, inv.Y != 0.0f, inv.W != 0.0f);
     }
 
     /// <summary>
@@ -1509,17 +1672,17 @@ public static class Pixels
             if (bys > -1 && bys < bh && bxs > -1 && bxs < bw)
             {
                 Rgb bClr = bpx[bxs + bys * bw];
-                if (bClr.a > 0.0f)
+                if (bClr.Alpha > 0.0f)
                 {
                     int axs = x - axd;
                     int ays = y - ayd;
                     if (ays > -1 && ays < ah && axs > -1 && axs < aw)
                     {
                         Rgb aClr = apx[axs + ays * aw];
-                        if (aClr.a > 0.0f)
+                        if (aClr.Alpha > 0.0f)
                         {
-                            target[i] = new Rgb(aClr.r, aClr.g, aClr.b,
-                               aClr.a * bClr.a);
+                            target[i] = new Rgb(aClr.R, aClr.G, aClr.B,
+                               aClr.Alpha * bClr.Alpha);
                         }
                         else { target[i] = Rgb.ClearBlack; }
                     }
@@ -1554,7 +1717,7 @@ public static class Pixels
     {
         return Pixels.MirrorBilinear(
             source, target, w, h,
-            orig.x, orig.y, dest.x, dest.y,
+            orig.X, orig.Y, dest.X, dest.Y,
             flip);
     }
 
@@ -1732,7 +1895,7 @@ public static class Pixels
         for (int j = 0; j < centersLen; ++j)
         {
             Vec3 center = centers[j];
-            Lab lab = new(l: center.z, a: center.x, b: center.y, alpha: 1.0f);
+            Lab lab = new(l: center.Z, a: center.X, b: center.Y, alpha: 1.0f);
             over[1 + j] = Rgb.CieLabToStandard(lab);
         }
         return over;
@@ -1895,7 +2058,7 @@ public static class Pixels
         {
             for (int i = 0; i < srcLen; ++i)
             {
-                if (Rgb.EqRgbSatArith(source[i], fromColor))
+                if (Rgb.EqSatArith(source[i], fromColor))
                 {
                     source[i] = toColor;
                 }
@@ -2085,17 +2248,17 @@ public static class Pixels
         float g0 = 0.0f;
         float b0 = 0.0f;
 
-        float a00 = c00.a;
-        float a10 = c10.a;
+        float a00 = c00.Alpha;
+        float a10 = c10.Alpha;
         if (a00 > 0.0f || a10 > 0.0f)
         {
             float u = 1.0f - xErr;
             a0 = u * a00 + xErr * a10;
             if (a0 > 0.0f)
             {
-                r0 = u * c00.r + xErr * c10.r;
-                g0 = u * c00.g + xErr * c10.g;
-                b0 = u * c00.b + xErr * c10.b;
+                r0 = u * c00.R + xErr * c10.R;
+                g0 = u * c00.G + xErr * c10.G;
+                b0 = u * c00.B + xErr * c10.B;
             }
         }
 
@@ -2104,17 +2267,17 @@ public static class Pixels
         float g1 = 0.0f;
         float b1 = 0.0f;
 
-        float a01 = c01.a;
-        float a11 = c11.a;
+        float a01 = c01.Alpha;
+        float a11 = c11.Alpha;
         if (a01 > 0.0f || a11 > 0.0f)
         {
             float u = 1.0f - xErr;
             a1 = u * a01 + xErr * a11;
             if (a1 > 0.0f)
             {
-                r1 = u * c01.r + xErr * c11.r;
-                g1 = u * c01.g + xErr * c11.g;
-                b1 = u * c01.b + xErr * c11.b;
+                r1 = u * c01.R + xErr * c11.R;
+                g1 = u * c01.G + xErr * c11.G;
+                b1 = u * c01.B + xErr * c11.B;
             }
         }
 
@@ -2167,8 +2330,8 @@ public static class Pixels
     in Rgb[] source, in int w, in int h, in Vec2 scalar)
     {
         Vec2 sVrf = Vec2.Abs(scalar);
-        int wTrg = Utils.Max(1, (int)(0.5f + w * sVrf.x));
-        int hTrg = Utils.Max(1, (int)(0.5f + h * sVrf.y));
+        int wTrg = Utils.Max(1, (int)(0.5f + w * sVrf.X));
+        int hTrg = Utils.Max(1, (int)(0.5f + h * sVrf.Y));
         return (pixels: Pixels.ResizeBilinear(source, w, h,
             wTrg, hTrg), w: wTrg, h: hTrg);
     }
@@ -2204,7 +2367,7 @@ public static class Pixels
             case 91:
             case 92:
                 {
-                    Rgb[] t90 = Pixels.Fill(new Rgb[srcLen], Rgb.ClearBlack);
+                    Rgb[] t90 = Pixels.Fill(Rgb.ClearBlack, new Rgb[srcLen]);
                     return (pixels: t90, w, h);
                 }
             default:
@@ -2264,7 +2427,7 @@ public static class Pixels
             case 91:
             case 92:
                 {
-                    Rgb[] t90 = Pixels.Fill(new Rgb[srcLen], Rgb.ClearBlack);
+                    Rgb[] t90 = Pixels.Fill(Rgb.ClearBlack, new Rgb[srcLen]);
                     return (pixels: t90, w, h);
                 }
             default:
@@ -2397,7 +2560,7 @@ public static class Pixels
             }
             else
             {
-                Pixels.Fill(target, Rgb.ClearBlack);
+                Pixels.Fill(Rgb.ClearBlack, target);
             }
         }
         return target;
@@ -2455,7 +2618,7 @@ public static class Pixels
             }
             else
             {
-                Pixels.Fill(target, Rgb.ClearBlack);
+                Pixels.Fill(Rgb.ClearBlack, target);
             }
         }
         return target;

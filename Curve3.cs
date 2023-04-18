@@ -715,7 +715,7 @@ public class Curve3 : IEnumerable<Knot3>
                     for (int i = 0; i < len; ++i)
                     {
                         Rgb c = colors[i];
-                        Vec3 v = new(c.r, c.g, c.b);
+                        Vec3 v = new(c.R, c.G, c.B);
                         Knot3 kn = knots[i];
                         kn.Coord = v;
                         kn.ForeHandle = v;
@@ -729,7 +729,7 @@ public class Curve3 : IEnumerable<Knot3>
                     {
                         Rgb c = colors[i];
                         Rgb l = Rgb.StandardToLinear(c);
-                        Vec3 v = new(l.r, l.g, l.b);
+                        Vec3 v = new(l.R, l.G, l.B);
                         Knot3 kn = knots[i];
                         kn.Coord = v;
                         kn.ForeHandle = v;
@@ -744,7 +744,7 @@ public class Curve3 : IEnumerable<Knot3>
                         Rgb c = colors[i];
                         Rgb l = Rgb.StandardToLinear(c);
                         Vec4 xyza = Rgb.LinearToCieXyz(l);
-                        Vec3 v = xyza.xyz;
+                        Vec3 v = xyza.XYZ;
                         Knot3 kn = knots[i];
                         kn.Coord = v;
                         kn.ForeHandle = v;
@@ -842,7 +842,7 @@ public class Curve3 : IEnumerable<Knot3>
                 prev = curr;
                 curr = next;
             }
-            carry = Knot3.SmoothHandles(prev, curr, first, carry);
+            Knot3.SmoothHandles(prev, curr, first, carry);
         }
         else
         {
@@ -860,7 +860,7 @@ public class Curve3 : IEnumerable<Knot3>
                 curr = next;
             }
 
-            carry = Knot3.SmoothHandlesLast(prev, curr, carry);
+            Knot3.SmoothHandlesLast(prev, curr, carry);
             curr.MirrorHandlesBackward();
         }
 

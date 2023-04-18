@@ -10,12 +10,12 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <summary>
     /// The coordinate index.
     /// </summary>
-    private readonly int _v;
+    private readonly int v;
 
     /// <summary>
     /// The texture coordinate index.
     /// </summary>
-    private readonly int _vt;
+    private readonly int vt;
 
     /// <summary>
     /// The number of array element indices held by this index.
@@ -27,13 +27,13 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// The coordinate index.
     /// </summary>
     /// <value>coordinate index</value>
-    public int v { get { return this._v; } }
+    public int V { get { return this.v; } }
 
     /// <summary>
     /// The texture coordinate index.
     /// </summary>
     /// <value>texture coordinate index</value>
-    public int vt { get { return this._vt; } }
+    public int VT { get { return this.vt; } }
 
     /// <summary>
     /// Retrieves a component by index.
@@ -45,8 +45,8 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
         {
             return i switch
             {
-                0 or -2 => this._v,
-                1 or -1 => this._vt,
+                0 or -2 => this.v,
+                1 or -1 => this.vt,
                 _ => 0,
             };
         }
@@ -62,8 +62,8 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <param name="vt">texture coordinate index</param>
     public Index2(in int v, in int vt)
     {
-        this._v = v < 0 ? 0 : v;
-        this._vt = vt < 0 ? 0 : vt;
+        this.v = v < 0 ? 0 : v;
+        this.vt = vt < 0 ? 0 : vt;
     }
 
     /// <summary>
@@ -87,8 +87,8 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     {
         unchecked
         {
-            return (Utils.MulBase ^ this._v.GetHashCode()) *
-                Utils.HashMul ^ this._vt.GetHashCode();
+            return (Utils.MulBase ^ this.v.GetHashCode()) *
+                Utils.HashMul ^ this.vt.GetHashCode();
         }
     }
 
@@ -109,8 +109,8 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <returns>equivalence</returns>
     public bool Equals(Index2 i)
     {
-        if (this._v != i._v) { return false; }
-        if (this._vt != i._vt) { return false; }
+        if (this.v != i.v) { return false; }
+        if (this.vt != i.vt) { return false; }
         return true;
     }
 
@@ -121,8 +121,8 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <returns>enumerator</returns>
     public IEnumerator GetEnumerator()
     {
-        yield return this._v;
-        yield return this._vt;
+        yield return this.v;
+        yield return this.vt;
     }
 
     /// <summary>
@@ -142,8 +142,8 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <returns>array</returns>
     public int[] ToArray(in int[] arr, in int i)
     {
-        arr[i] = this._v;
-        arr[i + 1] = this._vt;
+        arr[i] = this.v;
+        arr[i + 1] = this.vt;
         return arr;
     }
 
@@ -153,7 +153,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// <returns>tuple</returns>
     public (int v, int vt) ToTuple()
     {
-        return (v: this._v, vt: this._vt);
+        return (this.v, this.vt);
     }
 
     /// <summary>
@@ -211,9 +211,9 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
         in int padding = 3)
     {
         sb.Append("{ v: ");
-        Utils.ToPadded(sb, i._v, padding);
+        Utils.ToPadded(sb, i.v, padding);
         sb.Append(", vt: ");
-        Utils.ToPadded(sb, i._vt, padding);
+        Utils.ToPadded(sb, i.vt, padding);
         sb.Append(" }");
         return sb;
     }

@@ -16,8 +16,8 @@ public static class ClrBlends
     /// <returns>blended color</returns>
     public static Rgb Color(in Rgb under, in Rgb over)
     {
-        float t = over.a;
-        float v = under.a;
+        float t = over.Alpha;
+        float v = under.Alpha;
 
         if (t <= 0.0f) { return under; }
         if (v <= 0.0f) { return over; }
@@ -45,8 +45,8 @@ public static class ClrBlends
     /// <returns>blended color</returns>
     public static Rgb Hue(in Rgb under, in Rgb over)
     {
-        float t = over.a;
-        float v = under.a;
+        float t = over.Alpha;
+        float v = under.Alpha;
 
         if (t <= 0.0f) { return under; }
         if (v <= 0.0f) { return over; }
@@ -73,8 +73,8 @@ public static class ClrBlends
     /// <returns>blended color</returns>
     public static Rgb Luminosity(in Rgb under, in Rgb over)
     {
-        float t = over.a;
-        float v = under.a;
+        float t = over.Alpha;
+        float v = under.Alpha;
 
         if (t <= 0.0f) { return under; }
         if (v <= 0.0f) { return over; }
@@ -99,7 +99,7 @@ public static class ClrBlends
     /// <returns>replacement color</returns>
     public static Rgb Replace(in Rgb under, in Rgb over)
     {
-        if (over.a <= 0.0f) { return under; }
+        if (over.Alpha <= 0.0f) { return under; }
         return over;
     }
 
@@ -113,8 +113,8 @@ public static class ClrBlends
     /// <returns>blended color</returns>
     public static Rgb Saturation(in Rgb under, in Rgb over)
     {
-        float t = over.a;
-        float v = under.a;
+        float t = over.Alpha;
+        float v = under.Alpha;
 
         if (t <= 0.0f) { return under; }
         if (v <= 0.0f) { return over; }
@@ -138,26 +138,26 @@ public static class ClrBlends
     /// <returns>blended color</returns>
     public static Rgb Standard(in Rgb under, in Rgb over)
     {
-        float t = over.a;
+        float t = over.Alpha;
         float u = 1.0f - t;
-        float v = under.a;
+        float v = under.Alpha;
         float uv = u * v;
         float tuv = t + uv;
         if (tuv >= 1.0f)
         {
             return new Rgb(
-                uv * under.r + t * over.r,
-                uv * under.g + t * over.g,
-                uv * under.b + t * over.b,
+                uv * under.R + t * over.R,
+                uv * under.G + t * over.G,
+                uv * under.B + t * over.B,
                 1.0f);
         }
         else if (tuv > 0.0f)
         {
             float tuvInv = 1.0f / tuv;
             return new Rgb(
-                (uv * under.r + t * over.r) * tuvInv,
-                (uv * under.g + t * over.g) * tuvInv,
-                (uv * under.b + t * over.b) * tuvInv,
+                (uv * under.R + t * over.R) * tuvInv,
+                (uv * under.G + t * over.G) * tuvInv,
+                (uv * under.B + t * over.B) * tuvInv,
                 tuv);
         }
         return Rgb.ClearBlack;

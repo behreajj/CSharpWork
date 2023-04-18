@@ -192,9 +192,9 @@ public class Mesh3
             for (int j = 0; j < vertsLen; ++j)
             {
                 Index3 vert = verts[j];
-                usedCoords[vert.v] = this.coords[vert.v];
-                usedTexCoords[vert.vt] = this.texCoords[vert.vt];
-                usedNormals[vert.vn] = this.normals[vert.vn];
+                usedCoords[vert.V] = this.coords[vert.V];
+                usedTexCoords[vert.VT] = this.texCoords[vert.VT];
+                usedNormals[vert.VN] = this.normals[vert.VN];
             }
         }
 
@@ -226,9 +226,9 @@ public class Mesh3
             {
                 Index3 oldVert = verts[j];
                 verts[j] = new Index3(
-                    Array.BinarySearch<Vec3>(newCoords, this.coords[oldVert.v], v3Cmp),
-                    Array.BinarySearch<Vec2>(newTexCoords, this.texCoords[oldVert.vt], v2Cmp),
-                    Array.BinarySearch<Vec3>(newNormals, this.normals[oldVert.vn], v3Cmp));
+                    Array.BinarySearch<Vec3>(newCoords, this.coords[oldVert.V], v3Cmp),
+                    Array.BinarySearch<Vec2>(newTexCoords, this.texCoords[oldVert.VT], v2Cmp),
+                    Array.BinarySearch<Vec3>(newNormals, this.normals[oldVert.VN], v3Cmp));
             }
         }
 
@@ -268,7 +268,7 @@ public class Mesh3
         for (int i = 0; i < vtsLen; ++i)
         {
             Vec2 vt = this.texCoords[i];
-            this.texCoords[i] = new Vec2(1.0f - vt.x, vt.y);
+            this.texCoords[i] = new Vec2(1.0f - vt.X, vt.Y);
         }
         return this;
     }
@@ -284,7 +284,7 @@ public class Mesh3
         for (int i = 0; i < vtsLen; ++i)
         {
             Vec2 vt = this.texCoords[i];
-            this.texCoords[i] = new Vec2(vt.x, 1.0f - vt.y);
+            this.texCoords[i] = new Vec2(vt.X, 1.0f - vt.Y);
         }
         return this;
     }
@@ -354,14 +354,14 @@ public class Mesh3
 
         return new Edge3(
             new Vert3(
-                this.coords[idxOrigin.v],
-                this.texCoords[idxOrigin.vt],
-                this.normals[idxOrigin.v]),
+                this.coords[idxOrigin.V],
+                this.texCoords[idxOrigin.VT],
+                this.normals[idxOrigin.V]),
 
             new Vert3(
-                this.coords[idxDest.v],
-                this.texCoords[idxDest.vt],
-                this.normals[idxDest.vn]));
+                this.coords[idxDest.V],
+                this.texCoords[idxDest.VT],
+                this.normals[idxDest.VN]));
     }
 
     /// <summary>
@@ -397,14 +397,14 @@ public class Mesh3
 
                 Edge3 trial = new(
                     new Vert3(
-                        this.coords[idxOrigin.v],
-                        this.texCoords[idxOrigin.vt],
-                        this.normals[idxOrigin.vn]),
+                        this.coords[idxOrigin.V],
+                        this.texCoords[idxOrigin.VT],
+                        this.normals[idxOrigin.VN]),
 
                     new Vert3(
-                        this.coords[idxDest.v],
-                        this.texCoords[idxDest.vt],
-                        this.normals[idxDest.vn]));
+                        this.coords[idxDest.V],
+                        this.texCoords[idxDest.VT],
+                        this.normals[idxDest.VN]));
 
                 result.Add(trial);
             }
@@ -437,8 +437,8 @@ public class Mesh3
                 Index3 idxOrigin = indices[j];
                 Index3 idxDest = indices[(j + 1) % indicesLen];
 
-                int vIdxOrigin = idxOrigin.v;
-                int vIdxDest = idxDest.v;
+                int vIdxOrigin = idxOrigin.V;
+                int vIdxDest = idxDest.V;
 
                 int aHsh = (Utils.MulBase ^ vIdxOrigin) *
                     Utils.HashMul ^ vIdxDest;
@@ -449,14 +449,14 @@ public class Mesh3
                 {
                     result[vIdxOrigin < vIdxDest ? aHsh : bHsh] = new Edge3(
                     new Vert3(
-                        this.coords[idxOrigin.v],
-                        this.texCoords[idxOrigin.vt],
-                        this.normals[idxOrigin.vn]),
+                        this.coords[idxOrigin.V],
+                        this.texCoords[idxOrigin.VT],
+                        this.normals[idxOrigin.VN]),
 
                     new Vert3(
-                        this.coords[idxDest.v],
-                        this.texCoords[idxDest.vt],
-                        this.normals[idxDest.vn]));
+                        this.coords[idxDest.V],
+                        this.texCoords[idxDest.VT],
+                        this.normals[idxDest.VN]));
                 }
             }
         }
@@ -483,13 +483,13 @@ public class Mesh3
             Index3 idxDest = indices[(i + 1) % indicesLen];
             edges[i] = new Edge3(
                 new Vert3(
-                    this.coords[idxOrigin.v],
-                    this.texCoords[idxOrigin.vt],
-                    this.normals[idxOrigin.vn]),
+                    this.coords[idxOrigin.V],
+                    this.texCoords[idxOrigin.VT],
+                    this.normals[idxOrigin.VN]),
                 new Vert3(
-                    this.coords[idxDest.v],
-                    this.texCoords[idxDest.vt],
-                    this.normals[idxDest.vn]));
+                    this.coords[idxDest.V],
+                    this.texCoords[idxDest.VT],
+                    this.normals[idxDest.VN]));
         }
         return new Face3(edges);
     }
@@ -515,13 +515,13 @@ public class Mesh3
                 Index3 idxDest = indices[(j + 1) % indicesLen];
                 edges[j] = new Edge3(
                     new Vert3(
-                        this.coords[idxOrigin.v],
-                        this.texCoords[idxOrigin.vt],
-                        this.normals[idxOrigin.vn]),
+                        this.coords[idxOrigin.V],
+                        this.texCoords[idxOrigin.VT],
+                        this.normals[idxOrigin.VN]),
                     new Vert3(
-                        this.coords[idxDest.v],
-                        this.texCoords[idxDest.vt],
-                        this.normals[idxDest.vn]));
+                        this.coords[idxDest.V],
+                        this.texCoords[idxDest.VT],
+                        this.normals[idxDest.VN]));
             }
 
             faces[i] = new Face3(edges);
@@ -539,9 +539,9 @@ public class Mesh3
     {
         Index3 index = this.loops[Utils.RemFloor(faceIndex, this.loops.Length)][vertIndex];
         return new Vert3(
-            this.coords[index.v],
-            this.texCoords[index.vt],
-            this.normals[index.vn]);
+            this.coords[index.V],
+            this.texCoords[index.VT],
+            this.normals[index.VN]);
     }
 
     /// <summary>
@@ -561,9 +561,9 @@ public class Mesh3
             {
                 Index3 vert = indices[j];
                 result.Add(new Vert3(
-                    this.coords[vert.v],
-                    this.texCoords[vert.vt],
-                    this.normals[vert.vn]));
+                    this.coords[vert.V],
+                    this.texCoords[vert.VT],
+                    this.normals[vert.VN]));
             }
         }
 
@@ -722,26 +722,26 @@ public class Mesh3
             float vnx = 0.0f;
             float vny = 0.0f;
             float vnz = 0.0f;
-            Vec3 prev = this.coords[face[faceLen - 1].v];
+            Vec3 prev = this.coords[face[faceLen - 1].V];
             for (int j = 0; j < faceLen; ++j)
             {
                 Index3 vert = face[j];
-                Vec3 curr = this.coords[vert.v];
-                Vec3 next = this.coords[face[(j + 1) % faceLen].v];
+                Vec3 curr = this.coords[vert.V];
+                Vec3 next = this.coords[face[(j + 1) % faceLen].V];
 
-                float edge0x = prev.x - curr.x;
-                float edge0y = prev.y - curr.y;
-                float edge0z = prev.z - curr.z;
+                float edge0x = prev.X - curr.X;
+                float edge0y = prev.Y - curr.Y;
+                float edge0z = prev.Z - curr.Z;
 
-                float edge1x = curr.x - next.x;
-                float edge1y = curr.y - next.y;
-                float edge1z = curr.z - next.z;
+                float edge1x = curr.X - next.X;
+                float edge1y = curr.Y - next.Y;
+                float edge1z = curr.Z - next.Z;
 
                 vnx += edge0y * edge1z - edge0z * edge1y;
                 vny += edge0z * edge1x - edge0x * edge1z;
                 vnz += edge0x * edge1y - edge0y * edge1x;
 
-                face[j] = new Index3(vert.v, vert.vt, i);
+                face[j] = new Index3(vert.V, vert.VT, i);
                 prev = curr;
             }
 
@@ -792,17 +792,17 @@ public class Mesh3
             Index3 vertCurr = face[j];
             Index3 vertNext = face[k];
 
-            Vec3 vCurr = this.coords[vertCurr.v];
-            Vec2 vtCurr = this.texCoords[vertCurr.vt];
-            Vec3 vnCurr = this.normals[vertCurr.vn];
+            Vec3 vCurr = this.coords[vertCurr.V];
+            Vec2 vtCurr = this.texCoords[vertCurr.VT];
+            Vec3 vnCurr = this.normals[vertCurr.VN];
 
             vCenter += vCurr;
             vtCenter += vtCurr;
             vnCenter += vnCurr;
 
-            int vNextIdx = vertNext.v;
-            int vtNextIdx = vertNext.vt;
-            int vnNextIdx = vertNext.vn;
+            int vNextIdx = vertNext.V;
+            int vtNextIdx = vertNext.VT;
+            int vnNextIdx = vertNext.VN;
 
             vsNew[j] = Vec3.Mix(vCurr, this.coords[vNextIdx]);
             vtsNew[j] = Vec2.Mix(vtCurr, this.texCoords[vtNextIdx]);
@@ -868,9 +868,9 @@ public class Mesh3
             Index3 vertCurr = face[j];
             Index3 vertNext = face[k];
 
-            int vCurrIdx = vertCurr.v;
-            int vtCurrIdx = vertCurr.vt;
-            int vnCurrIdx = vertCurr.vn;
+            int vCurrIdx = vertCurr.V;
+            int vtCurrIdx = vertCurr.VT;
+            int vnCurrIdx = vertCurr.VN;
 
             Vec3 vCurr = this.coords[vCurrIdx];
             Vec2 vtCurr = this.texCoords[vtCurrIdx];
@@ -883,7 +883,7 @@ public class Mesh3
             loopsNew[j] = new Loop3(
                 new Index3(vCenterIdx, vtCenterIdx, vnCenterIdx),
                 new Index3(vCurrIdx, vtCurrIdx, vnCurrIdx),
-                new Index3(vertNext.v, vertNext.vt, vertNext.vn));
+                new Index3(vertNext.V, vertNext.VT, vertNext.VN));
         }
 
         if (faceLen > 0)
@@ -940,18 +940,18 @@ public class Mesh3
             Index3 vertCurr = face[j];
             Index3 vertNext = face[k];
 
-            int vNextIdx = vertNext.v;
-            int vtNextIdx = vertNext.vt;
-            int vnNextIdx = vertNext.vn;
+            int vNextIdx = vertNext.V;
+            int vtNextIdx = vertNext.VT;
+            int vnNextIdx = vertNext.VN;
 
             vsNew[j] = Vec3.Mix(
-                this.coords[vertCurr.v],
+                this.coords[vertCurr.V],
                 this.coords[vNextIdx]);
             vtsNew[j] = Vec2.Mix(
-                this.texCoords[vertCurr.vt],
+                this.texCoords[vertCurr.VT],
                 this.texCoords[vtNextIdx]);
             vnsNew[j] = Vec3.Normalize(
-                this.normals[vertCurr.vn] +
+                this.normals[vertCurr.VN] +
                 this.normals[vnNextIdx]);
 
             int vSubdivIdx = vsOldLen + j;
@@ -1187,9 +1187,9 @@ public class Mesh3
         for (int i = 0; i < len; ++i)
         {
             Vec3 coord = coords[i];
-            float x = coord.x;
-            float y = coord.y;
-            float z = coord.z;
+            float x = coord.X;
+            float y = coord.Y;
+            float z = coord.Z;
             if (x < lbx) { lbx = x; }
             if (x > ubx) { ubx = x; }
             if (y < lby) { lby = y; }
@@ -1389,26 +1389,26 @@ public class Mesh3
 
                 // North coordinate.
                 vs[vHemiOffsetNorth] = new Vec3(
-                    rhoCosPhiNorth * scTheta.x,
-                    rhoCosPhiNorth * scTheta.y,
+                    rhoCosPhiNorth * scTheta.X,
+                    rhoCosPhiNorth * scTheta.Y,
                     zOffsetNorth);
 
                 // North normal.
                 vns[vHemiOffsetNorth] = new Vec3(
-                    cosPhiNorth * scTheta.x,
-                    cosPhiNorth * scTheta.y,
+                    cosPhiNorth * scTheta.X,
+                    cosPhiNorth * scTheta.Y,
                     -sinPhiNorth);
 
                 // South coordinate.
                 vs[vHemiOffsetSouth] = new Vec3(
-                    rhoCosPhiSouth * scTheta.x,
-                    rhoCosPhiSouth * scTheta.y,
+                    rhoCosPhiSouth * scTheta.X,
+                    rhoCosPhiSouth * scTheta.Y,
                     zOffsetSouth);
 
                 // South normal. 
                 vns[vnHemiOffsetSouth] = new Vec3(
-                    cosPhiSouth * scTheta.x,
-                    cosPhiSouth * scTheta.y,
+                    cosPhiSouth * scTheta.X,
+                    cosPhiSouth * scTheta.Y,
                     -sinPhiSouth);
 
                 ++vHemiOffsetNorth;
@@ -1454,9 +1454,9 @@ public class Mesh3
                     // -half_depth. For clarity, this is left as a linear
                     // interpolation.
                     vs[vCylOffset] = new Vec3(
-                        cmplFac * vEquatorNorth.x + fac * vEquatorSouth.x,
-                        cmplFac * vEquatorNorth.y + fac * vEquatorSouth.y,
-                        cmplFac * vEquatorNorth.z + fac * vEquatorSouth.z);
+                        cmplFac * vEquatorNorth.X + fac * vEquatorSouth.X,
+                        cmplFac * vEquatorNorth.Y + fac * vEquatorSouth.Y,
+                        cmplFac * vEquatorNorth.Z + fac * vEquatorSouth.Z);
 
                     ++vCylOffset;
                 }
@@ -1696,7 +1696,7 @@ public class Mesh3
             for (int j = 0; j < fSrcLen; ++j)
             {
                 Index3 srcVert = fSrc[j];
-                fTrg[j] = new Index3(srcVert.v, srcVert.vt, srcVert.v);
+                fTrg[j] = new Index3(srcVert.V, srcVert.VT, srcVert.V);
             }
         }
 
@@ -2522,9 +2522,9 @@ public class Mesh3
             for (int j = 0; j < fLen; ++j, ++k)
             {
                 Index3 vertSrc = fSrc[j];
-                vsTrg[k] = vsSrc[vertSrc.v];
-                vtsTrg[k] = vtsSrc[vertSrc.vt];
-                vnsTrg[k] = vnsSrc[vertSrc.vn];
+                vsTrg[k] = vsSrc[vertSrc.V];
+                vtsTrg[k] = vtsSrc[vertSrc.VT];
+                vnsTrg[k] = vnsSrc[vertSrc.VN];
 
                 fTrg[j] = new Index3(k, k, k);
             }

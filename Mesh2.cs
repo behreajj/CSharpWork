@@ -144,23 +144,23 @@ public class Mesh2
         Vec2 dim = Bounds2.ExtentSigned(aabb);
         Vec2 lb = aabb.Min;
 
-        float lbx = lb.x;
-        float lby = lb.y;
-        float xInv = 1.0f / dim.x;
-        float yInv = 1.0f / dim.y;
+        float lbx = lb.X;
+        float lby = lb.Y;
+        float xInv = 1.0f / dim.X;
+        float yInv = 1.0f / dim.Y;
 
         float sAspect = 1.0f;
         float tAspect = 1.0f;
-        if (dim.x < dim.y) { sAspect = dim.x / dim.y; }
-        else if (dim.x > dim.y) { tAspect = dim.y / dim.x; }
+        if (dim.X < dim.Y) { sAspect = dim.X / dim.Y; }
+        else if (dim.X > dim.Y) { tAspect = dim.Y / dim.X; }
 
         int vsLen = this.coords.Length;
         this.texCoords = Vec2.Resize(this.texCoords, vsLen);
         for (int i = 0; i < vsLen; ++i)
         {
             Vec2 v = this.coords[i];
-            float sStretch = (v.x - lbx) * xInv;
-            float tStretch = (v.y - lby) * yInv;
+            float sStretch = (v.X - lbx) * xInv;
+            float tStretch = (v.Y - lby) * yInv;
             float s = (sStretch - 0.5f) * sAspect + 0.5f;
             float t = (tStretch - 0.5f) * tAspect + 0.5f;
             this.texCoords[i] = new Vec2(s, 1.0f - t);
@@ -175,7 +175,7 @@ public class Mesh2
             for (int j = 0; j < idcsLen; ++j)
             {
                 Index2 src = srcIndices[j];
-                loop.Indices[j] = new Index2(src.v, src.v);
+                loop.Indices[j] = new Index2(src.V, src.V);
             }
         }
 
@@ -207,8 +207,8 @@ public class Mesh2
             {
                 // The dictionary should ignore repeated visitations.
                 Index2 vert = verts[j];
-                usedCoords[vert.v] = this.coords[vert.v];
-                usedTexCoords[vert.vt] = this.texCoords[vert.vt];
+                usedCoords[vert.V] = this.coords[vert.V];
+                usedTexCoords[vert.VT] = this.texCoords[vert.VT];
             }
         }
 
@@ -239,8 +239,8 @@ public class Mesh2
                 // array as a reference.
                 Index2 oldVert = verts[j];
                 verts[j] = new Index2(
-                    Array.BinarySearch<Vec2>(newCoords, this.coords[oldVert.v], v2Cmp),
-                    Array.BinarySearch<Vec2>(newTexCoords, this.texCoords[oldVert.vt], v2Cmp));
+                    Array.BinarySearch<Vec2>(newCoords, this.coords[oldVert.V], v2Cmp),
+                    Array.BinarySearch<Vec2>(newTexCoords, this.texCoords[oldVert.VT], v2Cmp));
             }
         }
 
@@ -286,7 +286,7 @@ public class Mesh2
         for (int i = 0; i < vtsLen; ++i)
         {
             Vec2 vt = this.texCoords[i];
-            this.texCoords[i] = new Vec2(1.0f - vt.x, vt.y);
+            this.texCoords[i] = new Vec2(1.0f - vt.X, vt.Y);
         }
         return this;
     }
@@ -302,7 +302,7 @@ public class Mesh2
         for (int i = 0; i < vtsLen; ++i)
         {
             Vec2 vt = this.texCoords[i];
-            this.texCoords[i] = new Vec2(vt.x, 1.0f - vt.y);
+            this.texCoords[i] = new Vec2(vt.X, 1.0f - vt.Y);
         }
         return this;
     }
@@ -355,12 +355,12 @@ public class Mesh2
 
         return new Edge2(
             new Vert2(
-                this.coords[idxOrigin.v],
-                this.texCoords[idxOrigin.vt]),
+                this.coords[idxOrigin.V],
+                this.texCoords[idxOrigin.VT]),
 
             new Vert2(
-                this.coords[idxDest.v],
-                this.texCoords[idxDest.vt]));
+                this.coords[idxDest.V],
+                this.texCoords[idxDest.VT]));
     }
 
     ///<summary>
@@ -396,12 +396,12 @@ public class Mesh2
 
                 Edge2 trial = new(
                     new Vert2(
-                        this.coords[idxOrigin.v],
-                        this.texCoords[idxOrigin.vt]),
+                        this.coords[idxOrigin.V],
+                        this.texCoords[idxOrigin.VT]),
 
                     new Vert2(
-                        this.coords[idxDest.v],
-                        this.texCoords[idxDest.vt]));
+                        this.coords[idxDest.V],
+                        this.texCoords[idxDest.VT]));
 
                 result.Add(trial);
             }
@@ -434,8 +434,8 @@ public class Mesh2
                 Index2 idxOrigin = indices[j];
                 Index2 idxDest = indices[(j + 1) % indicesLen];
 
-                int vIdxOrigin = idxOrigin.v;
-                int vIdxDest = idxDest.v;
+                int vIdxOrigin = idxOrigin.V;
+                int vIdxDest = idxDest.V;
 
                 int aHsh = (Utils.MulBase ^ vIdxOrigin) *
                     Utils.HashMul ^ vIdxDest;
@@ -446,12 +446,12 @@ public class Mesh2
                 {
                     result[vIdxOrigin < vIdxDest ? aHsh : bHsh] = new Edge2(
                     new Vert2(
-                        this.coords[idxOrigin.v],
-                        this.texCoords[idxOrigin.vt]),
+                        this.coords[idxOrigin.V],
+                        this.texCoords[idxOrigin.VT]),
 
                     new Vert2(
-                        this.coords[idxDest.v],
-                        this.texCoords[idxDest.vt]));
+                        this.coords[idxDest.V],
+                        this.texCoords[idxDest.VT]));
                 }
             }
         }
@@ -478,11 +478,11 @@ public class Mesh2
             Index2 idxDest = indices[(i + 1) % indicesLen];
             edges[i] = new Edge2(
                 new Vert2(
-                    this.coords[idxOrigin.v],
-                    this.texCoords[idxOrigin.vt]),
+                    this.coords[idxOrigin.V],
+                    this.texCoords[idxOrigin.VT]),
                 new Vert2(
-                    this.coords[idxDest.v],
-                    this.texCoords[idxDest.vt]));
+                    this.coords[idxDest.V],
+                    this.texCoords[idxDest.VT]));
         }
         return new Face2(edges);
     }
@@ -508,11 +508,11 @@ public class Mesh2
                 Index2 idxDest = indices[(j + 1) % indicesLen];
                 edges[j] = new Edge2(
                     new Vert2(
-                        this.coords[idxOrigin.v],
-                        this.texCoords[idxOrigin.vt]),
+                        this.coords[idxOrigin.V],
+                        this.texCoords[idxOrigin.VT]),
                     new Vert2(
-                        this.coords[idxDest.v],
-                        this.texCoords[idxDest.vt]));
+                        this.coords[idxDest.V],
+                        this.texCoords[idxDest.VT]));
             }
 
             faces[i] = new Face2(edges);
@@ -530,8 +530,8 @@ public class Mesh2
     {
         Index2 index = this.loops[Utils.RemFloor(faceIndex, this.loops.Length)][vertIndex];
         return new Vert2(
-            this.coords[index.v],
-            this.texCoords[index.vt]);
+            this.coords[index.V],
+            this.texCoords[index.VT]);
     }
 
     /// <summary>
@@ -551,8 +551,8 @@ public class Mesh2
             {
                 Index2 vert = indices[j];
                 result.Add(new Vert2(
-                    this.coords[vert.v],
-                    this.texCoords[vert.vt]));
+                    this.coords[vert.V],
+                    this.texCoords[vert.VT]));
             }
         }
 
@@ -601,8 +601,8 @@ public class Mesh2
         for (int j = 0; j < loopLen; ++j)
         {
             Index2 curr = indices[j];
-            vCenter += this.coords[curr.v];
-            vtCenter += this.texCoords[curr.vt];
+            vCenter += this.coords[curr.V];
+            vtCenter += this.texCoords[curr.VT];
         }
 
         // Find average.
@@ -624,8 +624,8 @@ public class Mesh2
             Index2 vertCurr = indices[j];
             Index2 vertNext = indices[k];
 
-            int vCornerIdx = vertCurr.v;
-            int vtCornerIdx = vertCurr.vt;
+            int vCornerIdx = vertCurr.V;
+            int vtCornerIdx = vertCurr.VT;
 
             vsNew[j] = Vec2.Mix(this.coords[vCornerIdx], vCenter, fac);
             vtsNew[j] = Vec2.Mix(this.texCoords[vtCornerIdx], vtCenter, fac);
@@ -635,7 +635,7 @@ public class Mesh2
 
             loopsNew[j] = new Loop2(
                 new Index2(vCornerIdx, vtCornerIdx),
-                new Index2(vertNext.v, vertNext.vt),
+                new Index2(vertNext.V, vertNext.VT),
                 new Index2(vsOldLen + k, vtsOldLen + k),
                 new Index2(vSubdivIdx, vtSubdivIdx));
 
@@ -762,14 +762,14 @@ public class Mesh2
             Index2 vertCurr = face[j];
             Index2 vertNext = face[k];
 
-            Vec2 vCurr = this.coords[vertCurr.v];
-            Vec2 vtCurr = this.texCoords[vertCurr.vt];
+            Vec2 vCurr = this.coords[vertCurr.V];
+            Vec2 vtCurr = this.texCoords[vertCurr.VT];
 
             vCenter += vCurr;
             vtCenter += vtCurr;
 
-            int vNextIdx = vertNext.v;
-            int vtNextIdx = vertNext.vt;
+            int vNextIdx = vertNext.V;
+            int vtNextIdx = vertNext.VT;
 
             vsNew[j] = Vec2.Mix(vCurr, this.coords[vNextIdx]);
             vtsNew[j] = Vec2.Mix(vtCurr, this.texCoords[vtNextIdx]);
@@ -828,8 +828,8 @@ public class Mesh2
             Index2 vertCurr = face[j];
             Index2 vertNext = face[k];
 
-            int vCurrIdx = vertCurr.v;
-            int vtCurrIdx = vertCurr.vt;
+            int vCurrIdx = vertCurr.V;
+            int vtCurrIdx = vertCurr.VT;
 
             Vec2 vCurr = this.coords[vCurrIdx];
             Vec2 vtCurr = this.texCoords[vtCurrIdx];
@@ -840,7 +840,7 @@ public class Mesh2
             loopsNew[j] = new Loop2(
                 new Index2(vCenterIdx, vtCenterIdx),
                 new Index2(vCurrIdx, vtCurrIdx),
-                new Index2(vertNext.v, vertNext.vt));
+                new Index2(vertNext.V, vertNext.VT));
         }
 
         if (faceLen > 0)
@@ -891,14 +891,14 @@ public class Mesh2
             Index2 vertCurr = face[j];
             Index2 vertNext = face[k];
 
-            int vNextIdx = vertNext.v;
-            int vtNextIdx = vertNext.vt;
+            int vNextIdx = vertNext.V;
+            int vtNextIdx = vertNext.VT;
 
             vsNew[j] = Vec2.Mix(
-                this.coords[vertCurr.v],
+                this.coords[vertCurr.V],
                 this.coords[vNextIdx]);
             vtsNew[j] = Vec2.Mix(
-                this.texCoords[vertCurr.vt],
+                this.texCoords[vertCurr.VT],
                 this.texCoords[vtNextIdx]);
 
             int vSubdivIdx = vsOldLen + j;
@@ -1240,8 +1240,8 @@ public class Mesh2
         for (int i = 0; i < len; ++i)
         {
             Vec2 coord = coords[i];
-            float x = coord.x;
-            float y = coord.y;
+            float x = coord.X;
+            float y = coord.Y;
             if (x < lbx) { lbx = x; }
             if (x > ubx) { ubx = x; }
             if (y < lby) { lby = y; }
@@ -1263,7 +1263,7 @@ public class Mesh2
     /// <param name="poly">polygon type</param>
     /// <returns>mesh</returns>
     public static Mesh2 FromPixels(
-         in Rgb[] source, in Mesh2 target,
+        in Rgb[] source, in Mesh2 target,
         in int w, in int h,
         in PolyType poly = PolyType.Tri)
     {
@@ -1274,12 +1274,14 @@ public class Mesh2
             if (Rgb.Any(source[i])) { indices.Add(i); }
         }
 
-        float right = w > h ? 0.5f : 0.5f * (w / (float)h);
-        float top = w <= h ? 0.5f : 0.5f * (h / (float)w);
+        float wf = w;
+        float hf = h;
+        float right = w > h ? 0.5f : 0.5f * (wf / hf);
+        float top = w <= h ? 0.5f : 0.5f * (hf / wf);
         return Mesh2.FromPixels(
             indices, target, w,
             -right, top, right, -top,
-            1.0f / w, 1.0f / h, poly);
+            1.0f / wf, 1.0f / hf, poly);
     }
 
     /// <summary>
@@ -1577,8 +1579,8 @@ public class Mesh2
     {
         int sectVrf = Utils.Max(3, sectors);
         int newLen = poly == PolyType.Ngon ? sectVrf :
-                     poly == PolyType.Quad ? sectVrf + sectVrf + 1 :
-                     sectVrf + 1;
+            poly == PolyType.Quad ? sectVrf + sectVrf + 1 :
+            sectVrf + 1;
         float radVrf = MathF.Max(Utils.Epsilon, radius);
         float angVrf = Utils.WrapRadians(angle);
         float toTheta = Utils.Tau / sectVrf;
@@ -1744,10 +1746,10 @@ public class Mesh2
         in UvProfiles.Rect profile = UvProfiles.Rect.Stretch)
     {
         // Validate corners.
-        float lft = MathF.Min(lb.x, ub.x);
-        float rgt = MathF.Max(lb.x, ub.x);
-        float btm = MathF.Min(lb.y, ub.y);
-        float top = MathF.Max(lb.y, ub.y);
+        float lft = MathF.Min(lb.X, ub.X);
+        float rgt = MathF.Max(lb.X, ub.X);
+        float btm = MathF.Min(lb.Y, ub.Y);
+        float top = MathF.Max(lb.Y, ub.Y);
 
         // Protect from zero dimension meshes.
         float w = rgt - lft;
@@ -2382,8 +2384,8 @@ public class Mesh2
             for (int j = 0; j < fLen; ++j, ++k)
             {
                 Index2 vertSrc = fSrc[j];
-                vsTrg[k] = vsSrc[vertSrc.v];
-                vtsTrg[k] = vtsSrc[vertSrc.vt];
+                vsTrg[k] = vsSrc[vertSrc.V];
+                vtsTrg[k] = vtsSrc[vertSrc.VT];
                 fTrg[j] = new Index2(k, k);
             }
         }

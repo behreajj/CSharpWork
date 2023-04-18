@@ -31,9 +31,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         get
         {
             float w = this.real;
-            float x = this.imag.x;
-            float y = this.imag.y;
-            float z = this.imag.z;
+            float x = this.imag.X;
+            float y = this.imag.Y;
+            float z = this.imag.Z;
 
             float xy = x * y;
             float xw = x * w;
@@ -74,9 +74,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         get
         {
             float w = this.real;
-            float x = this.imag.x;
-            float y = this.imag.y;
-            float z = this.imag.z;
+            float x = this.imag.X;
+            float y = this.imag.Y;
+            float z = this.imag.Z;
 
             float xy = x * y;
             float xz = x * z;
@@ -99,9 +99,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         get
         {
             float w = this.real;
-            float x = this.imag.x;
-            float y = this.imag.y;
-            float z = this.imag.z;
+            float x = this.imag.X;
+            float y = this.imag.Y;
+            float z = this.imag.Z;
 
             float xz = x * z;
             float xw = x * w;
@@ -119,25 +119,25 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// The real component.
     /// </summary>
     /// <value>w</value>
-    public float w { get { return this.real; } }
+    public float W { get { return this.real; } }
 
     /// <summary>
     /// The coefficient of the imaginary i.
     /// </summary>
     /// <value>x</value>
-    public float x { get { return this.imag.x; } }
+    public float X { get { return this.imag.X; } }
 
     /// <summary>
     /// The coefficient of the imaginary j.
     /// </summary>
     /// <value>y</value>
-    public float y { get { return this.imag.y; } }
+    public float Y { get { return this.imag.Y; } }
 
     /// <summary>
     /// The coefficient of the imaginary k.
     /// </summary>
     /// <value>z</value>
-    public float z { get { return this.imag.z; } }
+    public float Z { get { return this.imag.Z; } }
 
     /// <summary>
     /// Retrieves an element by index. The real component is assumed to be the
@@ -151,9 +151,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
             return i switch
             {
                 0 or -4 => this.real,
-                1 or -3 => this.imag.x,
-                2 or -2 => this.imag.y,
-                3 or -1 => this.imag.z,
+                1 or -3 => this.imag.X,
+                2 or -2 => this.imag.Y,
+                3 or -1 => this.imag.Z,
                 _ => 0.0f,
             };
         }
@@ -243,9 +243,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     public IEnumerator GetEnumerator()
     {
         yield return this.real;
-        yield return this.imag.x;
-        yield return this.imag.y;
-        yield return this.imag.z;
+        yield return this.imag.X;
+        yield return this.imag.Y;
+        yield return this.imag.Z;
     }
 
     /// <summary>
@@ -268,9 +268,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     public float[] ToArray(in float[] arr, in int i = 0)
     {
         arr[i] = this.real;
-        arr[i + 1] = this.imag.x;
-        arr[i + 2] = this.imag.y;
-        arr[i + 3] = this.imag.z;
+        arr[i + 1] = this.imag.X;
+        arr[i + 2] = this.imag.Y;
+        arr[i + 3] = this.imag.Z;
         return arr;
     }
 
@@ -281,7 +281,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     public (float w, float x, float y, float z) ToTuple()
     {
         return (w: this.real,
-            this.imag.x, this.imag.y, this.imag.z);
+            this.imag.X, this.imag.Y, this.imag.Z);
     }
 
     /// <summary>
@@ -290,7 +290,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <param name="real">real number</param>
     public static implicit operator Quat(in float real)
     {
-        return new Quat(real, Vec3.Zero);
+        return new(real, Vec3.Zero);
     }
 
     /// <summary>
@@ -299,7 +299,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <param name="imag">vector</param>
     public static implicit operator Quat(in Vec3 imag)
     {
-        return new Quat(0.0f, new Vec3(imag.x, imag.y, imag.z));
+        return new(0.0f, new Vec3(imag.X, imag.Y, imag.Z));
     }
 
     /// <summary>
@@ -309,7 +309,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <param name="v">vector</param>
     public static explicit operator Quat(in Vec4 v)
     {
-        return new Quat(v.w, new Vec3(v.x, v.y, v.z));
+        return new(v.W, new Vec3(v.X, v.Y, v.Z));
     }
 
     /// <summary>
@@ -320,7 +320,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     public static explicit operator Vec4(in Quat q)
     {
         Vec3 i = q.imag;
-        return new Vec4(i.x, i.y, i.z, q.real);
+        return new Vec4(i.X, i.Y, i.Z, q.real);
     }
 
     /// <summary>
@@ -361,7 +361,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>negation</returns>
     public static Quat operator -(in Quat q)
     {
-        return new Quat(-q.real, -q.imag);
+        return new(-q.real, -q.imag);
     }
 
     /// <summary>
@@ -377,7 +377,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>product</returns>
     public static Quat operator *(in Quat a, in Quat b)
     {
-        return new Quat(
+        return new(
             (a.real * b.real) -
             Vec3.Dot(a.imag, b.imag),
 
@@ -394,7 +394,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>product</returns>
     public static Quat operator *(in Quat a, in float b)
     {
-        return new Quat(a.real * b, a.imag * b);
+        return new(a.real * b, a.imag * b);
     }
 
     /// <summary>
@@ -405,7 +405,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>product</returns>
     public static Quat operator *(in float a, in Quat b)
     {
-        return new Quat(a * b.real, a * b.imag);
+        return new(a * b.real, a * b.imag);
     }
 
     /// <summary>
@@ -417,7 +417,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>product</returns>
     public static Quat operator *(in Quat a, in Vec3 b)
     {
-        return new Quat(-Vec3.Dot(a.imag, b),
+        return new(-Vec3.Dot(a.imag, b),
             Vec3.Cross(a.imag, b) + (a.real * b));
     }
 
@@ -430,7 +430,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>product</returns>
     public static Quat operator *(in Vec3 a, in Quat b)
     {
-        return new Quat(-Vec3.Dot(a, b.imag),
+        return new(-Vec3.Dot(a, b.imag),
             Vec3.Cross(a, b.imag) + (b.real * a));
     }
 
@@ -461,7 +461,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         if (b != 0.0f)
         {
             float bInv = 1.0f / b;
-            return new Quat(a.real * bInv, a.imag * bInv);
+            return new(a.real * bInv, a.imag * bInv);
         }
         return Quat.Identity;
     }
@@ -521,7 +521,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>sum</returns>
     public static Quat operator +(in Quat a, in Quat b)
     {
-        return new Quat(a.real + b.real, a.imag + b.imag);
+        return new(a.real + b.real, a.imag + b.imag);
     }
 
     /// <summary>
@@ -532,7 +532,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>sum</returns>
     public static Quat operator +(in Quat a, in float b)
     {
-        return new Quat(a.real + b, a.imag);
+        return new(a.real + b, a.imag);
     }
 
     /// <summary>
@@ -543,7 +543,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>sum</returns>
     public static Quat operator +(in float a, in Quat b)
     {
-        return new Quat(a + b.real, b.imag);
+        return new(a + b.real, b.imag);
     }
 
     /// <summary>
@@ -554,7 +554,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>sum</returns>
     public static Quat operator +(in Quat a, in Vec3 b)
     {
-        return new Quat(a.real, a.imag + b);
+        return new(a.real, a.imag + b);
     }
 
     /// <summary>
@@ -565,7 +565,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>sum</returns>
     public static Quat operator +(in Vec3 a, in Quat b)
     {
-        return new Quat(b.real, a + b.imag);
+        return new(b.real, a + b.imag);
     }
 
     /// <summary>
@@ -576,7 +576,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>difference</returns>
     public static Quat operator -(in Quat a, in Quat b)
     {
-        return new Quat(a.real - b.real, a.imag - b.imag);
+        return new(a.real - b.real, a.imag - b.imag);
     }
 
     /// <summary>
@@ -587,7 +587,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>difference</returns>
     public static Quat operator -(in Quat a, in float b)
     {
-        return new Quat(a.real - b, a.imag);
+        return new(a.real - b, a.imag);
     }
 
     /// <summary>
@@ -598,7 +598,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>difference</returns>
     public static Quat operator -(in float a, in Quat b)
     {
-        return new Quat(a - b.real, -b.imag);
+        return new(a - b.real, -b.imag);
     }
 
     /// <summary>
@@ -609,7 +609,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>difference</returns>
     public static Quat operator -(in Quat a, in Vec3 b)
     {
-        return new Quat(a.real, a.imag - b);
+        return new(a.real, a.imag - b);
     }
 
     /// <summary>
@@ -620,7 +620,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>difference</returns>
     public static Quat operator -(in Vec3 a, in Quat b)
     {
-        return new Quat(-b.real, a - b.imag);
+        return new(-b.real, a - b.imag);
     }
 
     /// <summary>
@@ -666,7 +666,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>conjugate</returns>
     public static Quat Conj(in Quat q)
     {
-        return new Quat(q.real, -q.imag);
+        return new(q.real, -q.imag);
     }
 
     /// <summary>
@@ -697,7 +697,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         float rHalf = radians % Utils.Tau * 0.5f;
         float cosa = MathF.Cos(rHalf);
         float sina = MathF.Sin(rHalf);
-        return new Quat(cosa, 0.0f, 0.0f, sina);
+        return new(cosa, 0.0f, 0.0f, sina);
     }
 
     /// <summary>
@@ -709,15 +709,15 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>quaternion</returns>
     public static Quat FromAxisAngle(in float radians, in Vec3 axis)
     {
-        float ax = axis.x;
-        float ay = axis.y;
-        float az = axis.z;
+        float ax = axis.X;
+        float ay = axis.Y;
+        float az = axis.Z;
         float amSq = ax * ax + ay * ay + az * az;
         if (amSq > 0.0f)
         {
             float rHalf = radians % Utils.Tau * 0.5f;
             float amInv = MathF.Sin(rHalf) / MathF.Sqrt(amSq);
-            return new Quat(MathF.Cos(rHalf), new Vec3(
+            return new(MathF.Cos(rHalf), new Vec3(
                     ax * amInv,
                     ay * amInv,
                     az * amInv));
@@ -743,7 +743,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         float cosIncl = MathF.Cos(inHalf);
         float sinIncl = MathF.Sin(inHalf);
 
-        return new Quat(
+        return new(
             cosAzim * cosIncl,
             sinAzim * -sinIncl,
             sinIncl * cosAzim,
@@ -763,7 +763,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     {
         Vec3 o = Vec3.Normalize(origin);
         Vec3 d = Vec3.Normalize(dest);
-        return new Quat(Vec3.Dot(o, d), Vec3.Cross(o, d));
+        return new(Vec3.Dot(o, d), Vec3.Cross(o, d));
     }
 
     /// <summary>
@@ -787,7 +787,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         if (mSq != 0.0f)
         {
             float msi = 1.0f / mSq;
-            return new Quat(q.real * msi, -i.x * msi, -i.y * msi, -i.z * msi);
+            return new(q.real * msi, -i.X * msi, -i.Y * msi, -i.Z * msi);
         }
         return Quat.Identity;
     }
@@ -808,14 +808,14 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
             float w = q.real * mSqInv;
             Vec3 i = q.imag;
-            float qx = -i.x * mSqInv;
-            float qy = -i.y * mSqInv;
-            float qz = -i.z * mSqInv;
+            float qx = -i.X * mSqInv;
+            float qy = -i.Y * mSqInv;
+            float qz = -i.Z * mSqInv;
 
-            float iw = -qx * v.x - qy * v.y - qz * v.z;
-            float ix = w * v.x + qy * v.z - qz * v.y;
-            float iy = w * v.y + qz * v.x - qx * v.z;
-            float iz = w * v.z + qx * v.y - qy * v.x;
+            float iw = -qx * v.X - qy * v.Y - qz * v.Z;
+            float ix = w * v.X + qy * v.Z - qz * v.Y;
+            float iy = w * v.Y + qz * v.X - qx * v.Z;
+            float iz = w * v.Z + qx * v.Y - qy * v.X;
 
             return new Vec3(
                 ix * w + iz * qy - iw * qx - iy * qz,
@@ -901,16 +901,16 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         // Decompose origin quaternion.
         Vec3 oi = o.imag;
         float ow = o.real;
-        float ox = oi.x;
-        float oy = oi.y;
-        float oz = oi.z;
+        float ox = oi.X;
+        float oy = oi.Y;
+        float oz = oi.Z;
 
         // Decompose destination quaternion.
         Vec3 di = d.imag;
         float dw = d.real;
-        float dx = di.x;
-        float dy = di.y;
-        float dz = di.z;
+        float dx = di.X;
+        float dy = di.Y;
+        float dz = di.Z;
 
         // Clamped dot product.
         float dotp = Utils.Clamp(
@@ -969,12 +969,12 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         // If 1, no need to normalize.
         if (MathF.Abs(1.0f - mSq) < Utils.Epsilon)
         {
-            return new Quat(cw, cx, cy, cz);
+            return new(cw, cx, cy, cz);
         }
 
         // Normalize.
         float mInv = 1.0f / MathF.Sqrt(mSq);
-        return new Quat(
+        return new(
             cw * mInv,
             cx * mInv,
             cy * mInv,
@@ -1000,14 +1000,14 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
         float w = q.real;
         Vec3 i = q.imag;
-        float qx = i.x;
-        float qy = i.y;
-        float qz = i.z;
+        float qx = i.X;
+        float qy = i.Y;
+        float qz = i.Z;
 
-        float iw = -qx * v.x - qy * v.y - qz * v.z;
-        float ix = w * v.x + qy * v.z - qz * v.y;
-        float iy = w * v.y + qz * v.x - qx * v.z;
-        float iz = w * v.z + qx * v.y - qy * v.x;
+        float iw = -qx * v.X - qy * v.Y - qz * v.Z;
+        float ix = w * v.X + qy * v.Z - qz * v.Y;
+        float iy = w * v.Y + qz * v.X - qx * v.Z;
+        float iz = w * v.Z + qx * v.Y - qy * v.X;
 
         return new Vec3(
             ix * w + iz * qy - iw * qx - iy * qz,
@@ -1042,7 +1042,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         if (mSq > 0.0f)
         {
             float mInv = 1.0f / MathF.Sqrt(mSq);
-            return new Quat(q.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
+            return new(q.real * mInv, i.X * mInv, i.Y * mInv, i.Z * mInv);
         }
         return Quat.Identity;
     }
@@ -1069,7 +1069,7 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
         float cost1 = MathF.Cos(t1);
         float sint1 = MathF.Sin(t1);
 
-        return new Quat(
+        return new(
             x0 * sint0,
             x0 * cost0,
             x1 * sint1,
@@ -1105,11 +1105,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     public static Quat RotateX(in Quat q, in float cosah, in float sinah)
     {
         Vec3 i = q.imag;
-        return new Quat(
-            cosah * q.real - sinah * i.x,
-            cosah * i.x + sinah * q.real,
-            cosah * i.y + sinah * i.z,
-            cosah * i.z - sinah * i.y);
+        return new(
+            cosah * q.real - sinah * i.X,
+            cosah * i.X + sinah * q.real,
+            cosah * i.Y + sinah * i.Z,
+            cosah * i.Z - sinah * i.Y);
     }
 
     /// <summary>
@@ -1141,11 +1141,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     public static Quat RotateY(in Quat q, in float cosah, in float sinah)
     {
         Vec3 i = q.imag;
-        return new Quat(
-            cosah * q.real - sinah * i.y,
-            cosah * i.x - sinah * i.z,
-            cosah * i.y + sinah * q.real,
-            cosah * i.z + sinah * i.x);
+        return new(
+            cosah * q.real - sinah * i.Y,
+            cosah * i.X - sinah * i.Z,
+            cosah * i.Y + sinah * q.real,
+            cosah * i.Z + sinah * i.X);
     }
 
     /// <summary>
@@ -1177,11 +1177,11 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     public static Quat RotateZ(in Quat q, in float cosah, in float sinah)
     {
         Vec3 i = q.imag;
-        return new Quat(
-            cosah * q.real - sinah * i.z,
-            cosah * i.x + sinah * i.y,
-            cosah * i.y - sinah * i.x,
-            cosah * i.z + sinah * q.real);
+        return new(
+            cosah * q.real - sinah * i.Z,
+            cosah * i.X + sinah * i.Y,
+            cosah * i.Y - sinah * i.X,
+            cosah * i.Z + sinah * q.real);
     }
 
     /// <summary>
@@ -1196,9 +1196,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     {
         float w = q.real;
         Vec3 i = q.imag;
-        float x = i.x;
-        float y = i.y;
-        float z = i.z;
+        float x = i.X;
+        float y = i.Y;
+        float z = i.Z;
 
         float x2 = x + x;
         float y2 = y + y;
@@ -1263,9 +1263,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
 
         float sInv = 1.0f / wAsin;
         Vec3 i = q.imag;
-        float ax = i.x * sInv;
-        float ay = i.y * sInv;
-        float az = i.z * sInv;
+        float ax = i.X * sInv;
+        float ay = i.Y * sInv;
+        float az = i.Z * sInv;
 
         float amSq = ax * ax + ay * ay + az * az;
         if (amSq <= 0.0f)
@@ -1297,9 +1297,9 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     public static (float theta, float phi) ToSpherical(in Quat q)
     {
         float w = q.real;
-        float ix = q.imag.x;
-        float iy = q.imag.y;
-        float iz = q.imag.z;
+        float ix = q.imag.X;
+        float iy = q.imag.Y;
+        float iz = q.imag.Z;
 
         float xy = ix * iy;
         float xz = ix * iz;
@@ -1351,11 +1351,5 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// imaginary components are 0, ( 1.0, 0.0, 0.0, 0.0 ).
     /// </summary>
     /// <value>identity</value>
-    public static Quat Identity
-    {
-        get
-        {
-            return new Quat(1.0f, Vec3.Zero);
-        }
-    }
+    public static Quat Identity { get { return new(1.0f, Vec3.Zero); } }
 }

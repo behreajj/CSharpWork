@@ -73,28 +73,6 @@ public readonly struct Lch
     }
 
     /// <summary>
-    /// Multiplies a color's lightness by a scalar.
-    /// </summary>
-    /// <param name="a">left operand, the color</param>
-    /// <param name="b">right operand, the scalar</param>
-    /// <returns>product</returns>
-    public static Lch operator *(in Lch a, in float b)
-    {
-        return new Lch(l: a.l * b, c: a.c, h: a.h, alpha: a.alpha);
-    }
-
-    /// <summary>
-    /// Multiplies a color's lightness by a scalar.
-    /// </summary>
-    /// <param name="a">left operand, the scalar</param>
-    /// <param name="b">right operand, the color</param>
-    /// <returns>product</returns>
-    public static Lch operator *(in float a, in Lch b)
-    {
-        return new Lch(l: a * b.l, c: b.c, h: b.h, alpha: b.alpha);
-    }
-
-    /// <summary>
     /// Adds two colors together for the purpose of
     /// making an adjustment.
     /// </summary>

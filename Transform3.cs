@@ -400,7 +400,7 @@ public class Transform3
     public static float MaxDimension(in Transform3 t)
     {
         Vec3 scl = Vec3.Abs(t.scale);
-        return Utils.Max(scl.x, scl.y, scl.z);
+        return Utils.Max(scl.X, scl.Y, scl.Z);
     }
 
     /// <summary>
@@ -411,7 +411,7 @@ public class Transform3
     public static float MinDimension(in Transform3 t)
     {
         Vec3 scl = Vec3.Abs(t.scale);
-        return Utils.Min(scl.x, scl.y, scl.z);
+        return Utils.Min(scl.X, scl.Y, scl.Z);
     }
 
     /// <summary>
@@ -518,7 +518,7 @@ public class Transform3
     {
         get
         {
-            return new Transform3(Vec3.Zero, Quat.Identity, Vec3.One);
+            return new(Vec3.Zero, Quat.Identity, Vec3.One);
         }
     }
 }

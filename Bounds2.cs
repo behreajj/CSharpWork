@@ -207,8 +207,8 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     {
         Vec2 mn = b.min;
         Vec2 mx = b.max;
-        return !Utils.Approx(mn.x, mx.x) &&
-            !Utils.Approx(mn.y, mx.y);
+        return !Utils.Approx(mn.X, mx.X) &&
+            !Utils.Approx(mn.Y, mx.Y);
     }
 
     /// <summary>
@@ -222,8 +222,8 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     {
         Vec2 mn = b.min;
         Vec2 mx = b.max;
-        return !Utils.Approx(mn.x, mx.x) ||
-            !Utils.Approx(mn.y, mx.y);
+        return !Utils.Approx(mn.X, mx.X) ||
+            !Utils.Approx(mn.Y, mx.Y);
     }
 
     /// <summary>
@@ -243,7 +243,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>area</returns>
     public static float AreaSigned(in Bounds2 b)
     {
-        return (b.max.y - b.min.y) * (b.max.x - b.min.x);
+        return (b.max.Y - b.min.Y) * (b.max.X - b.min.X);
     }
 
     /// <summary>
@@ -276,10 +276,10 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>evaluation</returns>
     public static bool ContainsInclExcl(in Bounds2 b, in Vec2 v)
     {
-        return v.x >= b.min.x &&
-            v.x < b.max.x &&
-            v.y >= b.min.y &&
-            v.y < b.max.y;
+        return v.X >= b.min.X &&
+            v.X < b.max.X &&
+            v.Y >= b.min.Y &&
+            v.Y < b.max.Y;
     }
 
     /// <summary>
@@ -334,7 +334,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>bounds</returns>
     public static Bounds2 FromCenterHalfExtent(in Vec2 center, in Vec2 he)
     {
-        return new Bounds2(center - he, center + he);
+        return new(center - he, center + he);
     }
 
     /// <summary>
@@ -345,7 +345,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>intersection</returns>
     public static Bounds2 FromIntersection(in Bounds2 a, in Bounds2 b)
     {
-        return new Bounds2(Vec2.Max(a.min, b.min), Vec2.Min(a.max, b.max));
+        return new(Vec2.Max(a.min, b.min), Vec2.Min(a.max, b.max));
     }
 
     /// <summary>
@@ -365,15 +365,15 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         foreach (Vec2 p in points)
         {
             ++len;
-            float x = p.x;
-            float y = p.y;
+            float x = p.X;
+            float y = p.Y;
             if (x < lbx) { lbx = x; }
             if (x > ubx) { ubx = x; }
             if (y < lby) { lby = y; }
             if (y > uby) { uby = y; }
         }
 
-        if (len < 1) { return new Bounds2(); }
+        if (len < 1) { return new(); }
 
         lbx -= Utils.Epsilon * 2.0f;
         lby -= Utils.Epsilon * 2.0f;
@@ -381,7 +381,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         ubx += Utils.Epsilon * 2.0f;
         uby += Utils.Epsilon * 2.0f;
 
-        return new Bounds2(lbx, lby, ubx, uby);
+        return new(lbx, lby, ubx, uby);
     }
 
     /// <summary>
@@ -392,7 +392,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>union</returns>
     public static Bounds2 FromUnion(in Bounds2 a, in Bounds2 b)
     {
-        return new Bounds2(Vec2.Min(a.min, b.min), Vec2.Max(a.max, b.max));
+        return new(Vec2.Min(a.min, b.min), Vec2.Max(a.max, b.max));
     }
 
     /// <summary>
@@ -403,10 +403,10 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>evaluation</returns>
     public static bool Intersects(in Bounds2 a, in Bounds2 b)
     {
-        return a.max.y > b.min.y ||
-            a.min.y < b.max.y ||
-            a.max.x > b.min.x ||
-            a.min.x < b.max.x;
+        return a.max.Y > b.min.Y ||
+            a.min.Y < b.max.Y ||
+            a.max.X > b.min.X ||
+            a.min.X < b.max.X;
     }
 
     /// <summary>
@@ -418,12 +418,12 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>evaluation</returns>
     public static bool Intersects(in Bounds2 a, in Vec2 center, in float radius)
     {
-        float yd = center.y < a.min.y ? center.y - a.min.y :
-                   center.y > a.max.y ? center.y - a.max.y :
-                   0.0f;
-        float xd = center.x < a.min.x ? center.x - a.min.x :
-                   center.x > a.max.x ? center.x - a.max.x :
-                   0.0f;
+        float yd = center.Y < a.min.Y ? center.Y - a.min.Y :
+            center.Y > a.max.Y ? center.Y - a.max.Y :
+            0.0f;
+        float xd = center.X < a.min.X ? center.X - a.min.X :
+            center.X > a.max.X ? center.X - a.max.X :
+            0.0f;
 
         return xd * xd + yd * yd < radius * radius;
     }
@@ -435,7 +435,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <returns>evaluation</returns>
     public static bool IsNegative(in Bounds2 b)
     {
-        return b.max.y < b.min.y || b.max.x < b.min.x;
+        return b.max.Y < b.min.Y || b.max.X < b.min.X;
     }
 
     /// <summary>
@@ -452,11 +452,11 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         Vec2 bMn = b.min;
         Vec2 aMx = a.max;
         Vec2 bMx = b.max;
-        return new Bounds2(
-            u * aMn.x + t * bMn.x,
-            u * aMn.y + t * bMn.y,
-            u * aMx.x + t * bMx.x,
-            u * aMx.y + t * bMx.y);
+        return new(
+            u * aMn.X + t * bMn.X,
+            u * aMn.Y + t * bMn.Y,
+            u * aMx.X + t * bMx.X,
+            u * aMx.Y + t * bMx.Y);
     }
 
     /// <summary>
@@ -512,15 +512,15 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         float tx = Utils.Clamp(xFac, Utils.Epsilon, 1.0f - Utils.Epsilon);
         float ty = Utils.Clamp(yFac, Utils.Epsilon, 1.0f - Utils.Epsilon);
 
-        float x = (1.0f - tx) * bMin.x + tx * bMax.x;
-        float y = (1.0f - ty) * bMin.y + ty * bMax.y;
+        float x = (1.0f - tx) * bMin.X + tx * bMax.X;
+        float y = (1.0f - ty) * bMin.Y + ty * bMax.Y;
 
         return new Bounds2[]
         {
-            new Bounds2 (bMin.x, bMin.y, x, y),
-                new Bounds2 (x, bMin.y, bMax.x, y),
-                new Bounds2 (bMin.x, y, x, bMax.y),
-                new Bounds2 (x, y, bMax.x, bMax.y)
+            new Bounds2 (bMin.X, bMin.Y, x, y),
+                new Bounds2 (x, bMin.Y, bMax.X, y),
+                new Bounds2 (bMin.X, y, x, bMax.Y),
+                new Bounds2 (x, y, bMax.X, bMax.Y)
         };
     }
 
@@ -542,7 +542,10 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <param name="b">bounds</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in Bounds2 b, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Bounds2 b,
+        in int places = 4)
     {
         sb.Append("{ min: ");
         Vec2.ToString(sb, b.min, places);
@@ -565,11 +568,11 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         Vec2 mn = b.min;
         Vec2 mx = b.max;
 
-        float xMin = mn.x;
-        float yMin = mn.y;
+        float xMin = mn.X;
+        float yMin = mn.Y;
 
-        float xMax = mx.x;
-        float yMax = mx.y;
+        float xMax = mx.X;
+        float yMax = mx.Y;
 
         float bxMin = xMin < xMax ? xMin : xMax;
         float byMin = yMin < yMax ? yMin : yMax;
@@ -589,7 +592,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
             byMax += Utils.Epsilon * 2.0f;
         }
 
-        return new Bounds2(
+        return new(
             new Vec2(bxMin, byMin),
             new Vec2(bxMax, byMax));
     }
@@ -603,7 +606,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     {
         get
         {
-            return new Bounds2(
+            return new(
                 -1.0f - Utils.Epsilon * 2.0f,
                 1.0f + Utils.Epsilon * 2.0f);
         }
@@ -618,7 +621,7 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     {
         get
         {
-            return new Bounds2(
+            return new(
                 -Utils.Epsilon * 2.0f,
                 1.0f + Utils.Epsilon * 2.0f);
         }

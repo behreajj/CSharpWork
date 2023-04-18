@@ -234,7 +234,7 @@ public class Quadtree
     /// Splits this quadtree node into four child nodes.
     /// </summary>
     /// <param name="childCapacity">child capacity</param>
-    /// <returns>this quadtree</returns>
+    /// <returns>quadtree</returns>
     protected Quadtree Split(in int childCapacity = Quadtree.DefaultCapacity)
     {
         this.children.Clear();
@@ -406,7 +406,7 @@ public class Quadtree
     /// 16, 64.
     /// </summary>
     /// <param name="iterations">iterations</param>
-    /// <returns>this quadtree</returns>
+    /// <returns>quadtree</returns>
     public Quadtree Subdivide(in int iterations = 1)
     {
         return this.Subdivide(iterations, this.capacity);
@@ -420,7 +420,7 @@ public class Quadtree
     /// </summary>
     /// <param name="iterations">iterations</param>
     /// <param name="childCapacity">child capacity</param>
-    /// <returns>this quadtree</returns>
+    /// <returns>quadtree</returns>
     public Quadtree Subdivide(in int iterations, in int childCapacity)
     {
         if (iterations < 1) { return this; }

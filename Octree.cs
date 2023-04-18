@@ -234,7 +234,7 @@ public class Octree
     /// Splits this octree node into eight child nodes.
     /// </summary>
     /// <param name="childCapacity">child capacity</param>
-    /// <returns>this octree</returns>
+    /// <returns>octree</returns>
     protected Octree Split(in int childCapacity = Octree.DefaultCapacity)
     {
         this.children.Clear();
@@ -272,7 +272,7 @@ public class Octree
     /// 64, 512.
     /// </summary>
     /// <param name="iterations">iterations</param>
-    /// <returns>this octree</returns>
+    /// <returns>octree</returns>
     public Octree Subdivide(in int iterations = 1)
     {
         return this.Subdivide(iterations, this.capacity);
@@ -286,7 +286,7 @@ public class Octree
     /// </summary>
     /// <param name="iterations">iterations</param>
     /// <param name="childCapacity">child capacity</param>
-    /// <returns>this octree</returns>
+    /// <returns>octree</returns>
     public Octree Subdivide(in int iterations, in int childCapacity)
     {
         if (iterations < 1) { return this; }

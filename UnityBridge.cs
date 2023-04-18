@@ -97,7 +97,9 @@ public static class UnityBridge
         foreach (float step in steps)
         {
             Color c = g.Evaluate(step);
-            keys[j] = new ClrKey(step, UnityBridge.FromColor(c));
+            Rgb rgb = UnityBridge.FromColor(c);
+            Lab lab = Rgb.StandardToCieLab(rgb);
+            keys[j] = new ClrKey(step, lab);
             ++j;
         }
 
@@ -177,7 +179,7 @@ public static class UnityBridge
     /// <returns>conversion</returns>
     public static Color ToColor(in Rgb c)
     {
-        return new Color(c.r, c.g, c.b, c.a);
+        return new Color(c.R, c.G, c.B, c.Alpha);
     }
 
     /// <summary>
@@ -206,10 +208,10 @@ public static class UnityBridge
     public static Color32 ToColor32(in Rgb c)
     {
         return new Color32(
-            (byte)(Utils.Clamp(c.r, 0.0f, 1.0f) * 255.0f + 0.5f),
-            (byte)(Utils.Clamp(c.g, 0.0f, 1.0f) * 255.0f + 0.5f),
-            (byte)(Utils.Clamp(c.b, 0.0f, 1.0f) * 255.0f + 0.5f),
-            (byte)(Utils.Clamp(c.a, 0.0f, 1.0f) * 255.0f + 0.5f));
+            (byte)(Utils.Clamp(c.R, 0.0f, 1.0f) * 255.0f + 0.5f),
+            (byte)(Utils.Clamp(c.G, 0.0f, 1.0f) * 255.0f + 0.5f),
+            (byte)(Utils.Clamp(c.B, 0.0f, 1.0f) * 255.0f + 0.5f),
+            (byte)(Utils.Clamp(c.Alpha, 0.0f, 1.0f) * 255.0f + 0.5f));
     }
 
     /// <summary>
@@ -238,10 +240,10 @@ public static class UnityBridge
     public static Matrix4x4 ToMatrix4x4(in Mat4 m)
     {
         return new Matrix4x4(
-            new Vector4(m.m00, m.m10, m.m20, m.m30),
-            new Vector4(m.m01, m.m11, m.m21, m.m31),
-            new Vector4(m.m02, m.m12, m.m22, m.m32),
-            new Vector4(m.m03, m.m13, m.m23, m.m33));
+            new Vector4(m.M00, m.M10, m.M20, m.M30),
+            new Vector4(m.M01, m.M11, m.M21, m.M31),
+            new Vector4(m.M02, m.M12, m.M22, m.M32),
+            new Vector4(m.M03, m.M13, m.M23, m.M33));
     }
 
     /// <summary>
@@ -289,16 +291,16 @@ public static class UnityBridge
             for (int j = indicesLen - 1; j > -1; --j, ++k)
             {
                 Index2 index = indices[j];
-                Vec2 v = vs[index.v];
-                Vec2 vt = vts[index.vt];
+                Vec2 v = vs[index.V];
+                Vec2 vt = vts[index.VT];
 
                 triangles[k] = k;
                 vsUnity[k] = UnityBridge.ToVector3(v, 0.0f);
-                vtsUnity[k] = new Vector2(vt.x, 1.0f - vt.y);
+                vtsUnity[k] = new Vector2(vt.X, 1.0f - vt.Y);
                 vnsUnity[k] = Vector3.back;
 
-                float x = v.x;
-                float y = v.y;
+                float x = v.X;
+                float y = v.Y;
                 if (x < lbx) { lbx = x; }
                 if (x > ubx) { ubx = x; }
                 if (y < lby) { lby = y; }
@@ -372,18 +374,18 @@ public static class UnityBridge
             for (int j = 0; j < indicesLen; ++j, ++k)
             {
                 Index3 index = indices[j];
-                Vec3 v = vs[index.v];
-                Vec2 vt = vts[index.vt];
-                Vec3 vn = vns[index.vn];
+                Vec3 v = vs[index.V];
+                Vec2 vt = vts[index.VT];
+                Vec3 vn = vns[index.VN];
 
                 triangles[k] = k;
                 vsUnity[k] = UnityBridge.ToVector3(v);
                 vtsUnity[k] = UnityBridge.ToVector2(vt);
                 vnsUnity[k] = UnityBridge.ToVector3(vn);
 
-                float x = v.x;
-                float y = v.y;
-                float z = v.z;
+                float x = v.X;
+                float y = v.Y;
+                float z = v.Z;
                 if (x < lbx) { lbx = x; }
                 if (x > ubx) { ubx = x; }
                 if (y < lby) { lby = y; }
@@ -433,7 +435,7 @@ public static class UnityBridge
     /// <returns>conversion</returns>
     public static Quaternion ToQuaternion(in Quat q)
     {
-        return new Quaternion(q.x, q.y, q.z, q.w);
+        return new Quaternion(q.X, q.Y, q.Z, q.W);
     }
 
     /// <summary>
@@ -445,6 +447,7 @@ public static class UnityBridge
     /// <returns>conversion</returns>
     public static Transform ToTransform(in Transform2 t2, in Transform ut)
     {
+        // TODO: Should the 'in' keyword for ut be replaced with ref or out?
         ut.localPosition = UnityBridge.ToVector3(t2.Location);
         ut.localRotation = UnityBridge.ToQuaternion(t2.Rotation);
         ut.localScale = UnityBridge.ToVector3(t2.Scale, 1.0f);
@@ -460,6 +463,7 @@ public static class UnityBridge
     /// <returns>conversion</returns>
     public static Transform ToTransform(in Transform3 t3, in Transform ut)
     {
+        // TODO: Should the 'in' keyword for ut be replaced with ref or out?
         ut.localPosition = UnityBridge.ToVector3(t3.Location);
         ut.localRotation = UnityBridge.ToQuaternion(t3.Rotation);
         ut.localScale = UnityBridge.ToVector3(t3.Scale);
@@ -473,7 +477,7 @@ public static class UnityBridge
     /// <returns>conversion</returns>
     public static Vector2 ToVector2(in Vec2 v)
     {
-        return new Vector2(v.x, v.y);
+        return new Vector2(v.X, v.Y);
     }
 
     /// <summary>
@@ -499,7 +503,7 @@ public static class UnityBridge
     /// <returns>conversion</returns>
     public static Vector3 ToVector3(in Vec3 v)
     {
-        return new Vector3(v.x, v.y, v.z);
+        return new Vector3(v.X, v.Y, v.Z);
     }
 
     /// <summary>
@@ -510,7 +514,7 @@ public static class UnityBridge
     /// <returns>conversion</returns>
     public static Vector3 ToVector3(in Vec2 v, in float z = 0.0f)
     {
-        return new Vector3(v.x, v.y, z);
+        return new Vector3(v.X, v.Y, z);
     }
 
     /// <summary>
@@ -553,7 +557,7 @@ public static class UnityBridge
     /// <returns>conversion</returns>
     public static Vector4 ToVector4(in Vec4 v)
     {
-        return new Vector4(v.x, v.y, v.z, v.w);
+        return new Vector4(v.X, v.Y, v.Z, v.W);
     }
 
     /// <summary>
@@ -571,10 +575,14 @@ public static class UnityBridge
         for (int i = 0; i < keyCount; ++i)
         {
             float step = i * toStep;
-            Rgb c = ClrGradient.Eval(cg, step);
-            alphaKeys[i] = new GradientAlphaKey(c.a, step);
-            Rgb o = Rgb.Opaque(c);
-            colorKeys[i] = new GradientColorKey(UnityBridge.ToColor(o), step);
+            Lab lab = ClrGradient.Eval(cg, step);
+            alphaKeys[i] = new GradientAlphaKey(lab.Alpha, step);
+
+            Lab opaque = Lab.Opaque(lab);
+            Rgb rgb = Rgb.CieLabToStandard(opaque);
+            // Rgb clamped = Rgb.Clamp(rgb);
+            Color color = UnityBridge.ToColor(rgb);
+            colorKeys[i] = new GradientColorKey(color, step);
         }
 
         Gradient unityGradient = new();

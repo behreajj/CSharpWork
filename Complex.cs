@@ -183,7 +183,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <param name="s">real number</param>
     public static implicit operator Complex(in float s)
     {
-        return new Complex(s, 0.0f);
+        return new(s, 0.0f);
     }
 
     /// <summary>
@@ -201,7 +201,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <param name="v">vector</param>
     public static implicit operator Complex(in Vec2 v)
     {
-        return new Complex(v.x, v.y);
+        return new(v.X, v.Y);
     }
 
     /// <summary>
@@ -233,7 +233,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>the negation</returns>
     public static Complex operator -(in Complex z)
     {
-        return new Complex(-z.real, -z.imag);
+        return new(-z.real, -z.imag);
     }
 
     /// <summary>
@@ -245,7 +245,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>product</returns>
     public static Complex operator *(in Complex a, in Complex b)
     {
-        return new Complex(
+        return new(
             a.real * b.real - a.imag * b.imag,
             a.real * b.imag + a.imag * b.real);
     }
@@ -258,7 +258,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>product</returns>
     public static Complex operator *(in Complex a, in float b)
     {
-        return new Complex(a.real * b, a.imag * b);
+        return new(a.real * b, a.imag * b);
     }
 
     /// <summary>
@@ -269,7 +269,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>product</returns>
     public static Complex operator *(in float a, in Complex b)
     {
-        return new Complex(a * b.real, a * b.imag);
+        return new(a * b.real, a * b.imag);
     }
 
     /// <summary>
@@ -292,8 +292,8 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>quotient</returns>
     public static Complex operator /(in Complex a, in float b)
     {
-        if (b != 0.0f) { return new Complex(a.real / b, a.imag / b); }
-        return new Complex();
+        if (b != 0.0f) { return new(a.real / b, a.imag / b); }
+        return Complex.Zero;
     }
 
     /// <summary>
@@ -315,7 +315,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>sum</returns>
     public static Complex operator +(in Complex a, in Complex b)
     {
-        return new Complex(a.real + b.real, a.imag + b.imag);
+        return new(a.real + b.real, a.imag + b.imag);
     }
 
     /// <summary>
@@ -326,7 +326,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>sum</returns>
     public static Complex operator +(in Complex a, in float b)
     {
-        return new Complex(a.real + b, a.imag);
+        return new(a.real + b, a.imag);
     }
 
     /// <summary>
@@ -337,7 +337,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>sum</returns>
     public static Complex operator +(in float a, in Complex b)
     {
-        return new Complex(a + b.real, b.imag);
+        return new(a + b.real, b.imag);
     }
 
     /// <summary>
@@ -348,7 +348,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>difference</returns>
     public static Complex operator -(in Complex a, in Complex b)
     {
-        return new Complex(a.real - b.real, a.imag - b.imag);
+        return new(a.real - b.real, a.imag - b.imag);
     }
 
     /// <summary>
@@ -359,7 +359,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>difference</returns>
     public static Complex operator -(in Complex a, in float b)
     {
-        return new Complex(a.real - b, a.imag);
+        return new(a.real - b, a.imag);
     }
 
     /// <summary>
@@ -370,7 +370,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>difference</returns>
     public static Complex operator -(in float a, in Complex b)
     {
-        return new Complex(a - b.real, -b.imag);
+        return new(a - b.real, -b.imag);
     }
 
     /// <summary>
@@ -436,7 +436,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>conjugate</returns>
     public static Complex Conj(in Complex z)
     {
-        return new Complex(z.real, -z.imag);
+        return new(z.real, -z.imag);
     }
 
     /// <summary>
@@ -446,10 +446,9 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>cosine</returns>
     public static Complex Cos(in Complex z)
     {
-        double zr = (double)z.real;
-        double zi = (double)z.imag;
-
-        return new Complex(
+        double zr = z.real;
+        double zi = z.imag;
+        return new(
             (float)(Math.Cos(zr) * Math.Cosh(zi)),
             (float)(-Math.Sin(zr) * Math.Sinh(zi)));
     }
@@ -474,10 +473,10 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         float absSq = Complex.AbsSq(z);
         if (absSq > 0.0f)
         {
-            return new Complex(
+            return new(
                 z.real / absSq, -z.imag / absSq);
         }
-        return new Complex();
+        return Complex.Zero;
     }
 
     /// <summary>
@@ -487,7 +486,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>logarithm</returns>
     public static Complex Log(in Complex z)
     {
-        return new Complex(
+        return new(
             MathF.Log(Complex.Abs(z)),
             Complex.Phase(z));
     }
@@ -509,7 +508,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         float czdi = c.real * z.imag + c.imag * z.real + d.imag;
 
         float mSq = czdr * czdr + czdi * czdi;
-        if (mSq <= 0.0f) { return new Complex(); }
+        if (mSq <= 0.0f) { return Complex.Zero; }
 
         // Numerator: (a * z) + b .
         float azbr = a.real * z.real - a.imag * z.imag + b.real;
@@ -521,7 +520,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         float czdiInv = -czdi * mSqInv;
 
         // Multiply numerator with inverse of denominator.
-        return new Complex(
+        return new(
             azbr * czdrInv - azbi * czdiInv,
             azbr * czdiInv + azbi * czdrInv);
     }
@@ -598,20 +597,21 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// Creates a random complex number.
     /// </summary>
     /// <param name="rng">random number generator</param>
-    /// <param name="rhoMin">radius minimum</param>
-    /// <param name="rhoMax">radius maximum</param>
+    /// <param name="radius">radius</param>
     /// <returns>random complex number</returns>
     public static Complex Random(
         in System.Random rng,
-        in float rhoMin = 1.0f,
-        in float rhoMax = 1.0f)
+        in float radius = 1.0f)
     {
-        return Complex.Rect(
-            Utils.Mix(rhoMin, rhoMax,
-                (float)rng.NextDouble()),
-
-            Utils.Mix(-MathF.PI, MathF.PI,
-                (float)rng.NextDouble()));
+        float r = Utils.NextGaussian(rng);
+        float i = Utils.NextGaussian(rng);
+        float absq = r * r + i * i;
+        if (absq != 0.0f)
+        {
+            float scalar = radius / MathF.Sqrt(absq);
+            return new(r * scalar, i * scalar);
+        }
+        return Complex.Zero;
     }
 
     /// <summary>
@@ -622,7 +622,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>complex number</returns>
     public static Complex Rect(in float r = 1.0f, in float phi = 0.0f)
     {
-        return new Complex(r * MathF.Cos(phi), r * MathF.Sin(phi));
+        return new(r * MathF.Cos(phi), r * MathF.Sin(phi));
     }
 
     /// <summary>
@@ -632,10 +632,9 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>sine</returns>
     public static Complex Sin(in Complex z)
     {
-        double zr = (double)z.real;
-        double zi = (double)z.imag;
-
-        return new Complex(
+        double zr = z.real;
+        double zi = z.imag;
+        return new(
             (float)(Math.Sin(zr) * Math.Cosh(zi)),
             (float)(Math.Cos(zr) * Math.Sinh(zi)));
     }
@@ -649,10 +648,10 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     public static Complex Sqrt(in float a)
     {
         return (a > 0.0f) ?
-            new Complex(MathF.Sqrt(a), 0.0f) :
+            new(MathF.Sqrt(a), 0.0f) :
             (a < -0.0f) ?
-            new Complex(0.0f, MathF.Sqrt(-a)) :
-            new Complex();
+            new(0.0f, MathF.Sqrt(-a)) :
+            Complex.Zero;
     }
 
     /// <summary>
@@ -683,4 +682,10 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
         sb.Append('}');
         return sb;
     }
+
+    /// <summary>
+    /// Returns a complex number with all components set to zero.
+    /// </summary>
+    /// <value>the vector</value>
+    public static Complex Zero { get { return new(0.0f, 0.0f); } }
 }

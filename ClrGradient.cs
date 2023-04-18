@@ -39,8 +39,7 @@ public class ClrGradient : IEnumerable<ClrKey>
         for (int i = 0; i < vc; ++i)
         {
             float step = i * toStep;
-            float v = step * step; // Approximate pow(step, 2.2).
-            this.keys.Add(new ClrKey(step, new Rgb(v, v, v, 1.0f)));
+            this.keys.Add(new(step, new(100.0f * step, 0.0f, 0.0f, 1.0f)));
         }
     }
 
@@ -50,20 +49,17 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// somewhere between based on its luminance.
     /// </summary>
     /// <param name="color">color</param>
-    public ClrGradient(in Rgb color)
+    public ClrGradient(in Lab color)
     {
-        float a = color.a;
-        this.keys.Add(new ClrKey(0.0f, new Rgb(0.0f, 0.0f, 0.0f, a)));
-
-        float lum = Rgb.StandardLuminance(color);
+        float a = color.Alpha;
+        float lum = color.L * 0.01f;
+        this.keys.Add(new(0.0f, new(0.0f, 0.0f, 0.0f, a)));
         if (lum > Utils.Epsilon * 2.0f && lum < 1.0f - Utils.Epsilon * 2.0f)
         {
-            float gray = MathF.Pow(lum, 1.0f / 2.2f);
-            float middle = Utils.Mix(Utils.OneThird, Utils.TwoThirds, gray);
-            this.keys.Add(new ClrKey(middle, color));
+            float middle = Utils.Mix(Utils.OneThird, Utils.TwoThirds, lum);
+            this.keys.Add(new(middle, color));
         }
-
-        this.keys.Add(new ClrKey(1.0f, new Rgb(1.0f, 1.0f, 1.0f, a)));
+        this.keys.Add(new(1.0f, new(100.0f, 0.0f, 0.0f, a)));
     }
 
     /// <summary>
@@ -71,7 +67,7 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// evenly distributed across the gradient.
     /// </summary>
     /// <param name="colors">colors</param>
-    public ClrGradient(params Rgb[] colors)
+    public ClrGradient(params Lab[] colors)
     {
         this.AppendAll(colors);
     }
@@ -85,12 +81,12 @@ public class ClrGradient : IEnumerable<ClrKey>
         float step = key.Step;
         if (step > Utils.Epsilon)
         {
-            this.Insert(new ClrKey(0.0f, Rgb.ClearBlack));
+            this.Insert(new(0.0f, Lab.ClearBlack));
         }
         this.Insert(key);
         if (step < 1.0 - Utils.Epsilon)
         {
-            this.Insert(new ClrKey(1.0f, Rgb.White));
+            this.Insert(new(1.0f, Lab.White));
         }
     }
 
@@ -101,6 +97,20 @@ public class ClrGradient : IEnumerable<ClrKey>
     public ClrGradient(params ClrKey[] keys)
     {
         this.InsertAll(keys);
+    }
+
+    /// <summary>
+    /// Constructs a color gradient from a palette.
+    /// </summary>
+    /// <param name="pal">palette</param>
+    public ClrGradient(in Palette pal)
+    {
+        int len = pal.Length;
+        float denom = Utils.Div(1.0f, len - 1.0f);
+        for (int i = 0; i < len; ++i)
+        {
+            this.keys.Add(new(i * denom, pal.GetColor(i)));
+        }
     }
 
     /// <summary>
@@ -119,7 +129,7 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// Retrieves a color given a step in the range [0.0, 1.0] .
     /// </summary>
     /// <value>color</value>
-    public Rgb this[float step]
+    public Lab this[float step]
     {
         get
         {
@@ -150,29 +160,31 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// </summary>
     /// <param name="color">color</param>
     /// <returns>this gradient</returns>
-    public ClrGradient Append(Rgb color)
+    public ClrGradient Append(Lab color)
     {
         this.CompressKeysLeft(1);
-        this.keys.Add(new ClrKey(1.0f, color));
+        this.keys.Add(new(1.0f, color));
         return this;
     }
 
     /// <summary>
-    /// Appends a list of colors at the end of the gradient.
+    /// Appends a list of colors to the end of the gradient.
     ///
     /// The color keys will be evenly distributed across the gradient.
     /// </summary>
     /// <param name="colors">colors</param>
     /// <returns>this gradient</returns>
-    public ClrGradient AppendAll(params Rgb[] colors)
+    public ClrGradient AppendAll(params Lab[] colors)
     {
         int len = colors.Length;
         this.CompressKeysLeft(len);
         int oldLen = this.keys.Count;
-        float denom = 1.0f / (oldLen + len - 1.0f);
+        float range = oldLen + len;
+        float denom = Utils.Div(1.0f, range - 1.0f);
+
         for (int i = 0; i < len; ++i)
         {
-            this.keys.Add(new ClrKey(
+            this.keys.Add(new(
                 (oldLen + i) * denom,
                 colors[i]));
         }
@@ -192,7 +204,7 @@ public class ClrGradient : IEnumerable<ClrKey>
         for (int i = 0; i < len; ++i)
         {
             ClrKey key = this.keys[i];
-            this.keys[i] = new ClrKey(
+            this.keys[i] = new(
                 key.Step * i * scalar,
                 key.Color);
         }
@@ -213,7 +225,7 @@ public class ClrGradient : IEnumerable<ClrKey>
         for (int i = 0; i < len; ++i)
         {
             ClrKey key = this.keys[i];
-            this.keys[i] = new ClrKey(
+            this.keys[i] = new(
                 scalar + coeff * key.Step,
                 key.Color);
         }
@@ -320,10 +332,10 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// </summary>
     /// <param name="color">color</param>
     /// <returns>this gradient</returns>
-    public ClrGradient Prepend(in Rgb color)
+    public ClrGradient Prepend(in Lab color)
     {
         this.CompressKeysRight(1);
-        this.keys.Insert(0, new ClrKey(0.0f, color));
+        this.keys.Insert(0, new(0.0f, color));
         return this;
     }
 
@@ -333,15 +345,17 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// </summary>
     /// <param name="colors">colors</param>
     /// <returns>this gradient</returns>
-    public ClrGradient PrependAll(params Rgb[] colors)
+    public ClrGradient PrependAll(params Lab[] colors)
     {
         int len = colors.Length;
         this.CompressKeysRight(len);
         int oldLen = this.keys.Count;
-        float denom = 1.0f / (oldLen + len - 1.0f);
+        float range = oldLen + len;
+        float denom = Utils.Div(1.0f, range - 1.0f);
+
         for (int i = 0; i < len; ++i)
         {
-            this.keys.Insert(i, new ClrKey(
+            this.keys.Insert(i, new(
                 i * denom,
                 colors[i]));
         }
@@ -400,7 +414,7 @@ public class ClrGradient : IEnumerable<ClrKey>
         for (int i = 0; i < len; ++i)
         {
             ClrKey key = this.keys[i];
-            this.keys[i] = new ClrKey(1.0f - key.Step, key.Color);
+            this.keys[i] = new(1.0f - key.Step, key.Color);
         }
         return this;
     }
@@ -432,16 +446,78 @@ public class ClrGradient : IEnumerable<ClrKey>
     }
 
     /// <summary>
+    /// Finds a color given a step in the range [0.0, 1.0].
+    /// Chooses a color based on Interleaved Gradient Noise
+    /// as developed by Jorge Jiminez. See
+    /// https://blog.demofox.org/2022/01/01/
+    /// interleaved-gradient-noise-a-different-
+    /// kind-of-low-discrepancy-sequence/ .
+    /// </summary>
+    /// <param name="cg">color gradient</param>
+    /// <param name="step">step</param>
+    /// <param name="x">x pixel</param>
+    /// <param name="y">y pixel</param>
+    /// <param name="frame">frame</param>
+    /// <returns>color</returns>
+    public static Lab DitherNoise(
+        in ClrGradient cg,
+        in float step,
+        in int x, in int y,
+        in int frame = 0)
+    {
+        int frMod = Utils.RemFloor(frame, 64);
+        float xz = x + 5.588238f * frMod;
+        float yz = y + 5.588238f * frMod;
+        float ign = Utils.Fract(52.9829189f * Utils.Fract(
+            0.06711056f * xz + 0.00583715f * yz));
+
+        var (prev, next, tScaled) = ClrGradient.FindKeys(cg, step);
+        if (tScaled > ign) { return next.Color; }
+        return prev.Color;
+    }
+
+    /// <summary>
+    /// Finds a color given a step in the range [0.0, 1.0].
+    /// Chooses a color between keys according to an ordered
+    /// dither matrix. Pixel coordinates wrap around matrix
+    /// dimensions.
+    /// </summary>
+    /// <param name="cg">color gradient</param>
+    /// <param name="step">step</param>
+    /// <param name="x">x pixel</param>
+    /// <param name="y">y pixel</param>
+    /// <param name="matrix">dither matrix</param>
+    /// <param name="cols">matrix columns, or width</param>
+    /// <param name="rows">matrix rows, or height</param>
+    /// <returns>color</returns>
+    public static Lab DitherOrdered(
+        in ClrGradient cg,
+        in float step,
+        in int x, in int y,
+        in float[] matrix,
+        in int cols,
+        in int rows)
+    {
+        int matIdx = Utils.RemFloor(x, cols)
+                   + Utils.RemFloor(y, rows) * cols;
+        float matElm = matrix[matIdx];
+
+        var (prev, next, tScaled) = ClrGradient.FindKeys(cg, step);
+        if (tScaled > matElm) { return next.Color; }
+        return prev.Color;
+    }
+
+    /// <summary>
     /// Finds a color given a step in the range [0.0, 1.0]. When the step falls
     /// between color keys, the resultant color is created by an easing function.
     /// </summary>
     /// <param name="cg">color gradient</param>
     /// <param name="step">step</param>
     /// <returns>color</returns>
-    public static Rgb Eval(in ClrGradient cg, in float step)
+    public static Lab Eval(in ClrGradient cg, in float step)
     {
         return ClrGradient.Eval(cg, step,
-            (x, y, z) => Rgb.MixRgbaStandard(x, y, z));
+            (x, y, z) => Lab.Mix(x, y, z));
     }
 
     /// <summary>
@@ -452,33 +528,16 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// <param name="step">step</param>
     /// <param name="easing">easing function</param>
     /// <returns>color</returns>
-    public static Rgb Eval(
+    public static Lab Eval(
         in ClrGradient cg,
         in float step,
-        in Func<Rgb, Rgb, float, Rgb> easing)
+        in Func<Lab, Lab, float, Lab> easing)
     {
-        // TODO: If you include mixNormal, then this needs to be
-        // reconsidered. See Lua implementation.
-
-        List<ClrKey> keys = cg.keys;
-        int len = keys.Count;
-        if (step <= keys[0].Step || len < 2) { return keys[0].Color; }
-        if (step >= keys[len - 1].Step) { return keys[len - 1].Color; }
-
-        int nextIdx = ClrGradient.BisectRight(cg, step);
-        int prevIdx = nextIdx - 1;
-
-        ClrKey nextKey = keys[nextIdx];
-        ClrKey prevKey = keys[prevIdx];
-
-        float prevStep = prevKey.Step;
-        float nextStep = nextKey.Step;
-        if (prevStep != nextStep)
-        {
-            return easing(prevKey.Color, nextKey.Color,
-                (step - prevStep) / (nextStep - prevStep));
-        }
-        return nextKey.Color;
+        var (prev, next, tScaled) = ClrGradient.FindKeys(cg, step);
+        return easing(
+            prev.Color,
+            next.Color,
+            tScaled);
     }
 
     /// <summary>
@@ -490,14 +549,14 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// <param name="origin">origin</param>
     /// <param name="dest">destination</param>
     /// <returns>colors</returns>
-    public static Rgb[] EvalRange(
+    public static Lab[] EvalRange(
         in ClrGradient cg,
         in int count,
         in float origin = 0.0f,
         in float dest = 1.0f)
     {
         return ClrGradient.EvalRange(cg, count, origin, dest,
-            (x, y, z) => Rgb.MixRgbaStandard(x, y, z));
+            (x, y, z) => Lab.Mix(x, y, z));
     }
 
     /// <summary>
@@ -510,18 +569,18 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// <param name="dest">destination</param>
     /// <param name="easing">easing function</param>
     /// <returns>colors</returns>
-    public static Rgb[] EvalRange(
+    public static Lab[] EvalRange(
         in ClrGradient cg,
         in int count,
         in float origin,
         in float dest,
-        in Func<Rgb, Rgb, float, Rgb> easing)
+        in Func<Lab, Lab, float, Lab> easing)
     {
         int vCount = count < 3 ? 3 : count;
         float vOrigin = Utils.Clamp(origin, 0.0f, 1.0f);
         float vDest = Utils.Clamp(dest, 0.0f, 1.0f);
 
-        Rgb[] result = new Rgb[vCount];
+        Lab[] result = new Lab[vCount];
         float toPercent = 1.0f / (vCount - 1.0f);
         for (int i = 0; i < vCount; ++i)
         {
@@ -534,123 +593,49 @@ public class ClrGradient : IEnumerable<ClrKey>
     }
 
     /// <summary>
-    /// Returns the Magma color palette, consisting of 16 keys.
+    /// Internal helper function to find the previous key, next key
+    /// and scaled step based on an input step in [0.0, 1.0].
     /// </summary>
-    /// <param name="target">output gradient</param>
-    /// <returns>gradient</returns>
-    public static ClrGradient PaletteMagma(in ClrGradient target)
+    /// <param name="cg">color gradient</param>
+    /// <param name="step">step</param>
+    /// <returns>tuple</returns>
+    internal static (ClrKey prev, ClrKey next, float tScaled) FindKeys(
+        in ClrGradient cg,
+        in float step)
     {
-        List<ClrKey> keys = target.keys;
-        keys.Clear();
-        keys.Capacity = 16;
+        List<ClrKey> keys = cg.keys;
+        int len = keys.Count;
+        ClrKey first = keys[0];
+        if (len < 2)
+        {
+            return (prev: first, next: first, tScaled: 0.0f);
+        }
 
-        keys.Add(new ClrKey(0.000f, new Rgb(0.000000f, 0.000000f, 0.019608f)));
-        keys.Add(new ClrKey(0.067f, new Rgb(0.040784f, 0.028758f, 0.110327f)));
-        keys.Add(new ClrKey(0.167f, new Rgb(0.093856f, 0.036863f, 0.232941f)));
-        keys.Add(new ClrKey(0.200f, new Rgb(0.174118f, 0.006275f, 0.357647f)));
+        if (step <= first.Step)
+        {
+            return (prev: first, next: keys[1], tScaled: 0.0f);
+        }
 
-        keys.Add(new ClrKey(0.267f, new Rgb(0.267974f, 0.002353f, 0.416732f)));
-        keys.Add(new ClrKey(0.333f, new Rgb(0.367320f, 0.045752f, 0.432680f)));
-        keys.Add(new ClrKey(0.400f, new Rgb(0.471373f, 0.080784f, 0.430588f)));
-        keys.Add(new ClrKey(0.467f, new Rgb(0.584052f, 0.110588f, 0.413856f)));
+        ClrKey last = keys[^1];
+        if (step >= last.Step)
+        {
+            return (prev: keys[^2], next: last, tScaled: 1.0f);
+        }
 
-        keys.Add(new ClrKey(0.533f, new Rgb(0.703268f, 0.142484f, 0.383007f)));
-        keys.Add(new ClrKey(0.600f, new Rgb(0.824314f, 0.198431f, 0.334902f)));
-        keys.Add(new ClrKey(0.667f, new Rgb(0.912418f, 0.286275f, 0.298039f)));
-        keys.Add(new ClrKey(0.733f, new Rgb(0.962353f, 0.412549f, 0.301176f)));
+        int nextIdx = ClrGradient.BisectRight(cg, step);
+        int prevIdx = nextIdx - 1;
 
-        keys.Add(new ClrKey(0.800f, new Rgb(0.981176f, 0.548235f, 0.354510f)));
-        keys.Add(new ClrKey(0.867f, new Rgb(0.984314f, 0.694118f, 0.446275f)));
-        keys.Add(new ClrKey(0.933f, new Rgb(0.987190f, 0.843137f, 0.562092f)));
-        keys.Add(new ClrKey(1.000f, new Rgb(0.988235f, 1.000000f, 0.698039f)));
+        ClrKey next = keys[nextIdx];
+        ClrKey prev = keys[prevIdx];
 
-        return target;
-    }
-
-    /// <summary>
-    /// Returns seven primary and secondary colors: red, yellow, green, cyan,
-    /// blue, magenta and red. Red is repeated so the gradient is periodic.
-    /// </summary>
-    /// <param name="target">output gradient</param>
-    /// <returns>gradient</returns>
-    public static ClrGradient PaletteRgb(in ClrGradient target)
-    {
-        List<ClrKey> keys = target.keys;
-        keys.Clear();
-        keys.Capacity = 7;
-
-        keys.Add(new ClrKey(0.000f, Rgb.Red));
-        keys.Add(new ClrKey(0.167f, Rgb.Yellow));
-        keys.Add(new ClrKey(0.333f, Rgb.Green));
-        keys.Add(new ClrKey(0.500f, Rgb.Cyan));
-        keys.Add(new ClrKey(0.667f, Rgb.Blue));
-        keys.Add(new ClrKey(0.833f, Rgb.Magenta));
-        keys.Add(new ClrKey(1.000f, Rgb.Red));
-
-        return target;
-    }
-
-    /// <summary>
-    /// Returns thirteen colors in the red yellow blue color wheel. Red is
-    /// repeated so that the gradient is periodic.
-    /// </summary>
-    /// <param name="target">output gradient</param>
-    /// <returns>gradient</returns>
-    public static ClrGradient PaletteRyb(in ClrGradient target)
-    {
-        List<ClrKey> keys = target.keys;
-        keys.Clear();
-        keys.Capacity = 13;
-
-        keys.Add(new ClrKey(0.000f, new Rgb(1.000000f, 0.000000f, 0.000000f)));
-        keys.Add(new ClrKey(0.083f, new Rgb(1.000000f, 0.250000f, 0.000000f)));
-        keys.Add(new ClrKey(0.167f, new Rgb(1.000000f, 0.500000f, 0.000000f)));
-        keys.Add(new ClrKey(0.250f, new Rgb(1.000000f, 0.750000f, 0.000000f)));
-        keys.Add(new ClrKey(0.333f, new Rgb(1.000000f, 1.000000f, 0.000000f)));
-        keys.Add(new ClrKey(0.417f, new Rgb(0.505882f, 0.831373f, 0.101961f)));
-        keys.Add(new ClrKey(0.500f, new Rgb(0.000000f, 0.662745f, 0.200000f)));
-        keys.Add(new ClrKey(0.583f, new Rgb(0.082353f, 0.517647f, 0.400000f)));
-        keys.Add(new ClrKey(0.667f, new Rgb(0.164706f, 0.376471f, 0.600000f)));
-        keys.Add(new ClrKey(0.750f, new Rgb(0.333333f, 0.188235f, 0.552941f)));
-        keys.Add(new ClrKey(0.833f, new Rgb(0.500000f, 0.000000f, 0.500000f)));
-        keys.Add(new ClrKey(0.917f, new Rgb(0.750000f, 0.000000f, 0.250000f)));
-        keys.Add(new ClrKey(1.000f, new Rgb(1.000000f, 0.000000f, 0.000000f)));
-
-        return target;
-    }
-
-    /// <summary>
-    /// Returns the Viridis color palette, consisting of 16 keys.
-    /// </summary>
-    /// <param name="target">output gradient</param>
-    /// <returns>gradient</returns>
-    public static ClrGradient PaletteViridis(in ClrGradient target)
-    {
-        List<ClrKey> keys = target.keys;
-        keys.Clear();
-        keys.Capacity = 16;
-
-        keys.Add(new ClrKey(0.000f, new Rgb(0.266667f, 0.003922f, 0.329412f)));
-        keys.Add(new ClrKey(0.067f, new Rgb(0.282353f, 0.100131f, 0.420654f)));
-        keys.Add(new ClrKey(0.167f, new Rgb(0.276078f, 0.184575f, 0.487582f)));
-        keys.Add(new ClrKey(0.200f, new Rgb(0.254902f, 0.265882f, 0.527843f)));
-
-        keys.Add(new ClrKey(0.267f, new Rgb(0.221961f, 0.340654f, 0.549281f)));
-        keys.Add(new ClrKey(0.333f, new Rgb(0.192157f, 0.405229f, 0.554248f)));
-        keys.Add(new ClrKey(0.400f, new Rgb(0.164706f, 0.469804f, 0.556863f)));
-        keys.Add(new ClrKey(0.467f, new Rgb(0.139869f, 0.534379f, 0.553464f)));
-
-        keys.Add(new ClrKey(0.533f, new Rgb(0.122092f, 0.595033f, 0.543007f)));
-        keys.Add(new ClrKey(0.600f, new Rgb(0.139608f, 0.658039f, 0.516863f)));
-        keys.Add(new ClrKey(0.667f, new Rgb(0.210458f, 0.717647f, 0.471895f)));
-        keys.Add(new ClrKey(0.733f, new Rgb(0.326797f, 0.773595f, 0.407582f)));
-
-        keys.Add(new ClrKey(0.800f, new Rgb(0.477647f, 0.821961f, 0.316863f)));
-        keys.Add(new ClrKey(0.867f, new Rgb(0.648366f, 0.858039f, 0.208889f)));
-        keys.Add(new ClrKey(0.933f, new Rgb(0.825098f, 0.884967f, 0.114771f)));
-        keys.Add(new ClrKey(1.000f, new Rgb(0.992157f, 0.905882f, 0.145098f)));
-
-        return target;
+        float prevStep = prev.Step;
+        float nextStep = next.Step;
+        if (prevStep != nextStep)
+        {
+            float tScaled = (step - prevStep) / (nextStep - prevStep);
+            return (prev, next, tScaled);
+        }
+        return (prev, next, tScaled: 0.0f);
     }
 
     /// <summary>
@@ -683,7 +668,10 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// <param name="cg">color gradient</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in ClrGradient cg, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in ClrGradient cg,
+        in int places = 4)
     {
         List<ClrKey> keys = cg.keys;
         int len = keys.Count;

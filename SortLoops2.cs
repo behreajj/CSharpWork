@@ -34,7 +34,7 @@ public class SortLoops2 : IComparer<Loop2>
         int aLen = aIdcs.Length;
         for (int i = 0; i < aLen; ++i)
         {
-            aAvg += this.coords[aIdcs[i].v];
+            aAvg += this.coords[aIdcs[i].V];
         }
         aAvg /= aLen;
 
@@ -43,7 +43,7 @@ public class SortLoops2 : IComparer<Loop2>
         int bLen = bIdcs.Length;
         for (int i = 0; i < bLen; ++i)
         {
-            bAvg += this.coords[bIdcs[i].v];
+            bAvg += this.coords[bIdcs[i].V];
         }
         bAvg /= bLen;
 
