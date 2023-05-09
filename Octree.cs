@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -465,8 +466,28 @@ public class Octree
         in Vec3 center,
         in float radius)
     {
+        return Query(o, center, radius,
+            (a, b) => Vec3.DistEuclidean(a, b));
+    }
+
+    /// <summary>
+    /// Queries a node with a spherical range.
+    /// A custom distance function can be used within
+    /// that range for the purposes of color matching.
+    /// </summary>
+    /// <param name="o">octree</param>
+    /// <param name="center">sphere center</param>
+    /// <param name="radius">sphere radius</param>
+    /// <param name="distFunc">distance function</param>
+    /// <returns>found points</returns>
+    public static Vec3[] Query(
+        in Octree o,
+        in Vec3 center,
+        in float radius,
+        in Func<Vec3, Vec3, float> distFunc)
+    {
         SortedList<float, Vec3> found = new(o.capacity);
-        Octree.Query(o, center, radius, found);
+        Octree.Query(o, center, radius, distFunc, found);
         Vec3[] arr = new Vec3[found.Count];
         found.Values.CopyTo(arr, 0);
         return arr;
@@ -519,30 +540,31 @@ public class Octree
     /// <param name="o">octree</param>
     /// <param name="center">sphere center</param>
     /// <param name="radius">sphere radius</param>
+    /// <param name="distFunc">distance function</param>
     /// <param name="found">found dictionary</param>
     /// <returns>distance points dictionary</returns>
     internal static SortedList<float, Vec3> Query(
         in Octree o,
         in Vec3 center,
         in float radius,
+        in Func<Vec3, Vec3, float> distFunc,
         in SortedList<float, Vec3> found)
     {
         if (Bounds3.Intersects(o.bounds, center, radius))
         {
             foreach (Octree child in o.children)
             {
-                Octree.Query(child, center, radius, found);
+                Octree.Query(child, center, radius, distFunc, found);
             }
 
             if (Octree.IsLeaf(o))
             {
-                float rsq = radius * radius;
                 foreach (Vec3 v in o.points)
                 {
-                    float dsq = Vec3.DistSq(center, v);
-                    if (dsq < rsq)
+                    float dist = distFunc(center, v);
+                    if (dist < radius)
                     {
-                        found[dsq] = v;
+                        found[dist] = v;
                     }
                 }
             }
@@ -575,14 +597,14 @@ public class Octree
         in Octree o,
         in int places = 4)
     {
-        sb.Append("{ bounds: ");
+        sb.Append("{\"bounds\":");
         Bounds3.ToString(sb, o.bounds, places);
-        sb.Append(", capacity: ");
+        sb.Append(",\"capacity\":");
         sb.Append(o.capacity);
 
         if (Octree.IsLeaf(o))
         {
-            sb.Append(", points: [ ");
+            sb.Append(",\"points\":[");
             SortedSet<Vec3> points = o.points;
             int i = -1;
             int last = points.Count - 1;
@@ -590,29 +612,26 @@ public class Octree
             {
                 ++i;
                 Vec3.ToString(sb, v, places);
-                if (i < last) sb.Append(", ");
+                if (i < last) sb.Append(',');
             }
-            sb.Append(' ');
             sb.Append(']');
         }
         else
         {
-            sb.Append(", children: [ ");
+            sb.Append(",\"children\":[");
             List<Octree> children = o.children;
             int last = children.Count - 1;
             for (int i = 0; i < last; ++i)
             {
                 Octree child = children[i];
                 Octree.ToString(sb, child, places);
-                sb.Append(", ");
+                sb.Append(',');
             }
             Octree.ToString(sb, children[last], places);
 
-            sb.Append(' ');
             sb.Append(']');
         }
 
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

@@ -1916,6 +1916,8 @@ public static class Pixels
         in Rgb[] source, in Rgb[] target, in Rgb[] palette,
         in float radius = 128.0f, in int capacity = 16)
     {
+        // TODO: Test again.
+
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
@@ -1940,6 +1942,14 @@ public static class Pixels
 
             Dictionary<Rgb, Rgb> dict = new();
             SortedList<float, Vec3> found = new(32);
+            static float distFunc(Vec3 o, Vec3 d)
+            {
+                float da = d.X - o.X;
+                float db = d.Y - o.Y;
+                return Math.Abs(d.Z - o.Z)
+                    + MathF.Sqrt(da * da + db * db);
+            }
+
             for (int i = 0; i < srcLen; ++i)
             {
                 Rgb srgb = source[i];
@@ -1955,7 +1965,7 @@ public static class Pixels
                         found.Clear();
                         Lab lab = Rgb.StandardToCieLab(opaque);
                         Vec3 point = new(x: lab.A, y: lab.B, z: lab.L);
-                        Octree.Query(oct, point, radius, found);
+                        Octree.Query(oct, point, radius, distFunc, found);
                         if (found.Count > 0)
                         {
                             Vec3 nearest = found.Values[0];
@@ -2526,7 +2536,8 @@ public static class Pixels
                         if (gtZero)
                         {
                             stretchedLab = new(
-                                l: u * sourceLab.L + sourceLab.L * tDenom - lumMintDenom,
+                                l: u * sourceLab.L
+                                    + tDenom * sourceLab.L - lumMintDenom,
                                 a: sourceLab.A,
                                 b: sourceLab.B,
                                 alpha: sourceLab.Alpha);

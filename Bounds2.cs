@@ -39,18 +39,6 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
 
     /// <summary>
     /// Creats a bounds from a nonuniform
-    /// minimum and maximum.
-    /// </summary>
-    /// <param name="min">minimum</param>
-    /// <param name="max">maximum</param>
-    public Bounds2(in Vec2 min, in Vec2 max)
-    {
-        this.min = min;
-        this.max = max;
-    }
-
-    /// <summary>
-    /// Creats a bounds from a nonuniform
     /// minimum and maximum expressed in floats.
     /// </summary>
     /// <param name="xMin">minimum x</param>
@@ -65,8 +53,20 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         // a positive area, but that prevented bounds from
         // signalling that an intersection had a potentially
         // negative area.
-        this.min = new Vec2(xMin, yMin);
-        this.max = new Vec2(xMax, yMax);
+        this.min = new(xMin, yMin);
+        this.max = new(xMax, yMax);
+    }
+
+    /// <summary>
+    /// Creats a bounds from a nonuniform
+    /// minimum and maximum.
+    /// </summary>
+    /// <param name="min">minimum</param>
+    /// <param name="max">maximum</param>
+    public Bounds2(in Vec2 min, in Vec2 max)
+    {
+        this.min = min;
+        this.max = max;
     }
 
     /// <summary>
@@ -108,8 +108,8 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     }
 
     /// <summary>
-    /// Compares this bounds to another in compliance with the IComparable
-    /// interface.
+    /// Compares this bounds to another.
+    /// Bases the comparison on the bounds' centers.
     /// </summary>
     /// <param name="b">comparisand</param>
     /// <returns>evaluation</returns>
@@ -128,28 +128,6 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     {
         return this.min.GetHashCode() == b.min.GetHashCode() &&
             this.max.GetHashCode() == b.max.GetHashCode();
-    }
-
-    /// <summary>
-    /// A bounds evaluates to true when its minimum and maximum
-    /// corners are approximately unequal in all dimensions.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>evaluation</returns>
-    public static bool operator true(in Bounds2 b)
-    {
-        return Bounds2.All(b);
-    }
-
-    /// <summary>
-    /// A bounds evaluates to false when its minimum and maximum
-    /// corners are approximately equal in all dimensions.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>evaluation</returns>
-    public static bool operator false(in Bounds2 b)
-    {
-        return Bounds2.None(b);
     }
 
     /// <summary>
@@ -194,36 +172,6 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     public static Bounds2 operator *(in Vec2 a, in Bounds2 b)
     {
         return Bounds2.Scale(b, a);
-    }
-
-    /// <summary>
-    /// Evaluates whether the minimum and maximum corners
-    /// of a bounds are approximately unequal in all
-    /// dimensions.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>evaluation</returns>
-    public static bool All(in Bounds2 b)
-    {
-        Vec2 mn = b.min;
-        Vec2 mx = b.max;
-        return !Utils.Approx(mn.X, mx.X) &&
-            !Utils.Approx(mn.Y, mx.Y);
-    }
-
-    /// <summary>
-    /// Evaluates whether the minimum and maximum corners
-    /// of a bounds are approximately unequal in at least
-    /// one dimension.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>evaluation</returns>
-    public static bool Any(in Bounds2 b)
-    {
-        Vec2 mn = b.min;
-        Vec2 mx = b.max;
-        return !Utils.Approx(mn.X, mx.X) ||
-            !Utils.Approx(mn.Y, mx.Y);
     }
 
     /// <summary>
@@ -429,13 +377,55 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     }
 
     /// <summary>
-    /// Evaluates whether a bounding area is negative
+    /// Evaluates whether a bounding area is negative.
+    /// Returns a vector holding boolean values.
     /// </summary>
     /// <param name="b">bounding area</param>
     /// <returns>evaluation</returns>
-    public static bool IsNegative(in Bounds2 b)
+    public static Vec2 IsNegative(in Bounds2 b)
     {
-        return b.max.Y < b.min.Y || b.max.X < b.min.X;
+        return b.max < b.min;
+    }
+
+    /// <summary>
+    /// Evaluates whether a bounding area is non-zero.
+    /// Returns a vector holding boolean values.
+    /// </summary>
+    /// <param name="b">bounding area</param>
+    /// <returns>evaluation</returns>
+    public static Vec2 IsNonZero(in Bounds2 b)
+    {
+        Vec2 mn = b.min;
+        Vec2 mx = b.max;
+        return new(
+            !Utils.Approx(mn.X, mx.X),
+            !Utils.Approx(mn.Y, mx.Y));
+    }
+
+    /// <summary>
+    /// Evaluates whether a bounding area is positive.
+    /// Returns a vector holding boolean values.
+    /// </summary>
+    /// <param name="b">bounding area</param>
+    /// <returns>evaluation</returns>
+    public static Vec2 IsPositive(in Bounds2 b)
+    {
+        return b.min < b.max;
+    }
+
+    /// <summary>
+    /// Evaluates whether a bounding area is zero.
+    /// Returns a vector holding boolean values.
+    /// </summary>
+    /// <param name="b">bounding area</param>
+    /// <returns>evaluation</returns>
+    public static Vec2 IsZero(in Bounds2 b)
+    {
+        Vec2 mn = b.min;
+        Vec2 mx = b.max;
+        return new(
+            Utils.Approx(mn.X, mx.X),
+            Utils.Approx(mn.Y, mx.Y));
     }
 
     /// <summary>
@@ -457,17 +447,6 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
             u * aMn.Y + t * bMn.Y,
             u * aMx.X + t * bMx.X,
             u * aMx.Y + t * bMx.Y);
-    }
-
-    /// <summary>
-    /// Evaluates whether the minimum and maximum corners
-    /// of a bounds are approximately equal.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>evaluation</returns>
-    public static bool None(in Bounds2 b)
-    {
-        return Vec2.Approx(b.min, b.max);
     }
 
     /// <summary>
@@ -517,10 +496,10 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
 
         return new Bounds2[]
         {
-            new Bounds2 (bMin.X, bMin.Y, x, y),
-                new Bounds2 (x, bMin.Y, bMax.X, y),
-                new Bounds2 (bMin.X, y, x, bMax.Y),
-                new Bounds2 (x, y, bMax.X, bMax.Y)
+            new(bMin.X, bMin.Y, x, y),
+            new(x, bMin.Y, bMax.X, y),
+            new(bMin.X, y, x, bMax.Y),
+            new(x, y, bMax.X, bMax.Y)
         };
     }
 
@@ -547,11 +526,10 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         in Bounds2 b,
         in int places = 4)
     {
-        sb.Append("{ min: ");
+        sb.Append("{\"min\":");
         Vec2.ToString(sb, b.min, places);
-        sb.Append(", max: ");
+        sb.Append(",\"max\":");
         Vec2.ToString(sb, b.max, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

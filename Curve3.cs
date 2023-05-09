@@ -928,16 +928,16 @@ public class Curve3 : IEnumerable<Knot3>
         int len = knots.Count;
         int last = len - 1;
 
-        sb.Append("{ closedLoop: ");
+        sb.Append("{\"closedLoop\":");
         sb.Append(c.closedLoop ? "true" : "false");
-        sb.Append(", knots: [ ");
+        sb.Append(",\"knots\":[");
         for (int i = 0; i < last; ++i)
         {
             Knot3.ToString(sb, knots[i], places);
-            sb.Append(", ");
+            sb.Append(',');
         }
         Knot3.ToString(sb, knots[last], places);
-        sb.Append(" ] }");
+        sb.Append("]}");
         return sb;
     }
 }

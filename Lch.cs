@@ -254,15 +254,14 @@ public readonly struct Lch
     /// <returns>string builder</returns>
     public static StringBuilder ToString(in StringBuilder sb, in Lch c, in int places = 4)
     {
-        sb.Append("{ l: ");
+        sb.Append("{\"l\":");
         Utils.ToFixed(sb, c.l, places);
-        sb.Append(", c: ");
+        sb.Append(",\"c\":");
         Utils.ToFixed(sb, c.c, places);
-        sb.Append(", h: ");
+        sb.Append(",\"h\":");
         Utils.ToFixed(sb, c.h, places);
-        sb.Append(", alpha: ");
+        sb.Append(",\"alpha\":");
         Utils.ToFixed(sb, c.alpha, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

@@ -144,38 +144,6 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     }
 
     /// <summary>
-    /// Returns an integer array of length 3 containing this index's components.
-    /// </summary>
-    /// <returns>the array</returns>
-    public int[] ToArray()
-    {
-        return this.ToArray(new int[this.Length], 0);
-    }
-
-    /// <summary>
-    /// Puts this index's components into an array at a given index.
-    /// </summary>
-    /// <param name="arr">array</param>
-    /// <param name="i">index</param>
-    /// <returns>array</returns>
-    public int[] ToArray(in int[] arr, in int i)
-    {
-        arr[i] = this.v;
-        arr[i + 1] = this.vt;
-        arr[i + 2] = this.vn;
-        return arr;
-    }
-
-    /// <summary>
-    /// Returns a named value tuple containing this index's components.
-    /// </summary>
-    /// <returns>tuple</returns>
-    public (int v, int vt, int vn) ToTuple()
-    {
-        return (this.v, this.vt, this.vn);
-    }
-
-    /// <summary>
     /// Sets all elements of an index to the input.
     /// </summary>
     /// <param name="i">simple index</param>
@@ -240,13 +208,13 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
         in Index3 i,
         in int padding = 3)
     {
-        sb.Append("{ v: ");
+        sb.Append("{\"v\":");
         Utils.ToPadded(sb, i.v, padding);
-        sb.Append(", vt: ");
+        sb.Append(",\"vt\":");
         Utils.ToPadded(sb, i.vt, padding);
-        sb.Append(", vn: ");
+        sb.Append(",\"vn\":");
         Utils.ToPadded(sb, i.vn, padding);
-        sb.Append(" }");
+        sb.Append('}');
         return sb;
     }
 
@@ -275,8 +243,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
         in Index3[] arr,
         in int padding = 3)
     {
-        sb.Append('[');
-        sb.Append(' ');
+        sb.Append('[');        
 
         if (arr != null)
         {
@@ -287,11 +254,9 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
             {
                 Index3.ToString(sb, arr[i], padding);
                 sb.Append(',');
-                sb.Append(' ');
             }
 
             Index3.ToString(sb, arr[last], padding);
-            sb.Append(' ');
         }
 
         sb.Append(']');

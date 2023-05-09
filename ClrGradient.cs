@@ -677,15 +677,14 @@ public class ClrGradient : IEnumerable<ClrKey>
         int len = keys.Count;
         int last = len - 1;
 
-        sb.Append("{ keys: [ ");
+        sb.Append("{\"keys\":[");
         for (int i = 0; i < last; ++i)
         {
             ClrKey.ToString(sb, keys[i], places);
             sb.Append(',');
-            sb.Append(' ');
         }
         ClrKey.ToString(sb, keys[last], places);
-        sb.Append(" ] }");
+        sb.Append("]}");
         return sb;
     }
 }

@@ -382,12 +382,11 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
         in PalEntry pe,
         in int places = 4)
     {
-        sb.Append("{ color: ");
+        sb.Append("{\"color\":");
         Lab.ToString(sb, pe.color, places);
-        sb.Append(", name: \"");
+        sb.Append(",\"name\":\"");
         sb.Append(pe.name);
         sb.Append('\"');
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

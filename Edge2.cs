@@ -213,13 +213,16 @@ public readonly struct Edge2 : IComparable<Edge2>, IEquatable<Edge2>
     /// <param name="e">edge</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in Edge2 e, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Edge2 e,
+        in int places = 4)
     {
-        sb.Append("{ origin: ");
+        sb.Append("{\"origin\":");
         Vert2.ToString(sb, e.origin, places);
-        sb.Append(", dest: ");
+        sb.Append(",\"dest\":");
         Vert2.ToString(sb, e.dest, places);
-        sb.Append(" }");
+        sb.Append('}');
         return sb;
     }
 
@@ -242,10 +245,12 @@ public readonly struct Edge2 : IComparable<Edge2>, IEquatable<Edge2>
     /// <param name="arr">array</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in Edge2[] arr, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Edge2[] arr,
+        in int places = 4)
     {
         sb.Append('[');
-        sb.Append(' ');
 
         if (arr != null)
         {
@@ -256,11 +261,9 @@ public readonly struct Edge2 : IComparable<Edge2>, IEquatable<Edge2>
             {
                 Edge2.ToString(sb, arr[i], places);
                 sb.Append(',');
-                sb.Append(' ');
             }
 
             Edge2.ToString(sb, arr[last], places);
-            sb.Append(' ');
         }
 
         sb.Append(']');

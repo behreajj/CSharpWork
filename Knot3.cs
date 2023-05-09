@@ -667,9 +667,9 @@ public class Knot3
         in float xFh, in float yFh, in float zFh,
         in float xRh, in float yRh, in float zRh)
     {
-        this.coord = new Vec3(xCo, yCo, zCo);
-        this.foreHandle = new Vec3(xFh, yFh, zFh);
-        this.rearHandle = new Vec3(xRh, yRh, zRh);
+        this.coord = new(xCo, yCo, zCo);
+        this.foreHandle = new(xFh, yFh, zFh);
+        this.rearHandle = new(xRh, yRh, zRh);
 
         return this;
     }
@@ -1051,13 +1051,12 @@ public class Knot3
     /// <returns>string builder</returns>
     public static StringBuilder ToString(in StringBuilder sb, in Knot3 kn, in int places = 4)
     {
-        sb.Append("{ coord: ");
+        sb.Append("{\"coord\":");
         Vec3.ToString(sb, kn.coord, places);
-        sb.Append(", foreHandle: ");
+        sb.Append(",\"foreHandle\":");
         Vec3.ToString(sb, kn.foreHandle, places);
-        sb.Append(", rearHandle: ");
+        sb.Append(",\"rearHandle\":");
         Vec3.ToString(sb, kn.rearHandle, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

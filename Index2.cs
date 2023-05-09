@@ -126,37 +126,6 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     }
 
     /// <summary>
-    /// Returns an integer array of length 2 containing this index's components.
-    /// </summary>
-    /// <returns>the array</returns>
-    public int[] ToArray()
-    {
-        return this.ToArray(new int[this.Length], 0);
-    }
-
-    /// <summary>
-    /// Puts this index's components into an array at a given index.
-    /// </summary>
-    /// <param name="arr">array</param>
-    /// <param name="i">index</param>
-    /// <returns>array</returns>
-    public int[] ToArray(in int[] arr, in int i)
-    {
-        arr[i] = this.v;
-        arr[i + 1] = this.vt;
-        return arr;
-    }
-
-    /// <summary>
-    /// Returns a named value tuple containing this index's components.
-    /// </summary>
-    /// <returns>tuple</returns>
-    public (int v, int vt) ToTuple()
-    {
-        return (this.v, this.vt);
-    }
-
-    /// <summary>
     /// Sets all elements of an index to the input.
     /// </summary>
     /// <param name="i">simple index</param>
@@ -210,11 +179,11 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
         in Index2 i,
         in int padding = 3)
     {
-        sb.Append("{ v: ");
+        sb.Append("{\"v\":");
         Utils.ToPadded(sb, i.v, padding);
-        sb.Append(", vt: ");
+        sb.Append(",\"vt\":");
         Utils.ToPadded(sb, i.vt, padding);
-        sb.Append(" }");
+        sb.Append('}');
         return sb;
     }
 
@@ -244,7 +213,6 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
         in int padding = 3)
     {
         sb.Append('[');
-        sb.Append(' ');
 
         if (arr != null)
         {
@@ -255,11 +223,9 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
             {
                 Index2.ToString(sb, arr[i], padding);
                 sb.Append(',');
-                sb.Append(' ');
             }
 
             Index2.ToString(sb, arr[last], padding);
-            sb.Append(' ');
         }
 
         sb.Append(']');

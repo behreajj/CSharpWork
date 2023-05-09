@@ -298,47 +298,6 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     }
 
     /// <summary>
-    /// Returns a float array of length 9 containing this matrix's components.
-    /// </summary>
-    /// <returns>array</returns>
-    public float[] ToArray1()
-    {
-        return new float[]
-        {
-            this.m00, this.m01, this.m02,
-                this.m10, this.m11, this.m12,
-                this.m20, this.m21, this.m22
-        };
-    }
-
-    /// <summary>
-    /// Returns a 3 x 3 float array containing this matrix's components.
-    /// </summary>
-    /// <returns>array</returns>
-    public float[,] ToArray2()
-    {
-        return new float[,]
-        { { this.m00, this.m01, this.m02 },
-            { this.m10, this.m11, this.m12 },
-            { this.m20, this.m21, this.m22 }
-        };
-    }
-
-    /// <summary>
-    /// Returns a named value tuple containing this matrix's components.
-    /// </summary>
-    /// <returns>tuple</returns>
-    public (float m00, float m01, float m02,
-            float m10, float m11, float m12,
-            float m20, float m21, float m22) ToTuple()
-    {
-        return (
-            this.m00, this.m01, this.m02,
-            this.m10, this.m11, this.m12,
-            this.m20, this.m21, this.m22);
-    }
-
-    /// <summary>
     /// Converts a boolean to a matrix by supplying the boolean to all the
     /// matrix's components: 1.0 for true; 0.0 for false.
     /// </summary>
@@ -1010,6 +969,38 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     }
 
     /// <summary>
+    /// Returns a float array of length 9 containing this matrix's components.
+    /// </summary>
+    /// <param name="m">matrix</param>
+    /// <returns>array</returns>
+    public static float[] ToArray(in Mat3 m)
+    {
+        return Mat3.ToArray(m, new float[m.Length], 0);
+    }
+
+    /// <summary>
+    /// Puts a matrix's components into an array at a given index.
+    /// </summary>
+    /// <param name="m">matrix</param>
+    /// <returns>array</returns>
+    public static float[] ToArray(in Mat3 m, in float[] arr, in int i = 0)
+    {
+        arr[i] = m.m00;
+        arr[i + 1] = m.m01;
+        arr[i + 2] = m.m02;
+
+        arr[i + 3] = m.m10;
+        arr[i + 4] = m.m11;
+        arr[i + 5] = m.m12;
+
+        arr[i + 6] = m.m20;
+        arr[i + 7] = m.m21;
+        arr[i + 8] = m.m22;
+
+        return arr;
+    }
+
+    /// <summary>
     /// Returns a string representation of a matrix.
     /// </summary>
     /// <param name="m">matrix</param>
@@ -1029,28 +1020,28 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <returns>string builder</returns>
     public static StringBuilder ToString(in StringBuilder sb, in Mat3 m, in int places = 4)
     {
-        sb.Append("{ m00: ");
+        sb.Append("{\"m00\":");
         Utils.ToFixed(sb, m.m00, places);
-        sb.Append(", m01: ");
+        sb.Append(",\"m01\":");
         Utils.ToFixed(sb, m.m01, places);
-        sb.Append(", m02: ");
+        sb.Append(",\"m02\":");
         Utils.ToFixed(sb, m.m02, places);
 
-        sb.Append(", m10: ");
+        sb.Append(",\"m10\":");
         Utils.ToFixed(sb, m.m10, places);
-        sb.Append(", m11: ");
+        sb.Append(",\"m11\":");
         Utils.ToFixed(sb, m.m11, places);
-        sb.Append(", m12: ");
+        sb.Append(",\"m12\":");
         Utils.ToFixed(sb, m.m12, places);
 
-        sb.Append(", m20: ");
+        sb.Append(",\"m20\":");
         Utils.ToFixed(sb, m.m20, places);
-        sb.Append(", m21: ");
+        sb.Append(",\"m21\":");
         Utils.ToFixed(sb, m.m21, places);
-        sb.Append(", m22: ");
+        sb.Append(",\"m22\":");
         Utils.ToFixed(sb, m.m22, places);
 
-        sb.Append(" }");
+        sb.Append('}');
         return sb;
     }
 

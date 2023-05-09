@@ -575,14 +575,14 @@ public class Quadtree
         in Quadtree q,
         in int places = 4)
     {
-        sb.Append("{ bounds: ");
+        sb.Append("{\"bounds\":");
         Bounds2.ToString(sb, q.bounds, places);
-        sb.Append(", capacity: ");
+        sb.Append(",\"capacity\":");
         sb.Append(q.capacity);
 
         if (Quadtree.IsLeaf(q))
         {
-            sb.Append(", points: [ ");
+            sb.Append(",\"points\":[");
             SortedSet<Vec2> points = q.points;
             int i = -1;
             int last = points.Count - 1;
@@ -590,29 +590,26 @@ public class Quadtree
             {
                 ++i;
                 Vec2.ToString(sb, v, places);
-                if (i < last) sb.Append(", ");
+                if (i < last) sb.Append(',');
             }
-            sb.Append(' ');
             sb.Append(']');
         }
         else
         {
-            sb.Append(", children: [ ");
+            sb.Append(",\"children\":[");
             List<Quadtree> children = q.children;
             int last = children.Count - 1;
             for (int i = 0; i < last; ++i)
             {
                 Quadtree child = children[i];
                 Quadtree.ToString(sb, child, places);
-                sb.Append(", ");
+                sb.Append(",");
             }
             Quadtree.ToString(sb, children[last], places);
 
-            sb.Append(' ');
             sb.Append(']');
         }
 
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

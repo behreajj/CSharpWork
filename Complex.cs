@@ -104,8 +104,8 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     }
 
     /// <summary>
-    /// Compares this complex number to another in compliance with the
-    /// IComparable interface. Returns 1 when a component of this vector is
+    /// Compares this complex number to another.
+    /// Returns 1 when a component of this vector is
     /// greater than another; -1 when lesser. Prioritizes the imaginary
     /// component over the real component. Returns 0 as a last resort.
     /// </summary>
@@ -143,38 +143,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     {
         yield return this.real;
         yield return this.imag;
-    }
-
-    /// <summary>
-    /// Returns a float array of length 2 containing this complex number's
-    /// components.
-    /// </summary>
-    /// <returns>array</returns>
-    public float[] ToArray()
-    {
-        return this.ToArray(new float[this.Length], 0);
-    }
-
-    /// <summary>
-    /// Puts this complex number's components into an array at a given index.
-    /// </summary>
-    /// <param name="arr">array</param>
-    /// <param name="i">index</param>
-    /// <returns>array</returns>
-    public float[] ToArray(in float[] arr, in int i = 0)
-    {
-        arr[i] = this.real;
-        arr[i + 1] = this.imag;
-        return arr;
-    }
-
-    /// <summary>
-    /// Returns a named value tuple containing this complex number's components.
-    /// </summary>
-    /// <returns>tuple</returns>
-    public (float real, float imag) ToTuple()
-    {
-        return (this.real, this.imag);
     }
 
     /// <summary>
@@ -422,7 +390,9 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <param name="b">right comparisand</param>
     /// <param name="tol">tolerance</param>
     /// <returns>evaluation</returns>
-    public static bool Approx(in Complex a, in Complex b, in float tol = Utils.Epsilon)
+    public static bool Approx(
+        in Complex a, in Complex b,
+        in float tol = Utils.Epsilon)
     {
         return Utils.Approx(a.real, b.real, tol) &&
             Utils.Approx(a.imag, b.imag, tol);
@@ -674,11 +644,10 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>string builder</returns>
     public static StringBuilder ToString(in StringBuilder sb, in Complex z, in int places = 4)
     {
-        sb.Append("{ real: ");
+        sb.Append("{\"real\":");
         Utils.ToFixed(sb, z.real, places);
-        sb.Append(", imag: ");
+        sb.Append(",\"imag\":");
         Utils.ToFixed(sb, z.imag, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

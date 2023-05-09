@@ -444,13 +444,12 @@ public class Transform2
         in Transform2 tr,
         in int places = 4)
     {
-        sb.Append("{ location: ");
+        sb.Append("{\"location\":");
         Vec2.ToString(sb, tr.location, places);
-        sb.Append(", rotation: ");
+        sb.Append(",\"rotation\":");
         Utils.ToFixed(sb, tr.rotation, places);
-        sb.Append(", scale: ");
+        sb.Append(",\"scale\":");
         Vec2.ToString(sb, tr.scale, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

@@ -265,9 +265,8 @@ public class Loop2
     /// <returns>string builder</returns>
     public static StringBuilder ToString(in StringBuilder sb, in Loop2 l, in int padding = 3)
     {
-        sb.Append("{ indices: ");
+        sb.Append("{\"indices\":");
         Index2.ToString(sb, l.indices, padding);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }
@@ -294,7 +293,6 @@ public class Loop2
     public static StringBuilder ToString(in StringBuilder sb, in Loop2[] arr, in int padding = 3)
     {
         sb.Append('[');
-        sb.Append(' ');
 
         if (arr != null)
         {
@@ -305,11 +303,9 @@ public class Loop2
             {
                 Loop2.ToString(sb, arr[i], padding);
                 sb.Append(',');
-                sb.Append(' ');
             }
 
             Loop2.ToString(sb, arr[last], padding);
-            sb.Append(' ');
         }
 
         sb.Append(']');

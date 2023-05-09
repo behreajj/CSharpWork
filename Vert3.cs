@@ -135,13 +135,13 @@ public readonly struct Vert3 : IComparable<Vert3>, IEquatable<Vert3>
     /// <returns>string builder</returns>
     public static StringBuilder ToString(in StringBuilder sb, in Vert3 v, in int places = 4)
     {
-        sb.Append("{ coord: ");
+        sb.Append("{\"coord\":");
         Vec3.ToString(sb, v.coord, places);
-        sb.Append(", texCoord: ");
+        sb.Append(",\"texCoord\":");
         Vec2.ToString(sb, v.texCoord, places);
-        sb.Append(", normal: ");
+        sb.Append(",\"normal\":");
         Vec3.ToString(sb, v.normal, places);
-        sb.Append(" }");
+        sb.Append("}");
         return sb;
     }
 }

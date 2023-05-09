@@ -39,18 +39,6 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
 
     /// <summary>
     /// Creats a bounds from a nonuniform
-    /// minimum and maximum.
-    /// </summary>
-    /// <param name="min">minimum</param>
-    /// <param name="max">maximum</param>
-    public Bounds3(in Vec3 min, in Vec3 max)
-    {
-        this.min = min;
-        this.max = max;
-    }
-
-    /// <summary>
-    /// Creats a bounds from a nonuniform
     /// minimum and maximum expressed in floats.
     /// </summary>
     /// <param name="xMin">minimum x</param>
@@ -67,8 +55,20 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
         // a positive area, but that prevented bounds from
         // signalling that an intersection had a potentially
         // negative area.
-        this.min = new Vec3(xMin, yMin, zMin);
-        this.max = new Vec3(xMax, yMax, zMax);
+        this.min = new(xMin, yMin, zMin);
+        this.max = new(xMax, yMax, zMax);
+    }
+
+    /// <summary>
+    /// Creats a bounds from a nonuniform
+    /// minimum and maximum.
+    /// </summary>
+    /// <param name="min">minimum</param>
+    /// <param name="max">maximum</param>
+    public Bounds3(in Vec3 min, in Vec3 max)
+    {
+        this.min = min;
+        this.max = max;
     }
 
     /// <summary>
@@ -110,8 +110,8 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     }
 
     /// <summary>
-    /// Compares this bounds to another in compliance with the IComparable
-    /// interface.
+    /// Compares this bounds to another.
+    /// Bases the comparison on the bounds' centers.
     /// </summary>
     /// <param name="b">comparisand</param>
     /// <returns>evaluation</returns>
@@ -130,28 +130,6 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     {
         return this.min.GetHashCode() == b.min.GetHashCode() &&
             this.max.GetHashCode() == b.max.GetHashCode();
-    }
-
-    /// <summary>
-    /// A bounds evaluates to true when its minimum and maximum
-    /// corners are approximately unequal in all dimensions.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>evaluation</returns>
-    public static bool operator true(in Bounds3 b)
-    {
-        return Bounds3.All(b);
-    }
-
-    /// <summary>
-    /// A bounds evaluates to false when its minimum and maximum
-    /// corners are approximately equal in all dimensions.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>evaluation</returns>
-    public static bool operator false(in Bounds3 b)
-    {
-        return Bounds3.None(b);
     }
 
     /// <summary>
@@ -196,38 +174,6 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     public static Bounds3 operator *(in Vec3 a, in Bounds3 b)
     {
         return Bounds3.Scale(b, a);
-    }
-
-    /// <summary>
-    /// Evaluates whether the minimum and maximum corners
-    /// of a bounds are approximately unequal in all
-    /// dimensions.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>evaluation</returns>
-    public static bool All(in Bounds3 b)
-    {
-        Vec3 mn = b.min;
-        Vec3 mx = b.max;
-        return !Utils.Approx(mn.X, mx.X) &&
-            !Utils.Approx(mn.Y, mx.Y) &&
-            !Utils.Approx(mn.Z, mx.Z);
-    }
-
-    /// <summary>
-    /// Evaluates whether the minimum and maximum corners
-    /// of a bounds are approximately unequal in at least
-    /// one dimension.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>evaluation</returns>
-    public static bool Any(in Bounds3 b)
-    {
-        Vec3 mn = b.min;
-        Vec3 mx = b.max;
-        return !Utils.Approx(mn.X, mx.X) ||
-            !Utils.Approx(mn.Y, mx.Y) ||
-            !Utils.Approx(mn.Z, mx.Z);
     }
 
     /// <summary>
@@ -417,13 +363,57 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     }
 
     /// <summary>
-    /// Evaluates whether a bounding volume is negative
+    /// Evaluates whether a bounding volume is negative.
+    /// Returns a vector holding boolean values.
     /// </summary>
-    /// <param name="b">bounding area</param>
+    /// <param name="b">bounding volume</param>
     /// <returns>evaluation</returns>
-    public static bool IsNegative(in Bounds3 b)
+    public static Vec3 IsNegative(in Bounds3 b)
     {
-        return b.max.Z < b.min.Z || b.max.Y < b.min.Y || b.max.X < b.min.X;
+        return b.max < b.min;
+    }
+
+    /// <summary>
+    /// Evaluates whether a bounding volume is non-zero.
+    /// Returns a vector holding boolean values.
+    /// </summary>
+    /// <param name="b">bounding volume</param>
+    /// <returns>evaluation</returns>
+    public static Vec3 IsNonZero(in Bounds3 b)
+    {
+        Vec3 mn = b.min;
+        Vec3 mx = b.max;
+        return new(
+            !Utils.Approx(mn.X, mx.X),
+            !Utils.Approx(mn.Y, mx.Y),
+            !Utils.Approx(mn.Z, mx.Z));
+    }
+
+    /// <summary>
+    /// Evaluates whether a bounding volume is positive.
+    /// Returns a vector holding boolean values.
+    /// </summary>
+    /// <param name="b">bounding volume</param>
+    /// <returns>evaluation</returns>
+    public static Vec3 IsPositive(in Bounds3 b)
+    {
+        return b.min < b.max;
+    }
+
+    /// <summary>
+    /// Evaluates whether a bounding volume is zero.
+    /// Returns a vector holding boolean values.
+    /// </summary>
+    /// <param name="b">bounding volume</param>
+    /// <returns>evaluation</returns>
+    public static Vec3 IsZero(in Bounds3 b)
+    {
+        Vec3 mn = b.min;
+        Vec3 mx = b.max;
+        return new(
+            Utils.Approx(mn.X, mx.X),
+            Utils.Approx(mn.Y, mx.Y),
+            Utils.Approx(mn.Z, mx.Z));
     }
 
     /// <summary>
@@ -447,17 +437,6 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
             u * aMx.X + t * bMx.X,
             u * aMx.Y + t * bMx.Y,
             u * aMx.Z + t * bMx.Z);
-    }
-
-    /// <summary>
-    /// Evaluates whether the minimum and maximum corners
-    /// of a boundsF are approximately equal.
-    /// </summary>
-    /// <param name="b">bounds</param>
-    /// <returns>evaluation</returns>
-    public static bool None(in Bounds3 b)
-    {
-        return Vec3.Approx(b.min, b.max);
     }
 
     /// <summary>
@@ -514,14 +493,14 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
 
         return new Bounds3[]
         {
-            new Bounds3 (bMin.X, bMin.Y, bMin.Z, x, y, z),
-                new Bounds3 (x, bMin.Y, bMin.Z, bMax.X, y, z),
-                new Bounds3 (bMin.X, y, bMin.Z, x, bMax.Y, z),
-                new Bounds3 (x, y, bMin.Z, bMax.X, bMax.Y, z),
-                new Bounds3 (bMin.X, bMin.Y, z, x, y, bMax.Z),
-                new Bounds3 (x, bMin.Y, z, bMax.X, y, bMax.Z),
-                new Bounds3 (bMin.X, y, z, x, bMax.Y, bMax.Z),
-                new Bounds3 (x, y, z, bMax.X, bMax.Y, bMax.Z)
+            new(bMin.X, bMin.Y, bMin.Z, x, y, z),
+            new(x, bMin.Y, bMin.Z, bMax.X, y, z),
+            new(bMin.X, y, bMin.Z, x, bMax.Y, z),
+            new(x, y, bMin.Z, bMax.X, bMax.Y, z),
+            new(bMin.X, bMin.Y, z, x, y, bMax.Z),
+            new(x, bMin.Y, z, bMax.X, y, bMax.Z),
+            new(bMin.X, y, z, x, bMax.Y, bMax.Z),
+            new(x, y, z, bMax.X, bMax.Y, bMax.Z)
         };
     }
 
@@ -548,11 +527,10 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
         in Bounds3 b,
         in int places = 4)
     {
-        sb.Append("{ min: ");
+        sb.Append("{\"min\":");
         Vec3.ToString(sb, b.min, places);
-        sb.Append(", max: ");
+        sb.Append(",\"max\":");
         Vec3.ToString(sb, b.max, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

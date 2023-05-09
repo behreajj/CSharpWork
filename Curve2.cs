@@ -950,16 +950,16 @@ public class Curve2 : IEnumerable<Knot2>
         int len = knots.Count;
         int last = len - 1;
 
-        sb.Append("{ closedLoop: ");
+        sb.Append("{\"closedLoop\":");
         sb.Append(c.closedLoop ? "true" : "false");
-        sb.Append(", knots: [ ");
+        sb.Append(",\"knots\":[");
         for (int i = 0; i < last; ++i)
         {
             Knot2.ToString(sb, knots[i], places);
-            sb.Append(", ");
+            sb.Append(',');
         }
         Knot2.ToString(sb, knots[last], places);
-        sb.Append(" ] }");
+        sb.Append("]}");
         return sb;
     }
 }

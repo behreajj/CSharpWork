@@ -157,8 +157,8 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Compares this vector to another in compliance with the IComparable
-    /// interface. Returns 1 when a component of this vector is greater than
+    /// Compares this vector to another.
+    /// Returns 1 when a component of this vector is greater than
     /// another; -1 when lesser. Returns 0 as a last resort.
     /// Prioritizes the highest dimension first: z, y, x. 
     /// </summary>
@@ -203,42 +203,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
-    /// Returns a float array of length 3 containing this vector's components.
-    /// </summary>
-    /// <returns>array</returns>
-    public float[] ToArray()
-    {
-        return this.ToArray(new float[this.Length], 0);
-    }
-
-    /// <summary>
-    /// Puts this vector's components into an array at a given index.
-    /// </summary>
-    /// <param name="arr">array</param>
-    /// <param name="i">index</param>
-    /// <returns>array</returns>
-    public float[] ToArray(in float[] arr, in int i = 0)
-    {
-        arr[i] = this.x;
-        arr[i + 1] = this.y;
-        arr[i + 2] = this.z;
-        return arr;
-    }
-
-    /// <summary>
-    /// Returns a named value tuple containing this vector's components.
-    /// </summary>
-    /// <returns>tuple</returns>
-    public (float x, float y, float z) ToTuple()
-    {
-        return (this.x, this.y, this.z);
-    }
-
-    /// <summary>
     /// Converts a boolean to a vector by supplying the boolean to all the
     /// vector's components: 1.0 for true; 0.0 for false.
     /// </summary>
-    /// <param name="b">the boolean</param>
+    /// <param name="b">boolean</param>
     public static implicit operator Vec3(in bool b)
     {
         float eval = b ? 1.0f : 0.0f;
@@ -249,7 +217,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Converts a float to a vector by supplying the scalar to all the vector's
     /// components.
     /// </summary>
-    /// <param name="s">the scalar</param>
+    /// <param name="s">scalar</param>
     public static implicit operator Vec3(in float s)
     {
         return new(s, s, s);
@@ -259,7 +227,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Promotes a 2D vector to a 3D vector; the z component is assumed to be
     /// 0.0 .
     /// </summary>
-    /// <param name="v">the 2D vector</param>
+    /// <param name="v">2D vector</param>
     public static implicit operator Vec3(in Vec2 v)
     {
         return Vec3.Promote(v, 0.0f);
@@ -742,25 +710,15 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <param name="tol">the tolerance</param>
+    /// <param name="tol">tolerance</param>
     /// <returns>evaluation</returns>
-    public static bool Approx(in Vec3 a, in Vec3 b, in float tol = Utils.Epsilon)
+    public static bool Approx(
+        in Vec3 a, in Vec3 b,
+        in float tol = Utils.Epsilon)
     {
         return Utils.Approx(a.x, b.x, tol) &&
             Utils.Approx(a.y, b.y, tol) &&
             Utils.Approx(a.z, b.z, tol);
-    }
-
-    /// <summary>
-    /// Tests to see if a vector has, approximately, the specified magnitude.
-    /// </summary>
-    /// <param name="a">vector</param>
-    /// <param name="b">the magnitude</param>
-    /// <param name="tol">the tolerance</param>
-    /// <returns>evaluation</returns>
-    public static bool ApproxMag(in Vec3 a, in float b = 1.0f, in float tol = Utils.Epsilon)
-    {
-        return Utils.Approx(Vec3.MagSq(a), b * b, tol);
     }
 
     /// <summary>
@@ -1262,13 +1220,21 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         in int rows = 8,
         in int layers = 8)
     {
-        int lval = layers < 2 ? 2 : layers;
-        int rval = rows < 2 ? 2 : rows;
-        int cval = cols < 2 ? 2 : cols;
+        int lval = layers < 1 ? 1 : layers;
+        int rval = rows < 1 ? 1 : rows;
+        int cval = cols < 1 ? 1 : cols;
 
-        float hToStep = 1.0f / (lval - 1.0f);
-        float iToStep = 1.0f / (rval - 1.0f);
-        float jToStep = 1.0f / (cval - 1.0f);
+        bool oneLayer = lval == 1;
+        bool oneRow = rval == 1;
+        bool oneCol = cval == 1;
+        
+        float hToStep = oneLayer ? 0.0f : 1.0f / (lval - 1.0f);
+        float iToStep = oneRow ? 0.0f : 1.0f / (rval - 1.0f);
+        float jToStep = oneCol ? 0.0f : 1.0f / (cval - 1.0f);
+
+        float hOff = oneLayer ? 0.5f : 0.0f;
+        float iOff = oneRow ? 0.5f : 0.0f;
+        float jOff = oneCol ? 0.5f : 0.0f;
 
         float lbx = lowerBound.x;
         float lby = lowerBound.y;
@@ -1289,9 +1255,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             int i = m / cval;
             int j = m % cval;
 
-            float jFac = j * jToStep;
-            float iFac = i * iToStep;
-            float hFac = h * hToStep;
+            float jFac = j * jToStep + jOff;
+            float iFac = i * iToStep + iOff;
+            float hFac = h * hToStep + hOff;
 
             result[h, i, j] = new(
                 (1.0f - jFac) * lbx + jFac * ubx,
@@ -1645,7 +1611,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>reflected vector</returns>
     public static Vec3 Reflect(in Vec3 i, in Vec3 n)
     {
-        return i - (2.0f * n * Vec3.Dot(n, i));
+        return i - (2.0f * Vec3.Dot(n, i)) * n;
     }
 
     /// <summary>
@@ -1984,6 +1950,31 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     }
 
     /// <summary>
+    /// Returns a float array of length 3 containing a vector's components.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <returns>array</returns>
+    public static float[] ToArray(in Vec3 v)
+    {
+        return Vec3.ToArray(v, new float[v.Length], 0);
+    }
+
+    /// <summary>
+    /// Puts a vector's components into an array at a given index.
+    /// </summary>
+    /// <param name="v">vector</param>
+    /// <param name="arr">array</param>
+    /// <param name="i">index</param>
+    /// <returns>array</returns>
+    public static float[] ToArray(in Vec3 v, in float[] arr, in int i = 0)
+    {
+        arr[i] = v.x;
+        arr[i + 1] = v.y;
+        arr[i + 2] = v.z;
+        return arr;
+    }
+
+    /// <summary>
     /// Returns a named value tuple containing the vector's azimuth,
     /// theta; inclination, phi; and magnitude, rho.
     /// </summary>
@@ -1991,7 +1982,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>tuple</returns>
     public static (float theta, float phi, float rho) ToSpherical(in Vec3 v)
     {
-        float mSq = v.x * v.x + v.y * v.y + v.z * v.z;
+        float mSq = Vec3.MagSq(v);
         if (mSq > 0.0)
         {
             float m = MathF.Sqrt(mSq);
@@ -2023,13 +2014,12 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>string builder</returns>
     public static StringBuilder ToString(in StringBuilder sb, in Vec3 v, in int places = 4)
     {
-        sb.Append("{ x: ");
+        sb.Append("{\"x\":");
         Utils.ToFixed(sb, v.x, places);
-        sb.Append(", y: ");
+        sb.Append(",\"y\":");
         Utils.ToFixed(sb, v.y, places);
-        sb.Append(", z: ");
+        sb.Append(",\"z\":");
         Utils.ToFixed(sb, v.z, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }
@@ -2055,7 +2045,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static StringBuilder ToString(in StringBuilder sb, in Vec3[] arr, in int places = 4)
     {
         sb.Append('[');
-        sb.Append(' ');
 
         if (arr != null)
         {
@@ -2066,11 +2055,9 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
             {
                 Vec3.ToString(sb, arr[i], places);
                 sb.Append(',');
-                sb.Append(' ');
             }
 
             Vec3.ToString(sb, arr[last], places);
-            sb.Append(' ');
         }
 
         sb.Append(']');

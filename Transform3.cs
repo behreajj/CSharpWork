@@ -499,13 +499,12 @@ public class Transform3
         in Transform3 tr,
         in int places = 4)
     {
-        sb.Append("{ location: ");
+        sb.Append("{\"location\":");
         Vec3.ToString(sb, tr.location, places);
-        sb.Append(", rotation: ");
+        sb.Append(",\"rotation\":");
         Quat.ToString(sb, tr.rotation, places);
-        sb.Append(", scale: ");
+        sb.Append(",\"scale\":");
         Vec3.ToString(sb, tr.scale, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

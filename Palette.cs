@@ -602,12 +602,12 @@ public class Palette : IEnumerable
     /// <returns>string builder</returns>
     public static StringBuilder ToString(in StringBuilder sb, in Palette pal, in int places = 4)
     {
-        sb.Append("{ name: \"");
+        sb.Append("{\"name\":\"");
         sb.Append(pal.Name);
-        sb.Append("\", author: \"");
+        sb.Append("\",\"author\":\"");
         sb.Append(pal.Author);
 
-        sb.Append("\", entries: [ ");
+        sb.Append("\",\"entries\":[");
         PalEntry[] palEntries = pal.entries;
         int entriesLen = palEntries.Length;
         int entriesLast = entriesLen - 1;
@@ -619,12 +619,12 @@ public class Palette : IEnumerable
                 PalEntry.ToString(sb, entry, places);
                 if (i < entriesLast)
                 {
-                    sb.Append(',').Append(' ');
+                    sb.Append(',');
                 }
             }
         }
 
-        sb.Append(" ] }");
+        sb.Append("]}");
         return sb;
     }
 

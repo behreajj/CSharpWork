@@ -329,20 +329,25 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <returns>color</returns>
     public static Lab CopyAlpha(in Lab a, in Lab b)
     {
-        return new Lab(a.l, a.a, a.b, b.alpha);
+        return new(a.l, a.a, a.b, b.alpha);
     }
 
     /// <summary>
     /// Finds the distance between two colors.
     /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
     /// <returns>distance</returns>
     public static float Dist(in Lab o, in Lab d)
     {
-        // Alternatively, see
+        // See
         // https://github.com/svgeesus/svgeesus.github.io/blob/master/Color/OKLab-notes.md
-        return Lab.DistEuclideanAlpha(o, d);
+
+        float da = d.a - o.a;
+        float db = d.b - o.b;
+        return Math.Abs(100.0f * (d.alpha - o.alpha))
+            + Math.Abs(d.l - o.l)
+            + MathF.Sqrt(da * da + db * db);
     }
 
     /// <summary>
@@ -352,18 +357,18 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// that of the other channels, a scalar is provided
     /// to increase its weight.
     /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
     /// <param name="alphaScalar">alpha scalar</param>
     /// <returns>Euclidean distance</returns>
     public static float DistEuclideanAlpha(
-        in Lab a, in Lab b,
+        in Lab o, in Lab d,
         in float alphaScalar = 100.0f)
     {
-        float dt = alphaScalar * (b.alpha - a.alpha);
-        float dl = b.l - a.l;
-        float da = b.a - a.a;
-        float db = b.b - a.b;
+        float dt = alphaScalar * (d.alpha - o.alpha);
+        float dl = d.l - o.l;
+        float da = d.a - o.a;
+        float db = d.b - o.b;
         return MathF.Sqrt(
             dt * dt +
             dl * dl +
@@ -375,14 +380,14 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// Finds the Euclidean distance between two colors.
     /// Does not include the colors' alpha channel in the calculation.
     /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
     /// <returns>Euclidean distance</returns>
-    public static float DistEuclideanNoAlpha(in Lab a, in Lab b)
+    public static float DistEuclideanNoAlpha(in Lab o, in Lab d)
     {
-        float dl = b.l - a.l;
-        float da = b.a - a.a;
-        float db = b.b - a.b;
+        float dl = d.l - o.l;
+        float da = d.a - o.a;
+        float db = d.b - o.b;
         return MathF.Sqrt(dl * dl + da * da + db * db);
     }
 
@@ -538,11 +543,11 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <returns>mix</returns>
     public static Lab Mix(in Lab o, in Lab d)
     {
-        return new Lab(
-            l: 0.5f * (o.l + d.l),
-            a: 0.5f * (o.a + d.a),
-            b: 0.5f * (o.b + d.b),
-            alpha: 0.5f * (o.alpha + d.alpha));
+        return new(
+            0.5f * (o.l + d.l),
+            0.5f * (o.a + d.a),
+            0.5f * (o.b + d.b),
+            0.5f * (o.alpha + d.alpha));
     }
 
     /// <summary>
@@ -556,11 +561,11 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     public static Lab Mix(in Lab o, in Lab d, in float t)
     {
         float u = 1.0f - t;
-        return new Lab(
-            l: u * o.l + t * d.l,
-            a: u * o.a + t * d.a,
-            b: u * o.b + t * d.b,
-            alpha: u * o.alpha + t * d.alpha);
+        return new(
+            u * o.l + t * d.l,
+            u * o.a + t * d.a,
+            u * o.b + t * d.b,
+            u * o.alpha + t * d.alpha);
     }
 
     /// <summary>
@@ -639,6 +644,43 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
+    /// Converts from CIE LAB to CIE XYZ.
+    /// The z component of the input vector is
+    /// expected to hold the luminance, while x
+    /// is expected to hold a and y, b.
+    /// </summary>
+    /// <param name="lab">CIE LAB color</param>
+    /// <returns>CIE XYZ color</returns>
+    public static Vec4 ToCieXyz(in Lab lab)
+    {
+        double offset = 16.0d / 116.0d;
+        double one116 = 1.0d / 116.0d;
+        double one7787 = 1.0d / 7.787d;
+
+        double a = (lab.L + 16.0d) * one116;
+        double b = lab.A * 0.002d + a;
+        double c = a - lab.B * 0.005d;
+
+        double acb = a * a * a;
+        if (acb > 0.008856d) { a = acb; }
+        else { a = (a - offset) * one7787; }
+
+        double bcb = b * b * b;
+        if (bcb > 0.008856d) { b = bcb; }
+        else { b = (b - offset) * one7787; }
+
+        double ccb = c * c * c;
+        if (ccb > 0.008856d) { c = ccb; }
+        else { c = (c - offset) * one7787; }
+
+        return new Vec4(
+            x: (float)(b * 0.95047d),
+            y: (float)a,
+            z: (float)(c * 1.08883d),
+            w: lab.Alpha);
+    }
+
+    /// <summary>
     /// Converts a color to an integer. Clamps the a and b
     /// components to [-127.5, 127.5], floors, then adds 128.
     /// Scales lightness from [0.0, 100.0] to [0, 255].
@@ -680,15 +722,14 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         in Lab c,
         in int places = 4)
     {
-        sb.Append("{ l: ");
+        sb.Append("{\"l\":");
         Utils.ToFixed(sb, c.l, places);
-        sb.Append(", a: ");
+        sb.Append(",\"a\":");
         Utils.ToFixed(sb, c.a, places);
-        sb.Append(", b: ");
+        sb.Append(",\"b\":");
         Utils.ToFixed(sb, c.b, places);
-        sb.Append(", alpha: ");
+        sb.Append(",\"alpha\":");
         Utils.ToFixed(sb, c.alpha, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

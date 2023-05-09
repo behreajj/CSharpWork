@@ -2268,13 +2268,13 @@ public class Mesh2
         in int padding = 1,
         in int places = 4)
     {
-        sb.Append("{ loops: ");
+        sb.Append("{\"loops\":");
         Loop2.ToString(sb, m.loops, padding);
-        sb.Append(", coords: ");
+        sb.Append(",\"coords\":");
         Vec2.ToString(sb, m.coords, places);
-        sb.Append(", texCoords: ");
+        sb.Append(",\"texCoords\":");
         Vec2.ToString(sb, m.texCoords, places);
-        sb.Append(" }");
+        sb.Append('}');
         return sb;
     }
 

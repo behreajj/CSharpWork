@@ -249,42 +249,6 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     }
 
     /// <summary>
-    /// Returns a float array of length 4 containing this quaternion's
-    /// components. The real component, w, is treated as the first element.
-    /// </summary>
-    /// <returns>array</returns>
-    public float[] ToArray()
-    {
-        return this.ToArray(new float[this.Length], 0);
-    }
-
-    /// <summary>
-    /// Puts this quaternion's components into an array at a given index.
-    /// The real component, w, is treated as the first element.
-    /// </summary>
-    /// <param name="arr">array</param>
-    /// <param name="i">index</param>
-    /// <returns>array</returns>
-    public float[] ToArray(in float[] arr, in int i = 0)
-    {
-        arr[i] = this.real;
-        arr[i + 1] = this.imag.X;
-        arr[i + 2] = this.imag.Y;
-        arr[i + 3] = this.imag.Z;
-        return arr;
-    }
-
-    /// <summary>
-    /// Returns a named value tuple containing this quaternion's components.
-    /// </summary>
-    /// <returns>tuple</returns>
-    public (float w, float x, float y, float z) ToTuple()
-    {
-        return (w: this.real,
-            this.imag.X, this.imag.Y, this.imag.Z);
-    }
-
-    /// <summary>
     /// Promotes a real number to a quaternion.
     /// </summary>
     /// <param name="real">real number</param>
@@ -648,12 +612,14 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
-    /// <param name="tolerance">tolerance</param>
+    /// <param name="tol">tolerance</param>
     /// <returns>evaluation</returns>
-    public static bool Approx(in Quat a, in Quat b, in float tolerance = Utils.Epsilon)
+    public static bool Approx(
+        in Quat a, in Quat b,
+        in float tol = Utils.Epsilon)
     {
-        return Utils.Approx(a.real, b.real, tolerance) &&
-            Vec3.Approx(a.imag, b.imag, tolerance);
+        return Utils.Approx(a.real, b.real, tol) &&
+            Vec3.Approx(a.imag, b.imag, tol);
     }
 
     /// <summary>
@@ -1337,11 +1303,10 @@ public readonly struct Quat : IEquatable<Quat>, IEnumerable
     /// <returns>string builder</returns>
     public static StringBuilder ToString(in StringBuilder sb, in Quat q, in int places = 4)
     {
-        sb.Append("{ real: ");
+        sb.Append("{\"real\":");
         Utils.ToFixed(sb, q.real, places);
-        sb.Append(", imag: ");
+        sb.Append(",\"imag\":");
         Vec3.ToString(sb, q.imag, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

@@ -447,7 +447,6 @@ public static class UnityBridge
     /// <returns>conversion</returns>
     public static Transform ToTransform(in Transform2 t2, in Transform ut)
     {
-        // TODO: Should the 'in' keyword for ut be replaced with ref or out?
         ut.localPosition = UnityBridge.ToVector3(t2.Location);
         ut.localRotation = UnityBridge.ToQuaternion(t2.Rotation);
         ut.localScale = UnityBridge.ToVector3(t2.Scale, 1.0f);
@@ -463,7 +462,6 @@ public static class UnityBridge
     /// <returns>conversion</returns>
     public static Transform ToTransform(in Transform3 t3, in Transform ut)
     {
-        // TODO: Should the 'in' keyword for ut be replaced with ref or out?
         ut.localPosition = UnityBridge.ToVector3(t3.Location);
         ut.localRotation = UnityBridge.ToQuaternion(t3.Rotation);
         ut.localScale = UnityBridge.ToVector3(t3.Scale);

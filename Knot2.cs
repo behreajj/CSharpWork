@@ -572,9 +572,9 @@ public class Knot2
         in float xFh, in float yFh,
         in float xRh, in float yRh)
     {
-        this.coord = new Vec2(xCo, yCo);
-        this.foreHandle = new Vec2(xFh, yFh);
-        this.rearHandle = new Vec2(xRh, yRh);
+        this.coord = new(xCo, yCo);
+        this.foreHandle = new(xFh, yFh);
+        this.rearHandle = new(xRh, yRh);
 
         return this;
     }
@@ -795,13 +795,12 @@ public class Knot2
     /// <returns>string builder</returns>
     public static StringBuilder ToString(in StringBuilder sb, in Knot2 kn, in int places = 4)
     {
-        sb.Append("{ coord: ");
+        sb.Append("{\"coord\":");
         Vec2.ToString(sb, kn.coord, places);
-        sb.Append(", foreHandle: ");
+        sb.Append(",\"foreHandle\":");
         Vec2.ToString(sb, kn.foreHandle, places);
-        sb.Append(", rearHandle: ");
+        sb.Append(",\"rearHandle\":");
         Vec2.ToString(sb, kn.rearHandle, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

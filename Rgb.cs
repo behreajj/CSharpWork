@@ -270,44 +270,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     {
         return Rgb.LinearToStandard(
             Rgb.CieXyzToLinear(
-                Rgb.CieLabToCieXyz(lab)));
-    }
-
-    /// <summary>
-    /// Converts from CIE LAB to CIE XYZ.
-    /// The z component of the input vector is
-    /// expected to hold the luminance, while x
-    /// is expected to hold a and y, b.
-    /// </summary>
-    /// <param name="lab">CIE LAB color</param>
-    /// <returns>CIE XYZ color</returns>
-    public static Vec4 CieLabToCieXyz(in Lab lab)
-    {
-        double offset = 16.0d / 116.0d;
-        double one116 = 1.0d / 116.0d;
-        double one7787 = 1.0d / 7.787d;
-
-        double a = (lab.L + 16.0d) * one116;
-        double b = lab.A * 0.002d + a;
-        double c = a - lab.B * 0.005d;
-
-        double acb = a * a * a;
-        if (acb > 0.008856d) { a = acb; }
-        else { a = (a - offset) * one7787; }
-
-        double bcb = b * b * b;
-        if (bcb > 0.008856d) { b = bcb; }
-        else { b = (b - offset) * one7787; }
-
-        double ccb = c * c * c;
-        if (ccb > 0.008856d) { c = ccb; }
-        else { c = (c - offset) * one7787; }
-
-        return new Vec4(
-            (float)(b * 0.95047d),
-            (float)a,
-            (float)(c * 1.08883d),
-            lab.Alpha);
+                Lab.ToCieXyz(lab)));
     }
 
     /// <summary>
@@ -328,7 +291,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     {
         return Rgb.LinearToStandard(
             Rgb.CieXyzToLinear(
-                Rgb.CieLabToCieXyz(
+                Lab.ToCieXyz(
                     Lab.FromLch(lch))));
     }
 
@@ -1241,15 +1204,14 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
         in Rgb c,
         in int places = 4)
     {
-        sb.Append("{ r: ");
+        sb.Append("{\"r\":");
         Utils.ToFixed(sb, c.r, places);
-        sb.Append(", g: ");
+        sb.Append(",\"g\":");
         Utils.ToFixed(sb, c.g, places);
-        sb.Append(", b: ");
+        sb.Append(",\"b\":");
         Utils.ToFixed(sb, c.b, places);
-        sb.Append(", a: ");
+        sb.Append(",\"a\":");
         Utils.ToFixed(sb, c.a, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

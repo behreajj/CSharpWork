@@ -169,11 +169,13 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     /// <param name="f">face</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in Face2 f, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Face2 f,
+        in int places = 4)
     {
-        sb.Append("{ edges: ");
+        sb.Append("{\"edges\":");
         Edge2.ToString(sb, f.edges, places);
-        sb.Append(' ');
         sb.Append('}');
         return sb;
     }

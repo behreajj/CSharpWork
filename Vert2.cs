@@ -119,11 +119,11 @@ public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>
     /// <returns>string builder</returns>
     public static StringBuilder ToString(in StringBuilder sb, in Vert2 v, in int places = 4)
     {
-        sb.Append("{ coord: ");
+        sb.Append("{\"coord\":");
         Vec2.ToString(sb, v.coord, places);
-        sb.Append(", texCoord: ");
+        sb.Append(",\"texCoord\":");
         Vec2.ToString(sb, v.texCoord, places);
-        sb.Append(" }");
+        sb.Append("}");
         return sb;
     }
 }

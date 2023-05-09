@@ -190,7 +190,7 @@ public static class Utils
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>clamped value</returns>
-    public static int Clamp(in int v, in int lb = int.MinValue, in int ub = int.MaxValue)
+    public static int Clamp(in int v, in int lb, in int ub)
     {
         return (v < lb) ? lb : (v > ub) ? ub : v;
     }
@@ -210,6 +210,20 @@ public static class Utils
         return (sign < -0.0f) ? -MathF.Abs(mag) :
             (sign > 0.0f) ? MathF.Abs(mag) :
             0.0f;
+    }
+
+    /// <summary>
+    /// Returns the first floating-point argument with the sign of the second
+    /// floating-point argument. Returns zero if the sign is zero.
+    /// </summary>
+    /// <param name="mag">magnitude</param>
+    /// <param name="sign">sign</param>
+    /// <returns>magnified sign</returns>
+    public static int CopySign(in int mag, in int sign)
+    {
+        return (sign < 0) ? -Math.Abs(mag) :
+            (sign > 0) ? Math.Abs(mag) :
+            0;
     }
 
     /// <summary>
@@ -234,6 +248,17 @@ public static class Utils
     public static float Diff(in float a, in float b)
     {
         return MathF.Abs(b - a);
+    }
+
+    /// <summary>
+    /// Finds the absolute value of the right operand minus the left.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>difference</returns>
+    public static int Diff(in int a, in int b)
+    {
+        return Math.Abs(b - a);
     }
 
     /// <summary>
@@ -362,8 +387,6 @@ public static class Utils
     /// <returns>fractional portion</returns>
     public static float Fract(in float v)
     {
-        // TODO: Distinguish between FractTrunc and FractFloor?
-        // Make Fract an alias for FractTrunc?
         return v - MathF.Truncate(v);
     }
 
