@@ -20,7 +20,7 @@ public static class UnityBridge
     }
 
     /// <summary>
-    /// Converts from a Unity Color to a Clr.
+    /// Converts from a Unity Color to an Rgb.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>conversion</returns>
@@ -31,8 +31,7 @@ public static class UnityBridge
 
     /// <summary>
     /// Converts from an array of Unity colors to
-    /// an array of integers. The ClrChannel enumeration
-    /// signals the order for how integers should be packed.
+    /// an array of Rgbs.
     /// </summary>
     /// <param name="cs">colors</param>
     /// <returns>conversion</returns>
@@ -48,7 +47,7 @@ public static class UnityBridge
     }
 
     /// <summary>
-    /// Converts from a Unity Color32 to a Clr.
+    /// Converts from a Unity Color32 to an Rgb.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>conversion</returns>
@@ -202,32 +201,56 @@ public static class UnityBridge
 
     /// <summary>
     /// Converts to a Unity Color32 from a Clr.
+    /// Defaults to clamping the color to [0.0, 1.0].
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>conversion</returns>
     public static Color32 ToColor32(in Rgb c)
     {
-        return new Color32(
-            (byte)(Utils.Clamp(c.R, 0.0f, 1.0f) * 255.0f + 0.5f),
-            (byte)(Utils.Clamp(c.G, 0.0f, 1.0f) * 255.0f + 0.5f),
-            (byte)(Utils.Clamp(c.B, 0.0f, 1.0f) * 255.0f + 0.5f),
-            (byte)(Utils.Clamp(c.Alpha, 0.0f, 1.0f) * 255.0f + 0.5f));
+        return UnityBridge.ToColor32(c, (x) => Rgb.Clamp(x, 0.0f, 1.0f));
     }
 
     /// <summary>
-    /// Converts to an array of Unity colors from
-    /// an array of integers. The ClrChannel enumeration
-    /// signals the order for how integers should be packed.
+    /// Converts to a Unity Color32 from an Rgb.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <param name="tm">tone mapper</param>
+    /// <returns>conversion</returns>
+    public static Color32 ToColor32(in Rgb c, in Func<Rgb, Rgb> tm)
+    {
+        Rgb ctm = tm(c);
+        return new Color32(
+            (byte)(ctm.R * 255.0f + 0.5f),
+            (byte)(ctm.G * 255.0f + 0.5f),
+            (byte)(ctm.B * 255.0f + 0.5f),
+            (byte)(ctm.Alpha * 255.0f + 0.5f));
+    }
+
+    /// <summary>
+    /// Converts to a Unity Color32 from an Rgb.
+    /// Defaults to clamping the color to [0.0, 1.0].
     /// </summary>
     /// <param name="cs">colors</param>
     /// <returns>conversion</returns>
     public static Color32[] ToColor32(in Rgb[] cs)
     {
+        return UnityBridge.ToColor32(cs, (x) => Rgb.Clamp(x, 0.0f, 1.0f));
+    }
+
+    /// <summary>
+    /// Converts to an array of Unity Color32s from
+    /// an array of Rgbs.
+    /// </summary>
+    /// <param name="cs">colors</param>
+    /// <param name="tm">tone mapper</param>
+    /// <returns>conversion</returns>
+    public static Color32[] ToColor32(in Rgb[] cs, in Func<Rgb, Rgb> tm)
+    {
         int len = cs.Length;
         Color32[] target = new Color32[len];
         for (int i = 0; i < len; ++i)
         {
-            target[i] = UnityBridge.ToColor32(cs[i]);
+            target[i] = UnityBridge.ToColor32(cs[i], tm);
         }
         return target;
     }

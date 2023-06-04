@@ -354,7 +354,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// </summary>
     /// <param name="a">vector, numerator</param>
     /// <param name="b">scalar, denominator</param>
-    /// <returns>product</returns>
+    /// <returns>quotient</returns>
     public static Vec2 operator /(in Vec2 a, in float b)
     {
         if (b != 0.0f)
@@ -372,7 +372,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// </summary>
     /// <param name="a">scalar, numerator</param>
     /// <param name="b">vector, denominator</param>
-    /// <returns>product</returns>
+    /// <returns>quotient</returns>
     public static Vec2 operator /(in float a, in Vec2 b)
     {
         return new(
@@ -854,7 +854,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>distance</returns>
+    /// <returns>Chebyshev distance</returns>
     public static float DistChebyshev(in Vec2 a, in Vec2 b)
     {
         return MathF.Max(Utils.Diff(b.x, a.x),
@@ -976,7 +976,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Returns the fractional portion of the vector's components.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>fractional portion</returns>
+    /// <returns>fraction</returns>
     public static Vec2 Fract(in Vec2 v)
     {
         return new(

@@ -22,8 +22,8 @@ public static class ClrBlends
         if (t <= 0.0f) { return under; }
         if (v <= 0.0f) { return over; }
 
-        Lch uLch = Rgb.StandardToCieLch(under);
-        Lch oLch = Rgb.StandardToCieLch(over);
+        Lch uLch = Rgb.StandardToSrLch(under);
+        Lch oLch = Rgb.StandardToSrLch(over);
 
         float u = 1.0f - t;
         float tuv = MathF.Min(1.0f, t + u * v);
@@ -32,7 +32,7 @@ public static class ClrBlends
         ch -= MathF.Floor(ch);
 
         Lch cLch = new(l: uLch.L, c: cc, h: ch, alpha: tuv);
-        return Rgb.CieLchToStandard(cLch);
+        return Rgb.SrLchToStandard(cLch);
     }
 
     /// <summary>
@@ -51,8 +51,8 @@ public static class ClrBlends
         if (t <= 0.0f) { return under; }
         if (v <= 0.0f) { return over; }
 
-        Lch uLch = Rgb.StandardToCieLch(under);
-        Lch oLch = Rgb.StandardToCieLch(over);
+        Lch uLch = Rgb.StandardToSrLch(under);
+        Lch oLch = Rgb.StandardToSrLch(over);
 
         float u = 1.0f - t;
         float tuv = MathF.Min(1.0f, t + u * v);
@@ -60,7 +60,7 @@ public static class ClrBlends
         ch -= MathF.Floor(ch);
 
         Lch cLch = new(l: uLch.L, c: uLch.C, h: ch, alpha: tuv);
-        return Rgb.CieLchToStandard(cLch);
+        return Rgb.SrLchToStandard(cLch);
     }
 
     /// <summary>
@@ -79,15 +79,15 @@ public static class ClrBlends
         if (t <= 0.0f) { return under; }
         if (v <= 0.0f) { return over; }
 
-        Lch uLch = Rgb.StandardToCieLch(under);
-        Lch oLch = Rgb.StandardToCieLch(over);
+        Lch uLch = Rgb.StandardToSrLch(under);
+        Lch oLch = Rgb.StandardToSrLch(over);
 
         float u = 1.0f - t;
         float tuv = MathF.Min(1.0f, t + u * v);
         float cl = u * uLch.L + t * oLch.L;
 
         Lch cLch = new(l: cl, c: uLch.C, h: uLch.H, alpha: tuv);
-        return Rgb.CieLchToStandard(cLch);
+        return Rgb.SrLchToStandard(cLch);
     }
 
     /// <summary>
@@ -119,15 +119,15 @@ public static class ClrBlends
         if (t <= 0.0f) { return under; }
         if (v <= 0.0f) { return over; }
 
-        Lch uLch = Rgb.StandardToCieLch(under);
-        Lch oLch = Rgb.StandardToCieLch(over);
+        Lch uLch = Rgb.StandardToSrLch(under);
+        Lch oLch = Rgb.StandardToSrLch(over);
 
         float u = 1.0f - t;
         float tuv = MathF.Min(1.0f, t + u * v);
         float cc = u * uLch.C + t * oLch.C;
 
         Lch cLch = new(l: uLch.L, c: cc, h: uLch.H, alpha: tuv);
-        return Rgb.CieLchToStandard(cLch);
+        return Rgb.SrLchToStandard(cLch);
     }
 
     /// <summary>

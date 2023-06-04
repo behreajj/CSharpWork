@@ -422,7 +422,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">vector, numerator</param>
     /// <param name="b">scalar, denominator</param>
-    /// <returns>product</returns>
+    /// <returns>quotient</returns>
     public static Vec3 operator /(in Vec3 a, in float b)
     {
         if (b != 0.0f)
@@ -441,7 +441,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">scalar, numerator</param>
     /// <param name="b">vector, denominator</param>
-    /// <returns>product</returns>
+    /// <returns>quotient</returns>
     public static Vec3 operator /(in float a, in Vec3 b)
     {
         return new(
@@ -999,7 +999,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <returns>distance</returns>
+    /// <returns>Chebyshev distance</returns>
     public static float DistChebyshev(in Vec3 a, in Vec3 b)
     {
         return Utils.Max(Utils.Diff(b.x, a.x),
@@ -1137,7 +1137,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Returns the fractional portion of the vector's components.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <returns>fractional portion</returns>
+    /// <returns>fraction</returns>
     public static Vec3 Fract(in Vec3 v)
     {
         return new(
@@ -1227,7 +1227,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         bool oneLayer = lval == 1;
         bool oneRow = rval == 1;
         bool oneCol = cval == 1;
-        
+
         float hToStep = oneLayer ? 0.0f : 1.0f / (lval - 1.0f);
         float iToStep = oneRow ? 0.0f : 1.0f / (rval - 1.0f);
         float jToStep = oneCol ? 0.0f : 1.0f / (cval - 1.0f);

@@ -687,7 +687,7 @@ public static class Pixels
     /// <param name="target">target pixels</param>
     /// <param name="adjust">adjustment</param>
     /// <returns>adjusted pixels</returns>
-    public static Rgb[] AdjustCieLch(in Rgb[] source, in Rgb[] target, in Lch adjust)
+    public static Rgb[] AdjustSrLch(in Rgb[] source, in Rgb[] target, in Lch adjust)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
@@ -708,8 +708,8 @@ public static class Pixels
                 Rgb c = source[i];
                 if (Rgb.Any(c) && !dict.ContainsKey(c))
                 {
-                    Lch lch = Rgb.StandardToCieLch(c);
-                    dict.Add(c, Rgb.CieLchToStandard(lch + adjust));
+                    Lch lch = Rgb.StandardToSrLch(c);
+                    dict.Add(c, Rgb.SrLchToStandard(lch + adjust));
                 }
             }
 
@@ -759,13 +759,13 @@ public static class Pixels
                     Rgb key = Rgb.Opaque(c);
                     if (!dict.ContainsKey(key))
                     {
-                        Lab lab = Rgb.StandardToCieLab(key);
+                        Lab lab = Rgb.StandardToSrLab2(key);
                         Lab labAdj = new(
                             l: (lab.L - 50.0f) * valAdjust + 50.0f,
                             a: lab.A,
                             b: lab.B,
                             alpha: lab.Alpha);
-                        dict.Add(key, Rgb.CieLabToStandard(labAdj));
+                        dict.Add(key, Rgb.SrLab2ToStandard(labAdj));
                     }
                 }
             }
@@ -901,7 +901,7 @@ public static class Pixels
     /// <param name="bw">over width</param>
     /// <param name="bh">over height</param>
     /// <returns>tuple</returns>
-    public static (Rgb[] pixels, int w, int h, int x, int y) BlendCieLab(
+    public static (Rgb[] pixels, int w, int h, int x, int y) BlendSrLab2(
         in Rgb[] apx, in Rgb[] bpx,
         in int aw, in int ah, in int bw, in int bh)
     {
@@ -917,7 +917,7 @@ public static class Pixels
         int bx = bw == wLrg ? 0 : (int)(cx - bw * 0.5f);
         int by = bh == hLrg ? 0 : (int)(cy - bh * 0.5f);
 
-        return Pixels.BlendCieLab(apx, bpx,
+        return Pixels.BlendSrLab2(apx, bpx,
             aw, ah, bw, bh,
             ax, ay, bx, by);
     }
@@ -939,7 +939,7 @@ public static class Pixels
     /// <param name="bx">over top left corner x</param>
     /// <param name="by">over top left corner y</param>
     /// <returns>tuple</returns>
-    public static (Rgb[] pixels, int w, int h, int x, int y) BlendCieLab(
+    public static (Rgb[] pixels, int w, int h, int x, int y) BlendSrLab2(
         in Rgb[] apx, in Rgb[] bpx,
         in int aw, in int ah, in int bw, in int bh,
         in int ax, in int ay, in int bx, in int by)
@@ -982,7 +982,7 @@ public static class Pixels
                 Rgb aClr = apx[axs + ays * aw];
                 if (!dict.ContainsKey(aClr))
                 {
-                    dict.Add(aClr, Rgb.StandardToCieLab(aClr));
+                    dict.Add(aClr, Rgb.StandardToSrLab2(aClr));
                 }
 
                 int bxs = x - bxid;
@@ -990,7 +990,7 @@ public static class Pixels
                 Rgb bClr = bpx[bxs + bys * bw];
                 if (!dict.ContainsKey(bClr))
                 {
-                    dict.Add(bClr, Rgb.StandardToCieLab(bClr));
+                    dict.Add(bClr, Rgb.StandardToSrLab2(bClr));
                 }
             }
         }
@@ -1054,7 +1054,7 @@ public static class Pixels
                         a: u * orig.A + t * dest.A,
                         b: u * orig.B + t * dest.B,
                         alpha: tuv);
-                    target[i] = Rgb.CieLabToStandard(cLab);
+                    target[i] = Rgb.SrLab2ToStandard(cLab);
                 }
             }
         }
@@ -1073,7 +1073,7 @@ public static class Pixels
     /// <param name="h">image height</param>
     /// <param name="step">kernel step</param>
     /// <returns>blurred pixels</returns>
-    public static Rgb[] BlurBoxCieLab(
+    public static Rgb[] BlurBoxSrLab2(
         in Rgb[] source, in Rgb[] target,
         in int w, in int h, in int step = 1)
     {
@@ -1086,7 +1086,7 @@ public static class Pixels
                 Rgb srgb = source[i];
                 if (!dict.ContainsKey(srgb))
                 {
-                    dict.Add(srgb, Rgb.StandardToCieLab(srgb));
+                    dict.Add(srgb, Rgb.StandardToSrLab2(srgb));
                 }
             }
 
@@ -1135,7 +1135,7 @@ public static class Pixels
                     a: aSum * denom,
                     b: bSum * denom,
                     alpha: tSum * denom);
-                target[i] = Rgb.CieLabToStandard(labAvg);
+                target[i] = Rgb.SrLab2ToStandard(labAvg);
             }
         }
         return target;
@@ -1159,6 +1159,109 @@ public static class Pixels
             for (int i = 0; i < srcLen; ++i)
             {
                 target[i] = Rgb.Clamp(source[i], lb, ub);
+            }
+        }
+        return target;
+    }
+
+    /// <summary>
+    /// Adjusts an image by a shift in RGB. Negative shifts
+    /// indicate the secondary colors: Cyan, Magenta, Yellow.
+    /// Positive shifts indicate the primaries: Red, Green,
+    /// Blue. Preservers luminosity by default.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">target pixels</param>
+    /// <param name="shift">shift</param>
+    /// <param name="preset">color balance</param>
+    /// <returns>rebalanced array</returns>
+    public static Rgb[] ColorBalance(
+        in Rgb[] source,
+        in Rgb[] target,
+        in Rgb shift,
+        in ClrBalance preset)
+    {
+        int srcLen = source.Length;
+        if (srcLen == target.Length)
+        {
+            Func<float, float> responseFunc = x =>
+            {
+                if (x <= 0.0) return 0.0f;
+                if (x >= 1.0) return 1.0f;
+                return x * x * (3.0f - 2.0f * x);
+            };
+
+            // TODO: Account for ClrBalance.Shadow | ColorBalance.Midtone, etc.?
+            switch (preset)
+            {
+                case ClrBalance.Shadow:
+                    {
+                        responseFunc = x =>
+                        {
+                            if (x <= 0.0) return 1.0f;
+                            if (x >= 0.5) return 0.0f;
+                            float y = 1.0f - 2.0f * x;
+                            return y * y * (3.0f - 2.0f * y);
+                        };
+                    }
+                    break;
+
+                case ClrBalance.Midtone:
+                    {
+                        responseFunc = x =>
+                        {
+                            if (x <= 0.0) return 0.0f;
+                            if (x >= 1.0) return 1.0f;
+                            float y = MathF.Abs(x + x - 1.0f);
+                            return 1.0f - y * y * (3.0f - 2.0f * y);
+                        };
+                    }
+                    break;
+
+                case ClrBalance.Highlight:
+                    {
+                        responseFunc = x =>
+                        {
+                            if (x <= 0.5) return 0.0f;
+                            if (x >= 1.0) return 1.0f;
+                            float y = x + x - 1.0f;
+                            return y * y * (3.0f - 2.0f * y);
+                        };
+                    }
+                    break;
+            }
+
+            Dictionary<Rgb, Rgb> dict = new(256);
+            for (int i = 0; i < srcLen; ++i)
+            {
+                Rgb cSrc = source[i];
+                Rgb cTrg;
+                if (dict.ContainsKey(cSrc))
+                {
+                    cTrg = dict[cSrc];
+                }
+                else
+                {
+                    Rgb cShift = new(
+                        cSrc.R + shift.R,
+                        cSrc.G + shift.G,
+                        cSrc.B + shift.B,
+                        cSrc.Alpha + shift.Alpha);
+
+                    Lab labSrc = Rgb.StandardToSrLab2(cSrc);
+                    Lab labShift = Rgb.StandardToSrLab2(cShift);
+
+                    float t = responseFunc(labSrc.L * 0.01f);
+                    float u = 1.0f - t;
+
+                    Lab labTrg = new(
+                        labSrc.L,
+                        u * labSrc.A + t * labShift.A,
+                        u * labSrc.A + t * labShift.B,
+                        u * labSrc.Alpha + t * labShift.Alpha);
+                    cTrg = Rgb.SrLab2ToStandard(labTrg);
+                }
+                target[i] = cTrg;
             }
         }
         return target;
@@ -1292,7 +1395,7 @@ public static class Pixels
             else
             {
                 Lab lab = ClrGradient.Eval(cg, fac, easing);
-                Rgb rgb = Rgb.CieLabToStandard(lab);
+                Rgb rgb = Rgb.SrLab2ToStandard(lab);
                 target[i] = rgb;
                 visited[fac] = rgb;
             }
@@ -1345,7 +1448,7 @@ public static class Pixels
                             lum * 12.92f :
                             MathF.Pow(lum, 1.0f / 2.4f) * 1.055f - 0.055f;
                         Lab lab = ClrGradient.Eval(cg, fac, easing);
-                        dict.Add(key, Rgb.CieLabToStandard(lab));
+                        dict.Add(key, Rgb.SrLab2ToStandard(lab));
                     }
                 }
             }
@@ -1411,7 +1514,7 @@ public static class Pixels
             else
             {
                 Lab lab = ClrGradient.Eval(cg, fac, easing);
-                Rgb rgb = Rgb.CieLabToStandard(lab);
+                Rgb rgb = Rgb.SrLab2ToStandard(lab);
                 target[i] = rgb;
                 visited[fac] = rgb;
             }
@@ -1502,7 +1605,7 @@ public static class Pixels
             else
             {
                 Lab lab = ClrGradient.Eval(cg, fac, easing);
-                Rgb rgb = Rgb.CieLabToStandard(lab);
+                Rgb rgb = Rgb.SrLab2ToStandard(lab);
                 target[i] = rgb;
                 visited[fac] = rgb;
             }
@@ -1516,10 +1619,10 @@ public static class Pixels
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
     /// <returns>inverted pixels</returns>
-    public static Rgb[] InvertCieLab(
+    public static Rgb[] InvertSrLab2(
         in Rgb[] source, in Rgb[] target)
     {
-        return Pixels.InvertCieLab(source, target,
+        return Pixels.InvertSrLab2(source, target,
             true, true, true, false);
     }
 
@@ -1530,10 +1633,10 @@ public static class Pixels
     /// <param name="target">target pixels</param>
     /// <param name="inv">inversion</param>
     /// <returns>inverted pixels</returns>
-    public static Rgb[] InvertCieLab(
+    public static Rgb[] InvertSrLab2(
         in Rgb[] source, in Rgb[] target, in Vec4 inv)
     {
-        return Pixels.InvertCieLab(source, target,
+        return Pixels.InvertSrLab2(source, target,
             inv.Z != 0.0f, inv.X != 0.0f, inv.Y != 0.0f, inv.W != 0.0f);
     }
 
@@ -1547,7 +1650,7 @@ public static class Pixels
     /// <param name="b">invert b</param>
     /// <param name="alpha">invert alpha</param>
     /// <returns>inverted pixels</returns>
-    public static Rgb[] InvertCieLab(
+    public static Rgb[] InvertSrLab2(
         in Rgb[] source, in Rgb[] target,
         in bool l, in bool a, in bool b, in bool alpha)
     {
@@ -1569,13 +1672,13 @@ public static class Pixels
                 Rgb c = source[i];
                 if (!dict.ContainsKey(c))
                 {
-                    Lab lab = Rgb.StandardToCieLab(c);
+                    Lab lab = Rgb.StandardToSrLab2(c);
                     Lab inv = new(
                         l: l ? 100.0f - lab.L : lab.L,
                         a: lab.A * aSign,
                         b: lab.B * bSign,
                         alpha: alpha ? 1.0f - lab.Alpha : lab.Alpha);
-                    dict.Add(c, Rgb.CieLabToStandard(inv));
+                    dict.Add(c, Rgb.SrLab2ToStandard(inv));
                 }
             }
 
@@ -1882,7 +1985,7 @@ public static class Pixels
         Octree oct = new(Bounds3.Lab, capacity);
         foreach (Rgb unique in uniqueColors)
         {
-            Lab lab = Rgb.StandardToCieLab(unique);
+            Lab lab = Rgb.StandardToSrLab2(unique);
             oct.Insert(new(x: lab.A, y: lab.B, z: lab.L));
         }
         oct.Cull();
@@ -1896,7 +1999,7 @@ public static class Pixels
         {
             Vec3 center = centers[j];
             Lab lab = new(l: center.Z, a: center.X, b: center.Y, alpha: 1.0f);
-            over[1 + j] = Rgb.CieLabToStandard(lab);
+            over[1 + j] = Rgb.SrLab2ToStandard(lab);
         }
         return over;
     }
@@ -1932,7 +2035,7 @@ public static class Pixels
                 Rgb c = palette[h];
                 if (Rgb.Any(c))
                 {
-                    Lab lab = Rgb.StandardToCieLab(c);
+                    Lab lab = Rgb.StandardToSrLab2(c);
                     Vec3 point = new(x: lab.A, y: lab.B, z: lab.L);
                     oct.Insert(point);
                     lookup.Add(point, c);
@@ -1963,7 +2066,7 @@ public static class Pixels
                     else
                     {
                         found.Clear();
-                        Lab lab = Rgb.StandardToCieLab(opaque);
+                        Lab lab = Rgb.StandardToSrLab2(opaque);
                         Vec3 point = new(x: lab.A, y: lab.B, z: lab.L);
                         Octree.Query(oct, point, radius, distFunc, found);
                         if (found.Count > 0)
@@ -2028,7 +2131,7 @@ public static class Pixels
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            Lab fromLab = Rgb.StandardToCieLab(fromColor);
+            Lab fromLab = Rgb.StandardToSrLab2(fromColor);
             Dictionary<Rgb, Rgb> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
@@ -2039,7 +2142,7 @@ public static class Pixels
                 }
                 else
                 {
-                    Lab srcLab = Rgb.StandardToCieLab(srcClr);
+                    Lab srcLab = Rgb.StandardToSrLab2(srcClr);
                     Rgb trgClr = Lab.DistEuclideanAlpha(srcLab, fromLab) <= tolerance ?
                         toColor : srcClr;
                     dict.Add(srcClr, trgClr);
@@ -2501,7 +2604,7 @@ public static class Pixels
                     Rgb key = Rgb.Opaque(c);
                     if (!dict.ContainsKey(key))
                     {
-                        Lab lab = Rgb.StandardToCieLab(key);
+                        Lab lab = Rgb.StandardToSrLab2(key);
                         dict.Add(key, lab);
 
                         float lum = lab.L;
@@ -2551,7 +2654,7 @@ public static class Pixels
                                 alpha: sourceLab.Alpha);
                         }
 
-                        stretched.Add(kv.Key, Rgb.CieLabToStandard(stretchedLab));
+                        stretched.Add(kv.Key, Rgb.SrLab2ToStandard(stretchedLab));
                     }
 
                     Rgb clearBlack = Rgb.ClearBlack;
@@ -2585,7 +2688,7 @@ public static class Pixels
     /// <param name="tint">tint color</param>
     /// <param name="fac">factor</param>
     /// <returns>tinted pixels</returns>
-    public static Rgb[] TintCieLab(
+    public static Rgb[] TintSrLab2(
         in Rgb[] source, in Rgb[] target,
         in Rgb tint, in float fac = 0.5f)
     {
@@ -2607,15 +2710,15 @@ public static class Pixels
                 return target;
             }
 
-            Lab tintLab = Rgb.StandardToCieLab(tint);
+            Lab tintLab = Rgb.StandardToSrLab2(tint);
             Dictionary<Rgb, Rgb> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
                 Rgb c = source[i];
                 if (Rgb.Any(c) && !dict.ContainsKey(c))
                 {
-                    Lab mixedLab = Lab.Mix(Rgb.StandardToCieLab(c), tintLab, fac);
-                    dict.Add(c, Rgb.CieLabToStandard(mixedLab));
+                    Lab mixedLab = Lab.Mix(Rgb.StandardToSrLab2(c), tintLab, fac);
+                    dict.Add(c, Rgb.SrLab2ToStandard(mixedLab));
                 }
             }
 

@@ -232,7 +232,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     {
         return new Lab(
             l: a.l + b.l,
-            a: a.a + b.b,
+            a: a.a + b.a,
             b: a.b + b.b,
             alpha: a.alpha + b.alpha);
     }
@@ -248,7 +248,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     {
         return new Lab(
             l: a.l - b.l,
-            a: a.a - b.b,
+            a: a.a - b.a,
             b: a.b - b.b,
             alpha: a.alpha - b.alpha);
     }
@@ -440,8 +440,8 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// Converts from CIE XYZ to CIE LAB.
     /// Assumes that alpha is stored in the w component.
     /// </summary>
-    /// <param name="v">CIE XYZ color</param>
-    /// <returns>CIE LAB color</returns>
+    /// <param name="v">XYZ color</param>
+    /// <returns>LAB color</returns>
     public static Lab FromCieXyz(in Vec4 v)
     {
         double oneThird = 1.0d / 3.0d;
@@ -521,6 +521,33 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
             a: chroma * MathF.Cos(hRad),
             b: chroma * MathF.Sin(hRad),
             alpha: c.Alpha);
+    }
+
+    /// <summary>
+    /// Converts from SR XYZ to SR LAB 2.
+    /// Assumes that alpha is stored in the w component.
+    /// </summary>
+    /// <param name="v">XYZ color</param>
+    /// <returns>LAB color</returns>
+    public static Lab FromSrXyz(in Vec4 v)
+    {
+        double x = v.X;
+        double y = v.Y;
+        double z = v.Z;
+
+        double comparisand = 216.0d / 24389.0d;
+        double scalar = 24389.0d / 2700.0d;
+        double oneThird = 1.0d / 3.0d;
+
+        x = (x <= comparisand) ? x * scalar : Math.Pow(x, oneThird) * 1.16d - 0.16d;
+        y = (y <= comparisand) ? y * scalar : Math.Pow(y, oneThird) * 1.16d - 0.16d;
+        z = (z <= comparisand) ? z * scalar : Math.Pow(z, oneThird) * 1.16d - 0.16d;
+
+        return new(
+            (float)(37.0950d * x + 62.9054d * y - 0.0008d * z),
+            (float)(663.4684d * x - 750.5078d * y + 87.0328d * z),
+            (float)(63.9569d * x + 108.4576d * y - 172.4152d * z),
+            v.W);
     }
 
     ///<summary>
@@ -649,8 +676,8 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// expected to hold the luminance, while x
     /// is expected to hold a and y, b.
     /// </summary>
-    /// <param name="lab">CIE LAB color</param>
-    /// <returns>CIE XYZ color</returns>
+    /// <param name="lab">LAB color</param>
+    /// <returns>XYZ color</returns>
     public static Vec4 ToCieXyz(in Lab lab)
     {
         double offset = 16.0d / 116.0d;
@@ -677,6 +704,65 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
             x: (float)(b * 0.95047d),
             y: (float)a,
             z: (float)(c * 1.08883d),
+            w: lab.Alpha);
+    }
+
+    /// <summary>
+    /// Converts from SR LAB 2 to SR XYZ.
+    /// The z component of the input vector is
+    /// expected to hold the luminance, while x
+    /// is expected to hold a and y, b.
+    /// </summary>
+    /// <param name="lab">LAB color</param>
+    /// <returns>XYZ color</returns>
+    public static Vec4 ToSrXyz(in Lab lab)
+    {
+        double ld = lab.l * 0.01d;
+        double ad = lab.a;
+        double bd = lab.b;
+
+        double x = ld + 0.000904127d * ad + 0.000456344d * bd;
+        double y = ld - 0.000533159d * ad - 0.000269178d * bd;
+        double z = ld - 0.0058d * bd;
+
+        // 2700.0 / 24389.0 = 0.11070564598795
+        // 1.0 / 1.16 = 0.86206896551724
+        double ltScale = 2700.0d / 24389.0d;
+        double gtScale = 1.0d / 1.16d;
+        if (x <= 0.08d)
+        {
+            x *= ltScale;
+        }
+        else
+        {
+            x = (x + 0.16d) * gtScale;
+            x = x * x * x;
+        }
+
+        if (y <= 0.08d)
+        {
+            y *= ltScale;
+        }
+        else
+        {
+            y = (y + 0.16d) * gtScale;
+            y = y * y * y;
+        }
+
+        if (z <= 0.08d)
+        {
+            z *= ltScale;
+        }
+        else
+        {
+            z = (z + 0.16d) * gtScale;
+            z = z * z * z;
+        }
+
+        return new Vec4(
+            x: (float)x,
+            y: (float)y,
+            z: (float)z,
             w: lab.Alpha);
     }
 
@@ -748,6 +834,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     {
         get
         {
+            // TODO: Replace with SrLab2 primaries.
             return new(32.29847f, 79.1899f, -107.8634f, 1.0f);
         }
     }

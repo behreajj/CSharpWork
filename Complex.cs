@@ -642,7 +642,10 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <param name="z">complex number</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in Complex z, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Complex z,
+        in int places = 4)
     {
         sb.Append("{\"real\":");
         Utils.ToFixed(sb, z.real, places);

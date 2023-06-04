@@ -384,7 +384,7 @@ public static class Utils
     /// the value's truncation from the value. Not the same as GLSL fract.
     /// </summary>
     /// <param name="v">input value</param>
-    /// <returns>fractional portion</returns>
+    /// <returns>fraction</returns>
     public static float Fract(in float v)
     {
         return v - MathF.Truncate(v);

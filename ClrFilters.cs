@@ -40,7 +40,7 @@ public static class ClrFilters
     /// <returns>evaluation</returns>
     public static bool FilterChroma(in Rgb c, in float lb = 0.0f, in float ub = 135.0f)
     {
-        Lab lab = Rgb.StandardToCieLab(c);
+        Lab lab = Rgb.StandardToSrLab2(c);
         float chromaSq = Lab.ChromaSq(lab);
         return chromaSq >= (lb * lb) && chromaSq <= (ub * ub);
     }
@@ -68,7 +68,7 @@ public static class ClrFilters
     /// <returns>evaluation</returns>
     public static bool FilterHue(in Rgb c, in float lb = 0.0f, in float ub = 1.0f)
     {
-        Lab lab = Rgb.StandardToCieLab(c);
+        Lab lab = Rgb.StandardToSrLab2(c);
         float a = lab.A;
         float b = lab.B;
         if ((a * a + b * b) < Utils.Epsilon) { return false; }
@@ -89,7 +89,7 @@ public static class ClrFilters
     /// <returns>evaluation</returns>
     public static bool FilterLightness(in Rgb c, in float lb = 0.0f, in float ub = 100.0f)
     {
-        Lab lab = Rgb.StandardToCieLab(c);
+        Lab lab = Rgb.StandardToSrLab2(c);
         return lab.L >= lb && lab.L <= ub;
     }
 

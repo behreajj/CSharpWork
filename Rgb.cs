@@ -63,10 +63,10 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <param name="a">alpha channel</param>
     public Rgb(in byte r, in byte g, in byte b, in byte a = 255)
     {
-        this.r = r * Utils.One255;
-        this.g = g * Utils.One255;
-        this.b = b * Utils.One255;
-        this.a = a * Utils.One255;
+        this.r = r / 255.0f;
+        this.g = g / 255.0f;
+        this.b = b / 255.0f;
+        this.a = a / 255.0f;
     }
 
     /// <summary>
@@ -79,10 +79,10 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <param name="a">alpha channel</param>
     public Rgb(in sbyte r, in sbyte g, in sbyte b, in sbyte a = -1)
     {
-        this.r = (r & 0xff) * Utils.One255;
-        this.g = (g & 0xff) * Utils.One255;
-        this.b = (b & 0xff) * Utils.One255;
-        this.a = (a & 0xff) * Utils.One255;
+        this.r = (r & 0xff) / 255.0f;
+        this.g = (g & 0xff) / 255.0f;
+        this.b = (b & 0xff) / 255.0f;
+        this.a = (a & 0xff) / 255.0f;
     }
 
     /// <summary>
@@ -260,11 +260,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
 
     /// <summary>
     /// Converts from CIE LAB to standard RGB (SRGB).
-    /// The z component of the input vector is
-    /// expected to hold the luminance, while x
-    /// is expected to hold a and y, b.
     /// </summary>
-    /// <param name="lab">CIE LAB color</param>
+    /// <param name="lab">LAB color</param>
     /// <returns>sRGB color</returns>
     public static Rgb CieLabToStandard(in Lab lab)
     {
@@ -276,17 +273,9 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <summary>
     /// Converts a color from CIE LCH to standard
     /// RGB (sRGB).
-    ///
-    /// Luminance is expected to be in [0.0, 100.0].
-    /// Chroma is expected to be in [0.0, 135.0].
-    /// Hue is expected to be in [0.0, 1.0].
-    ///
-    /// The input vector is expected to store hue
-    /// in the x component; chroma, in the y;
-    /// luminance in the z; alpha in the w.
     /// </summary>
-    /// <param name="lch">CIE LCH color</param>
-    /// <returns>CIE LAB color</returns>
+    /// <param name="lch">LCH color</param>
+    /// <returns>LAB color</returns>
     public static Rgb CieLchToStandard(in Lch lch)
     {
         return Rgb.LinearToStandard(
@@ -299,7 +288,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// Converts a color from CIE XYZ to linear RGB.
     /// The alpha channel is unaffected by the transformation.
     /// </summary>
-    /// <param name="v">CIE XYZ color</param>
+    /// <param name="v">XYZ color</param>
     /// <returns>linear color</returns>
     public static Rgb CieXyzToLinear(in Vec4 v)
     {
@@ -447,10 +436,10 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     public static Rgb FromHexAbgr(in int c)
     {
         return new(
-            Utils.One255 * (c & 0xff),
-            Utils.One255 * (c >> 0x08 & 0xff),
-            Utils.One255 * (c >> 0x10 & 0xff),
-            Utils.One255 * (c >> 0x18 & 0xff));
+            (c & 0xff) / 255.0f,
+            ((c >> 0x08) & 0xff) / 255.0f,
+            ((c >> 0x10) & 0xff) / 255.0f,
+            ((c >> 0x18) & 0xff) / 255.0f);
     }
 
     /// <summary>
@@ -462,10 +451,10 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     public static Rgb FromHexArgb(in int c)
     {
         return new(
-            Utils.One255 * (c >> 0x10 & 0xff),
-            Utils.One255 * (c >> 0x08 & 0xff),
-            Utils.One255 * (c & 0xff),
-            Utils.One255 * (c >> 0x18 & 0xff));
+            ((c >> 0x10) & 0xff) / 255.0f,
+            ((c >> 0x08) & 0xff) / 255.0f,
+            (c & 0xff) / 255.0f,
+            ((c >> 0x18) & 0xff) / 255.0f);
     }
 
     /// <summary>
@@ -477,10 +466,10 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     public static Rgb FromHexRgba(in int c)
     {
         return new(
-            Utils.One255 * (c >> 0x18 & 0xff),
-            Utils.One255 * (c >> 0x10 & 0xff),
-            Utils.One255 * (c >> 0x08 & 0xff),
-            Utils.One255 * (c & 0xff));
+            ((c >> 0x18) & 0xff) / 255.0f,
+            ((c >> 0x10) & 0xff) / 255.0f,
+            ((c >> 0x08) & 0xff) / 255.0f,
+            (c & 0xff) / 255.0f);
     }
 
     /// <summary>
@@ -548,10 +537,27 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>XYZ color</returns>
     public static Vec4 LinearToCieXyz(in Rgb c)
     {
-        return new Vec4(
+        return new(
             0.41241086f * c.r + 0.35758457f * c.g + 0.1804538f * c.b,
             0.21264935f * c.r + 0.71516913f * c.g + 0.07218152f * c.b,
             0.019331759f * c.r + 0.11919486f * c.g + 0.95039004f * c.b,
+            c.a);
+    }
+
+    /// <summary>
+    /// Converts a color from linear RGB to the XYZ
+    /// coordinates of SR LAB 2. See
+    /// See Jan Behrens, https://www.magnetkern.de/srlab2.html .
+    /// The alpha channel is unaffected by the transformation.
+    /// </summary>
+    /// <param name="c">linear color</param>
+    /// <returns>XYZ color</returns>
+    public static Vec4 LinearToSrXyz(in Rgb c)
+    {
+        return new(
+            0.32053f * c.r + 0.63692f * c.g + 0.04256f * c.b,
+            0.161987f * c.r + 0.756636f * c.g + 0.081376f * c.b,
+            0.017228f * c.r + 0.10866f * c.g + 0.874112f * c.b,
             c.a);
     }
 
@@ -582,93 +588,6 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
             MathF.Pow(c.a, inv24) * 1.055f - 0.055f :
             c.a * 12.92f :
             c.a);
-    }
-
-    /// <summary>
-    /// Mixes two colors by a step in the range [0.0, 1.0] .
-    /// Converts each color from sRGB to CIE LAB, mixes according
-    /// to the step, then converts back to sRGB.
-    /// </summary>
-    /// <param name="o">origin color</param>
-    /// <param name="d">destination color</param>
-    /// <param name="t">step</param>
-    /// <returns>mixed color</returns>
-    public static Rgb MixCieLab(in Rgb o, in Rgb d, in float t = 0.5f)
-    {
-        Lab oLab = Rgb.StandardToCieLab(o);
-        Lab dLab = Rgb.StandardToCieLab(d);
-        return Rgb.CieLabToStandard(Lab.Mix(oLab, dLab, t));
-    }
-
-    /// <summary>
-    /// Mixes two colors by a step in the range [0.0, 1.0] .
-    /// Converts each color from sRGB to CIE LCH, mixes according
-    /// to the step, then converts back to sRGB.
-    /// </summary>
-    /// <param name="o">origin color</param>
-    /// <param name="d">destination color</param>
-    /// <param name="t">step</param>
-    /// <returns>mixed color</returns>
-    public static Rgb MixCieLch(in Rgb o, in Rgb d, in float t = 0.5f)
-    {
-        return Rgb.MixCieLch(o, d, t,
-            (x, y, z, w) => Utils.LerpAngleNear(x, y, z, w));
-    }
-
-    /// <summary>
-    /// Mixes two colors by a step in the range [0.0, 1.0] .
-    /// Converts each color from sRGB to CIE LCH, mixes according
-    /// to the step, then converts back to sRGB.
-    /// The easing function is expected to ease from an origin
-    /// hue to a destination by a factor according to a range.
-    /// </summary>
-    /// <param name="o">origin color</param>
-    /// <param name="d">destination color</param>
-    /// <param name="t">step</param>
-    /// <param name="easing">easing function</param>
-    /// <returns>mixed color</returns>
-    public static Rgb MixCieLch(
-        in Rgb o,
-        in Rgb d,
-        in float t,
-        in Func<float, float, float, float, float> easing)
-    {
-        Lab oLab = Rgb.StandardToCieLab(o);
-        float oa = oLab.A;
-        float ob = oLab.B;
-        float oChrSq = oa * oa + ob * ob;
-
-        Lab dLab = Rgb.StandardToCieLab(d);
-        float da = dLab.A;
-        float db = dLab.B;
-        float dChrSq = da * da + db * db;
-
-        Lab cLab;
-
-        if (oChrSq < Utils.Epsilon || dChrSq < Utils.Epsilon)
-        {
-            cLab = Lab.Mix(oLab, dLab, t);
-        }
-        else
-        {
-            float oChr = MathF.Sqrt(oChrSq);
-            float oHue = Utils.OneTau * Utils.WrapRadians(
-                MathF.Atan2(ob, oa));
-
-            float dChr = MathF.Sqrt(dChrSq);
-            float dHue = Utils.OneTau * Utils.WrapRadians(
-                MathF.Atan2(db, da));
-
-            float u = 1.0f - t;
-            Lch cLch = new(
-                easing(oHue, dHue, t, 1.0f),
-                u * oChr + t * dChr,
-                u * oLab.L + t * dLab.L,
-                u * oLab.Alpha + t * dLab.Alpha);
-            cLab = Lab.FromLch(cLch);
-        }
-
-        return Rgb.CieLabToStandard(cLab);
     }
 
     /// <summary>
@@ -704,6 +623,94 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
             u * o.g + t * d.g,
             u * o.b + t * d.b,
             u * o.a + t * d.a);
+    }
+
+
+    /// <summary>
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Converts each color from sRGB to CIE LAB, mixes according
+    /// to the step, then converts back to sRGB.
+    /// </summary>
+    /// <param name="o">origin color</param>
+    /// <param name="d">destination color</param>
+    /// <param name="t">step</param>
+    /// <returns>mixed color</returns>
+    public static Rgb MixSrLab2(in Rgb o, in Rgb d, in float t = 0.5f)
+    {
+        Lab oLab = Rgb.StandardToSrLab2(o);
+        Lab dLab = Rgb.StandardToSrLab2(d);
+        return Rgb.SrLab2ToStandard(Lab.Mix(oLab, dLab, t));
+    }
+
+    /// <summary>
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Converts each color from sRGB to CIE LCH, mixes according
+    /// to the step, then converts back to sRGB.
+    /// </summary>
+    /// <param name="o">origin color</param>
+    /// <param name="d">destination color</param>
+    /// <param name="t">step</param>
+    /// <returns>mixed color</returns>
+    public static Rgb MixSrLch(in Rgb o, in Rgb d, in float t = 0.5f)
+    {
+        return Rgb.MixSrLch(o, d, t,
+            (x, y, z, w) => Utils.LerpAngleNear(x, y, z, w));
+    }
+
+    /// <summary>
+    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Converts each color from sRGB to CIE LCH, mixes according
+    /// to the step, then converts back to sRGB.
+    /// The easing function is expected to ease from an origin
+    /// hue to a destination by a factor according to a range.
+    /// </summary>
+    /// <param name="o">origin color</param>
+    /// <param name="d">destination color</param>
+    /// <param name="t">step</param>
+    /// <param name="easing">easing function</param>
+    /// <returns>mixed color</returns>
+    public static Rgb MixSrLch(
+        in Rgb o,
+        in Rgb d,
+        in float t,
+        in Func<float, float, float, float, float> easing)
+    {
+        Lab oLab = Rgb.StandardToSrLab2(o);
+        float oa = oLab.A;
+        float ob = oLab.B;
+        float oChrSq = oa * oa + ob * ob;
+
+        Lab dLab = Rgb.StandardToSrLab2(d);
+        float da = dLab.A;
+        float db = dLab.B;
+        float dChrSq = da * da + db * db;
+
+        Lab cLab;
+
+        if (oChrSq < Utils.Epsilon || dChrSq < Utils.Epsilon)
+        {
+            cLab = Lab.Mix(oLab, dLab, t);
+        }
+        else
+        {
+            float oChr = MathF.Sqrt(oChrSq);
+            float oHue = Utils.OneTau * Utils.WrapRadians(
+                MathF.Atan2(ob, oa));
+
+            float dChr = MathF.Sqrt(dChrSq);
+            float dHue = Utils.OneTau * Utils.WrapRadians(
+                MathF.Atan2(db, da));
+
+            float u = 1.0f - t;
+            Lch cLch = new(
+                easing(oHue, dHue, t, 1.0f),
+                u * oChr + t * dChr,
+                u * oLab.L + t * dLab.L,
+                u * oLab.Alpha + t * dLab.Alpha);
+            cLab = Lab.FromLch(cLch);
+        }
+
+        return Rgb.SrLab2ToStandard(cLab);
     }
 
     /// <summary>
@@ -867,6 +874,46 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
+    /// </summary>
+    /// <param name="lab">LAB color</param>
+    /// <returns>sRGB color</returns>
+    public static Rgb SrLab2ToStandard(in Lab lab)
+    {
+        return Rgb.LinearToStandard(
+            Rgb.SrXyzToLinear(
+                Lab.ToSrXyz(lab)));
+    }
+
+    /// <summary>
+    /// Converts a color from SR LCH to standard
+    /// RGB (sRGB).
+    /// </summary>
+    /// <param name="lch">LCH color</param>
+    /// <returns>LAB color</returns>
+    public static Rgb SrLchToStandard(in Lch lch)
+    {
+        return Rgb.LinearToStandard(
+            Rgb.SrXyzToLinear(
+                Lab.ToSrXyz(
+                    Lab.FromLch(lch))));
+    }
+
+    /// <summary>
+    /// Converts a color from SRLAB2 XYZ to linear RGB.
+    /// The alpha channel is unaffected by the transformation.
+    /// </summary>
+    /// <param name="v">XYZ color</param>
+    /// <returns>linear color</returns>
+    public static Rgb SrXyzToLinear(in Vec4 v)
+    {
+        return new(
+            5.435679f * v.X - 4.599131f * v.Y + 0.163593f * v.Z,
+            -1.16809f * v.X + 2.327977f * v.Y - 0.159798f * v.Z,
+            0.03784f * v.X - 0.198564f * v.Y + 1.160644f * v.Z,
+            v.W);
+    }
+
+    /// <summary>
     /// Returns the relative luminance of the color.
     /// Converts the color from standard RGB to linear.
     /// </summary>
@@ -879,11 +926,9 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
 
     /// <summary>
     /// Converts a color from standard RGB (sRGB) to CIE LAB.
-    /// Stores alpha in the w component, luminance in the z
-    /// component, a in the x component and b in the y component.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>CIE LAB color</returns>
+    /// <returns>LAB color</returns>
     public static Lab StandardToCieLab(in Rgb c)
     {
         return Lab.FromCieXyz(
@@ -894,18 +939,40 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <summary>
     /// Converts a color from standard RGB (sRGB)
     /// to CIE LCH.
-    ///
-    /// In the return vector, hue is assigned to
-    /// the x component; chroma, to y; luminance,
-    /// to z; alpha, to w.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>CIE LCH color</returns>
+    /// <returns>LCH color</returns>
     public static Lch StandardToCieLch(in Rgb c)
     {
         return Lch.FromLab(
             Lab.FromCieXyz(
                 Rgb.LinearToCieXyz(
+                    Rgb.StandardToLinear(c))));
+    }
+
+    /// <summary>
+    /// Converts a color from standard RGB (sRGB) to SR LAB 2.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>LAB color</returns>
+    public static Lab StandardToSrLab2(in Rgb c)
+    {
+        return Lab.FromSrXyz(
+            Rgb.LinearToSrXyz(
+                Rgb.StandardToLinear(c)));
+    }
+
+    /// <summary>
+    /// Converts a color from standard RGB (sRGB)
+    /// to SR LCH.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>LCH color</returns>
+    public static Lch StandardToSrLch(in Rgb c)
+    {
+        return Lch.FromLab(
+            Lab.FromSrXyz(
+                Rgb.LinearToSrXyz(
                     Rgb.StandardToLinear(c))));
     }
 
@@ -975,7 +1042,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>hexadecimal color</returns>
     public static int ToHexArgb(in Rgb c)
     {
-        return Rgb.ToHexArgbUnchecked(Rgb.Clamp(c));
+        return Rgb.ToHexArgbUnchecked(Rgb.Clamp(c, 0.0f, 1.0f));
     }
 
     /// <summary>
@@ -985,7 +1052,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>hexadecimal color</returns>
     public static int ToHexRgba(in Rgb c)
     {
-        return Rgb.ToHexRgbaUnchecked(Rgb.Clamp(c));
+        return Rgb.ToHexRgbaUnchecked(Rgb.Clamp(c, 0.0f, 1.0f));
     }
 
     /// <summary>
@@ -1210,7 +1277,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
         Utils.ToFixed(sb, c.g, places);
         sb.Append(",\"b\":");
         Utils.ToFixed(sb, c.b, places);
-        sb.Append(",\"a\":");
+        sb.Append(",\"alpha\":");
         Utils.ToFixed(sb, c.a, places);
         sb.Append('}');
         return sb;
