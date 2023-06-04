@@ -698,7 +698,7 @@ public class Curve3 : IEnumerable<Knot3>
     public static Curve3 FromColors(
         in Curve3 target,
         in Rgb[] colors,
-        in ClrModel model = ClrModel.CieLab,
+        in ClrModel model = ClrModel.SrLab,
         in bool closedLoop = false)
     {
         int len = colors.Length;
@@ -737,13 +737,13 @@ public class Curve3 : IEnumerable<Knot3>
                     }
                 }
                 break;
-            case ClrModel.CieXyz:
+            case ClrModel.SrXyz:
                 {
                     for (int i = 0; i < len; ++i)
                     {
                         Rgb c = colors[i];
                         Rgb l = Rgb.StandardToLinear(c);
-                        Vec4 xyza = Rgb.LinearToCieXyz(l);
+                        Vec4 xyza = Rgb.LinearToSrXyz(l);
                         Vec3 v = xyza.XYZ;
                         Knot3 kn = knots[i];
                         kn.Coord = v;
@@ -765,14 +765,14 @@ public class Curve3 : IEnumerable<Knot3>
                     }
                 }
                 break;
-            case ClrModel.CieLch:
-            case ClrModel.CieLab:
+            case ClrModel.SrLch:
+            case ClrModel.SrLab:
             default:
                 {
                     for (int i = 0; i < len; ++i)
                     {
                         Rgb c = colors[i];
-                        Lab lab = Rgb.StandardToCieLab(c);
+                        Lab lab = Rgb.StandardToSrLab2(c);
                         Vec3 v = new(x: lab.A, y: lab.B, z: lab.L);
                         Knot3 kn = knots[i];
                         kn.Coord = v;

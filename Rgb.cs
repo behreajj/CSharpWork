@@ -259,47 +259,6 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Converts from CIE LAB to standard RGB (SRGB).
-    /// </summary>
-    /// <param name="lab">LAB color</param>
-    /// <returns>sRGB color</returns>
-    public static Rgb CieLabToStandard(in Lab lab)
-    {
-        return Rgb.LinearToStandard(
-            Rgb.CieXyzToLinear(
-                Lab.ToCieXyz(lab)));
-    }
-
-    /// <summary>
-    /// Converts a color from CIE LCH to standard
-    /// RGB (sRGB).
-    /// </summary>
-    /// <param name="lch">LCH color</param>
-    /// <returns>LAB color</returns>
-    public static Rgb CieLchToStandard(in Lch lch)
-    {
-        return Rgb.LinearToStandard(
-            Rgb.CieXyzToLinear(
-                Lab.ToCieXyz(
-                    Lab.FromLch(lch))));
-    }
-
-    /// <summary>
-    /// Converts a color from CIE XYZ to linear RGB.
-    /// The alpha channel is unaffected by the transformation.
-    /// </summary>
-    /// <param name="v">XYZ color</param>
-    /// <returns>linear color</returns>
-    public static Rgb CieXyzToLinear(in Vec4 v)
-    {
-        return new(
-            3.2408123f * v.X - 1.5373085f * v.Y - 0.49858654f * v.Z,
-            -0.969243f * v.X + 1.8759663f * v.Y + 0.041555032f * v.Z,
-            0.0556384f * v.X - 0.20400746f * v.Y + 1.0571296f * v.Z,
-            v.W);
-    }
-
-    /// <summary>
     /// Clamps a color to a lower and upper bound.
     /// </summary>
     /// <param name="c">color</param>
@@ -527,21 +486,6 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
         return 0.21264935f * c.r +
                0.71516913f * c.g +
                0.07218152f * c.b;
-    }
-
-    /// <summary>
-    /// Converts a color from linear RGB to CIE XYZ.
-    /// The alpha channel is unaffected by the transformation.
-    /// </summary>
-    /// <param name="c">linear color</param>
-    /// <returns>XYZ color</returns>
-    public static Vec4 LinearToCieXyz(in Rgb c)
-    {
-        return new(
-            0.41241086f * c.r + 0.35758457f * c.g + 0.1804538f * c.b,
-            0.21264935f * c.r + 0.71516913f * c.g + 0.07218152f * c.b,
-            0.019331759f * c.r + 0.11919486f * c.g + 0.95039004f * c.b,
-            c.a);
     }
 
     /// <summary>
@@ -922,32 +866,6 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     public static float StandardLuminance(in Rgb c)
     {
         return Rgb.LinearLuminance(Rgb.StandardToLinear(c));
-    }
-
-    /// <summary>
-    /// Converts a color from standard RGB (sRGB) to CIE LAB.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>LAB color</returns>
-    public static Lab StandardToCieLab(in Rgb c)
-    {
-        return Lab.FromCieXyz(
-            Rgb.LinearToCieXyz(
-                Rgb.StandardToLinear(c)));
-    }
-
-    /// <summary>
-    /// Converts a color from standard RGB (sRGB)
-    /// to CIE LCH.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>LCH color</returns>
-    public static Lch StandardToCieLch(in Rgb c)
-    {
-        return Lch.FromLab(
-            Lab.FromCieXyz(
-                Rgb.LinearToCieXyz(
-                    Rgb.StandardToLinear(c))));
     }
 
     /// <summary>

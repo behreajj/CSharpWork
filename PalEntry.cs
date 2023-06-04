@@ -63,7 +63,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
             }
             else
             {
-                this.name = Rgb.ToHexWeb(Rgb.CieLabToStandard(this.color));
+                this.name = Rgb.ToHexWeb(Rgb.SrLab2ToStandard(this.color));
             }
         }
     }
@@ -345,7 +345,7 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     public static StringBuilder ToPalString(in StringBuilder sb, in PalEntry pe)
     {
         Lab lab = pe.color;
-        Rgb c = Rgb.CieLabToStandard(lab);
+        Rgb c = Rgb.SrLab2ToStandard(lab);
         int r = (int)(Utils.Clamp(c.R, 0.0f, 1.0f) * 255.0f + 0.5f);
         int g = (int)(Utils.Clamp(c.G, 0.0f, 1.0f) * 255.0f + 0.5f);
         int b = (int)(Utils.Clamp(c.B, 0.0f, 1.0f) * 255.0f + 0.5f);

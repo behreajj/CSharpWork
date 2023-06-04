@@ -437,54 +437,6 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Converts from CIE XYZ to CIE LAB.
-    /// Assumes that alpha is stored in the w component.
-    /// </summary>
-    /// <param name="v">XYZ color</param>
-    /// <returns>LAB color</returns>
-    public static Lab FromCieXyz(in Vec4 v)
-    {
-        double oneThird = 1.0d / 3.0d;
-        double offset = 16.0d / 116.0d;
-
-        double a = v.X * 1.0521110608435826d;
-        if (a > 0.008856d)
-        {
-            a = Math.Pow(a, oneThird);
-        }
-        else
-        {
-            a = 7.787d * a + offset;
-        }
-
-        double b = v.Y;
-        if (b > 0.008856d)
-        {
-            b = Math.Pow(b, oneThird);
-        }
-        else
-        {
-            b = 7.787d * b + offset;
-        }
-
-        double c = v.Z * 0.9184170164304805d;
-        if (c > 0.008856d)
-        {
-            c = Math.Pow(c, oneThird);
-        }
-        else
-        {
-            c = 7.787d * c + offset;
-        }
-
-        return new Lab(
-            l: (float)(116.0d * b - 16.0d),
-            a: (float)(500.0d * (a - b)),
-            b: (float)(200.0d * (b - c)),
-            alpha: v.W);
-    }
-
-    /// <summary>
     /// Converts a hexadecimal representation of a color into
     /// LAB. Assumes the integer is packed in the order alpha
     /// in the 0x18 place, l in 0x10, a in 0x08, b in 0x00.
@@ -671,43 +623,6 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Converts from CIE LAB to CIE XYZ.
-    /// The z component of the input vector is
-    /// expected to hold the luminance, while x
-    /// is expected to hold a and y, b.
-    /// </summary>
-    /// <param name="lab">LAB color</param>
-    /// <returns>XYZ color</returns>
-    public static Vec4 ToCieXyz(in Lab lab)
-    {
-        double offset = 16.0d / 116.0d;
-        double one116 = 1.0d / 116.0d;
-        double one7787 = 1.0d / 7.787d;
-
-        double a = (lab.L + 16.0d) * one116;
-        double b = lab.A * 0.002d + a;
-        double c = a - lab.B * 0.005d;
-
-        double acb = a * a * a;
-        if (acb > 0.008856d) { a = acb; }
-        else { a = (a - offset) * one7787; }
-
-        double bcb = b * b * b;
-        if (bcb > 0.008856d) { b = bcb; }
-        else { b = (b - offset) * one7787; }
-
-        double ccb = c * c * c;
-        if (ccb > 0.008856d) { c = ccb; }
-        else { c = (c - offset) * one7787; }
-
-        return new Vec4(
-            x: (float)(b * 0.95047d),
-            y: (float)a,
-            z: (float)(c * 1.08883d),
-            w: lab.Alpha);
-    }
-
-    /// <summary>
     /// Converts from SR LAB 2 to SR XYZ.
     /// The z component of the input vector is
     /// expected to hold the luminance, while x
@@ -827,79 +742,6 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     public static Lab Black { get { return new(0.0f, 0.0f, 0.0f, 1.0f); } }
 
     /// <summary>
-    /// Returns the color blue in CIE LAB.
-    /// </summary>
-    /// <value>CIE blue</value>
-    public static Lab CieBlue
-    {
-        get
-        {
-            // TODO: Replace with SrLab2 primaries.
-            return new(32.29847f, 79.1899f, -107.8634f, 1.0f);
-        }
-    }
-
-    /// <summary>
-    /// Returns the color cyan in CIE LAB.
-    /// </summary>
-    /// <value>CIE cyan</value>
-    public static Lab CieCyan
-    {
-        get
-        {
-            return new(91.11428f, -48.08577f, -14.13485f, 1.0f);
-        }
-    }
-
-    /// <summary>
-    /// Returns the color green in CIE LAB.
-    /// </summary>
-    /// <value>CIE green</value>
-    public static Lab CieGreen
-    {
-        get
-        {
-            return new(87.73554f, -86.1834f, 83.17997f, 1.0f);
-        }
-    }
-
-    /// <summary>
-    /// Returns the color magenta in CIE LAB.
-    /// </summary>
-    /// <value>CIE magenta</value>
-    public static Lab CieMagenta
-    {
-        get
-        {
-            return new(60.32269f, 98.23384f, -60.83306f, 1.0f);
-        }
-    }
-
-    /// <summary>
-    /// Returns the color red in CIE LAB.
-    /// </summary>
-    /// <value>CIE red</value>
-    public static Lab CieRed
-    {
-        get
-        {
-            return new(53.23824f, 80.08955f, 67.20071f, 1.0f);
-        }
-    }
-
-    /// <summary>
-    /// Returns the color yellow in CIE LAB.
-    /// </summary>
-    /// <value>CIE yellow</value>
-    public static Lab CieYellow
-    {
-        get
-        {
-            return new(97.139f, -21.56006f, 94.47734f, 1.0f);
-        }
-    }
-
-    /// <summary>
     /// Returns the color clear black.
     /// </summary>
     /// <value>clear black</value>
@@ -910,6 +752,42 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// </summary>
     /// <value>clear white</value>
     public static Lab ClearWhite { get { return new(100.0f, 0.0f, 0.0f, 0.0f); } }
+
+    /// <summary>
+    /// Returns the color red in SR LAB 2.
+    /// </summary>
+    /// <value>red</value>
+    public static Lab SrRed { get { return new(53.22598f, 78.20428f, 67.70062f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the color yellow in SR LAB 2.
+    /// </summary>
+    /// <value>yellow</value>
+    public static Lab SrYellow { get { return new(97.34526f, -37.15428f, 95.18662f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the color green in SR LAB 2.
+    /// </summary>
+    /// <value>green</value>
+    public static Lab SrGreen { get { return new(87.51519f, -82.95599f, 83.03678f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the color cyan in SR LAB 2.
+    /// </summary>
+    /// <value>cyan</value>
+    public static Lab SrCyan { get { return new(90.6247f, -43.80207f, -15.00912f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the color blue in SR LAB 2.
+    /// </summary>
+    /// <value>blue</value>
+    public static Lab SrBlue { get { return new(30.64395f, -12.02581f, -110.8078f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the color magenta in SR LAB 2.
+    /// </summary>
+    /// <value>green</value>
+    public static Lab SrMagenta { get { return new(60.25521f, 102.6771f, -61.00205f, 1.0f); } }
 
     /// <summary>
     /// Returns the color white.

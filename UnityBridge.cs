@@ -97,7 +97,7 @@ public static class UnityBridge
         {
             Color c = g.Evaluate(step);
             Rgb rgb = UnityBridge.FromColor(c);
-            Lab lab = Rgb.StandardToCieLab(rgb);
+            Lab lab = Rgb.StandardToSrLab2(rgb);
             keys[j] = new ClrKey(step, lab);
             ++j;
         }
@@ -600,7 +600,7 @@ public static class UnityBridge
             alphaKeys[i] = new GradientAlphaKey(lab.Alpha, step);
 
             Lab opaque = Lab.Opaque(lab);
-            Rgb rgb = Rgb.CieLabToStandard(opaque);
+            Rgb rgb = Rgb.SrLab2ToStandard(opaque);
             // Rgb clamped = Rgb.Clamp(rgb);
             Color color = UnityBridge.ToColor(rgb);
             colorKeys[i] = new GradientColorKey(color, step);

@@ -446,12 +446,12 @@ public class Palette : IEnumerable
         target.entries = PalEntry.Resize(target.entries, 6);
         PalEntry[] entries = target.entries;
 
-        entries[0].Set(Lab.CieRed, "Red");
-        entries[1].Set(Lab.CieYellow, "Yellow");
-        entries[2].Set(Lab.CieGreen, "Green");
-        entries[3].Set(Lab.CieCyan, "Cyan");
-        entries[4].Set(Lab.CieBlue, "Blue");
-        entries[5].Set(Lab.CieMagenta, "Magenta");
+        entries[0].Set(Lab.SrRed, "Red");
+        entries[1].Set(Lab.SrYellow, "Yellow");
+        entries[2].Set(Lab.SrGreen, "Green");
+        entries[3].Set(Lab.SrCyan, "Cyan");
+        entries[4].Set(Lab.SrBlue, "Blue");
+        entries[5].Set(Lab.SrMagenta, "Magenta");
 
         target.Name = "Rgb";
         target.Author = "Anonymous";

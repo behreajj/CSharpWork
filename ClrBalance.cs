@@ -5,8 +5,8 @@ using System;
 /// </summary>
 public enum ClrBalance : int
 {
-    Full = 0,
     Shadow = 1,
     Midtone = 2,
-    Highlight = 4
+    Highlight = 4,
+    Full = 1 | 2 | 4
 }
