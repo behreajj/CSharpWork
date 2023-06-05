@@ -1297,7 +1297,7 @@ public static class Pixels
                     Lab labTrg = new(
                         labSrc.L,
                         u * labSrc.A + t * labShift.A,
-                        u * labSrc.A + t * labShift.B,
+                        u * labSrc.B + t * labShift.B,
                         u * labSrc.Alpha + t * labShift.Alpha);
                     cTrg = Rgb.SrLab2ToStandard(labTrg);
                 }
