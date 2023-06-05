@@ -107,6 +107,30 @@ public readonly struct Lch
     }
 
     /// <summary>
+    /// Returns the first color argument with the alpha
+    /// of the second.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>color</returns>
+    public static Lch CopyAlpha(in Lch a, in Lch b)
+    {
+        return new(a.l, a.c, a.h, b.alpha);
+    }
+
+    /// <summary>
+    /// Returns the first color argument with the light
+    /// of the second.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>color</returns>
+    public static Lch CopyLight(in Lch a, in Lch b)
+    {
+        return new(b.l, a.c, a.h, a.alpha);
+    }
+
+    /// <summary>
     /// Converts a color from LAB to LCH. If the chroma is near
 	/// zero, then the hue is set to zero.
     /// </summary>

@@ -1088,8 +1088,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     public static Rgb ToneMapAcesLinear(in Rgb c)
     {
         float rFrwrd = 0.59719f * c.r + 0.35458f * c.g + 0.04823f * c.b;
-        float gFrwrd = 0.07600f * c.r + 0.90834f * c.g + 0.01566f * c.b;
-        float bFrwrd = 0.02840f * c.r + 0.13383f * c.g + 0.83777f * c.b;
+        float gFrwrd = 0.076f * c.r + 0.90834f * c.g + 0.01566f * c.b;
+        float bFrwrd = 0.0284f * c.r + 0.13383f * c.g + 0.83777f * c.b;
 
         float ar = rFrwrd * (rFrwrd + 0.0245786f) - 0.000090537f;
         float ag = gFrwrd * (gFrwrd + 0.0245786f) - 0.000090537f;

@@ -383,6 +383,114 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
+    /// Parses a palette from a string.
+    /// </summary>
+    /// <param name="source">source</param>
+    /// <param name="target">target</param>
+    /// <returns>palette</returns>
+    public static Palette FromGplString(
+        in string source,
+        in Palette target)
+    {
+        string[] lines = source.Split(
+            new string[] { "\r\n", "\r", "\n" },
+            StringSplitOptions.RemoveEmptyEntries);
+        int lenLines = lines.Length;
+
+        bool validHeader = false;
+        bool useAseprite = false;
+        int entryNameIdx = 3;
+        string paletteName = "Palette";
+
+        List<string> entryNames = new(32);
+        List<Lab> colors = new(32);
+
+        for (int i = 0; i < lenLines; ++i)
+        {
+            string line = lines[i].Trim();
+            string lcLine = line.ToLower();
+
+            if (!validHeader && lcLine.Equals("gimp palette"))
+            {
+                validHeader = true;
+            }
+            else if (!useAseprite && lcLine.Equals("channels: rgba"))
+            {
+                useAseprite = true;
+                entryNameIdx = 4;
+            }
+            else if (lcLine.IndexOf('#') == 0)
+            {
+                continue;
+            }
+            else if (lcLine.IndexOf("columns:") > -1)
+            {
+                continue;
+            }
+            else if (lcLine.IndexOf("name:") > -1)
+            {
+                paletteName = line.Substring(lcLine.IndexOf("name:") + 5).Trim();
+            }
+            else
+            {
+                string[] tokens = line.Split(
+                    new char[] { ' ' },
+                    StringSplitOptions.RemoveEmptyEntries);
+                int lenTokens = tokens.Length;
+                if (lenTokens > 2)
+                {
+                    int r255 = 0;
+                    int g255 = 0;
+                    int b255 = 0;
+                    int a255 = 255;
+                    string entryName = "";
+
+                    int.TryParse(tokens[0], out r255);
+                    int.TryParse(tokens[1], out g255);
+                    int.TryParse(tokens[2], out b255);
+                    if (useAseprite && lenTokens > 3)
+                    {
+                        int.TryParse(tokens[3], out a255);
+                    }
+
+                    if (lenTokens > entryNameIdx)
+                    {
+                        StringBuilder sb = new StringBuilder(32);
+                        for (int j = entryNameIdx; j < lenTokens; ++j)
+                        {
+                            sb.Append(tokens[j]);
+                        }
+                        entryName = sb.ToString();
+                    }
+
+                    Rgb rgb = new(
+                        r255 / 255.0f,
+                        g255 / 255.0f,
+                        b255 / 255.0f,
+                        a255 / 255.0f);
+                    Lab lab = Rgb.StandardToSrLab2(rgb);
+
+                    entryNames.Add(entryName);
+                    colors.Add(lab);
+                }
+            }
+        }
+
+        int lenColors = colors.Count;
+        target.entries = PalEntry.Resize(target.entries, lenColors);
+        PalEntry[] trgEntries = target.entries;
+        for (int k = 0; k < lenColors; ++k)
+        {
+            PalEntry entry = trgEntries[k];
+            entry.Set(colors[k], entryNames[k]);
+        }
+
+        target.Author = "Anonymous";
+        target.Name = paletteName;
+        return target;
+    }
+
+    /// <summary>
     /// Reverses the source palette.
     /// </summary>
     /// <param name="source">source palette</param>
@@ -441,7 +549,7 @@ public class Palette : IEnumerable
     /// </summary>
     /// <param name="target">palette</param>
     /// <returns>palette</returns>
-    public static Palette Rgb(in Palette target)
+    public static Palette StandardRgb(in Palette target)
     {
         target.entries = PalEntry.Resize(target.entries, 6);
         PalEntry[] entries = target.entries;
@@ -504,15 +612,12 @@ public class Palette : IEnumerable
     /// GPL file string.
     /// </summary>
     /// <param name="pal">palette</param>
-    /// <param name="tm">tone mapper</param>
     /// <returns>string</returns>
-    public static string ToGplString(
-        in Palette pal, 
-        in Func<Rgb, Rgb> tm)
+    public static string ToGplString(in Palette p)
     {
         return Palette.ToGplString(
-            new StringBuilder(1024),
-            pal, 0, tm).ToString();
+            new StringBuilder(1024), p, 0,
+            (x) => Rgb.Clamp(x, 0.0f, 1.0f)).ToString();
     }
 
     /// <summary>
@@ -560,15 +665,12 @@ public class Palette : IEnumerable
     /// PAL file string.
     /// </summary>
     /// <param name="pal">palette</param>
-    /// <param name="tm">tone mapper</param>
     /// <returns>string</returns>
-    public static string ToPalString(
-        in Palette pal,
-        in Func<Rgb, Rgb> tm)
+    public static string ToPalString(in Palette p)
     {
         return Palette.ToPalString(
-            new StringBuilder(1024),
-            pal, tm).ToString();
+            new StringBuilder(1024), p,
+            (x) => Rgb.Clamp(x, 0.0f, 1.0f)).ToString();
     }
 
     /// <summary>
@@ -707,25 +809,25 @@ public class Palette : IEnumerable
         target.entries = PalEntry.Resize(target.entries, 16);
         PalEntry[] entries = target.entries;
 
-        entries[0].Set(new(14.90381f, 40.63402f, -32.33224f, 1.0f), "");
-        entries[1].Set(new(20.68592f, 37.56964f, -38.39149f, 1.0f), "");
-        entries[2].Set(new(26.21247f, 29.92534f, -40.3885f, 1.0f), "");
-        entries[3].Set(new(31.74207f, 18.50084f, -37.93478f, 1.0f), "");
+        entries[0].Set(new(14.838376f, 37.483573f, -32.474410f, 1.0f), "");
+        entries[1].Set(new(20.629248f, 28.265625f, -38.358393f, 1.0f), "");
+        entries[2].Set(new(25.940536f, 17.404003f, -40.681333f, 1.0f), "");
+        entries[3].Set(new(31.577208f, 6.610862f, -38.518327f, 1.0f), "");
 
-        entries[4].Set(new(37.01833f, 5.925362f, -32.92351f, 1.0f), "");
-        entries[5].Set(new(41.77047f, -5.487026f, -26.25092f, 1.0f), "");
-        entries[6].Set(new(46.74955f, -16.01142f, -18.96897f, 1.0f), "");
-        entries[7].Set(new(51.8129f, -25.90926f, -10.78771f, 1.0f), "");
+        entries[4].Set(new(36.796605f, -3.072040f, -33.312005f, 1.0f), "");
+        entries[5].Set(new(41.360421f, -10.741949f, -26.773439f, 1.0f), "");
+        entries[6].Set(new(46.519898f, -17.796277f, -19.405993f, 1.0f), "");
+        entries[7].Set(new(51.442266f, -24.214719f, -11.350814f, 1.0f), "");
 
-        entries[8].Set(new(56.59541f, -34.70068f, -2.151069f, 1.0f), "");
-        entries[9].Set(new(61.61822f, -43.08775f, 8.882464f, 1.0f), "");
-        entries[10].Set(new(66.52343f, -49.42807f, 22.02212f, 1.0f), "");
-        entries[11].Set(new(71.49011f, -52.04929f, 37.18873f, 1.0f), "");
+        entries[8].Set(new(56.387197f, -30.645903f, -2.271095f, 1.0f), "");
+        entries[9].Set(new(61.436311f, -36.778321f, 8.441928f, 1.0f), "");
+        entries[10].Set(new(66.307870f, -42.539711f, 21.860905f, 1.0f), "");
+        entries[11].Set(new(71.241397f, -46.754003f, 36.834015f, 1.0f), "");
 
-        entries[12].Set(new(76.44146f, -49.09578f, 54.27348f, 1.0f), "");
-        entries[13].Set(new(81.21071f, -39.64906f, 70.21368f, 1.0f), "");
-        entries[14].Set(new(86.03786f, -25.64453f, 81.4676f, 1.0f), "");
-        entries[15].Set(new(90.85758f, -10.3154f, 85.29758f, 1.0f), "");
+        entries[12].Set(new(76.504021f, -48.551795f, 54.343992f, 1.0f), "");
+        entries[13].Set(new(81.285761f, -45.828649f, 70.595464f, 1.0f), "");
+        entries[14].Set(new(86.244770f, -37.757474f, 82.085790f, 1.0f), "");
+        entries[15].Set(new(91.094646f, -24.817274f, 86.018299f, 1.0f), "");
 
         target.Name = "Viridis";
         target.Author = "Stefan van der Walt, Nathaniel Smith";

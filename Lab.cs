@@ -101,7 +101,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         this.l = l * Lab.LFrom255;
         this.a = a - 128.0f;
         this.b = b - 128.0f;
-        this.alpha = alpha * Utils.One255;
+        this.alpha = alpha / 255.0f;
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         this.l = (l & 0xff) * Lab.LFrom255;
         this.a = a;
         this.b = b;
-        this.alpha = (alpha & 0xff) * Utils.One255;
+        this.alpha = (alpha & 0xff) / 255.0f;
     }
 
     /// <summary>
@@ -197,28 +197,6 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     public static implicit operator Lab(in float v)
     {
         return new Lab(l: v, a: 0.0f, b: 0.0f, alpha: 1.0f);
-    }
-
-    /// <summary>
-    /// Converts a four dimensional vector to a Lab color.
-    /// The vector's w component is interpreted as alpha;
-    /// z, as lightness; x, as green-magenta; y, as blue-yellow.
-    /// </summary>
-    /// <param name="v">vector</param>
-    public static explicit operator Lab(in Vec4 v)
-    {
-        return new Lab(l: v.Z, a: v.X, b: v.Y, alpha: v.W);
-    }
-
-    /// <summary>
-    /// Converts a Lab color to a four dimensional vector.
-    /// The alpha channel is interpreted as w;
-    /// lightness, as z; green-magenta, as x; blue-yellow, as y.
-    /// </summary>
-    /// <param name="c">color</param>
-    public static explicit operator Vec4(in Lab c)
-    {
-        return new Vec4(x: c.a, y: c.b, z: c.l, w: c.alpha);
     }
 
     /// <summary>
@@ -330,6 +308,18 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     public static Lab CopyAlpha(in Lab a, in Lab b)
     {
         return new(a.l, a.a, a.b, b.alpha);
+    }
+
+    /// <summary>
+    /// Returns the first color argument with the light
+    /// of the second.
+    /// </summary>
+    /// <param name="a">left operand</param>
+    /// <param name="b">right operand</param>
+    /// <returns>color</returns>
+    public static Lab CopyLight(in Lab a, in Lab b)
+    {
+        return new(b.l, a.a, a.b, a.alpha);
     }
 
     /// <summary>

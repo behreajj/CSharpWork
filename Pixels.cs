@@ -1168,18 +1168,20 @@ public static class Pixels
     /// Adjusts an image by a shift in RGB. Negative shifts
     /// indicate the secondary colors: Cyan, Magenta, Yellow.
     /// Positive shifts indicate the primaries: Red, Green,
-    /// Blue. Preservers luminosity by default.
+    /// Blue.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
     /// <param name="shift">shift</param>
     /// <param name="preset">color balance</param>
+    /// <param name="preserve">preserve luminosity</param>
     /// <returns>rebalanced array</returns>
     public static Rgb[] ColorBalance(
         in Rgb[] source,
         in Rgb[] target,
         in Rgb shift,
-        in ClrBalance preset)
+        in ClrBalance preset,
+        in bool preserve = true)
     {
         int srcLen = source.Length;
         if (srcLen == target.Length)
@@ -1205,7 +1207,7 @@ public static class Pixels
                         {
                             if (x <= 0.0) return 0.0f;
                             if (x >= 1.0) return 0.0f;
-                            float y = MathF.Abs(x + x - 1.0f);
+                            float y = MathF.Abs(2.0f * x - 1.0f);
                             return 1.0f - y * y * (3.0f - 2.0f * y);
                         };
                     }
@@ -1295,11 +1297,12 @@ public static class Pixels
                     float u = 1.0f - t;
 
                     Lab labTrg = new(
-                        labSrc.L,
+                        preserve ? labSrc.L : u * labSrc.L + t * labShift.L,
                         u * labSrc.A + t * labShift.A,
                         u * labSrc.B + t * labShift.B,
                         u * labSrc.Alpha + t * labShift.Alpha);
                     cTrg = Rgb.SrLab2ToStandard(labTrg);
+                    dict.Add(cSrc, cTrg);
                 }
                 target[i] = cTrg;
             }
@@ -2087,7 +2090,6 @@ public static class Pixels
             SortedList<float, Vec3> found = new(32);
             static float distFunc(Vec3 o, Vec3 d)
             {
-                // TODO: Formalize this into a DistCylindrical method?
                 float da = d.X - o.X;
                 float db = d.Y - o.Y;
                 return MathF.Abs(d.Z - o.Z)
@@ -2723,16 +2725,25 @@ public static class Pixels
 
     /// <summary>
     /// Mixes an image with a color in CIE LAB according to a factor.
+    /// The preserve flag designates whether to preserve the source
+    /// image lightness.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
     /// <param name="tint">tint color</param>
     /// <param name="fac">factor</param>
+    /// <param name="preserve">preserve</param>
     /// <returns>tinted pixels</returns>
     public static Rgb[] TintSrLab2(
-        in Rgb[] source, in Rgb[] target,
-        in Rgb tint, in float fac = 0.5f)
+        in Rgb[] source,
+        in Rgb[] target,
+        in Rgb tint,
+        in float fac = 0.5f,
+        in bool preserve = false)
     {
+        // TODO: Can this be consolidated with color balance method
+        // tone options and replace it?
+
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
@@ -2742,7 +2753,7 @@ public static class Pixels
                 return target;
             }
 
-            if (fac >= 1.0f)
+            if (fac >= 1.0f && !preserve)
             {
                 for (int i = 0; i < srcLen; ++i)
                 {
@@ -2751,6 +2762,7 @@ public static class Pixels
                 return target;
             }
 
+            float facVrf = fac >= 1.0f ? 1.0f : fac;
             Lab tintLab = Rgb.StandardToSrLab2(tint);
             Dictionary<Rgb, Rgb> dict = new();
             for (int i = 0; i < srcLen; ++i)
@@ -2758,7 +2770,9 @@ public static class Pixels
                 Rgb c = source[i];
                 if (Rgb.Any(c) && !dict.ContainsKey(c))
                 {
-                    Lab mixedLab = Lab.Mix(Rgb.StandardToSrLab2(c), tintLab, fac);
+                    Lab srcLab = Rgb.StandardToSrLab2(c);
+                    Lab mixedLab = Lab.Mix(srcLab, tintLab, facVrf);
+                    if (preserve) { mixedLab = Lab.CopyLight(mixedLab, srcLab); }
                     dict.Add(c, Rgb.SrLab2ToStandard(mixedLab));
                 }
             }
