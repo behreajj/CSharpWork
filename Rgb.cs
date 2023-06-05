@@ -1045,22 +1045,36 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>string</returns>
     public static string ToHexWeb(in Rgb c)
     {
-        return Rgb.ToHexWeb(new StringBuilder(8), c).ToString();
+        return Rgb.ToHexWeb(new StringBuilder(8), c, (x) => Rgb.Clamp(x, 0.0f, 1.0f)).ToString();
     }
 
     /// <summary>
     /// Appends a string representation of a color in web-friendly hexdecimal
-    /// to a string builder. Does not prepend a hash tag. Clamps all values
-    /// to [0.0, 1.0] before converting to a byte.
+    /// to a string builder. Does not prepend a hash tag. The tone mapper function
+    /// should bring the color into [0.0, 1.0].
+    /// </summary>
+    /// <param name="sb">string builder</param>
+    /// <param name="c">color</param>
+    /// <param name="tm">tone mapper</param>
+    /// <returns>string builder</returns>
+    public static StringBuilder ToHexWeb(in StringBuilder sb, in Rgb c, in Func<Rgb, Rgb> tm)
+    {
+        return Rgb.ToHexWebUnchecked(sb, tm(c));
+    }
+
+    /// <summary>
+    /// Appends a string representation of a color in web-friendly hexdecimal
+    /// to a string builder. Does not prepend a hash tag. Does not validate
+    /// colors that are out of gamut.
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="c">color</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToHexWeb(in StringBuilder sb, in Rgb c)
+    public static StringBuilder ToHexWebUnchecked(in StringBuilder sb, in Rgb c)
     {
-        int r = (int)(Utils.Clamp(c.r, 0.0f, 1.0f) * 255.0f + 0.5f);
-        int g = (int)(Utils.Clamp(c.g, 0.0f, 1.0f) * 255.0f + 0.5f);
-        int b = (int)(Utils.Clamp(c.b, 0.0f, 1.0f) * 255.0f + 0.5f);
+        int r = (int)(c.r * 255.0f + 0.5f);
+        int g = (int)(c.g * 255.0f + 0.5f);
+        int b = (int)(c.b * 255.0f + 0.5f);
         sb.AppendFormat("{0:X6}", r << 0x10 | g << 0x08 | b);
         return sb;
     }

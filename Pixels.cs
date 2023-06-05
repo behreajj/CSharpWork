@@ -1184,14 +1184,7 @@ public static class Pixels
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            Func<float, float> responseFunc = x =>
-            {
-                if (x <= 0.0) return 0.0f;
-                if (x >= 1.0) return 1.0f;
-                return x * x * (3.0f - 2.0f * x);
-            };
-
-            // TODO: Account for ClrBalance.Shadow | ColorBalance.Midtone, etc.?
+            Func<float, float> responseFunc = x => 0.0f;
             switch (preset)
             {
                 case ClrBalance.Shadow:
@@ -1211,7 +1204,7 @@ public static class Pixels
                         responseFunc = x =>
                         {
                             if (x <= 0.0) return 0.0f;
-                            if (x >= 1.0) return 1.0f;
+                            if (x >= 1.0) return 0.0f;
                             float y = MathF.Abs(x + x - 1.0f);
                             return 1.0f - y * y * (3.0f - 2.0f * y);
                         };
@@ -1224,8 +1217,55 @@ public static class Pixels
                         {
                             if (x <= 0.5) return 0.0f;
                             if (x >= 1.0) return 1.0f;
-                            float y = x + x - 1.0f;
+                            float y = 2.0f * x - 1.0f;
                             return y * y * (3.0f - 2.0f * y);
+                        };
+                    }
+                    break;
+
+                case ClrBalance.Shadow | ClrBalance.Midtone:
+                    {
+                        responseFunc = x =>
+                        {
+                            if (x <= 0.0) return 1.0f;
+                            if (x >= 0.75f) return 0.0f;
+                            float y = 1.0f - Utils.FourThirds * x;
+                            return y * y * (3.0f - 2.0f * y);
+                        };
+                    }
+                    break;
+
+                case ClrBalance.Midtone | ClrBalance.Highlight:
+                    {
+                        responseFunc = x =>
+                        {
+                            if (x <= 0.25f) return 0.0f;
+                            if (x >= 1.0f) return 1.0f;
+                            float y = Utils.FourThirds * x - Utils.OneThird;
+                            return y * y * (3.0f - 2.0f * y);
+                        };
+                    }
+                    break;
+
+                case ClrBalance.Shadow | ClrBalance.Highlight:
+                    {
+                        responseFunc = x =>
+                        {
+                            if (x <= 0.0f) return 0.0f;
+                            if (x >= 1.0f) return 0.0f;
+                            float y = MathF.Abs(1.0f - 2.0f * x);
+                            return y * y * (3.0f - 2.0f * y);
+                        };
+                    }
+                    break;
+
+                case ClrBalance.Shadow | ClrBalance.Midtone | ClrBalance.Highlight:
+                    {
+                        responseFunc = x =>
+                        {
+                            if (x <= 0.0) return 0.0f;
+                            if (x >= 1.0) return 1.0f;
+                            return x * x * (3.0f - 2.0f * x);
                         };
                     }
                     break;
@@ -2047,9 +2087,10 @@ public static class Pixels
             SortedList<float, Vec3> found = new(32);
             static float distFunc(Vec3 o, Vec3 d)
             {
+                // TODO: Formalize this into a DistCylindrical method?
                 float da = d.X - o.X;
                 float db = d.Y - o.Y;
-                return Math.Abs(d.Z - o.Z)
+                return MathF.Abs(d.Z - o.Z)
                     + MathF.Sqrt(da * da + db * db);
             }
 
@@ -2143,7 +2184,7 @@ public static class Pixels
                 else
                 {
                     Lab srcLab = Rgb.StandardToSrLab2(srcClr);
-                    Rgb trgClr = Lab.DistEuclideanAlpha(srcLab, fromLab) <= tolerance ?
+                    Rgb trgClr = Lab.Dist(srcLab, fromLab) <= tolerance ?
                         toColor : srcClr;
                     dict.Add(srcClr, trgClr);
                     target[i] = trgClr;

@@ -504,10 +504,15 @@ public class Palette : IEnumerable
     /// GPL file string.
     /// </summary>
     /// <param name="pal">palette</param>
+    /// <param name="tm">tone mapper</param>
     /// <returns>string</returns>
-    public static string ToGplString(in Palette pal)
+    public static string ToGplString(
+        in Palette pal, 
+        in Func<Rgb, Rgb> tm)
     {
-        return Palette.ToGplString(new StringBuilder(1024), pal).ToString();
+        return Palette.ToGplString(
+            new StringBuilder(1024),
+            pal, 0, tm).ToString();
     }
 
     /// <summary>
@@ -517,8 +522,13 @@ public class Palette : IEnumerable
     /// <param name="sb">string builder</param>
     /// <param name="pal">palette</param>
     /// <param name="columns">display columns</param>
+    /// <param name="tm">tone mapper</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToGplString(in StringBuilder sb, in Palette pal, in int columns = 0)
+    public static StringBuilder ToGplString(
+        in StringBuilder sb,
+        in Palette pal,
+        in int columns,
+        in Func<Rgb, Rgb> tm)
     {
         PalEntry[] entries = pal.entries;
         int len = entries.Length;
@@ -539,7 +549,7 @@ public class Palette : IEnumerable
             if (entry != null)
             {
                 sb.Append('\n');
-                PalEntry.ToGplString(sb, entry);
+                PalEntry.ToGplString(sb, entry, tm);
             }
         }
         return sb;
@@ -550,10 +560,15 @@ public class Palette : IEnumerable
     /// PAL file string.
     /// </summary>
     /// <param name="pal">palette</param>
+    /// <param name="tm">tone mapper</param>
     /// <returns>string</returns>
-    public static string ToPalString(in Palette pal)
+    public static string ToPalString(
+        in Palette pal,
+        in Func<Rgb, Rgb> tm)
     {
-        return Palette.ToPalString(new StringBuilder(1024), pal).ToString();
+        return Palette.ToPalString(
+            new StringBuilder(1024),
+            pal, tm).ToString();
     }
 
     /// <summary>
@@ -562,8 +577,12 @@ public class Palette : IEnumerable
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="pal">palette</param>
+    /// <param name="tm">tone mapper</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToPalString(in StringBuilder sb, in Palette pal)
+    public static StringBuilder ToPalString(
+        in StringBuilder sb,
+        in Palette pal,
+        in Func<Rgb, Rgb> tm)
     {
         PalEntry[] entries = pal.entries;
         int len = entries.Length;
@@ -576,7 +595,7 @@ public class Palette : IEnumerable
             if (entry != null)
             {
                 sb.Append('\n');
-                PalEntry.ToPalString(sb, entry);
+                PalEntry.ToPalString(sb, entry, tm);
             }
         }
         return sb;

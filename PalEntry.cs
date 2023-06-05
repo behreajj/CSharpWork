@@ -305,8 +305,9 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// <returns>string</returns>
     public static string ToGplString(in PalEntry pe)
     {
-        return PalEntry.ToGplString(new StringBuilder(
-            16 + PalEntry.NameCharLimit), pe).ToString();
+        return PalEntry.ToGplString(
+            new StringBuilder(16 + PalEntry.NameCharLimit), pe,
+            (x) => Rgb.Clamp(x, 0.0f, 1.0f)).ToString();
     }
 
     /// <summary>
@@ -315,10 +316,14 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="pe">entry</param>
+    /// <param name="tm">tone mapper</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToGplString(in StringBuilder sb, in PalEntry pe)
+    public static StringBuilder ToGplString(
+        in StringBuilder sb,
+        in PalEntry pe,
+        in Func<Rgb, Rgb> tm)
     {
-        PalEntry.ToPalString(sb, pe);
+        PalEntry.ToPalString(sb, pe, tm);
         sb.Append(' ');
         sb.Append(pe.Name);
         return sb;
@@ -332,7 +337,9 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// <returns>string</returns>
     public static string ToPalString(in PalEntry pe)
     {
-        return PalEntry.ToPalString(new StringBuilder(16), pe).ToString();
+        return PalEntry.ToPalString(
+            new StringBuilder(16), pe,
+            (x) => Rgb.Clamp(x, 0.0f, 1.0f)).ToString();
     }
 
     /// <summary>
@@ -341,14 +348,19 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="pe">entry</param>
+    /// <param name="tm">tone mapper</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToPalString(in StringBuilder sb, in PalEntry pe)
+    public static StringBuilder ToPalString(
+        in StringBuilder sb,
+        in PalEntry pe,
+        in Func<Rgb, Rgb> tm)
     {
         Lab lab = pe.color;
         Rgb c = Rgb.SrLab2ToStandard(lab);
-        int r = (int)(Utils.Clamp(c.R, 0.0f, 1.0f) * 255.0f + 0.5f);
-        int g = (int)(Utils.Clamp(c.G, 0.0f, 1.0f) * 255.0f + 0.5f);
-        int b = (int)(Utils.Clamp(c.B, 0.0f, 1.0f) * 255.0f + 0.5f);
+        Rgb ctm = tm(c);
+        int r = (int)(ctm.R * 255.0f + 0.5f);
+        int g = (int)(ctm.G * 255.0f + 0.5f);
+        int b = (int)(ctm.B * 255.0f + 0.5f);
         sb.Append(r.ToString().PadLeft(3, ' '));
         sb.Append(' ');
         sb.Append(g.ToString().PadLeft(3, ' '));
@@ -367,7 +379,8 @@ public class PalEntry : IComparable<PalEntry>, IEquatable<PalEntry>
         in PalEntry pe,
         in int places = 4)
     {
-        return PalEntry.ToString(new StringBuilder(128), pe, places).ToString();
+        return PalEntry.ToString(
+            new StringBuilder(128), pe, places).ToString();
     }
 
     /// <summary>
