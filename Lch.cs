@@ -309,6 +309,42 @@ public readonly struct Lch
     public static Lch ClearWhite { get { return new Lch(100.0f, 0.0f, 0.0f, 0.0f); } }
 
     /// <summary>
+    /// Returns the color red in SR LCH.
+    /// </summary>
+    /// <value>red</value>
+    public static Lch SrRed { get { return new(53.22598f, 103.4373f, 0.1135622f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the color yellow in SR LCH.
+    /// </summary>
+    /// <value>yellow</value>
+    public static Lch SrYellow { get { return new(97.34526f, 102.1809f, 0.3092285f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the color green in SR LCH.
+    /// </summary>
+    /// <value>green</value>
+    public static Lch SrGreen { get { return new(87.51519f, 117.3746f, 0.3749225f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the color cyan in SR LCH.
+    /// </summary>
+    /// <value>cyan</value>
+    public static Lch SrCyan { get { return new(90.6247f, 46.30222f, 0.5525401f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the color blue in SR LCH.
+    /// </summary>
+    /// <value>blue</value>
+    public static Lch SrBlue { get { return new(30.64395f, 111.4585f, 0.7327945f, 1.0f); } }
+
+    /// <summary>
+    /// Returns the color magenta in SR LCH.
+    /// </summary>
+    /// <value>magenta</value>
+    public static Lch SrMagenta { get { return new(60.25521f, 119.4313f, 0.91468f, 1.0f); } }
+
+    /// <summary>
     /// Returns the color white.
     /// </summary>
     /// <value>white</value>

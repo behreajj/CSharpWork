@@ -1165,152 +1165,6 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Adjusts an image by a shift in RGB. Negative shifts
-    /// indicate the secondary colors: Cyan, Magenta, Yellow.
-    /// Positive shifts indicate the primaries: Red, Green,
-    /// Blue.
-    /// </summary>
-    /// <param name="source">source pixels</param>
-    /// <param name="target">target pixels</param>
-    /// <param name="shift">shift</param>
-    /// <param name="preset">color balance</param>
-    /// <param name="preserve">preserve luminosity</param>
-    /// <returns>rebalanced array</returns>
-    public static Rgb[] ColorBalance(
-        in Rgb[] source,
-        in Rgb[] target,
-        in Rgb shift,
-        in ClrBalance preset,
-        in bool preserve = true)
-    {
-        int srcLen = source.Length;
-        if (srcLen == target.Length)
-        {
-            Func<float, float> responseFunc = x => 0.0f;
-            switch (preset)
-            {
-                case ClrBalance.Shadow:
-                    {
-                        responseFunc = x =>
-                        {
-                            if (x <= 0.0) return 1.0f;
-                            if (x >= 0.5) return 0.0f;
-                            float y = 1.0f - 2.0f * x;
-                            return y * y * (3.0f - 2.0f * y);
-                        };
-                    }
-                    break;
-
-                case ClrBalance.Midtone:
-                    {
-                        responseFunc = x =>
-                        {
-                            if (x <= 0.0) return 0.0f;
-                            if (x >= 1.0) return 0.0f;
-                            float y = MathF.Abs(2.0f * x - 1.0f);
-                            return 1.0f - y * y * (3.0f - 2.0f * y);
-                        };
-                    }
-                    break;
-
-                case ClrBalance.Highlight:
-                    {
-                        responseFunc = x =>
-                        {
-                            if (x <= 0.5) return 0.0f;
-                            if (x >= 1.0) return 1.0f;
-                            float y = 2.0f * x - 1.0f;
-                            return y * y * (3.0f - 2.0f * y);
-                        };
-                    }
-                    break;
-
-                case ClrBalance.Shadow | ClrBalance.Midtone:
-                    {
-                        responseFunc = x =>
-                        {
-                            if (x <= 0.0) return 1.0f;
-                            if (x >= 0.75f) return 0.0f;
-                            float y = 1.0f - Utils.FourThirds * x;
-                            return y * y * (3.0f - 2.0f * y);
-                        };
-                    }
-                    break;
-
-                case ClrBalance.Midtone | ClrBalance.Highlight:
-                    {
-                        responseFunc = x =>
-                        {
-                            if (x <= 0.25f) return 0.0f;
-                            if (x >= 1.0f) return 1.0f;
-                            float y = Utils.FourThirds * x - Utils.OneThird;
-                            return y * y * (3.0f - 2.0f * y);
-                        };
-                    }
-                    break;
-
-                case ClrBalance.Shadow | ClrBalance.Highlight:
-                    {
-                        responseFunc = x =>
-                        {
-                            if (x <= 0.0f) return 0.0f;
-                            if (x >= 1.0f) return 0.0f;
-                            float y = MathF.Abs(1.0f - 2.0f * x);
-                            return y * y * (3.0f - 2.0f * y);
-                        };
-                    }
-                    break;
-
-                case ClrBalance.Shadow | ClrBalance.Midtone | ClrBalance.Highlight:
-                    {
-                        responseFunc = x =>
-                        {
-                            if (x <= 0.0) return 0.0f;
-                            if (x >= 1.0) return 1.0f;
-                            return x * x * (3.0f - 2.0f * x);
-                        };
-                    }
-                    break;
-            }
-
-            Dictionary<Rgb, Rgb> dict = new(256);
-            for (int i = 0; i < srcLen; ++i)
-            {
-                Rgb cSrc = source[i];
-                Rgb cTrg;
-                if (dict.ContainsKey(cSrc))
-                {
-                    cTrg = dict[cSrc];
-                }
-                else
-                {
-                    Rgb cShift = new(
-                        cSrc.R + shift.R,
-                        cSrc.G + shift.G,
-                        cSrc.B + shift.B,
-                        cSrc.Alpha + shift.Alpha);
-
-                    Lab labSrc = Rgb.StandardToSrLab2(cSrc);
-                    Lab labShift = Rgb.StandardToSrLab2(cShift);
-
-                    float t = responseFunc(labSrc.L * 0.01f);
-                    float u = 1.0f - t;
-
-                    Lab labTrg = new(
-                        preserve ? labSrc.L : u * labSrc.L + t * labShift.L,
-                        u * labSrc.A + t * labShift.A,
-                        u * labSrc.B + t * labShift.B,
-                        u * labSrc.Alpha + t * labShift.Alpha);
-                    cTrg = Rgb.SrLab2ToStandard(labTrg);
-                    dict.Add(cSrc, cTrg);
-                }
-                target[i] = cTrg;
-            }
-        }
-        return target;
-    }
-
-    /// <summary>
     /// Filters an array of colors according to a filter
     /// function. The lower bound and upper bound are both
     /// inclusive. Returns a dictionary wherein the key
@@ -1996,9 +1850,12 @@ public static class Pixels
     /// <param name="threshold">threshold</param>
     /// <returns>palette</returns>
     public static Rgb[] PaletteExtract(
-        in Rgb[] source, in int capacity,
-        in int threshold = 256)
+        in Rgb[] source,
+        in int capacity,
+        in int threshold)
     {
+        // TODO: Update to work with a Palette object?
+
         SortedSet<Rgb> uniqueColors = new();
         int srcLen = source.Length;
         for (int h = 0; h < srcLen; ++h)
@@ -2677,24 +2534,24 @@ public static class Pixels
                     Dictionary<Rgb, Rgb> stretched = new();
                     foreach (KeyValuePair<Rgb, Lab> kv in dict)
                     {
-                        Lab sourceLab = kv.Value;
-                        Lab stretchedLab = sourceLab;
+                        Lab srcLab = kv.Value;
+                        Lab stretchedLab = srcLab;
                         if (gtZero)
                         {
                             stretchedLab = new(
-                                l: u * sourceLab.L
-                                    + tDenom * sourceLab.L - lumMintDenom,
-                                a: sourceLab.A,
-                                b: sourceLab.B,
-                                alpha: sourceLab.Alpha);
+                                l: u * srcLab.L
+                                    + tDenom * srcLab.L - lumMintDenom,
+                                a: srcLab.A,
+                                b: srcLab.B,
+                                alpha: srcLab.Alpha);
                         }
                         else if (ltZero)
                         {
                             stretchedLab = new(
                                 l: u * stretchedLab.L + tLumAvg,
-                                a: sourceLab.A,
-                                b: sourceLab.B,
-                                alpha: sourceLab.Alpha);
+                                a: srcLab.A,
+                                b: srcLab.B,
+                                alpha: srcLab.Alpha);
                         }
 
                         stretched.Add(kv.Key, Rgb.SrLab2ToStandard(stretchedLab));
@@ -2725,25 +2582,70 @@ public static class Pixels
 
     /// <summary>
     /// Mixes an image with a color in CIE LAB according to a factor.
-    /// The preserve flag designates whether to preserve the source
-    /// image lightness.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
     /// <param name="tint">tint color</param>
     /// <param name="fac">factor</param>
-    /// <param name="preserve">preserve</param>
+    /// <param name="preserveLight">preserve lightness</param>
     /// <returns>tinted pixels</returns>
     public static Rgb[] TintSrLab2(
         in Rgb[] source,
         in Rgb[] target,
         in Rgb tint,
         in float fac = 0.5f,
-        in bool preserve = false)
+        in bool preserveLight = false)
     {
-        // TODO: Can this be consolidated with color balance method
-        // tone options and replace it?
+        return Pixels.TintSrLab2(
+            source, target,
+            tint, fac, preserveLight,
+            (x) => 1.0f);
+    }
 
+    /// <summary>
+    /// Mixes an image with a color in CIE LAB according to a factor.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">target pixels</param>
+    /// <param name="tint">tint color</param>
+    /// <param name="fac">factor</param>
+    /// <param name="preserveLight">preserve lightness</param>
+    /// <param name="tonePreset">tone preset</param>
+    /// <returns>tinted pixels</returns>
+    public static Rgb[] TintSrLab2(
+        in Rgb[] source,
+        in Rgb[] target,
+        in Rgb tint,
+        in float fac = 0.5f,
+        in bool preserveLight = false,
+        Tone tonePreset = Tone.Highlight
+                        | Tone.Midtone
+                        | Tone.Shadow)
+    {
+        return Pixels.TintSrLab2(
+            source, target,
+            tint, fac, preserveLight,
+            Pixels.ToneFuncFromPreset(tonePreset));
+    }
+
+    /// <summary>
+    /// Mixes an image with a color in CIE LAB according to a factor.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">target pixels</param>
+    /// <param name="tint">tint color</param>
+    /// <param name="fac">factor</param>
+    /// <param name="preserveLight">preserve lightness</param>
+    /// <param name="toneResponse">tone response function</param>
+    /// <returns>tinted pixels</returns>
+    public static Rgb[] TintSrLab2(
+        in Rgb[] source,
+        in Rgb[] target,
+        in Rgb tint,
+        in float fac,
+        in bool preserveLight,
+        in Func<float, float> toneResponse)
+    {
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
@@ -2753,44 +2655,126 @@ public static class Pixels
                 return target;
             }
 
-            if (fac >= 1.0f && !preserve)
-            {
-                for (int i = 0; i < srcLen; ++i)
-                {
-                    target[i] = Rgb.CopyAlpha(tint, source[i]);
-                }
-                return target;
-            }
+            float t = fac >= 1.0f ? 1.0f : fac;
 
-            float facVrf = fac >= 1.0f ? 1.0f : fac;
             Lab tintLab = Rgb.StandardToSrLab2(tint);
+            float lTint = tintLab.L;
+            float aTint = tintLab.A;
+            float bTint = tintLab.B;
+
             Dictionary<Rgb, Rgb> dict = new();
             for (int i = 0; i < srcLen; ++i)
             {
-                Rgb c = source[i];
-                if (Rgb.Any(c) && !dict.ContainsKey(c))
+                Rgb rgbSrc = source[i];
+                Rgb rgbTrg;
+                if (dict.ContainsKey(rgbSrc))
                 {
-                    Lab srcLab = Rgb.StandardToSrLab2(c);
-                    Lab mixedLab = Lab.Mix(srcLab, tintLab, facVrf);
-                    if (preserve) { mixedLab = Lab.CopyLight(mixedLab, srcLab); }
-                    dict.Add(c, Rgb.SrLab2ToStandard(mixedLab));
+                    rgbTrg = dict[rgbSrc];
                 }
-            }
+                else
+                {
+                    if (rgbSrc.Alpha <= 0.0f)
+                    {
+                        rgbTrg = Rgb.ClearBlack;
+                    }
+                    else
+                    {
+                        Lab labSrc = Rgb.StandardToSrLab2(rgbSrc);
+                        float lightSrc = labSrc.L;
+                        float lightFac = toneResponse(lightSrc * 0.01f);
+                        float ts = lightFac * t;
+                        float us = 1.0f - ts;
 
-            if (dict.Count > 0)
-            {
-                Rgb clearBlack = Rgb.ClearBlack;
-                for (int i = 0; i < srcLen; ++i)
-                {
-                    target[i] = dict.GetValueOrDefault(source[i], clearBlack);
+                        Lab labTrg = new(
+                        preserveLight ? lightSrc : us * lightSrc + ts * lTint,
+                        us * labSrc.A + ts * aTint,
+                        us * labSrc.B + ts * bTint,
+                        labSrc.Alpha);
+                        rgbTrg = Rgb.SrLab2ToStandard(labTrg);
+                    }
+
+                    dict.Add(rgbSrc, rgbTrg);
                 }
-            }
-            else
-            {
-                Pixels.Fill(Rgb.ClearBlack, target);
+                target[i] = rgbTrg;
             }
         }
         return target;
+    }
+
+    /// <summary>
+    /// Generates a tone response curve from a preset.
+    /// </summary>
+    /// <param name="preset">tone preset</param>
+    /// <returns>tone function</returns>
+    public static Func<float, float> ToneFuncFromPreset(Tone preset)
+    {
+        switch (preset)
+        {
+            case (Tone)(~0):
+            case Tone.Shadow | Tone.Midtone | Tone.Highlight: /* 1|2|4 = 7 */
+                return x =>
+                {
+                    if (x <= 0.0f) return 0.0f;
+                    if (x >= 1.0f) return 1.0f;
+                    return x * x * (3.0f - 2.0f * x);
+                };
+
+            case Tone.Midtone | Tone.Highlight: /* 2|4 = 6 */
+                return x =>
+                {
+                    if (x <= 0.25f) return 0.0f;
+                    if (x >= 1.0f) return 1.0f;
+                    float y = Utils.FourThirds * x - Utils.OneThird;
+                    return y * y * (3.0f - 2.0f * y);
+                };
+
+            case Tone.Shadow | Tone.Highlight: /* 1|4 = 5 */
+                return x =>
+                {
+                    if (x <= 0.0f) return 0.0f;
+                    if (x >= 1.0f) return 0.0f;
+                    float y = MathF.Abs(1.0f - 2.0f * x);
+                    return y * y * (3.0f - 2.0f * y);
+                };
+
+            case Tone.Shadow | Tone.Midtone: /* 1|2 = 3 */
+                return x =>
+                    {
+                        if (x <= 0.0f) return 1.0f;
+                        if (x >= 0.75f) return 0.0f;
+                        float y = 1.0f - Utils.FourThirds * x;
+                        return y * y * (3.0f - 2.0f * y);
+                    };
+
+            case Tone.Highlight:
+                return x =>
+                {
+                    if (x <= 0.5f) return 0.0f;
+                    if (x >= 1.0f) return 1.0f;
+                    float y = 2.0f * x - 1.0f;
+                    return y * y * (3.0f - 2.0f * y);
+                };
+
+            case Tone.Midtone:
+                return x =>
+                {
+                    if (x <= 0.0f) return 0.0f;
+                    if (x >= 1.0f) return 0.0f;
+                    float y = MathF.Abs(2.0f * x - 1.0f);
+                    return 1.0f - y * y * (3.0f - 2.0f * y);
+                };
+
+            case Tone.Shadow:
+                return x =>
+                    {
+                        if (x <= 0.0f) return 1.0f;
+                        if (x >= 0.5f) return 0.0f;
+                        float y = 1.0f - 2.0f * x;
+                        return y * y * (3.0f - 2.0f * y);
+                    };
+
+            default: return x => 1.0f;
+        }
     }
 
     /// <summary>

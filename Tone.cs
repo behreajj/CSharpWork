@@ -1,10 +1,10 @@
 using System;
 
 /// <summary>
-/// Ordering for color balance presets.
+/// Ordering for tones preset used by Pixels methods.
 /// </summary>
 [Flags]
-public enum ClrBalance : int
+public enum Tone : int
 {
     Shadow = 1,
     Midtone = 2,

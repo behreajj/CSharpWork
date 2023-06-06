@@ -191,7 +191,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// Converts a color to an integer, performs the bitwise not operation on
     /// it, then converts the result to a color.
     /// </summary>
-    /// <param name="c">the input color</param>
+    /// <param name="c">color</param>
     /// <returns>negated color</returns>
     public static Rgb operator ~(in Rgb c)
     {
@@ -446,13 +446,17 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
         in int layers = 8,
         in float alpha = 1.0f)
     {
-        int lval = layers < 2 ? 2 : layers;
-        int rval = rows < 2 ? 2 : rows;
-        int cval = cols < 2 ? 2 : cols;
+        int lval = layers < 1 ? 1 : layers;
+        int rval = rows < 1 ? 1 : rows;
+        int cval = cols < 1 ? 1 : cols;
 
-        float hToStep = 1.0f / (lval - 1.0f);
-        float iToStep = 1.0f / (rval - 1.0f);
-        float jToStep = 1.0f / (cval - 1.0f);
+        bool oneLayer = lval == 1;
+        bool oneRow = rval == 1;
+        bool oneCol = cval == 1;
+
+        float hToStep = oneLayer ? 0.0f : 1.0f / (lval - 1.0f);
+        float iToStep = oneRow ? 0.0f : 1.0f / (rval - 1.0f);
+        float jToStep = oneCol ? 0.0f : 1.0f / (cval - 1.0f);
 
         Rgb[,,] result = new Rgb[lval, rval, cval];
 
@@ -818,6 +822,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
+    /// Converts a color from SR LAB 2 to standard
+    /// RGB (sRGB).
     /// </summary>
     /// <param name="lab">LAB color</param>
     /// <returns>sRGB color</returns>
@@ -843,7 +849,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Converts a color from SRLAB2 XYZ to linear RGB.
+    /// Converts a color from SR LAB 2 XYZ to linear RGB.
     /// The alpha channel is unaffected by the transformation.
     /// </summary>
     /// <param name="v">XYZ color</param>
@@ -1045,11 +1051,12 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>string</returns>
     public static string ToHexWeb(in Rgb c)
     {
-        return Rgb.ToHexWeb(new StringBuilder(8), c, (x) => Rgb.Clamp(x, 0.0f, 1.0f)).ToString();
+        return Rgb.ToHexWeb(new StringBuilder(8), c,
+            (x) => Rgb.Clamp(x, 0.0f, 1.0f)).ToString();
     }
 
     /// <summary>
-    /// Appends a string representation of a color in web-friendly hexdecimal
+    /// Appends a string representation of a color in web-friendly hexadecimal
     /// to a string builder. Does not prepend a hash tag. The tone mapper function
     /// should bring the color into [0.0, 1.0].
     /// </summary>
@@ -1057,13 +1064,16 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <param name="c">color</param>
     /// <param name="tm">tone mapper</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToHexWeb(in StringBuilder sb, in Rgb c, in Func<Rgb, Rgb> tm)
+    public static StringBuilder ToHexWeb(
+        in StringBuilder sb,
+        in Rgb c,
+        in Func<Rgb, Rgb> tm)
     {
         return Rgb.ToHexWebUnchecked(sb, tm(c));
     }
 
     /// <summary>
-    /// Appends a string representation of a color in web-friendly hexdecimal
+    /// Appends a string representation of a color in web-friendly hexadecimal
     /// to a string builder. Does not prepend a hash tag. Does not validate
     /// colors that are out of gamut.
     /// </summary>

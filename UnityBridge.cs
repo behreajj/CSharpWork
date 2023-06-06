@@ -1,6 +1,6 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Converts basic representations to UnityEngine.
@@ -601,7 +601,6 @@ public static class UnityBridge
 
             Lab opaque = Lab.Opaque(lab);
             Rgb rgb = Rgb.SrLab2ToStandard(opaque);
-            // Rgb clamped = Rgb.Clamp(rgb);
             Color color = UnityBridge.ToColor(rgb);
             colorKeys[i] = new GradientColorKey(color, step);
         }

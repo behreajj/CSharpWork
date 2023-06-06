@@ -383,7 +383,7 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
-    /// Parses a palette from a string.
+    /// Parses a palette from a GPL string.
     /// </summary>
     /// <param name="source">source</param>
     /// <param name="target">target</param>
@@ -393,10 +393,22 @@ public class Palette : IEnumerable
         in Palette target)
     {
         string[] lines = source.Split(
-            new string[] { "\r\n", "\r", "\n" },
-            StringSplitOptions.RemoveEmptyEntries);
-        int lenLines = lines.Length;
+                new string[] { "\r\n", "\r", "\n" },
+                StringSplitOptions.RemoveEmptyEntries);
+        return Palette.FromGplStrings(lines, target);
+    }
 
+    /// <summary>
+    /// Parses a palette from an array of strings
+    /// from the GPL palette format.
+    /// </summary>
+    /// <param name="lines">lines</param>
+    /// <param name="target">target</param>
+    /// <returns>palette</returns>
+    public static Palette FromGplStrings(
+        in string[] lines,
+        in Palette target)
+    {
         bool validHeader = false;
         bool useAseprite = false;
         int entryNameIdx = 3;
@@ -405,6 +417,7 @@ public class Palette : IEnumerable
         List<string> entryNames = new(32);
         List<Lab> colors = new(32);
 
+        int lenLines = lines.Length;
         for (int i = 0; i < lenLines; ++i)
         {
             string line = lines[i].Trim();
@@ -429,7 +442,7 @@ public class Palette : IEnumerable
             }
             else if (lcLine.IndexOf("name:") > -1)
             {
-                paletteName = line.Substring(lcLine.IndexOf("name:") + 5).Trim();
+                paletteName = line[(lcLine.IndexOf("name:") + 5)..].Trim();
             }
             else
             {
@@ -439,15 +452,12 @@ public class Palette : IEnumerable
                 int lenTokens = tokens.Length;
                 if (lenTokens > 2)
                 {
-                    int r255 = 0;
-                    int g255 = 0;
-                    int b255 = 0;
                     int a255 = 255;
                     string entryName = "";
 
-                    int.TryParse(tokens[0], out r255);
-                    int.TryParse(tokens[1], out g255);
-                    int.TryParse(tokens[2], out b255);
+                    int.TryParse(tokens[0], out int r255);
+                    int.TryParse(tokens[1], out int g255);
+                    int.TryParse(tokens[2], out int b255);
                     if (useAseprite && lenTokens > 3)
                     {
                         int.TryParse(tokens[3], out a255);
@@ -455,7 +465,7 @@ public class Palette : IEnumerable
 
                     if (lenTokens > entryNameIdx)
                     {
-                        StringBuilder sb = new StringBuilder(32);
+                        StringBuilder sb = new(32);
                         for (int j = entryNameIdx; j < lenTokens; ++j)
                         {
                             sb.Append(tokens[j]);
@@ -487,6 +497,98 @@ public class Palette : IEnumerable
 
         target.Author = "Anonymous";
         target.Name = paletteName;
+        return target;
+    }
+
+    /// <summary>
+    /// Parses a palette from a PAL string.
+    /// </summary>
+    /// <param name="source">source</param>
+    /// <param name="target">target</param>
+    /// <returns>palette</returns>
+    public static Palette FromPalString(
+        in string source,
+        in Palette target)
+    {
+        string[] lines = source.Split(
+                new string[] { "\r\n", "\r", "\n" },
+                StringSplitOptions.RemoveEmptyEntries);
+        return Palette.FromPalStrings(lines, target);
+    }
+
+    /// <summary>
+    /// Parses a palette from an array of strings
+    /// from the PAL palette format.
+    /// </summary>
+    /// <param name="lines">lines</param>
+    /// <param name="target">target</param>
+    /// <returns>palette</returns>
+    public static Palette FromPalStrings(
+    in string[] lines,
+    in Palette target)
+    {
+        bool validHeader = false;
+        bool validCode = false;
+
+        List<Lab> colors = new(32);
+
+        int lenLines = lines.Length;
+        for (int i = 0; i < lenLines; ++i)
+        {
+            string line = lines[i].Trim();
+            string lcLine = line.ToLower();
+
+            if (!validHeader && lcLine.Equals("jasc-pal"))
+            {
+                validHeader = true;
+            }
+            else if (!validCode && lcLine.Equals("0100"))
+            {
+                validCode = true;
+            }
+            else
+            {
+                // JASC Pal also contains a line that describes
+                // the number of colors in the palette.
+                string[] tokens = line.Split(
+                    new char[] { ' ' },
+                    StringSplitOptions.RemoveEmptyEntries);
+                int lenTokens = tokens.Length;
+                if (lenTokens > 2)
+                {
+                    int a255 = 255;
+
+                    int.TryParse(tokens[0], out int r255);
+                    int.TryParse(tokens[1], out int g255);
+                    int.TryParse(tokens[2], out int b255);
+                    if (lenTokens > 3)
+                    {
+                        int.TryParse(tokens[3], out a255);
+                    }
+
+                    Rgb rgb = new(
+                        r255 / 255.0f,
+                        g255 / 255.0f,
+                        b255 / 255.0f,
+                        a255 / 255.0f);
+                    Lab lab = Rgb.StandardToSrLab2(rgb);
+
+                    colors.Add(lab);
+                }
+            }
+        }
+
+        int lenColors = colors.Count;
+        target.entries = PalEntry.Resize(target.entries, lenColors);
+        PalEntry[] trgEntries = target.entries;
+        for (int k = 0; k < lenColors; ++k)
+        {
+            PalEntry entry = trgEntries[k];
+            entry.Set(colors[k], "");
+        }
+
+        target.Author = "Anonymous";
+        target.Name = "Palette";
         return target;
     }
 

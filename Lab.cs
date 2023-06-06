@@ -446,7 +446,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
             l * Lab.LFrom255,
             a - 128.0f,
             b - 128.0f,
-            t * Utils.One255);
+            t / 255.0f);
     }
 
     /// <summary>
@@ -776,7 +776,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <summary>
     /// Returns the color magenta in SR LAB 2.
     /// </summary>
-    /// <value>green</value>
+    /// <value>magenta</value>
     public static Lab SrMagenta { get { return new(60.25521f, 102.6771f, -61.00205f, 1.0f); } }
 
     /// <summary>
