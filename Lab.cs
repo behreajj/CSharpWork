@@ -156,7 +156,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <summary>
     /// Compares this color to another in compliance with the IComparable
     /// interface. Returns 1 when a component of this color is greater than
-    /// another; -1 when lesser.  Returns 0 as a last resort.
+    /// another; -1 when lesser. Returns 0 as a last resort.
     /// Priority is alpha, lightness, b and a.
     /// </summary>
     /// <param name="c">comparisand</param>
@@ -492,9 +492,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
             v.W);
     }
 
-    ///<summary>
-    ///Finds the hue of a color.
-    ///</summary>
+    /// <summary>
+    /// Finds the hue of a color.
+    /// </summary>
     /// <param name="c">color</param>
     /// <returns>chroma squared</returns>
     public static float Hue(in Lab c)

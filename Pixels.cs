@@ -25,6 +25,9 @@ public static class Pixels
         in T a, in T b,
         in int cols = 8, in int rows = 8)
     {
+        // TODO: Create Separate RGB function?
+        // TODO: Create Quantize function?
+
         int limit = 2;
         int vCols = cols < 2 ? 2 : cols > w / limit ? w / limit : cols;
         int vRows = rows < 2 ? 2 : rows > h / limit ? h / limit : rows;
@@ -2651,7 +2654,7 @@ public static class Pixels
                 return target;
             }
 
-            float t = fac >= 1.0f ? 1.0f : fac;
+            float facVrf = fac >= 1.0f ? 1.0f : fac;
 
             Lab tintLab = Rgb.StandardToSrLab2(tint);
             float lTint = tintLab.L;
@@ -2678,13 +2681,13 @@ public static class Pixels
                         Lab labSrc = Rgb.StandardToSrLab2(rgbSrc);
                         float lightSrc = labSrc.L;
                         float lightFac = toneResponse(lightSrc * 0.01f);
-                        float ts = lightFac * t;
-                        float us = 1.0f - ts;
+                        float t = lightFac * facVrf;
+                        float u = 1.0f - t;
 
                         Lab labTrg = new(
-                        preserveLight ? lightSrc : us * lightSrc + ts * lTint,
-                        us * labSrc.A + ts * aTint,
-                        us * labSrc.B + ts * bTint,
+                        preserveLight ? lightSrc : u * lightSrc + t * lTint,
+                        u * labSrc.A + t * aTint,
+                        u * labSrc.B + t * bTint,
                         labSrc.Alpha);
                         rgbTrg = Rgb.SrLab2ToStandard(labTrg);
                     }
@@ -2706,70 +2709,68 @@ public static class Pixels
     {
         switch (preset)
         {
-            case (Tone)(~0):
-            case Tone.Shadow | Tone.Midtone | Tone.Highlight: /* 1|2|4 = 7 */
-                return x =>
-                {
-                    if (x <= 0.0f) return 0.0f;
-                    if (x >= 1.0f) return 1.0f;
-                    return x * x * (3.0f - 2.0f * x);
-                };
-
-            case Tone.Midtone | Tone.Highlight: /* 2|4 = 6 */
-                return x =>
-                {
-                    if (x <= 0.25f) return 0.0f;
-                    if (x >= 1.0f) return 1.0f;
-                    float y = Utils.FourThirds * x - Utils.OneThird;
-                    return y * y * (3.0f - 2.0f * y);
-                };
-
-            case Tone.Shadow | Tone.Highlight: /* 1|4 = 5 */
-                return x =>
-                {
-                    if (x <= 0.0f) return 0.0f;
-                    if (x >= 1.0f) return 0.0f;
-                    float y = MathF.Abs(1.0f - 2.0f * x);
-                    return y * y * (3.0f - 2.0f * y);
-                };
-
-            case Tone.Shadow | Tone.Midtone: /* 1|2 = 3 */
-                return x =>
-                    {
-                        if (x <= 0.0f) return 1.0f;
-                        if (x >= 0.75f) return 0.0f;
-                        float y = 1.0f - Utils.FourThirds * x;
-                        return y * y * (3.0f - 2.0f * y);
-                    };
-
-            case Tone.Highlight:
-                return x =>
-                {
-                    if (x <= 0.5f) return 0.0f;
-                    if (x >= 1.0f) return 1.0f;
-                    float y = 2.0f * x - 1.0f;
-                    return y * y * (3.0f - 2.0f * y);
-                };
-
-            case Tone.Midtone:
-                return x =>
-                {
-                    if (x <= 0.0f) return 0.0f;
-                    if (x >= 1.0f) return 0.0f;
-                    float y = MathF.Abs(2.0f * x - 1.0f);
-                    return 1.0f - y * y * (3.0f - 2.0f * y);
-                };
-
             case Tone.Shadow:
                 return x =>
                     {
-                        if (x <= 0.0f) return 1.0f;
-                        if (x >= 0.5f) return 0.0f;
+                        if (x <= 0.0f) { return 1.0f; }
+                        if (x >= 0.5f) { return 0.0f; }
                         float y = 1.0f - 2.0f * x;
                         return y * y * (3.0f - 2.0f * y);
                     };
 
-            default: return x => 1.0f;
+            case Tone.Midtone:
+                return x =>
+                {
+                    if (x <= 0.0f || x >= 1.0f) { return 0.0f; }
+                    float y = MathF.Abs(2.0f * x - 1.0f);
+                    return 1.0f - y * y * (3.0f - 2.0f * y);
+                };
+
+            case Tone.Highlight:
+                return x =>
+                {
+                    if (x <= 0.5f) { return 0.0f; }
+                    if (x >= 1.0f) { return 1.0f; }
+                    float y = 2.0f * x - 1.0f;
+                    return y * y * (3.0f - 2.0f * y);
+                };
+
+            case Tone.Shadow | Tone.Midtone: /* 1 | 2 = 3 */
+                return x =>
+                    {
+                        if (x <= 0.0f) { return 1.0f; }
+                        if (x >= 0.75f) { return 0.0f; }
+                        float y = 1.0f - Utils.FourThirds * x;
+                        return y * y * (3.0f - 2.0f * y);
+                    };
+
+            case Tone.Shadow | Tone.Highlight: /* 1 | 4 = 5 */
+                return x =>
+                {
+                    if (x <= 0.0f || x >= 1.0f) { return 1.0f; }
+                    float y = MathF.Abs(1.0f - 2.0f * x);
+                    return y * y * (3.0f - 2.0f * y);
+                };
+
+            case Tone.Midtone | Tone.Highlight: /* 2 | 4 = 6 */
+                return x =>
+                {
+                    if (x <= 0.25f) { return 0.0f; }
+                    if (x >= 1.0f) { return 1.0f; }
+                    float y = Utils.FourThirds * x - Utils.OneThird;
+                    return y * y * (3.0f - 2.0f * y);
+                };
+
+            case (Tone)~0: /* Due to how Unity handles flag enums. */
+            case Tone.Shadow | Tone.Midtone | Tone.Highlight: /* 1 | 2 | 4 = 7 */
+                return x =>
+                {
+                    if (x <= 0.0f) { return 0.0f; }
+                    if (x >= 1.0f) { return 1.0f; }
+                    return x * x * (3.0f - 2.0f * x);
+                };
+
+            default: return x => { return 1.0f; };
         }
     }
 
