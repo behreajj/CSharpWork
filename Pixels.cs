@@ -731,7 +731,7 @@ public static class Pixels
 
     /// <summary>
     /// Adjusts the contrast of colors from a source pixels array by a factor.
-    /// Uses the CIE LAB color space. The adjustment factor is expected to be in
+    /// Uses the SR LAB 2 color space. The adjustment factor is expected to be in
     /// [-1.0, 1.0].
     /// </summary>
     /// <param name="source">source pixels</param>
@@ -889,7 +889,7 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Blends backdrop and overlay pixels in CIE LAB. Forms a union
+    /// Blends backdrop and overlay pixels in SR LAB 2. Forms a union
     /// of the bounding area of the two inputs. Returns a tuple
     /// containing the blended pixels, the image's width and height,
     /// and the top left corner x and y.
@@ -923,7 +923,7 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Blends backdrop and overlay pixels in CIE LAB. Forms a union
+    /// Blends backdrop and overlay pixels in SR LAB 2. Forms a union
     /// of the bounding area of the two inputs. Returns a tuple
     /// containing the blended pixels, the image's width and height,
     /// and the top left corner x and y.
@@ -1065,7 +1065,7 @@ public static class Pixels
     /// Blurs an array of pixels by averaging each color with its
     /// neighbors in 8 directions. The step determines the size of the kernel,
     /// where the minimum step of 1 will make a 3x3, 9 pixel kernel. Averages
-    /// the color's CIE LAB representation.
+    /// the color's SR LAB 2 representation.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>  
@@ -1511,7 +1511,7 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Inverts colors from a source pixels array in CIE LAB.
+    /// Inverts colors from a source pixels array in SR LAB 2.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
@@ -1524,7 +1524,7 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Inverts colors from a source pixels array in CIE LAB.
+    /// Inverts colors from a source pixels array in SR LAB 2.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
@@ -1538,7 +1538,7 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Inverts colors from a source pixels array in CIE LAB.
+    /// Inverts colors from a source pixels array in SR LAB 2.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
@@ -1838,52 +1838,50 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Extracts a palette from a source pixels array using an octree in CIE
-    /// LAB. The size of the palette depends on the capacity of each node in the
+    /// Extracts a palette from a source pixels array using an octree in SR
+    /// LAB 2. The size of the palette depends on the capacity of each node in the
     /// octree. Does not retain alpha component of image pixels. The threshold
     /// describes the minimum number of unique colors in the image beneath which
-    /// it is preferable to not engage the octree. Once the octree has been
-    /// used, colors produced may not be in gamut.
+    /// it is preferable to not engage the octree.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="capacity">node capacity</param>
     /// <param name="threshold">threshold</param>
     /// <returns>palette</returns>
-    public static Rgb[] PaletteExtract(
+    public static Lab[] PaletteExtract(
         in Rgb[] source,
         in int capacity,
         in int threshold)
     {
-        // TODO: Update to work with a Palette object?
-
-        SortedSet<Rgb> uniqueColors = new();
+        SortedSet<Rgb> uniqueRgbs = new();
         int srcLen = source.Length;
         for (int h = 0; h < srcLen; ++h)
         {
-            Rgb c = source[h];
-            if (Rgb.Any(c))
+            Rgb rgbSrc = source[h];
+            if (Rgb.Any(rgbSrc))
             {
-                uniqueColors.Add(Rgb.Opaque(c));
+                uniqueRgbs.Add(Rgb.Opaque(rgbSrc));
             }
         }
 
         // If under threshold, do not engage octree.
         int valThresh = threshold < 3 ? 3 : threshold;
-        int uniquesLen = uniqueColors.Count;
+        int uniquesLen = uniqueRgbs.Count;
         if (uniquesLen < valThresh)
         {
-            Rgb[] under = new Rgb[1 + uniquesLen];
-            under[0] = Rgb.ClearBlack;
+            // Prepend alpha mask.
+            Lab[] under = new Lab[1 + uniquesLen];
+            under[0] = Lab.ClearBlack;
             int i = 0;
-            foreach (Rgb unique in uniqueColors)
+            foreach (Rgb unique in uniqueRgbs)
             {
-                under[++i] = unique;
+                under[++i] = Rgb.StandardToSrLab2(unique);
             }
             return under;
         }
 
         Octree oct = new(Bounds3.Lab, capacity);
-        foreach (Rgb unique in uniqueColors)
+        foreach (Rgb unique in uniqueRgbs)
         {
             Lab lab = Rgb.StandardToSrLab2(unique);
             oct.Insert(new(x: lab.A, y: lab.B, z: lab.L));
@@ -1893,13 +1891,14 @@ public static class Pixels
         List<Vec3> centers = new();
         Octree.CentersMean(oct, centers, false);
         int centersLen = centers.Count;
-        Rgb[] over = new Rgb[1 + centersLen];
-        over[0] = Rgb.ClearBlack;
+
+        Lab[] over = new Lab[1 + centersLen];
+        over[0] = Lab.ClearBlack;
         for (int j = 0; j < centersLen; ++j)
         {
             Vec3 center = centers[j];
             Lab lab = new(l: center.Z, a: center.X, b: center.Y, alpha: 1.0f);
-            over[1 + j] = Rgb.SrLab2ToStandard(lab);
+            over[1 + j] = lab;
         }
         return over;
     }
@@ -1916,11 +1915,9 @@ public static class Pixels
     /// <param name="capacity">node capacity</param>
     /// <returns>palette map</returns>
     public static Rgb[] PaletteMap(
-        in Rgb[] source, in Rgb[] target, in Rgb[] palette,
+        in Rgb[] source, in Rgb[] target, in Lab[] palette,
         in float radius = 128.0f, in int capacity = 16)
     {
-        // TODO: Test again.
-
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
@@ -1932,13 +1929,12 @@ public static class Pixels
             int palLen = palette.Length;
             for (int h = 0; h < palLen; ++h)
             {
-                Rgb c = palette[h];
-                if (Rgb.Any(c))
+                Lab lab = palette[h];
+                if (Lab.Any(lab))
                 {
-                    Lab lab = Rgb.StandardToSrLab2(c);
                     Vec3 point = new(x: lab.A, y: lab.B, z: lab.L);
                     oct.Insert(point);
-                    lookup.Add(point, c);
+                    lookup.Add(point, Rgb.SrLab2ToStandard(lab));
                 }
             }
             oct.Cull();
@@ -2581,7 +2577,7 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Mixes an image with a color in CIE LAB according to a factor.
+    /// Mixes an image with a color in SR LAB 2 according to a factor.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
@@ -2603,7 +2599,7 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Mixes an image with a color in CIE LAB according to a factor.
+    /// Mixes an image with a color in SR LAB 2 according to a factor.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
@@ -2629,7 +2625,7 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Mixes an image with a color in CIE LAB according to a factor.
+    /// Mixes an image with a color in SR LAB 2 according to a factor.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
