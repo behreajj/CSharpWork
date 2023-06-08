@@ -1168,6 +1168,95 @@ public static class Pixels
     }
 
     /// <summary>
+    /// Clamps a pixel array to a lower and upper bounds.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">target pixels</param>
+    /// <param name="lCurve">lightness curve</param>
+    /// <param name="aCurve">green-magenta curva</param>
+    /// <param name="bCurve">blue-yellow curve</param>
+    /// <returns>clamped array</returns>
+    public static Rgb[] CurvesColor(
+        in Rgb[] source, in Rgb[] target,
+        in Curve2 lCurve,
+        in Curve2 aCurve,
+        in Curve2 bCurve)
+    {
+        // TODO: Alpha curve?
+
+        int srcLen = source.Length;
+        if (srcLen == target.Length)
+        {
+            Dictionary<Rgb, Lab> dict = new(256);
+            float aMin = float.MaxValue;
+            float aMax = float.MinValue;
+            float bMin = float.MaxValue;
+            float bMax = float.MinValue;
+
+            for (int i = 0; i < srcLen; ++i)
+            {
+                Rgb rgbSrc = source[i];
+                if (!dict.ContainsKey(rgbSrc))
+                {
+                    Lab labSrc = Rgb.StandardToSrLab2(rgbSrc);
+                    float aSrc = labSrc.A;
+                    float bSrc = labSrc.B;
+                    if (aSrc < aMin) { aMin = aSrc; }
+                    if (aSrc > aMax) { aMax = aSrc; }
+                    if (bSrc < bMin) { bMin = bSrc; }
+                    if (bSrc > bMax) { bMax = bSrc; }
+                    dict.Add(rgbSrc, labSrc);
+                }
+            }
+
+            float aRange = aMax - aMin;
+            bool aRangeNonZero = aRange != 0.0f;
+            float aDenom = Utils.Div(1.0f, aRange);
+
+            float bRange = bMax - bMin;
+            bool bRangeNonZero = bRange != 0.0f;
+            float bDenom = Utils.Div(1.0f, bRange);
+
+            Dictionary<Rgb, Rgb> srcToTrgRgb = new(dict.Count);
+            foreach (KeyValuePair<Rgb, Lab> entry in dict)
+            {
+                Rgb rgbSrc = entry.Key;
+                Lab labSrc = entry.Value;
+
+                float lFac = labSrc.L * 0.01f;
+                (Vec2 lCo, _) = Curve2.Eval(lCurve, lFac);
+                float lAdj = lCo.Y * 100.0f;
+
+                float aAdj = labSrc.A;
+                if (aRangeNonZero)
+                {
+                    float aFac = (aAdj - aMin) * aDenom;
+                    (Vec2 aCo, _) = Curve2.Eval(aCurve, aFac);
+                    aAdj = aCo.Y * aRange + aMin;
+                }
+
+                float bAdj = labSrc.B;
+                if (bRangeNonZero)
+                {
+                    float bFac = (bAdj - bMin) * bDenom;
+                    (Vec2 bCo, _) = Curve2.Eval(bCurve, bFac);
+                    bAdj = bCo.Y * bRange + bMin;
+                }
+
+                Lab labAdj = new(lAdj, aAdj, bAdj, labSrc.Alpha);
+                Rgb rgbAdj = Rgb.SrLab2ToStandard(labAdj);
+                srcToTrgRgb.Add(rgbSrc, rgbAdj);
+            }
+
+            for (int j = 0; j < srcLen; ++j)
+            {
+                target[j] = srcToTrgRgb[source[j]];
+            }
+        }
+        return target;
+    }
+
+    /// <summary>
     /// Filters an array of colors according to a filter
     /// function. The lower bound and upper bound are both
     /// inclusive. Returns a dictionary wherein the key
@@ -1334,7 +1423,7 @@ public static class Pixels
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            Dictionary<Rgb, Rgb> dict = new();
+            Dictionary<Rgb, Rgb> dict = new(256);
             for (int i = 0; i < srcLen; ++i)
             {
                 Rgb c = source[i];
@@ -1566,7 +1655,7 @@ public static class Pixels
             float aSign = a ? -1.0f : 1.0f;
             float bSign = b ? -1.0f : 1.0f;
 
-            Dictionary<Rgb, Rgb> dict = new();
+            Dictionary<Rgb, Rgb> dict = new(256);
             for (int i = 0; i < srcLen; ++i)
             {
                 Rgb c = source[i];
@@ -2022,6 +2111,8 @@ public static class Pixels
         in Rgb fromColor, in Rgb toColor,
         in float tolerance = 0.0f)
     {
+        // TODO: Make Lab friendly version?
+
         if (tolerance <= 0.0f)
         {
             return Pixels.ReplaceColorExact(source, target, fromColor, toColor);
@@ -2490,8 +2581,8 @@ public static class Pixels
                 return target;
             }
 
-            float lumMin = Single.MaxValue;
-            float lumMax = Single.MinValue;
+            float lumMin = float.MaxValue;
+            float lumMax = float.MinValue;
             float lumSum = 0.0f;
 
             Dictionary<Rgb, Lab> dict = new();
@@ -2591,7 +2682,7 @@ public static class Pixels
     public static Rgb[] TintSrLab2(
         in Rgb[] source,
         in Rgb[] target,
-        in Rgb tint,
+        in Lab tint,
         in float fac = 0.5f,
         in bool preserveLight = false)
     {
@@ -2614,7 +2705,7 @@ public static class Pixels
     public static Rgb[] TintSrLab2(
         in Rgb[] source,
         in Rgb[] target,
-        in Rgb tint,
+        in Lab tint,
         in float fac = 0.5f,
         in bool preserveLight = false,
         Tone tonePreset = Tone.Highlight
@@ -2640,7 +2731,7 @@ public static class Pixels
     public static Rgb[] TintSrLab2(
         in Rgb[] source,
         in Rgb[] target,
-        in Rgb tint,
+        in Lab tint,
         in float fac,
         in bool preserveLight,
         in Func<float, float> toneResponse)
@@ -2655,11 +2746,9 @@ public static class Pixels
             }
 
             float facVrf = fac >= 1.0f ? 1.0f : fac;
-
-            Lab tintLab = Rgb.StandardToSrLab2(tint);
-            float lTint = tintLab.L;
-            float aTint = tintLab.A;
-            float bTint = tintLab.B;
+            float lTint = tint.L;
+            float aTint = tint.A;
+            float bTint = tint.B;
 
             Dictionary<Rgb, Rgb> dict = new();
             for (int i = 0; i < srcLen; ++i)

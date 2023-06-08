@@ -8,6 +8,116 @@ using UnityEngine;
 public static class UnityBridge
 {
     /// <summary>
+    /// Converts from a Unity AnimationCurve to a Curve2.
+    /// </summary>
+    /// <param name="source">animation curve</param>
+    /// <param name="tanLimit">tangent limit</param>
+    /// <returns>conversion</returns>
+    public static Curve2 FromAnimationCurve(
+        in AnimationCurve source,
+        in float tanLimit = 1000.0f)
+    {
+        // https://answers.unity.com/questions/623318/how-to-convert-cubic-bezier-curve-into-animationcu.html
+        // https://math.stackexchange.com/questions/3210725/weighting-a-cubic-hermite-spline
+
+        Keyframe[] keys = source.keys;
+        int keysLen = keys.Length;
+        List<Knot2> knots = new(keysLen);
+
+        Keyframe firstFrame = keys[0];
+        float firstTime = firstFrame.time;
+        if (firstTime > 0.0f)
+        {
+            float firstValue = firstFrame.value;
+            float x = Utils.Mix(0.0f, firstTime, Utils.OneThird);
+            Vec2 co = new(0.0f, firstValue);
+            Vec2 fh = new(x, firstValue);
+            Knot2 knot = new(co, fh, new());
+            knot.MirrorHandlesForward();
+            knots.Add(knot);
+        }
+
+        for (int i = 0; i < keysLen; ++i)
+        {
+            Keyframe currKey = keys[i];
+            float currTime = currKey.time;
+            float currValue = currKey.value;
+            WeightedMode weightMode = currKey.weightedMode;
+            Vec2 co = new(currTime, currValue);
+
+            Vec2 fh;
+            if (i < keysLen - 1)
+            {
+                Keyframe nextKey = keys[i + 1];
+                float nextTime = nextKey.time;
+                float diffTime = Utils.Diff(currTime, nextTime);
+                float diffWeight = diffTime * Utils.OneThird;
+                if (weightMode == WeightedMode.Out ||
+                    weightMode == WeightedMode.Both)
+                {
+                    float outWeight = currKey.outWeight;
+                    diffWeight = diffTime * outWeight;
+                }
+
+                float outTangent = Utils.Clamp(currKey.outTangent,
+                    -tanLimit, tanLimit);
+                fh = new(
+                    currTime + diffWeight,
+                    currValue + diffWeight * outTangent);
+            }
+            else
+            {
+                fh = new(
+                    Utils.Mix(currTime, 1.0f, Utils.OneThird),
+                    currValue);
+            }
+
+            Vec2 rh;
+            if (i > 0)
+            {
+                Keyframe prevKey = keys[i - 1];
+                float diffTime = Utils.Diff(currTime, prevKey.time);
+                float diffWeight = diffTime * Utils.OneThird;
+                if (weightMode == WeightedMode.In ||
+                    weightMode == WeightedMode.Both)
+                {
+                    float inWeight = currKey.inWeight;
+                    diffWeight = diffTime * inWeight;
+                }
+
+                float inTangent = Utils.Clamp(currKey.inTangent,
+                    -tanLimit, tanLimit);
+                rh = new(
+                    currTime - diffWeight,
+                    currValue - diffWeight * inTangent);
+            }
+            else
+            {
+                rh = new(
+                    Utils.Mix(currTime, 0.0f, Utils.OneThird),
+                    currValue);
+            }
+
+            knots.Add(new(co, fh, rh));
+        }
+
+        Keyframe lastFrame = keys[^1];
+        float lastTime = lastFrame.time;
+        if (lastTime < 1.0f)
+        {
+            float lastValue = lastFrame.value;
+            float x = Utils.Mix(1.0f, lastTime, Utils.OneThird);
+            Vec2 co = new(1.0f, lastValue);
+            Vec2 rh = new(x, lastValue);
+            Knot2 knot = new(co, new(), rh);
+            knot.MirrorHandlesBackward();
+            knots.Add(knot);
+        }
+
+        return new(false, knots.ToArray());
+    }
+
+    /// <summary>
     /// Converts from a Unity Bounds to a Bounds3.
     /// </summary>
     /// <param name="b">bounds</param>
@@ -172,19 +282,28 @@ public static class UnityBridge
     }
 
     /// <summary>
-    /// Converts to a Unity Color from a Clr.
+    /// Converts to a Unity Color from an Rgb.
     /// </summary>
-    /// <param name="c">color</param>
+    /// <param name="rgb">color</param>
     /// <returns>conversion</returns>
-    public static Color ToColor(in Rgb c)
+    public static Color ToColor(in Rgb rgb)
     {
-        return new Color(c.R, c.G, c.B, c.Alpha);
+        return new Color(rgb.R, rgb.G, rgb.B, rgb.Alpha);
+    }
+
+    /// <summary>
+    /// Converts to a Unity Color from a Lab.
+    /// </summary>
+    /// <param name="lab">color</param>
+    /// <returns>conversion</returns>
+    public static Color ToColor(in Lab lab)
+    {
+        return UnityBridge.ToColor(Rgb.SrLab2ToStandard(lab));
     }
 
     /// <summary>
     /// Converts to an array of Unity colors from
-    /// an array of integers. The ClrChannel enumeration
-    /// signals the order for how integers should be packed.
+    /// an array of Rgbs.
     /// </summary>
     /// <param name="cs">colors</param>
     /// <returns>conversion</returns>
@@ -200,7 +319,24 @@ public static class UnityBridge
     }
 
     /// <summary>
-    /// Converts to a Unity Color32 from a Clr.
+    /// Converts to an array of Unity colors from
+    /// an array of Labs.
+    /// </summary>
+    /// <param name="cs">colors</param>
+    /// <returns>conversion</returns>
+    public static Color[] ToColor(in Lab[] labs)
+    {
+        int len = labs.Length;
+        Color[] target = new Color[len];
+        for (int i = 0; i < len; ++i)
+        {
+            target[i] = UnityBridge.ToColor(labs[i]);
+        }
+        return target;
+    }
+
+    /// <summary>
+    /// Converts to a Unity Color32 from an Rgb.
     /// Defaults to clamping the color to [0.0, 1.0].
     /// </summary>
     /// <param name="c">color</param>
@@ -277,6 +413,8 @@ public static class UnityBridge
     /// <returns>conversion</returns>
     public static Mesh ToMesh(in Mesh2 m)
     {
+        // TODO: FromMesh function?
+
         Loop2[] loops = m.Loops;
         Vec2[] vs = m.Coords;
         Vec2[] vts = m.TexCoords;
