@@ -692,6 +692,7 @@ public static class Pixels
     /// <returns>adjusted pixels</returns>
     public static Rgb[] AdjustSrLch(in Rgb[] source, in Rgb[] target, in Lch adjust)
     {
+        // TODO: Make AdjustSrLab2 method?
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
@@ -1162,95 +1163,6 @@ public static class Pixels
             for (int i = 0; i < srcLen; ++i)
             {
                 target[i] = Rgb.Clamp(source[i], lb, ub);
-            }
-        }
-        return target;
-    }
-
-    /// <summary>
-    /// Clamps a pixel array to a lower and upper bounds.
-    /// </summary>
-    /// <param name="source">source pixels</param>
-    /// <param name="target">target pixels</param>
-    /// <param name="lCurve">lightness curve</param>
-    /// <param name="aCurve">green-magenta curva</param>
-    /// <param name="bCurve">blue-yellow curve</param>
-    /// <returns>clamped array</returns>
-    public static Rgb[] CurvesColor(
-        in Rgb[] source, in Rgb[] target,
-        in Curve2 lCurve,
-        in Curve2 aCurve,
-        in Curve2 bCurve)
-    {
-        // TODO: Alpha curve?
-
-        int srcLen = source.Length;
-        if (srcLen == target.Length)
-        {
-            Dictionary<Rgb, Lab> dict = new(256);
-            float aMin = float.MaxValue;
-            float aMax = float.MinValue;
-            float bMin = float.MaxValue;
-            float bMax = float.MinValue;
-
-            for (int i = 0; i < srcLen; ++i)
-            {
-                Rgb rgbSrc = source[i];
-                if (!dict.ContainsKey(rgbSrc))
-                {
-                    Lab labSrc = Rgb.StandardToSrLab2(rgbSrc);
-                    float aSrc = labSrc.A;
-                    float bSrc = labSrc.B;
-                    if (aSrc < aMin) { aMin = aSrc; }
-                    if (aSrc > aMax) { aMax = aSrc; }
-                    if (bSrc < bMin) { bMin = bSrc; }
-                    if (bSrc > bMax) { bMax = bSrc; }
-                    dict.Add(rgbSrc, labSrc);
-                }
-            }
-
-            float aRange = aMax - aMin;
-            bool aRangeNonZero = aRange != 0.0f;
-            float aDenom = Utils.Div(1.0f, aRange);
-
-            float bRange = bMax - bMin;
-            bool bRangeNonZero = bRange != 0.0f;
-            float bDenom = Utils.Div(1.0f, bRange);
-
-            Dictionary<Rgb, Rgb> srcToTrgRgb = new(dict.Count);
-            foreach (KeyValuePair<Rgb, Lab> entry in dict)
-            {
-                Rgb rgbSrc = entry.Key;
-                Lab labSrc = entry.Value;
-
-                float lFac = labSrc.L * 0.01f;
-                (Vec2 lCo, _) = Curve2.Eval(lCurve, lFac);
-                float lAdj = lCo.Y * 100.0f;
-
-                float aAdj = labSrc.A;
-                if (aRangeNonZero)
-                {
-                    float aFac = (aAdj - aMin) * aDenom;
-                    (Vec2 aCo, _) = Curve2.Eval(aCurve, aFac);
-                    aAdj = aCo.Y * aRange + aMin;
-                }
-
-                float bAdj = labSrc.B;
-                if (bRangeNonZero)
-                {
-                    float bFac = (bAdj - bMin) * bDenom;
-                    (Vec2 bCo, _) = Curve2.Eval(bCurve, bFac);
-                    bAdj = bCo.Y * bRange + bMin;
-                }
-
-                Lab labAdj = new(lAdj, aAdj, bAdj, labSrc.Alpha);
-                Rgb rgbAdj = Rgb.SrLab2ToStandard(labAdj);
-                srcToTrgRgb.Add(rgbSrc, rgbAdj);
-            }
-
-            for (int j = 0; j < srcLen; ++j)
-            {
-                target[j] = srcToTrgRgb[source[j]];
             }
         }
         return target;
@@ -2111,8 +2023,6 @@ public static class Pixels
         in Rgb fromColor, in Rgb toColor,
         in float tolerance = 0.0f)
     {
-        // TODO: Make Lab friendly version?
-
         if (tolerance <= 0.0f)
         {
             return Pixels.ReplaceColorExact(source, target, fromColor, toColor);
@@ -2800,12 +2710,12 @@ public static class Pixels
         {
             case Tone.Shadow:
                 return x =>
-                    {
-                        if (x <= 0.0f) { return 1.0f; }
-                        if (x >= 0.5f) { return 0.0f; }
-                        float y = 1.0f - 2.0f * x;
-                        return y * y * (3.0f - 2.0f * y);
-                    };
+                {
+                    if (x <= 0.0f) { return 1.0f; }
+                    if (x >= 0.5f) { return 0.0f; }
+                    float y = 1.0f - 2.0f * x;
+                    return y * y * (3.0f - 2.0f * y);
+                };
 
             case Tone.Midtone:
                 return x =>
@@ -2826,12 +2736,12 @@ public static class Pixels
 
             case Tone.Shadow | Tone.Midtone: /* 1 | 2 = 3 */
                 return x =>
-                    {
-                        if (x <= 0.0f) { return 1.0f; }
-                        if (x >= 0.75f) { return 0.0f; }
-                        float y = 1.0f - Utils.FourThirds * x;
-                        return y * y * (3.0f - 2.0f * y);
-                    };
+                {
+                    if (x <= 0.0f) { return 1.0f; }
+                    if (x >= 0.75f) { return 0.0f; }
+                    float y = 1.0f - Utils.FourThirds * x;
+                    return y * y * (3.0f - 2.0f * y);
+                };
 
             case Tone.Shadow | Tone.Highlight: /* 1 | 4 = 5 */
                 return x =>

@@ -130,7 +130,7 @@ public readonly struct Mat3 : IEquatable<Mat3>, IEnumerable
     /// <summary>
     /// The second column, or forward axis.
     /// </summary>
-    /// <returns>forward</returns>
+    /// <returns>forward axis/returns>
     public Vec3 Forward
     {
         get

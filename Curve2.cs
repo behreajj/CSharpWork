@@ -112,6 +112,17 @@ public class Curve2 : IEnumerable<Knot2>
     }
 
     /// <summary>
+    /// Creates a curve with a given number of knots.
+    /// </summary>
+    /// <param name="cl">closed loop</param>
+    /// <param name="count">count</param>
+    public Curve2(in bool cl, in int count)
+    {
+        this.closedLoop = cl;
+        this.Resize(count);
+    }
+
+    /// <summary>
     /// Returns a hash code representing this curve.
     /// </summary>
     /// <returns>hash code</returns>
@@ -885,6 +896,132 @@ public class Curve2 : IEnumerable<Knot2>
             prev.Coord,
             first.Coord,
             Utils.OneThird);
+
+        return target;
+    }
+
+    /// <summary>
+    /// Creates a rounded rectangle. The rounding is a factor,
+    /// expected to fall in the range [0.0, 1.0].
+    /// </summary>
+    /// <param name="target">target curve</param>
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
+    /// <param name="tl">top left corner rounding</param>
+    /// <param name="tr">top right corner rounding</param>
+    /// <param name="br">bottom right corner rounding</param>
+    /// <param name="bl">bottom left corner rounding</param>
+    /// <returns>rectangle</returns>
+    public static Curve2 Rect(
+        in Curve2 target,
+        in Vec2 lb, in Vec2 ub,
+        in float tl = 0.25f, in float tr = 0.25f,
+        in float br = 0.25f, in float bl = 0.25f)
+    {
+        float lbx = lb.X;
+        float lby = lb.Y;
+        float ubx = ub.X;
+        float uby = ub.Y;
+
+        // Validate corners.
+        float lft = MathF.Min(lbx, ubx);
+        float rgt = MathF.Max(lbx, ubx);
+        float btm = MathF.Min(lby, uby);
+        float top = MathF.Max(lby, uby);
+
+        // Protect from zero dimension curves.
+        float w = rgt - lft;
+        float h = top - btm;
+        bool wInval = w < Utils.Epsilon;
+        bool hInval = h < Utils.Epsilon;
+        if (wInval && hInval)
+        {
+            float cx = (lft + rgt) * 0.5f;
+            float cy = (top + btm) * 0.5f;
+            lft = cx - 0.5f;
+            rgt = cx + 0.5f;
+            btm = cy - 0.5f;
+            top = cy + 0.5f;
+        }
+        else if (wInval)
+        {
+            float cx = (lft + rgt) * 0.5f;
+            float hHalf = h * 0.5f;
+            lft = cx - hHalf;
+            rgt = cx + hHalf;
+        }
+        else if (hInval)
+        {
+            float cy = (top + btm) * 0.5f;
+            float wHalf = w * 0.5f;
+            btm = cy - wHalf;
+            top = cy + wHalf;
+        }
+
+        // Validate corner insetting.
+        // Half the short edge is the maximum size.
+        float se = 0.5f * MathF.Min(rgt - lft, top - btm);
+        float vtl = se * MathF.Min(MathF.Max(tl, 0.0f), 1.0f - Utils.Epsilon);
+        float vbl = se * MathF.Min(MathF.Max(bl, 0.0f), 1.0f - Utils.Epsilon);
+        float vbr = se * MathF.Min(MathF.Max(br, 0.0f), 1.0f - Utils.Epsilon);
+        float vtr = se * MathF.Min(MathF.Max(tr, 0.0f), 1.0f - Utils.Epsilon);
+
+        // Corners with zero rounding are a special case.
+        bool tl_is_round = vtl > 0.0f;
+        bool bl_is_round = vbl > 0.0f;
+        bool br_is_round = vbr > 0.0f;
+        bool tr_is_round = vtr > 0.0f;
+
+        // For calculating handle magnitude.
+        float vtlk = vtl * Utils.Kappa;
+        float vbrk = vbr * Utils.Kappa;
+        float vblk = vbl * Utils.Kappa;
+        float vtrk = vtr * Utils.Kappa;
+
+        // Calculate insets.
+        float btm_ins_0 = btm + vbr;
+        float top_ins_0 = top - vtr;
+        float rgt_ins_0 = rgt - vtr;
+        float lft_ins_0 = lft + vtl;
+        float top_ins_1 = top - vtl;
+        float btm_ins_1 = btm + vbl;
+        float lft_ins_1 = lft + vbl;
+        float rgt_ins_1 = rgt - vbr;
+
+        int kn_count = 4;
+        if (tl_is_round) { ++kn_count; }
+        if (bl_is_round) { ++kn_count; }
+        if (br_is_round) { ++kn_count; }
+        if (tr_is_round) { ++kn_count; }
+        target.Resize(kn_count);
+
+        float t_3 = Utils.TwoThirds;
+        float o_3 = Utils.OneThird;
+        int cursor = 0;
+        if (tl_is_round)
+        {
+            target.knots[cursor].Set(
+                lft_ins_0, top,
+                lft_ins_0 - vtlk, top,
+                t_3 * lft_ins_0 + o_3 * rgt_ins_0, top);
+            ++cursor;
+
+            target.knots[cursor].Set(
+                lft, top_ins_1,
+                lft, t_3 * top_ins_1 + o_3 * btm_ins_1,
+                lft, top_ins_1 + vtlk);
+            ++cursor;
+        }
+        else
+        {
+            target.knots[cursor].Set(
+                lft, top,
+                lft, t_3 * top + o_3 * btm_ins_1,
+                t_3 * lft + o_3 * rgt_ins_0, top);
+            ++cursor;
+        }
+
+        // TODO: Finish.
 
         return target;
     }

@@ -15,6 +15,34 @@ using System.Text;
 public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
 {
     /// <summary>
+    /// The lower bound for the a color channel of a color
+    /// converted from standard RGB to SR LAB 2, sampled
+    /// without respect for lightness.
+    /// </summary>
+    public const float AbsMinA = -82.70919f;
+
+    /// <summary>
+    /// The upper bound for the a color channel of a color
+    /// converted from standard RGB to SR LAB 2, sampled
+    /// without respect for lightness.
+    /// </summary>
+    public const float AbsMaxA = 104.18851f;
+
+    /// <summary>
+    /// The lower bound for the b color channel of a color
+    /// converted from standard RGB to SR LAB 2, sampled
+    /// without respect for lightness.
+    /// </summary>
+    public const float AbsMinB = -110.47817f;
+
+    /// <summary>
+    /// The upper bound for the b color channel of a color
+    /// converted from standard RGB to SR LAB 2, sampled
+    /// without respect for lightness.
+    /// </summary>
+    public const float AbsMaxB = 94.90346f;
+
+    /// <summary>
     /// A scalar to convert a number in [0, 255] to
     /// lightness in [0, 100]. Equivalent to 100.0 / 255.0.
     /// </summary>
@@ -25,6 +53,54 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// a number in [0, 255]. Equivalent to 255.0 / 100.0.
     /// </summary>
     public const float LTo255 = 2.55f;
+
+    /// <summary>
+    /// The scalar used to normalize the A channel in 
+    /// SR LCH 2 to a range [0.0, 1.0]. Equivalent to
+    /// 0.5 / max(abs(AbsMinA), abs(AbsMinA)). Takes the
+    /// larger number to center the range at 0.
+    /// </summary>
+    public const float NormDenomA = 0.004798994f;
+
+    /// <summary>
+    /// The offset added to normalize the A channel in 
+    /// SR LCH 2 to a range [0.0, 1.0]. Equivalent to
+    /// max(abs(AbsMinA), abs(AbsMinA). Takes the larger
+    /// number so as to center the range at 0.
+    /// </summary>
+    public const float NormOffsetA = 104.18851f;
+
+    /// <summary>
+    /// The scalar used to restore the A channel in 
+    /// SR LCH 2 from a range [0.0, 1.0]. Equivalent to
+    /// 2.0 * max(abs(AbsMinA), abs(AbsMinA)). Takes the
+    /// larger number so as to center the range at 0.
+    /// </summary>
+    public const float NormScaleA = 208.37701f;
+
+    /// <summary>
+    /// The scalar used to normalize the B channel in 
+    /// SR LCH 2 to a range [0.0, 1.0]. Equivalent to
+    /// 0.5 / max(abs(AbsMinB), abs(AbsMinB)). Takes the
+    /// larger number to center the range at 0.
+    /// </summary>
+    public const float NormDenomB = 0.004525781f;
+
+    /// <summary>
+    /// The offset added to normalize the B channel in 
+    /// SR LCH 2 to a range [0.0, 1.0]. Equivalent to
+    /// max(abs(AbsMinB), abs(AbsMinB). Takes the larger
+    /// number so as to center the range at 0.
+    /// </summary>
+    public const float NormOffsetB = 110.47817f;
+
+    /// <summary>
+    /// The scalar used to restore the B channel in 
+    /// SR LCH 2 from a range [0.0, 1.0]. Equivalent to
+    /// 2.0 * max(abs(AbsMinB), abs(AbsMinB)). Takes the
+    /// larger number so as to center the range at 0.
+    /// </summary>
+    public const float NormScaleB = 220.95634f;
 
     /// <summary>
     /// The green-magenta component.
@@ -490,6 +566,34 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
             (float)(663.4684d * x - 750.5078d * y + 87.0328d * z),
             (float)(63.9569d * x + 108.4576d * y - 172.4152d * z),
             v.W);
+    }
+
+    /// <summary>
+    /// Finds the complementary color harmony for the color.
+    /// Returns an array containing one color.
+    /// </summary>
+    /// <param name="a">LAB color</param>
+    /// <returns>complement</returns>
+    public static Lab[] HarmonyComplement(in Lab a)
+    {
+        return new Lab[] { 
+            new(100.0f - a.l, -a.a, -a.b, a.alpha)
+        };
+    }
+
+    /// <summary>
+    /// Finds the square color harmonies for the color.
+    /// Returns an array containing three colors.
+    /// </summary>
+    /// <param name="a">LAB color</param>
+    /// <returns>square</returns>
+    public static Lab[] HarmonySquare(in Lab a)
+    {
+        return new Lab[] { 
+            new(50.0f, -a.b, a.a, a.alpha),
+            new(100.0f - a.l, -a.a, -a.b, a.alpha),
+            new(50.0f, a.b, -a.a, a.alpha)
+        };
     }
 
     /// <summary>

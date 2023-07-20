@@ -207,7 +207,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// The second column, or forward axis.
     /// </summary>
-    /// <returns>forward</returns>
+    /// <returns>forward axis</returns>
     public Vec4 Forward
     {
         get
@@ -219,7 +219,7 @@ public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
     /// <summary>
     /// The third column, or up axis.
     /// </summary>
-    /// <returns>up</returns>
+    /// <returns>up axis</returns>
     public Vec4 Up
     {
         get

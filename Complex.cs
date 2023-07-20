@@ -125,7 +125,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// with the IEquatable interface. For approximate equality with another
     /// complex number, use the static approx function instead.
     /// </summary>
-    /// <param name="v">vector</param>
+    /// <param name="z">complex number</param>
     /// <returns>equivalence</returns>
     public bool Equals(Complex z)
     {
@@ -658,6 +658,6 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <summary>
     /// Returns a complex number with all components set to zero.
     /// </summary>
-    /// <value>the vector</value>
+    /// <value>zero</value>
     public static Complex Zero { get { return new(0.0f, 0.0f); } }
 }

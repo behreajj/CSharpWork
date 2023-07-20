@@ -9,13 +9,19 @@ public static class UnityBridge
 {
     /// <summary>
     /// Converts from a Unity AnimationCurve to a Curve2.
+    /// If appendStems flag is true, then adds horizontal
+    /// segments in cases where the first key's time is
+    /// greater than zero or the last key's time is less
+    /// than one.
     /// </summary>
     /// <param name="source">animation curve</param>
     /// <param name="tanLimit">tangent limit</param>
+    /// <param name="appendStems">append stems</param>
     /// <returns>conversion</returns>
     public static Curve2 FromAnimationCurve(
         in AnimationCurve source,
-        in float tanLimit = 1000.0f)
+        in float tanLimit = 1000.0f,
+        in bool appendStems = true)
     {
         // https://answers.unity.com/questions/623318/how-to-convert-cubic-bezier-curve-into-animationcu.html
         // https://math.stackexchange.com/questions/3210725/weighting-a-cubic-hermite-spline
@@ -26,7 +32,7 @@ public static class UnityBridge
 
         Keyframe firstFrame = keys[0];
         float firstTime = firstFrame.time;
-        if (firstTime > 0.0f)
+        if (appendStems && firstTime > 0.0f)
         {
             float firstValue = firstFrame.value;
             float x = Utils.Mix(0.0f, firstTime, Utils.OneThird);
@@ -103,7 +109,7 @@ public static class UnityBridge
 
         Keyframe lastFrame = keys[^1];
         float lastTime = lastFrame.time;
-        if (lastTime < 1.0f)
+        if (appendStems && lastTime < 1.0f)
         {
             float lastValue = lastFrame.value;
             float x = Utils.Mix(1.0f, lastTime, Utils.OneThird);

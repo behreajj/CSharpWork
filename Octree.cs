@@ -641,7 +641,7 @@ public class Octree
     /// the summed capacities of its children.
     /// </summary>
     /// <param name="o">octree</param>
-    /// <returns>sum</returns>
+    /// <returns>capacity</returns>
     public static int TotalCapacity(in Octree o)
     {
         if (Octree.IsLeaf(o)) { return o.capacity; }

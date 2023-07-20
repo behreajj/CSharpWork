@@ -52,9 +52,9 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
         in float xMax, in float yMax, in float zMax)
     {
         // This used to verify each bounds to be nonzero with
-        // a positive area, but that prevented bounds from
+        // a positive volume, but that prevented bounds from
         // signalling that an intersection had a potentially
-        // negative area.
+        // negative volume.
         this.min = new(xMin, yMin, zMin);
         this.max = new(xMax, yMax, zMax);
     }
@@ -619,9 +619,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     }
 
     /// <summary>
-    /// Returns a boundary encompassing the LAB color space, with a
-    /// minimum at (-111.0, -111.0, -1.0) and a maximum of (111.0, 111.0,
-    /// 101.0).
+    /// Returns a boundary encompassing the LAB color space.
     /// </summary>
     /// <value>bounds</value>
     public static Bounds3 Lab

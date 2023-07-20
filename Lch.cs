@@ -14,6 +14,17 @@ using System.Text;
 public readonly struct Lch
 {
     /// <summary>
+    /// The upper bound for the chroma of a color
+    /// converted from standard RGB to SR LCH, sampled
+    /// without respect for lightness.
+    /// </summary>
+    public const float AbsMaxC = 119.07602f;
+
+    /// Denominator used when normalizing the chroma of
+    /// a color in SR LCH. Equivalent to 1.0 / AbsMaxC.
+    public const float NormDenomC = 0.008397996f;
+
+    /// <summary>
     /// The alpha (transparency) component.
     /// </summary>
     private readonly float alpha;
@@ -159,6 +170,111 @@ public readonly struct Lch
             c: chroma,
             h: hue,
             alpha: alpha);
+    }
+
+    /// <summary>
+    /// Finds the analogous color harmonies for the color.
+    /// Returns an array containing two colors.
+    /// </summary>
+    /// <param name="a">LCH color</param>
+    /// <returns>analogies</returns>
+    public static (Lch, Lch) HarmonyAnalogous(in Lch a)
+    {
+        float lAna = (a.l * 2.0f + 50.0f) / 3.0f;
+        float h30 = a.h + 0.08333333333333f;
+        float h330 = a.h - 0.08333333333333f;
+        return (
+            new(lAna, a.c, h30 - MathF.Floor(h30), a.alpha),
+            new(lAna, a.c, h330 - MathF.Floor(h330), a.alpha));
+    }
+
+    /// <summary>
+    /// Finds the complementary color harmony for the color.
+    /// Returns an array containing one color.
+    /// </summary>
+    /// <param name="a">LCH color</param>
+    /// <returns>complement</returns>
+    public static Lch[] HarmonyComplement(in Lch a)
+    {
+        float lCmp = 100.0f - a.l;
+        float h180 = a.h + 0.5f;
+        return new Lch[] { 
+            new(lCmp, a.c, h180 - MathF.Floor(h180), a.alpha)
+        };
+    }
+
+    /// <summary>
+    /// Finds the split color harmonies for the color.
+    /// Returns an array containing two colors.
+    /// </summary>
+    /// <param name="a">LCH color</param>
+    /// <returns>split</returns>
+    public static Lch[] HarmonySplit(in Lch a)
+    {
+        float lSpl = (250.0f - a.l * 2.0f) / 3.0f;
+        float h150 = a.h + 0.41666666666667f;
+        float h210 = a.h - 0.41666666666667f;
+        return new Lch[] {
+            new(lSpl, a.c, h150 - MathF.Floor(h150), a.alpha),
+            new(lSpl, a.c, h210 - MathF.Floor(h210), a.alpha)
+        };
+    }
+
+    /// <summary>
+    /// Finds the square color harmonies for the color.
+    /// Returns an array containing three colors.
+    /// </summary>
+    /// <param name="a">LCH color</param>
+    /// <returns>square</returns>
+    public static Lch[] HarmonySquare(in Lch a)
+    {
+        float lCmp = 100.0f - a.l;
+        float h90 = a.h + 0.25f;
+        float h180 = a.h + 0.5f;
+        float h270 = a.h - 0.25f;
+        return new Lch[] {
+            new(50.0f, a.c, h90 - MathF.Floor(h90), a.alpha),
+            new(lCmp, a.c, h180 - MathF.Floor(h180), a.alpha),
+            new(50.0f, a.c, h270 - MathF.Floor(h270), a.alpha)
+        };
+    }
+
+    /// <summary>
+    /// Finds the tetradic color harmonies for the color.
+    /// Returns an array containing three colors.
+    /// </summary>
+    /// <param name="a">LCH color</param>
+    /// <returns>tetrad</returns>
+    public static Lch[] HarmonyTetradic(in Lch a)
+    {
+        float lTri = (200.0f - a.l) / 3.0f;
+        float lCmp = 100.0f - a.l;
+        float lTet = (100.0f + a.l) / 3.0f;
+        float h120 = a.h + Utils.OneThird;
+        float h180 = a.h + 0.5f;
+        float h300 = a.h - 0.16666666666667f;
+        return new Lch[] {
+            new(lTri, a.c, h120 - MathF.Floor(h120), a.alpha),
+            new(lCmp, a.c, h180 - MathF.Floor(h180), a.alpha),
+            new(lTet, a.c, h300 - MathF.Floor(h300), a.alpha)
+        };
+    }
+
+    /// <summary>
+    /// Finds the triadic color harmonies for the color.
+    /// Returns an array containing two colors.
+    /// </summary>
+    /// <param name="a">LCH color</param>
+    /// <returns>triad</returns>
+    public static Lch[] HarmonyTriadic(in Lch a)
+    {
+        float lTri = (200.0f - a.l) / 3.0f;
+        float h120 = a.h + Utils.OneThird;
+        float h240 = a.h - Utils.OneThird;
+        return new Lch[] {
+            new(lTri, a.c, h120 - MathF.Floor(h120), a.alpha),
+            new(lTri, a.c, h240 - MathF.Floor(h240), a.alpha)
+        };
     }
 
     /// <summary>

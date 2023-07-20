@@ -110,6 +110,17 @@ public class Curve3 : IEnumerable<Knot3>
     }
 
     /// <summary>
+    /// Creates a curve with a given number of knots.
+    /// </summary>
+    /// <param name="cl">closed loop</param>
+    /// <param name="count">count</param>
+    public Curve3(in bool cl, in int count)
+    {
+        this.closedLoop = cl;
+        this.Resize(count);
+    }
+
+    /// <summary>
     /// Returns a hash code representing this curve.
     /// </summary>
     /// <returns>hash code</returns>

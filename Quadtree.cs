@@ -112,7 +112,7 @@ public class Quadtree
     }
 
     /// <summary>
-    /// Constructs an octree with a boundary and capacity.
+    /// Constructs a quadtree with a boundary and capacity.
     /// </summary>
     /// <param name="bounds">bounds</param>
     /// <param name="capacity">capacity</param>
@@ -343,7 +343,7 @@ public class Quadtree
     /// <summary>
     /// Counts the number of points held by the leaf nodes.
     /// </summary>
-    /// <param name="o">octree</param>
+    /// <param name="q">quadtree</param>
     /// <returns>sum</returns>
     public static int CountPoints(in Quadtree q)
     {
@@ -367,9 +367,9 @@ public class Quadtree
         in int capacity = Quadtree.DefaultCapacity)
     {
         Bounds2 b = Bounds2.FromPoints(points);
-        Quadtree o = new(b, capacity);
-        o.InsertAll(points);
-        return o;
+        Quadtree q = new(b, capacity);
+        q.InsertAll(points);
+        return q;
     }
 
     /// <summary>
@@ -619,7 +619,7 @@ public class Quadtree
     /// the summed capacities of its children.
     /// </summary>
     /// <param name="q">quadtree</param>
-    /// <returns>sum</returns>
+    /// <returns>capacity</returns>
     public static int TotalCapacity(in Quadtree q)
     {
         if (Quadtree.IsLeaf(q)) { return q.capacity; }
