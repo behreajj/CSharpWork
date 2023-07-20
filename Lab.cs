@@ -569,6 +569,32 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
+    /// Finds the analogous color harmonies for the color.
+    /// Returns an array containing two colors.
+    /// </summary>
+    /// <param name="a">LAB color</param>
+    /// <returns>analogues</returns>
+    public static Lab[] HarmonyAnalogous(in Lab a)
+    {
+        float lAna = (a.l * 2.0f + 50.0f) / 3.0f;
+
+        float cos30 = Utils.Sqrt32;
+        float sin30 = 0.5f;
+        float a30 = cos30 * a.a - sin30 * a.b;
+        float b30 = cos30 * a.b + sin30 * a.a;
+
+        float cos330 = Utils.Sqrt32;
+        float sin330 = -0.5f;
+        float a330 = cos330 * a.a - sin330 * a.b;
+        float b330 = cos330 * a.b + sin330 * a.a;
+
+        return new Lab[] {
+            new(lAna, a30, b30, a.alpha),
+            new(lAna, a330, b330, a.alpha)
+        };
+    }
+
+    /// <summary>
     /// Finds the complementary color harmony for the color.
     /// Returns an array containing one color.
     /// </summary>
@@ -578,6 +604,32 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     {
         return new Lab[] { 
             new(100.0f - a.l, -a.a, -a.b, a.alpha)
+        };
+    }
+
+    /// <summary>
+    /// Finds the split color harmonies for the color.
+    /// Returns an array containing two colors.
+    /// </summary>
+    /// <param name="a">LAB color</param>
+    /// <returns>split</returns>
+    public static Lab[] HarmonySplit(in Lab a)
+    {
+        float lSpl = (250.0f - a.l * 2.0f) / 3.0f;
+
+        float cos150 = -Utils.Sqrt32;
+        float sin150 = 0.5f;
+        float a150 = cos150 * a.a - sin150 * a.b;
+        float b150 = cos150 * a.b + sin150 * a.a;
+
+        float cos210 = -Utils.Sqrt32;
+        float sin210 = -0.5f;
+        float a210 = cos210 * a.a - sin210 * a.b;
+        float b210 = cos210 * a.b + sin210 * a.a;
+
+        return new Lab[] {
+            new(lSpl, a150, b150, a.alpha),
+            new(lSpl, a210, b210, a.alpha)
         };
     }
 
@@ -593,6 +645,64 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
             new(50.0f, -a.b, a.a, a.alpha),
             new(100.0f - a.l, -a.a, -a.b, a.alpha),
             new(50.0f, a.b, -a.a, a.alpha)
+        };
+    }
+
+    /// <summary>
+    /// Finds the tetradic color harmonies for the color.
+    /// Returns an array containing three colors.
+    /// </summary>
+    /// <param name="a">LAB color</param>
+    /// <returns>tetrad</returns>
+    public static Lab[] HarmonyTetradic(in Lab a)
+    {
+        float lTri = (200.0f - a.l) / 3.0f;
+        float lCmp = 100.0f - a.l;
+        float lTet = (100.0f + a.l) / 3.0f;
+
+        float cos120 = -0.5f;
+        float sin120 = Utils.Sqrt32;
+        float a120 = cos120 * a.a - sin120 * a.b;
+        float b120 = cos120 * a.b + sin120 * a.a;
+
+        float cos300 = 0.5f;
+        float sin300 = -Utils.Sqrt32;
+        float a300 = cos300 * a.a - sin300 * a.b;
+        float b300 = cos300 * a.b + sin300 * a.a;
+
+        return new Lab[] {
+            new(lTri, a120, b120, a.alpha),
+            new(lCmp, -a.a, -a.b, a.alpha),
+            new(lTet, a300, b300, a.alpha)
+        };
+    }
+
+    /// <summary>
+    /// Finds the triadic color harmonies for the color.
+    /// Returns an array containing two colors.
+    /// </summary>
+    /// <param name="a">LAB color</param>
+    /// <returns>triad</returns>
+    public static Lab[] HarmonyTriadic(in Lab a)
+    {
+        // cosa * a - sina * b,
+        // cosa * b + sina * a
+        // cos(a) == cos(-a), sin(a) == -sin(-a)
+        float lTri = (200.0f - a.l) / 3.0f;
+        
+        float cos120 = -0.5f;
+        float sin120 = Utils.Sqrt32;
+        float a120 = cos120 * a.a - sin120 * a.b;
+        float b120 = cos120 * a.b + sin120 * a.a;
+        
+        float cos240 = -0.5f;
+        float sin240 = -Utils.Sqrt32;
+        float a240 = cos240 * a.a - sin240 * a.b;
+        float b240 = cos240 * a.b + sin240 * a.a;
+        
+        return new Lab[] {
+            new(lTri, a120, b120, a.alpha),
+            new(lTri, a240, b240, a.alpha)
         };
     }
 
