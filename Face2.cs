@@ -27,7 +27,7 @@ public readonly struct Face2 : IComparable<Face2>, IEquatable<Face2>
     public int Length { get { return this.edges.Length; } }
 
     /// <summary>
-    /// Gets an edge at i. Wraps around, so
+    /// Gets an edge at an index. Wraps around, so
     /// negative indices may be used.
     /// </summary>
     /// <value>the edge</value>

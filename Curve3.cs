@@ -16,14 +16,14 @@ public class Curve3 : IEnumerable<Knot3>
     protected bool closedLoop = false;
 
     /// <summary>
-    ///  The list of knots contained by the curve.
+    /// The list of knots contained by the curve.
     /// </summary>
     protected readonly List<Knot3> knots = new();
 
     /// <summary>
     /// A flag for whether or not the curve is a closed loop.
     /// </summary>
-    /// <value>the closed loop flag</value>
+    /// <value>closed loop flag</value>
     public bool ClosedLoop
     {
         get
@@ -40,7 +40,7 @@ public class Curve3 : IEnumerable<Knot3>
     /// <summary>
     /// Gets the knots of this curve, copied to an array.
     /// </summary>
-    /// <value>the knots</value>
+    /// <value>knots</value>
     public Knot3[] Knots
     {
         get
@@ -699,105 +699,6 @@ public class Curve3 : IEnumerable<Knot3>
     }
 
     /// <summary>
-    /// Sets a curve to an array of colors.
-    /// </summary>
-    /// <param name="target">target curve</param>
-    /// <param name="colors">colors</param>
-    /// <param name="model">color model</param>
-    /// <param name="closedLoop">closed loop</param>
-    /// <returns>curve</returns>
-    public static Curve3 FromColors(
-        in Curve3 target,
-        in Rgb[] colors,
-        in ClrModel model = ClrModel.SrLab,
-        in bool closedLoop = false)
-    {
-        int len = colors.Length;
-        if (len < 2) { return target; }
-
-        target.Resize(len);
-        target.closedLoop = closedLoop;
-        List<Knot3> knots = target.knots;
-
-        switch (model)
-        {
-            case ClrModel.Standard:
-                {
-                    for (int i = 0; i < len; ++i)
-                    {
-                        Rgb c = colors[i];
-                        Vec3 v = new(c.R, c.G, c.B);
-                        Knot3 kn = knots[i];
-                        kn.Coord = v;
-                        kn.ForeHandle = v;
-                        kn.RearHandle = v;
-                    }
-                }
-                break;
-            case ClrModel.Linear:
-                {
-                    for (int i = 0; i < len; ++i)
-                    {
-                        Rgb c = colors[i];
-                        Rgb l = Rgb.StandardToLinear(c);
-                        Vec3 v = new(l.R, l.G, l.B);
-                        Knot3 kn = knots[i];
-                        kn.Coord = v;
-                        kn.ForeHandle = v;
-                        kn.RearHandle = v;
-                    }
-                }
-                break;
-            case ClrModel.SrXyz:
-                {
-                    for (int i = 0; i < len; ++i)
-                    {
-                        Rgb c = colors[i];
-                        Rgb l = Rgb.StandardToLinear(c);
-                        Vec4 xyza = Rgb.LinearToSrXyz(l);
-                        Vec3 v = xyza.XYZ;
-                        Knot3 kn = knots[i];
-                        kn.Coord = v;
-                        kn.ForeHandle = v;
-                        kn.RearHandle = v;
-                    }
-                }
-                break;
-            case ClrModel.Normal:
-                {
-                    for (int i = 0; i < len; ++i)
-                    {
-                        Rgb c = colors[i];
-                        Vec3 v = Vec3.FromColor(c);
-                        Knot3 kn = knots[i];
-                        kn.Coord = v;
-                        kn.ForeHandle = v;
-                        kn.RearHandle = v;
-                    }
-                }
-                break;
-            case ClrModel.SrLch:
-            case ClrModel.SrLab:
-            default:
-                {
-                    for (int i = 0; i < len; ++i)
-                    {
-                        Rgb c = colors[i];
-                        Lab lab = Rgb.StandardToSrLab2(c);
-                        Vec3 v = new(x: lab.A, y: lab.B, z: lab.L);
-                        Knot3 kn = knots[i];
-                        kn.Coord = v;
-                        kn.ForeHandle = v;
-                        kn.RearHandle = v;
-                    }
-                }
-                break;
-        }
-
-        return len < 3 ? Curve3.StraightHandles(target) : Curve3.SmoothHandles(target);
-    }
-
-    /// <summary>
     /// Sets a curve to a series of points.
     /// </summary>
     /// <param name="target">target curve</param>
@@ -933,7 +834,10 @@ public class Curve3 : IEnumerable<Knot3>
     /// <param name="c">curve</param>
     /// <param name="places">number of places</param>
     /// <returns>string</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in Curve3 c, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Curve3 c,
+        in int places = 4)
     {
         List<Knot3> knots = c.knots;
         int len = knots.Count;

@@ -15,14 +15,14 @@ public class Curve2 : IEnumerable<Knot2>
     protected bool closedLoop = false;
 
     /// <summary>
-    ///  The list of knots contained by the curve.
+    /// The list of knots contained by the curve.
     /// </summary>
     protected readonly List<Knot2> knots = new();
 
     /// <summary>
     /// A flag for whether or not the curve is a closed loop.
     /// </summary>
-    /// <value>the closed loop flag</value>
+    /// <value>closed loop flag</value>
     public bool ClosedLoop
     {
         get
@@ -39,7 +39,7 @@ public class Curve2 : IEnumerable<Knot2>
     /// <summary>
     /// Gets the knots of this curve, copied to an array.
     /// </summary>
-    /// <value>the knots</value>
+    /// <value>knots</value>
     public Knot2[] Knots
     {
         get
@@ -1081,7 +1081,10 @@ public class Curve2 : IEnumerable<Knot2>
     /// <param name="c">curve</param>
     /// <param name="places">number of places</param>
     /// <returns>string</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in Curve2 c, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Curve2 c,
+        in int places = 4)
     {
         List<Knot2> knots = c.knots;
         int len = knots.Count;

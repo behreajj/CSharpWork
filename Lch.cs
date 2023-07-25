@@ -142,6 +142,40 @@ public readonly struct Lch
     }
 
     /// <summary>
+    /// Attempts to fit an LCH color to gamut by iteratively
+    /// reducing its chroma until its standard RGB representation
+    /// has channels within gamut.
+    /// </summary>
+    /// <param name="c">LCH color</param>
+    /// <param name="step">chroma step</param>
+    /// <returns>fitted color</returns>
+    public static Lch FitToGamut(
+        in Lch c,
+        in float step = 0.25f)
+    {
+        float stepVrf = MathF.Max(Utils.Epsilon, MathF.Abs(step));
+
+        float lTrg = Utils.Clamp(c.l, 0.0f, 100.0f);
+        float cTrg = MathF.Max(0.0f, c.c);
+        float hTrg = c.h - MathF.Floor(c.h);
+        float alphaTrg = Utils.Clamp(c.alpha, 0.0f, 1.0f);
+        Lch target = new(lTrg, cTrg, hTrg, alphaTrg);
+
+        while (cTrg > 0.0f)
+        {
+            Rgb srgb = Rgb.SrLchToStandard(target);
+            if (Rgb.IsInGamut(srgb))
+            {
+                return target;
+            }
+
+            cTrg -= stepVrf;
+            target = new(lTrg, cTrg, hTrg, alphaTrg);
+        }
+        return new(lTrg, 0.0f, hTrg, alphaTrg);
+    }
+
+    /// <summary>
     /// Converts a color from LAB to LCH. If the chroma is near
 	/// zero, then the hue is set to zero.
     /// </summary>
@@ -176,18 +210,18 @@ public readonly struct Lch
     /// Finds the analogous color harmonies for the color.
     /// Returns an array containing two colors.
     /// </summary>
-    /// <param name="a">LCH color</param>
+    /// <param name="c">LCH color</param>
     /// <returns>analogues</returns>
-    public static Lch[] HarmonyAnalogous(in Lch a)
+    public static Lch[] HarmonyAnalogous(in Lch c)
     {
-        float lAna = (a.l * 2.0f + 50.0f) / 3.0f;
+        float lAna = (c.l * 2.0f + 50.0f) / 3.0f;
 
-        float h30 = a.h + 0.08333333333333f;
-        float h330 = a.h - 0.08333333333333f;
+        float h30 = c.h + 0.083333333f;
+        float h330 = c.h - 0.083333333f;
 
         return new Lch[] {
-            new(lAna, a.c, h30 - MathF.Floor(h30), a.alpha),
-            new(lAna, a.c, h330 - MathF.Floor(h330), a.alpha)
+            new(lAna, c.c, h30 - MathF.Floor(h30), c.alpha),
+            new(lAna, c.c, h330 - MathF.Floor(h330), c.alpha)
         };
     }
 
@@ -195,16 +229,16 @@ public readonly struct Lch
     /// Finds the complementary color harmony for the color.
     /// Returns an array containing one color.
     /// </summary>
-    /// <param name="a">LCH color</param>
+    /// <param name="c">LCH color</param>
     /// <returns>complement</returns>
-    public static Lch[] HarmonyComplement(in Lch a)
+    public static Lch[] HarmonyComplement(in Lch c)
     {
-        float lCmp = 100.0f - a.l;
+        float lCmp = 100.0f - c.l;
 
-        float h180 = a.h + 0.5f;
+        float h180 = c.h + 0.5f;
 
-        return new Lch[] { 
-            new(lCmp, a.c, h180 - MathF.Floor(h180), a.alpha)
+        return new Lch[] {
+            new(lCmp, c.c, h180 - MathF.Floor(h180), c.alpha)
         };
     }
 
@@ -212,18 +246,18 @@ public readonly struct Lch
     /// Finds the split color harmonies for the color.
     /// Returns an array containing two colors.
     /// </summary>
-    /// <param name="a">LCH color</param>
+    /// <param name="c">LCH color</param>
     /// <returns>split</returns>
-    public static Lch[] HarmonySplit(in Lch a)
+    public static Lch[] HarmonySplit(in Lch c)
     {
-        float lSpl = (250.0f - a.l * 2.0f) / 3.0f;
+        float lSpl = (250.0f - c.l * 2.0f) / 3.0f;
 
-        float h150 = a.h + 0.41666666666667f;
-        float h210 = a.h - 0.41666666666667f;
+        float h150 = c.h + 0.41666667f;
+        float h210 = c.h - 0.41666667f;
 
         return new Lch[] {
-            new(lSpl, a.c, h150 - MathF.Floor(h150), a.alpha),
-            new(lSpl, a.c, h210 - MathF.Floor(h210), a.alpha)
+            new(lSpl, c.c, h150 - MathF.Floor(h150), c.alpha),
+            new(lSpl, c.c, h210 - MathF.Floor(h210), c.alpha)
         };
     }
 
@@ -231,20 +265,20 @@ public readonly struct Lch
     /// Finds the square color harmonies for the color.
     /// Returns an array containing three colors.
     /// </summary>
-    /// <param name="a">LCH color</param>
+    /// <param name="c">LCH color</param>
     /// <returns>square</returns>
-    public static Lch[] HarmonySquare(in Lch a)
+    public static Lch[] HarmonySquare(in Lch c)
     {
-        float lCmp = 100.0f - a.l;
+        float lCmp = 100.0f - c.l;
 
-        float h90 = a.h + 0.25f;
-        float h180 = a.h + 0.5f;
-        float h270 = a.h - 0.25f;
+        float h90 = c.h + 0.25f;
+        float h180 = c.h + 0.5f;
+        float h270 = c.h - 0.25f;
 
         return new Lch[] {
-            new(50.0f, a.c, h90 - MathF.Floor(h90), a.alpha),
-            new(lCmp, a.c, h180 - MathF.Floor(h180), a.alpha),
-            new(50.0f, a.c, h270 - MathF.Floor(h270), a.alpha)
+            new(50.0f, c.c, h90 - MathF.Floor(h90), c.alpha),
+            new(lCmp, c.c, h180 - MathF.Floor(h180), c.alpha),
+            new(50.0f, c.c, h270 - MathF.Floor(h270), c.alpha)
         };
     }
 
@@ -252,22 +286,22 @@ public readonly struct Lch
     /// Finds the tetradic color harmonies for the color.
     /// Returns an array containing three colors.
     /// </summary>
-    /// <param name="a">LCH color</param>
+    /// <param name="c">LCH color</param>
     /// <returns>tetrad</returns>
-    public static Lch[] HarmonyTetradic(in Lch a)
+    public static Lch[] HarmonyTetradic(in Lch c)
     {
-        float lTri = (200.0f - a.l) / 3.0f;
-        float lCmp = 100.0f - a.l;
-        float lTet = (100.0f + a.l) / 3.0f;
+        float lTri = (200.0f - c.l) / 3.0f;
+        float lCmp = 100.0f - c.l;
+        float lTet = (100.0f + c.l) / 3.0f;
 
-        float h120 = a.h + Utils.OneThird;
-        float h180 = a.h + 0.5f;
-        float h300 = a.h - 0.16666666666667f;
+        float h120 = c.h + Utils.OneThird;
+        float h180 = c.h + 0.5f;
+        float h300 = c.h - 0.16666667f;
 
         return new Lch[] {
-            new(lTri, a.c, h120 - MathF.Floor(h120), a.alpha),
-            new(lCmp, a.c, h180 - MathF.Floor(h180), a.alpha),
-            new(lTet, a.c, h300 - MathF.Floor(h300), a.alpha)
+            new(lTri, c.c, h120 - MathF.Floor(h120), c.alpha),
+            new(lCmp, c.c, h180 - MathF.Floor(h180), c.alpha),
+            new(lTet, c.c, h300 - MathF.Floor(h300), c.alpha)
         };
     }
 
@@ -275,18 +309,18 @@ public readonly struct Lch
     /// Finds the triadic color harmonies for the color.
     /// Returns an array containing two colors.
     /// </summary>
-    /// <param name="a">LCH color</param>
+    /// <param name="c">LCH color</param>
     /// <returns>triad</returns>
-    public static Lch[] HarmonyTriadic(in Lch a)
+    public static Lch[] HarmonyTriadic(in Lch c)
     {
-        float lTri = (200.0f - a.l) / 3.0f;
+        float lTri = (200.0f - c.l) / 3.0f;
 
-        float h120 = a.h + Utils.OneThird;
-        float h240 = a.h - Utils.OneThird;
+        float h120 = c.h + Utils.OneThird;
+        float h240 = c.h - Utils.OneThird;
 
         return new Lch[] {
-            new(lTri, a.c, h120 - MathF.Floor(h120), a.alpha),
-            new(lTri, a.c, h240 - MathF.Floor(h240), a.alpha)
+            new(lTri, c.c, h120 - MathF.Floor(h120), c.alpha),
+            new(lTri, c.c, h240 - MathF.Floor(h240), c.alpha)
         };
     }
 
@@ -385,6 +419,67 @@ public readonly struct Lch
     public static bool None(in Lch c)
     {
         return c.alpha <= 0.0f;
+    }
+
+    /// <summary>
+    /// Finds an array of colors suitable for shading with the base.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <param name="count">count</param>
+    /// <param name="chromaStep">chromaStep</param>
+    /// <returns>shades</returns>
+    public static Lch[] Shades(
+        in Lch c,
+        in int count = 7,
+        in float lightStep = 31.25f,
+        in float chromaStep = 5.0f,
+        in float hueStep = 0.5f)
+    {
+        float hueStepVrf = MathF.Max(0.0f, MathF.Abs(hueStep));
+        float chromaStepVrf = MathF.Max(0.0f, MathF.Abs(chromaStep));
+        float lightStepVrf = MathF.Max(0.0f, MathF.Abs(lightStep));
+        int countVrf = count < 3 ? 3 : count;
+
+        float hViolet = 0.80922841685655f + Utils.Epsilon;
+        float hYellow = hViolet - 0.5f;
+
+        float minLight = MathF.Max(0.25f, c.l - lightStepVrf);
+        float maxLight = MathF.Min(99.75f, c.l + lightStepVrf);
+        float midLight = (minLight + maxLight) * 0.5f;
+        float minChromaShd = MathF.Max(0.0f, c.c - chromaStepVrf);
+        float minChromaLgt = MathF.Max(0.0f, c.c - chromaStepVrf);
+        float toShdFac = MathF.Abs(50.0f - minLight) * 0.02f;
+        float toLgtFac = MathF.Abs(50.0f - maxLight) * 0.02f;
+
+        float shdHue = Utils.LerpAngleNear(c.h, hViolet,
+            hueStepVrf * toShdFac, 1.0f);
+        float lgtHue = Utils.LerpAngleNear(c.h, hYellow,
+            hueStepVrf * toLgtFac, 1.0f);
+
+        float shdCrm = Utils.Mix(c.c, minChromaShd, toShdFac);
+        float lgtCrm = Utils.Mix(c.c, minChromaLgt, toLgtFac);
+
+        Lab labShd = Lab.FromLch(new(minLight, shdCrm, shdHue, c.alpha));
+        Lab labKey = Lab.FromLch(new(midLight, c.c, c.h, c.alpha));
+        Lab labLgt = Lab.FromLch(new(maxLight, lgtCrm, lgtHue, c.alpha));
+
+        Curve3 curve = new(false, 3);
+        Curve3.FromLinear(curve, new Vec3[] {
+                new(labShd.A, labShd.B, labShd.L),
+                new(labKey.A, labKey.B, labKey.L),
+                new(labLgt.A, labLgt.B, labLgt.L)
+            }, false);
+        Curve3.SmoothHandles(curve);
+
+        Lch[] swatches = new Lch[countVrf];
+        float iToFac = 1.0f / countVrf;
+        for (int i = 0; i < countVrf; ++i)
+        {
+            (Vec3 co, _) = Curve3.Eval(curve, i * iToFac);
+            swatches[i] = Lch.FromLab(new(co.Z, co.X, co.Y, c.alpha));
+        }
+
+        return swatches;
     }
 
     /// <summary>

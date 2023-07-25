@@ -204,7 +204,7 @@ public readonly struct Index2 : IEquatable<Index2>, IEnumerable
     /// Appends a representation of an array of indices to a string builder.
     /// </summary>
     /// <param name="sb">string builder</param>
-    /// <param name="i">index</param>
+    /// <param name="arr">array</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string builder</returns>
     public static StringBuilder ToString(

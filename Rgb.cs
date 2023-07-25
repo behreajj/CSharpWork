@@ -446,28 +446,28 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
         in int layers = 8,
         in float alpha = 1.0f)
     {
-        int lval = layers < 1 ? 1 : layers;
-        int rval = rows < 1 ? 1 : rows;
-        int cval = cols < 1 ? 1 : cols;
+        int lVrf = layers < 1 ? 1 : layers;
+        int rVrf = rows < 1 ? 1 : rows;
+        int cVrf = cols < 1 ? 1 : cols;
 
-        bool oneLayer = lval == 1;
-        bool oneRow = rval == 1;
-        bool oneCol = cval == 1;
+        bool oneLayer = lVrf == 1;
+        bool oneRow = rVrf == 1;
+        bool oneCol = cVrf == 1;
 
-        float hToStep = oneLayer ? 0.0f : 1.0f / (lval - 1.0f);
-        float iToStep = oneRow ? 0.0f : 1.0f / (rval - 1.0f);
-        float jToStep = oneCol ? 0.0f : 1.0f / (cval - 1.0f);
+        float hToStep = oneLayer ? 0.0f : 1.0f / (lVrf - 1.0f);
+        float iToStep = oneRow ? 0.0f : 1.0f / (rVrf - 1.0f);
+        float jToStep = oneCol ? 0.0f : 1.0f / (cVrf - 1.0f);
 
-        Rgb[,,] result = new Rgb[lval, rval, cval];
+        Rgb[,,] result = new Rgb[lVrf, rVrf, cVrf];
 
-        int rcval = rval * cval;
-        int len3 = lval * rcval;
+        int rcVrf = rVrf * cVrf;
+        int len3 = lVrf * rcVrf;
         for (int k = 0; k < len3; ++k)
         {
-            int h = k / rcval;
-            int m = k - h * rcval;
-            int i = m / cval;
-            int j = m % cval;
+            int h = k / rcVrf;
+            int m = k - h * rcVrf;
+            int i = m / cVrf;
+            int j = m % cVrf;
 
             result[h, i, j] = new(
                 j * jToStep,
@@ -477,6 +477,20 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Evaluates whether a color's red, green
+    /// and blue channels are within the range
+    /// [0.0, 1.0].
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>evaluation</returns>
+    public static bool IsInGamut(in Rgb c)
+    {
+        return c.r >= 0.0f && c.r <= 1.0f
+            && c.g >= 0.0f && c.g <= 1.0f
+            && c.b >= 0.0f && c.b <= 1.0f;
     }
 
     /// <summary>
@@ -709,61 +723,6 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     public static Rgb Quantize(in Rgb c, in int levels)
     {
         return Rgb.QuantizeUnsigned(c, levels);
-    }
-
-    /// <summary>
-    /// Reduces the signal, or granularity, of a color's channels.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <param name="levels">levels</param>
-    /// <returns>posterized color</returns>
-    public static Rgb QuantizeSigned(in Rgb c, in int levels)
-    {
-        return Rgb.QuantizeSigned(c, levels, levels, levels, levels);
-    }
-
-    /// <summary>
-    /// Reduces the signal, or granularity, of a color's red, green
-    /// and blue channels. Does not alter the alpha channel.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <param name="rLevels">red levels</param>
-    /// <param name="gLevels">green levels</param>
-    /// <param name="bLevels">blue levels</param>
-    /// <returns>posterized color</returns>
-    public static Rgb QuantizeSigned(
-        in Rgb c,
-        in int rLevels,
-        in int gLevels,
-        in int bLevels)
-    {
-        return new(
-            Utils.QuantizeSigned(c.r, rLevels),
-            Utils.QuantizeSigned(c.g, gLevels),
-            Utils.QuantizeSigned(c.b, bLevels), c.a);
-    }
-
-    /// <summary>
-    /// Reduces the signal, or granularity, of a color's channels.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <param name="rLevels">red levels</param>
-    /// <param name="gLevels">green levels</param>
-    /// <param name="bLevels">blue levels</param>
-    /// <param name="aLevels">alpha levels</param>
-    /// <returns>posterized color</returns>
-    public static Rgb QuantizeSigned(
-        in Rgb c,
-        in int rLevels,
-        in int gLevels,
-        in int bLevels,
-        in int aLevels)
-    {
-        return new(
-            Utils.QuantizeSigned(c.r, rLevels),
-            Utils.QuantizeSigned(c.g, gLevels),
-            Utils.QuantizeSigned(c.b, bLevels),
-            Utils.QuantizeSigned(c.a, aLevels));
     }
 
     /// <summary>

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Text;
 
 /// <summary>
-/// A two-dimensional complex number. The imag component is a
+/// A two-dimensional complex number. The imaginary component is a
 /// coefficient of i, or the square-root of negative one.
 /// </summary>
 [Serializable]
@@ -625,7 +625,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     }
 
     /// <summary>
-    /// Returns a string representation of a vector.
+    /// Returns a string representation of a complex number.
     /// </summary>
     /// <param name="z">real number</param>
     /// <param name="places">number of decimal places</param>

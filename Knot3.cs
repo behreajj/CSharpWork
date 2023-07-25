@@ -612,7 +612,7 @@ public class Knot3
     /// Scales both the fore and rear handle to a magnitude.
     /// </summary>
     /// <param name="magnitude">magnitude</param>
-    /// <returns>the knot</returns>
+    /// <returns>this knot</returns>
     public Knot3 ScaleHandlesTo(in float magnitude)
     {
         this.ScaleForeHandleTo(magnitude);

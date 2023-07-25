@@ -185,7 +185,10 @@ public readonly struct ClrKey : IComparable<ClrKey>, IEquatable<ClrKey>
     /// <param name="key">color key</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in ClrKey key, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in ClrKey key,
+        in int places = 4)
     {
         sb.Append("{\"step\":");
         Utils.ToFixed(sb, key.step, places);

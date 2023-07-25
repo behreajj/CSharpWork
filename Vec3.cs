@@ -1220,17 +1220,17 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         in int rows = 8,
         in int layers = 8)
     {
-        int lval = layers < 1 ? 1 : layers;
-        int rval = rows < 1 ? 1 : rows;
-        int cval = cols < 1 ? 1 : cols;
+        int lVrf = layers < 1 ? 1 : layers;
+        int rVrf = rows < 1 ? 1 : rows;
+        int cVrf = cols < 1 ? 1 : cols;
 
-        bool oneLayer = lval == 1;
-        bool oneRow = rval == 1;
-        bool oneCol = cval == 1;
+        bool oneLayer = lVrf == 1;
+        bool oneRow = rVrf == 1;
+        bool oneCol = cVrf == 1;
 
-        float hToStep = oneLayer ? 0.0f : 1.0f / (lval - 1.0f);
-        float iToStep = oneRow ? 0.0f : 1.0f / (rval - 1.0f);
-        float jToStep = oneCol ? 0.0f : 1.0f / (cval - 1.0f);
+        float hToStep = oneLayer ? 0.0f : 1.0f / (lVrf - 1.0f);
+        float iToStep = oneRow ? 0.0f : 1.0f / (rVrf - 1.0f);
+        float jToStep = oneCol ? 0.0f : 1.0f / (cVrf - 1.0f);
 
         float hOff = oneLayer ? 0.5f : 0.0f;
         float iOff = oneRow ? 0.5f : 0.0f;
@@ -1244,16 +1244,16 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float uby = upperBound.y;
         float ubz = upperBound.z;
 
-        Vec3[,,] result = new Vec3[lval, rval, cval];
+        Vec3[,,] result = new Vec3[lVrf, rVrf, cVrf];
 
-        int rcval = rval * cval;
-        int len3 = lval * rcval;
+        int rcVrf = rVrf * cVrf;
+        int len3 = lVrf * rcVrf;
         for (int k = 0; k < len3; ++k)
         {
-            int h = k / rcval;
-            int m = k - h * rcval;
-            int i = m / cval;
-            int j = m % cval;
+            int h = k / rcVrf;
+            int m = k - h * rcVrf;
+            int i = m / cVrf;
+            int j = m % cVrf;
 
             float jFac = j * jToStep + jOff;
             float iFac = i * iToStep + iOff;
@@ -1592,10 +1592,10 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float x = Utils.NextGaussian(rng);
         float y = Utils.NextGaussian(rng);
         float z = Utils.NextGaussian(rng);
-        float sqMag = x * x + y * y + z * z;
-        if (sqMag != 0.0f)
+        float mSq = x * x + y * y + z * z;
+        if (mSq != 0.0f)
         {
-            float scalar = radius / MathF.Sqrt(sqMag);
+            float scalar = radius / MathF.Sqrt(mSq);
             return new(x * scalar, y * scalar, z * scalar);
         }
         return Vec3.Zero;

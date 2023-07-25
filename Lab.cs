@@ -569,28 +569,39 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
+    /// Returns a gray version of the color, i.e.,
+    /// where a and b are zero.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>opaque</returns>
+    public static Lab Gray(in Lab c)
+    {
+        return new Lab(c.l, 0.0f, 0.0f, c.alpha);
+    }
+
+    /// <summary>
     /// Finds the analogous color harmonies for the color.
     /// Returns an array containing two colors.
     /// </summary>
-    /// <param name="a">LAB color</param>
+    /// <param name="c">LAB color</param>
     /// <returns>analogues</returns>
-    public static Lab[] HarmonyAnalogous(in Lab a)
+    public static Lab[] HarmonyAnalogous(in Lab c)
     {
-        float lAna = (a.l * 2.0f + 50.0f) / 3.0f;
+        float lAna = (c.l * 2.0f + 50.0f) / 3.0f;
 
         float cos30 = Utils.Sqrt32;
         float sin30 = 0.5f;
-        float a30 = cos30 * a.a - sin30 * a.b;
-        float b30 = cos30 * a.b + sin30 * a.a;
+        float a30 = cos30 * c.a - sin30 * c.b;
+        float b30 = cos30 * c.b + sin30 * c.a;
 
         float cos330 = Utils.Sqrt32;
         float sin330 = -0.5f;
-        float a330 = cos330 * a.a - sin330 * a.b;
-        float b330 = cos330 * a.b + sin330 * a.a;
+        float a330 = cos330 * c.a - sin330 * c.b;
+        float b330 = cos330 * c.b + sin330 * c.a;
 
         return new Lab[] {
-            new(lAna, a30, b30, a.alpha),
-            new(lAna, a330, b330, a.alpha)
+            new(lAna, a30, b30, c.alpha),
+            new(lAna, a330, b330, c.alpha)
         };
     }
 
@@ -598,12 +609,12 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// Finds the complementary color harmony for the color.
     /// Returns an array containing one color.
     /// </summary>
-    /// <param name="a">LAB color</param>
+    /// <param name="c">LAB color</param>
     /// <returns>complement</returns>
-    public static Lab[] HarmonyComplement(in Lab a)
+    public static Lab[] HarmonyComplement(in Lab c)
     {
-        return new Lab[] { 
-            new(100.0f - a.l, -a.a, -a.b, a.alpha)
+        return new Lab[] {
+            new(100.0f - c.l, -c.a, -c.b, c.alpha)
         };
     }
 
@@ -611,25 +622,25 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// Finds the split color harmonies for the color.
     /// Returns an array containing two colors.
     /// </summary>
-    /// <param name="a">LAB color</param>
+    /// <param name="c">LAB color</param>
     /// <returns>split</returns>
-    public static Lab[] HarmonySplit(in Lab a)
+    public static Lab[] HarmonySplit(in Lab c)
     {
-        float lSpl = (250.0f - a.l * 2.0f) / 3.0f;
+        float lSpl = (250.0f - c.l * 2.0f) / 3.0f;
 
         float cos150 = -Utils.Sqrt32;
         float sin150 = 0.5f;
-        float a150 = cos150 * a.a - sin150 * a.b;
-        float b150 = cos150 * a.b + sin150 * a.a;
+        float a150 = cos150 * c.a - sin150 * c.b;
+        float b150 = cos150 * c.b + sin150 * c.a;
 
         float cos210 = -Utils.Sqrt32;
         float sin210 = -0.5f;
-        float a210 = cos210 * a.a - sin210 * a.b;
-        float b210 = cos210 * a.b + sin210 * a.a;
+        float a210 = cos210 * c.a - sin210 * c.b;
+        float b210 = cos210 * c.b + sin210 * c.a;
 
         return new Lab[] {
-            new(lSpl, a150, b150, a.alpha),
-            new(lSpl, a210, b210, a.alpha)
+            new(lSpl, a150, b150, c.alpha),
+            new(lSpl, a210, b210, c.alpha)
         };
     }
 
@@ -637,14 +648,14 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// Finds the square color harmonies for the color.
     /// Returns an array containing three colors.
     /// </summary>
-    /// <param name="a">LAB color</param>
+    /// <param name="c">LAB color</param>
     /// <returns>square</returns>
-    public static Lab[] HarmonySquare(in Lab a)
+    public static Lab[] HarmonySquare(in Lab c)
     {
-        return new Lab[] { 
-            new(50.0f, -a.b, a.a, a.alpha),
-            new(100.0f - a.l, -a.a, -a.b, a.alpha),
-            new(50.0f, a.b, -a.a, a.alpha)
+        return new Lab[] {
+            new(50.0f, -c.b, c.a, c.alpha),
+            new(100.0f - c.l, -c.a, -c.b, c.alpha),
+            new(50.0f, c.b, -c.a, c.alpha)
         };
     }
 
@@ -652,28 +663,28 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// Finds the tetradic color harmonies for the color.
     /// Returns an array containing three colors.
     /// </summary>
-    /// <param name="a">LAB color</param>
+    /// <param name="c">LAB color</param>
     /// <returns>tetrad</returns>
-    public static Lab[] HarmonyTetradic(in Lab a)
+    public static Lab[] HarmonyTetradic(in Lab c)
     {
-        float lTri = (200.0f - a.l) / 3.0f;
-        float lCmp = 100.0f - a.l;
-        float lTet = (100.0f + a.l) / 3.0f;
+        float lTri = (200.0f - c.l) / 3.0f;
+        float lCmp = 100.0f - c.l;
+        float lTet = (100.0f + c.l) / 3.0f;
 
         float cos120 = -0.5f;
         float sin120 = Utils.Sqrt32;
-        float a120 = cos120 * a.a - sin120 * a.b;
-        float b120 = cos120 * a.b + sin120 * a.a;
+        float a120 = cos120 * c.a - sin120 * c.b;
+        float b120 = cos120 * c.b + sin120 * c.a;
 
         float cos300 = 0.5f;
         float sin300 = -Utils.Sqrt32;
-        float a300 = cos300 * a.a - sin300 * a.b;
-        float b300 = cos300 * a.b + sin300 * a.a;
+        float a300 = cos300 * c.a - sin300 * c.b;
+        float b300 = cos300 * c.b + sin300 * c.a;
 
         return new Lab[] {
-            new(lTri, a120, b120, a.alpha),
-            new(lCmp, -a.a, -a.b, a.alpha),
-            new(lTet, a300, b300, a.alpha)
+            new(lTri, a120, b120, c.alpha),
+            new(lCmp, -c.a, -c.b, c.alpha),
+            new(lTet, a300, b300, c.alpha)
         };
     }
 
@@ -681,28 +692,25 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// Finds the triadic color harmonies for the color.
     /// Returns an array containing two colors.
     /// </summary>
-    /// <param name="a">LAB color</param>
+    /// <param name="c">LAB color</param>
     /// <returns>triad</returns>
-    public static Lab[] HarmonyTriadic(in Lab a)
+    public static Lab[] HarmonyTriadic(in Lab c)
     {
-        // cosa * a - sina * b,
-        // cosa * b + sina * a
-        // cos(a) == cos(-a), sin(a) == -sin(-a)
-        float lTri = (200.0f - a.l) / 3.0f;
-        
+        float lTri = (200.0f - c.l) / 3.0f;
+
         float cos120 = -0.5f;
         float sin120 = Utils.Sqrt32;
-        float a120 = cos120 * a.a - sin120 * a.b;
-        float b120 = cos120 * a.b + sin120 * a.a;
-        
+        float a120 = cos120 * c.a - sin120 * c.b;
+        float b120 = cos120 * c.b + sin120 * c.a;
+
         float cos240 = -0.5f;
         float sin240 = -Utils.Sqrt32;
-        float a240 = cos240 * a.a - sin240 * a.b;
-        float b240 = cos240 * a.b + sin240 * a.a;
-        
+        float a240 = cos240 * c.a - sin240 * c.b;
+        float b240 = cos240 * c.b + sin240 * c.a;
+
         return new Lab[] {
-            new(lTri, a120, b120, a.alpha),
-            new(lTri, a240, b240, a.alpha)
+            new(lTri, a120, b120, c.alpha),
+            new(lTri, a240, b240, c.alpha)
         };
     }
 
@@ -817,13 +825,64 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Returns an opaque version of the color, i.e., where its alpha is 1.0.
+    /// Returns an opaque version of the color, i.e.,
+    /// where alpha is 1.0.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>opaque</returns>
     public static Lab Opaque(in Lab c)
     {
         return new Lab(c.l, c.a, c.b, 1.0f);
+    }
+
+    /// <summary>
+    /// Normalizes the color's a and b components, then multiplies
+    /// by a scalar, in effect setting the color's chroma.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>rescaled color</returns>
+    public static Lab RescaleChroma(in Lab c, in float scalar = 1.0f)
+    {
+        float cSq = Lab.ChromaSq(c);
+        if (cSq > Utils.Epsilon)
+        {
+            float scInv = scalar / MathF.Sqrt(cSq);
+            return new(c.l, c.a * scInv, c.b * scInv, c.alpha);
+        }
+        return Lab.Gray(c);
+    }
+
+    /// <summary>
+    /// Rotates a color's a and b components.
+    /// Accepts a normalized hue, or angle, in [0.0, 1.0].
+    /// </summary>
+    /// <param name="c">LAB color</param>
+    /// <param name="amt">hue, angle</param>
+    /// <returns>rotated color</returns>
+    public static Lab RotateHue(in Lab c, in float amt)
+    {
+        float radians = amt * Utils.Tau;
+        return Lab.RotateHue(c, MathF.Cos(radians), MathF.Sin(radians));
+    }
+
+    /// <summary>
+    /// Rotates a color's a and b components.
+    ///
+    /// Accepts pre-calculated sine and cosine of an angle, so that collections
+    /// of colors can be efficiently rotated without repeatedly calling cos and
+    /// sin.
+    /// </summary>
+    /// <param name="c">LAB color</param>
+    /// <param name="cosa">the cosine of the angle</param>
+    /// <param name="sina">the sine of the angle</param>
+    /// <returns>rotated color</returns>
+    public static Lab RotateHue(in Lab c, in float cosa, in float sina)
+    {
+        return new(
+            c.l,
+            cosa * c.a - sina * c.b,
+            cosa * c.b + sina * c.a,
+            c.alpha);
     }
 
     /// <summary>
@@ -891,7 +950,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// Scales lightness from [0.0, 100.0] to [0, 255].
     /// Packs the integer, from most to least significant,
     /// in the order alpha in the 0x18 place, l in 0x10,
-    // a in 0x08, b in 0x00.
+    /// a in 0x08, b in 0x00.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>integer</returns>

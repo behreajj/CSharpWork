@@ -120,11 +120,11 @@ public readonly struct Edge2 : IComparable<Edge2>, IEquatable<Edge2>
             Vec2.Approx(a.dest.Coord, b.origin.Coord, tol);
     }
 
-    ///<summary>
-    ///Finds the center of the edge.
-    ///</summary>
-    ///<param name="e">edge</param>
-    ///<returns>center</returns>
+    /// <summary>
+    /// Finds the center of the edge.
+    /// </summary>
+    /// <param name="e">edge</param>
+    /// <returns>center</returns>
     public static Vec2 Center(in Edge2 e)
     {
         return Vec2.Mix(e.origin.Coord, e.dest.Coord);

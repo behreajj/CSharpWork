@@ -1123,20 +1123,20 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         in int layers = 8,
         in int steps = 8)
     {
-        int sval = steps < 1 ? 1 : steps;
-        int lval = layers < 1 ? 1 : layers;
-        int rval = rows < 1 ? 1 : rows;
-        int cval = cols < 1 ? 1 : cols;
+        int sVrf = steps < 1 ? 1 : steps;
+        int lVrf = layers < 1 ? 1 : layers;
+        int rVrf = rows < 1 ? 1 : rows;
+        int cVrf = cols < 1 ? 1 : cols;
 
-        bool oneStep = sval == 1;
-        bool oneLayer = lval == 1;
-        bool oneRow = rval == 1;
-        bool oneCol = cval == 1;
+        bool oneStep = sVrf == 1;
+        bool oneLayer = lVrf == 1;
+        bool oneRow = rVrf == 1;
+        bool oneCol = cVrf == 1;
 
-        float gToStep = oneStep ? 0.0f : 1.0f / (sval - 1.0f);
-        float hToStep = oneLayer ? 0.0f : 1.0f / (lval - 1.0f);
-        float iToStep = oneRow ? 0.0f : 1.0f / (rval - 1.0f);
-        float jToStep = oneCol ? 0.0f : 1.0f / (cval - 1.0f);
+        float gToStep = oneStep ? 0.0f : 1.0f / (sVrf - 1.0f);
+        float hToStep = oneLayer ? 0.0f : 1.0f / (lVrf - 1.0f);
+        float iToStep = oneRow ? 0.0f : 1.0f / (rVrf - 1.0f);
+        float jToStep = oneCol ? 0.0f : 1.0f / (cVrf - 1.0f);
 
         float gOff = oneStep ? 0.5f : 0.0f;
         float hOff = oneLayer ? 0.5f : 0.0f;
@@ -1153,19 +1153,19 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
         float ubz = upperBound.z;
         float ubw = upperBound.w;
 
-        Vec4[,,,] result = new Vec4[sval, lval, rval, cval];
+        Vec4[,,,] result = new Vec4[sVrf, lVrf, rVrf, cVrf];
 
-        int rcval = rval * cval;
-        int lrcval = lval * rcval;
-        int len4 = sval * lrcval;
+        int rcVrf = rVrf * cVrf;
+        int lrcVrf = lVrf * rcVrf;
+        int len4 = sVrf * lrcVrf;
         for (int k = 0; k < len4; ++k)
         {
-            int g = k / lrcval;
-            int m = k - g * lrcval;
-            int h = m / rcval;
-            int n = m - h * rcval;
-            int i = n / cval;
-            int j = n % cval;
+            int g = k / lrcVrf;
+            int m = k - g * lrcVrf;
+            int h = m / rcVrf;
+            int n = m - h * rcVrf;
+            int i = n / cVrf;
+            int j = n % cVrf;
 
             float jFac = j * jToStep + jOff;
             float iFac = i * iToStep + iOff;

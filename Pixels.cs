@@ -25,9 +25,6 @@ public static class Pixels
         in T a, in T b,
         in int cols = 8, in int rows = 8)
     {
-        // TODO: Create Separate RGB function?
-        // TODO: Create Quantize function?
-
         int limit = 2;
         int vCols = cols < 2 ? 2 : cols > w / limit ? w / limit : cols;
         int vRows = rows < 2 ? 2 : rows > h / limit ? h / limit : rows;

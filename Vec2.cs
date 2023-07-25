@@ -1029,14 +1029,14 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         in int cols = 8,
         in int rows = 8)
     {
-        int rval = rows < 1 ? 1 : rows;
-        int cval = cols < 1 ? 1 : cols;
+        int rVrf = rows < 1 ? 1 : rows;
+        int cVrf = cols < 1 ? 1 : cols;
 
-        bool oneRow = rval == 1;
-        bool oneCol = cval == 1;
+        bool oneRow = rVrf == 1;
+        bool oneCol = cVrf == 1;
 
-        float iToStep = oneRow ? 0.0f : 1.0f / (rval - 1.0f);
-        float jToStep = oneCol ? 0.0f : 1.0f / (cval - 1.0f);
+        float iToStep = oneRow ? 0.0f : 1.0f / (rVrf - 1.0f);
+        float jToStep = oneCol ? 0.0f : 1.0f / (cVrf - 1.0f);
 
         float iOff = oneRow ? 0.5f : 0.0f;
         float jOff = oneCol ? 0.5f : 0.0f;
@@ -1047,13 +1047,13 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
         float ubx = upperBound.x;
         float uby = upperBound.y;
 
-        Vec2[,] result = new Vec2[rval, cval];
+        Vec2[,] result = new Vec2[rVrf, cVrf];
 
-        int len2 = cval * rval;
+        int len2 = cVrf * rVrf;
         for (int k = 0; k < len2; ++k)
         {
-            int i = k / cval;
-            int j = k % cval;
+            int i = k / cVrf;
+            int j = k % cVrf;
 
             float jFac = j * jToStep + jOff;
             float iFac = i * iToStep + iOff;
@@ -1424,10 +1424,10 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     {
         float x = Utils.NextGaussian(rng);
         float y = Utils.NextGaussian(rng);
-        float sqMag = x * x + y * y;
-        if (sqMag != 0.0f)
+        float mSq = x * x + y * y;
+        if (mSq != 0.0f)
         {
-            float scalar = radius / MathF.Sqrt(sqMag);
+            float scalar = radius / MathF.Sqrt(mSq);
             return new(x * scalar, y * scalar);
         }
         return Vec2.Zero;

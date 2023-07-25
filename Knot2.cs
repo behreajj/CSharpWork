@@ -520,7 +520,7 @@ public class Knot2
     /// Scales both the fore and rear handle to a magnitude.
     /// </summary>
     /// <param name="magnitude">magnitude</param>
-    /// <returns>the knot</returns>
+    /// <returns>this knot</returns>
     public Knot2 ScaleHandlesTo(in float magnitude)
     {
         this.ScaleForeHandleTo(magnitude);
@@ -718,7 +718,7 @@ public class Knot2
     /// <param name="handleMag">length of handles</param>
     /// <param name="xCenter">x center</param>
     /// <param name="yCenter">y center</param>
-    /// <returns>the knot</returns>
+    /// <returns>knot</returns>
     public static Knot2 FromPolar(
         in float cosa = 1.0f,
         in float sina = 0.0f,

@@ -235,7 +235,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     /// Appends a representation of an array of indices to a string builder.
     /// </summary>
     /// <param name="sb">string builder</param>
-    /// <param name="i">index</param>
+    /// <param name="arr">array</param>
     /// <param name="padding">digits to pad</param>
     /// <returns>string builder</returns>
     public static StringBuilder ToString(
@@ -243,7 +243,7 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
         in Index3[] arr,
         in int padding = 3)
     {
-        sb.Append('[');        
+        sb.Append('[');
 
         if (arr != null)
         {

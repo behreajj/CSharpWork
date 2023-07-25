@@ -131,11 +131,11 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
         return Vec3.AzimuthSigned(e.dest.Coord - e.origin.Coord);
     }
 
-    ///<summary>
-    ///Finds the center of the edge.
-    ///</summary>
-    ///<param name="e">edge</param>
-    ///<returns>center</returns>
+    /// <summary>
+    /// Finds the center of the edge.
+    /// </summary>
+    /// <param name="e">edge</param>
+    /// <returns>center</returns>
     public static Vec3 Center(in Edge3 e)
     {
         return Vec3.Mix(e.origin.Coord, e.dest.Coord);
