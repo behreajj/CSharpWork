@@ -2,26 +2,25 @@ using System;
 using System.Text;
 
 /// <summary>
-/// A readonly struct. Represents colors in a perceptual
-/// color space, such as CIE LCH, etc.
-/// Lightness falls in the range [0.0, 100.0].
-/// Chroma is unbounded, but has a practical range of
-/// roughly [0.0, 135.0].
-/// Hue is a periodic number in [0.0, 1.0].
-/// Alpha is expected to be in [0.0, 1.0].
+/// A readonly struct. Represents colors in a perceptual color space, such as
+/// CIE LCH, SR LCH, OK LCH, etc., with polar coordinates. Lightness falls in
+/// the range [0.0, 100.0]. Chroma is unbounded, but has a practical range of
+/// roughly [0.0, 135.0]. Hue is a periodic number in [0.0, 1.0]. Alpha is
+/// expected to be in [0.0, 1.0].
 /// </summary>
 [Serializable]
 public readonly struct Lch
 {
     /// <summary>
-    /// The upper bound for the chroma of a color
-    /// converted from standard RGB to SR LCH, sampled
-    /// without respect for lightness.
+    /// The upper bound for the chroma of a color converted from standard RGB
+    /// to SR LCH, sampled without respect for lightness.
     /// </summary>
     public const float AbsMaxC = 119.07602f;
 
-    /// Denominator used when normalizing the chroma of
-    /// a color in SR LCH. Equivalent to 1.0 / AbsMaxC.
+    /// <summary>
+    /// Denominator used when normalizing the chroma of a color in SR LCH.
+    /// Equivalent to 1.0 / AbsMaxC.
+    /// </summary>
     public const float NormDenomC = 0.008397996f;
 
     /// <summary>
@@ -84,8 +83,7 @@ public readonly struct Lch
     }
 
     /// <summary>
-    /// Adds two colors together for the purpose of
-    /// making an adjustment.
+    /// Adds two colors together for the purpose of making an adjustment.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -101,8 +99,8 @@ public readonly struct Lch
     }
 
     /// <summary>
-    /// Subtracts the right color from the left
-    /// for the purpose of making an adjustment.
+    /// Subtracts the right color from the left for the purpose of making
+    /// an adjustment.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -118,33 +116,30 @@ public readonly struct Lch
     }
 
     /// <summary>
-    /// Returns the first color argument with the alpha
-    /// of the second.
+    /// Returns the first color argument with the alpha of the second.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>color</returns>
     public static Lch CopyAlpha(in Lch a, in Lch b)
     {
-        return new(a.l, a.c, a.h, b.alpha);
+        return new Lch(l: a.l, c: a.c, h: a.h, alpha: b.alpha);
     }
 
     /// <summary>
-    /// Returns the first color argument with the light
-    /// of the second.
+    /// Returns the first color argument with the light of the second.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>color</returns>
     public static Lch CopyLight(in Lch a, in Lch b)
     {
-        return new(b.l, a.c, a.h, a.alpha);
+        return new Lch(l: b.l, c: a.c, h: a.h, alpha: a.alpha);
     }
 
     /// <summary>
-    /// Attempts to fit an LCH color to gamut by iteratively
-    /// reducing its chroma until its standard RGB representation
-    /// has channels within gamut.
+    /// Attempts to fit an LCH color to gamut by iteratively reducing its
+    /// chroma until its standard RGB representation has channels within gamut.
     /// </summary>
     /// <param name="c">LCH color</param>
     /// <param name="step">chroma step</param>
@@ -159,7 +154,7 @@ public readonly struct Lch
         float cTrg = MathF.Max(0.0f, c.c);
         float hTrg = c.h - MathF.Floor(c.h);
         float alphaTrg = Utils.Clamp(c.alpha, 0.0f, 1.0f);
-        Lch target = new(lTrg, cTrg, hTrg, alphaTrg);
+        Lch target = new Lch(l: lTrg, c: cTrg, h: hTrg, alpha: alphaTrg);
 
         while (cTrg > 0.0f)
         {
@@ -170,14 +165,14 @@ public readonly struct Lch
             }
 
             cTrg -= stepVrf;
-            target = new(lTrg, cTrg, hTrg, alphaTrg);
+            target = new Lch(l: lTrg, c: cTrg, h: hTrg, alpha: alphaTrg);
         }
-        return new(lTrg, 0.0f, hTrg, alphaTrg);
+        return new Lch(l: lTrg, c: 0.0f, h: hTrg, alpha: alphaTrg);
     }
 
     /// <summary>
-    /// Converts a color from LAB to LCH. If the chroma is near
-	/// zero, then the hue is set to zero.
+    /// Converts a color from LAB to LCH. If the chroma is near zero, then the
+    /// hue is set to zero.
     /// </summary>
     /// <param name="c">LAB color</param>
     /// <returns>LCH color</returns>
@@ -204,6 +199,20 @@ public readonly struct Lch
             c: chroma,
             h: hue,
             alpha: alpha);
+    }
+
+    /// <summary>
+    /// Returns a gray version of the color, where chroma and hue are zero.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>gray</returns>
+    public static Lch Gray(in Lch c)
+    {
+        return new Lch(
+            l: c.l,
+            c: 0.0f,
+            h: 0.0f,
+            alpha: c.alpha);
     }
 
     /// <summary>
@@ -336,7 +345,7 @@ public readonly struct Lch
     }
 
     /// <summary>
-    /// Mixes two colors by a step in the range [0.0, 1.0] .
+    /// Mixes two colors by a step in the range [0.0, 1.0].
     /// </summary>
     /// <param name="o">origin color</param>
     /// <param name="d">destination color</param>
@@ -349,11 +358,10 @@ public readonly struct Lch
     }
 
     /// <summary>
-    /// Mixes two colors by a step in the range [0.0, 1.0] .
-    /// The easing function is expected to ease from an origin
-    /// hue to a destination by a factor according to a range.
-	/// Mixes in LAB if the chroma of either origin or destination
-	/// is near zero.
+    /// Mixes two colors by a step in the range [0.0, 1.0]. The easing function
+    /// is expected to ease from an origin hue to a destination by a factor
+    /// according to a range. Mixes in LAB if the chroma of either origin or
+    /// destination is near zero.
     /// </summary>
     /// <param name="o">origin color</param>
     /// <param name="d">destination color</param>
@@ -366,47 +374,44 @@ public readonly struct Lch
         in float t,
         in Func<float, float, float, float, float> easing)
     {
-        float oc = o.c;
-        float oh = o.h;
-
-        float dc = d.c;
-        float dh = d.h;
-
         float u = 1.0f - t;
         float cl = u * o.l + t * d.l;
         float calpha = u * o.alpha + t * d.alpha;
 
-        bool oGray = oc < Utils.Epsilon;
-        bool dGray = dc < Utils.Epsilon;
+        bool oGray = o.c < Utils.Epsilon;
+        bool dGray = d.c < Utils.Epsilon;
+        if (oGray && dGray)
+        {
+            return new Lch(l: cl, c: 0.0f, h: 0.0f, alpha: calpha);
+        }
+
         if (oGray || dGray)
         {
-            float oa = oGray ? 0.0f : oc * MathF.Cos(oh);
-            float ob = oGray ? 0.0f : oc * MathF.Sin(oh);
+            float oa = oGray ? 0.0f : o.c * MathF.Cos(o.h);
+            float ob = oGray ? 0.0f : o.c * MathF.Sin(o.h);
 
-            float da = dGray ? 0.0f : dc * MathF.Cos(dh);
-            float db = dGray ? 0.0f : dc * MathF.Sin(dh);
+            float da = dGray ? 0.0f : d.c * MathF.Cos(d.h);
+            float db = dGray ? 0.0f : d.c * MathF.Sin(d.h);
 
+            // Mix in LAB.
             float ca = u * oa + t * da;
             float cb = u * ob + t * db;
 
-            float ccsq = ca * ca + cb * cb;
-            if (ccsq < Utils.Epsilon)
-            {
-                return new Lch(l: cl, c: 0.0f, h: 0.0f, alpha: ca);
-            }
+            // Zero chroma should already be taken care of by the early return
+            // above for both o and d gray.
+            float cc = MathF.Sqrt(ca * ca + cb * cb);
 
             float ch = MathF.Atan2(cb, ca);
             ch = (ch < -0.0f) ? ch + Utils.Tau : ch;
             ch *= Utils.OneTau;
-            float cc = MathF.Sqrt(ccsq);
 
             return new Lch(l: cl, c: cc, h: ch, alpha: calpha);
         }
 
         return new Lch(
             l: cl,
-            c: u * oc + t * dc,
-            h: easing(oh, dh, t, 1.0f),
+            c: u * o.c + t * d.c,
+            h: easing(o.h, d.h, t, 1.0f),
             alpha: calpha);
     }
 
@@ -432,7 +437,7 @@ public readonly struct Lch
         in Lch c,
         in int count = 7,
         in float lightStep = 31.25f,
-        in float chromaStep = 5.0f,
+        in float chromaStep = 7.5f,
         in float hueStep = 0.5f)
     {
         float hueStepVrf = MathF.Max(0.0f, MathF.Abs(hueStep));
@@ -446,8 +451,8 @@ public readonly struct Lch
         float minLight = MathF.Max(0.25f, c.l - lightStepVrf);
         float maxLight = MathF.Min(99.75f, c.l + lightStepVrf);
         float midLight = (minLight + maxLight) * 0.5f;
-        float minChromaShd = MathF.Max(0.0f, c.c - chromaStepVrf);
-        float minChromaLgt = MathF.Max(0.0f, c.c - chromaStepVrf);
+        float minChromaShd = MathF.Max(Utils.Epsilon, c.c - chromaStepVrf);
+        float minChromaLgt = MathF.Max(Utils.Epsilon, c.c - chromaStepVrf);
         float toShdFac = MathF.Abs(50.0f - minLight) * 0.02f;
         float toLgtFac = MathF.Abs(50.0f - maxLight) * 0.02f;
 
@@ -500,7 +505,10 @@ public readonly struct Lch
     /// <param name="c">vector</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in Lch c, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Lch c,
+        in int places = 4)
     {
         sb.Append("{\"l\":");
         Utils.ToFixed(sb, c.l, places);

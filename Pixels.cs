@@ -41,10 +41,9 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Expands the image to the nearest greater power of two.
-    /// Centers the source image within the expanded dimensions.
-    /// Returns a tuple with the expanded pixels and the 
-    /// new width and height.
+    /// Expands the image to the nearest greater power of two. Centers the
+    /// source image within the expanded dimensions. Returns a tuple with the
+    /// expanded pixels and the new width and height.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="w">image width</param>
@@ -181,9 +180,9 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Gets a region defined by a top left and bottom right corner.
-    /// May return an empty array if coordinates are invalid. Same
-    /// as getting a cropped copy of an image.
+    /// Gets a region defined by a top left and bottom right corner. May return
+    /// an empty array if coordinates are invalid. Same as getting a cropped
+    /// copy of an image.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="wSrc">source image width</param>
@@ -391,8 +390,7 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Sets a region of pixels on the target array
-    /// from the source.
+    /// Sets a region of pixels on the target array sfrom the source.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">source pixels</param>
@@ -413,8 +411,8 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Sets a region defined by a "write" top left and bottom right
-    /// corners on the target array from the source.
+    /// Sets a region defined by a "write" top left and bottom right corners on
+    /// the target array from the source.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">source pixels</param>
@@ -644,9 +642,9 @@ public static class Pixels
     #region Specific
 
     /// <summary>
-    /// Multiplies a source pixels array's alpha by the input alpha. If the alpha
-    /// is less than zero, sets the target array to clear black. If the alpha is
-    /// approximately one, copies the source pixels to the target.
+    /// Multiplies a source pixels array's alpha by the input alpha. If the
+    /// alpha is less than zero, sets the target array to clear black. If the
+    /// alpha is approximately one, copies the source pixels to the target.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
@@ -693,7 +691,6 @@ public static class Pixels
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            // LCH None method is different from Vec4 None method.
             if (adjust.Alpha == 0.0f &&
                 adjust.L == 0.0f &&
                 adjust.C == 0.0f &&
@@ -732,8 +729,8 @@ public static class Pixels
 
     /// <summary>
     /// Adjusts the contrast of colors from a source pixels array by a factor.
-    /// Uses the SR LAB 2 color space. The adjustment factor is expected to be in
-    /// [-1.0, 1.0].
+    /// Uses the SR LAB 2 color space. The adjustment factor is expected to be
+    /// in [-1.0, 1.0].
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
@@ -1608,8 +1605,8 @@ public static class Pixels
         int hLrg = ah > bh ? ah : bh;
 
         // The 0.5 is to bias the rounding.
-        float cx = 0.5f + wLrg * 0.5f;
-        float cy = 0.5f + hLrg * 0.5f;
+        float cx = wLrg * 0.5f + 0.5f;
+        float cy = hLrg * 0.5f + 0.5f;
 
         int ax = aw == wLrg ? 0 : (int)(cx - aw * 0.5f);
         int ay = ah == hLrg ? 0 : (int)(cy - ah * 0.5f);
@@ -1840,10 +1837,10 @@ public static class Pixels
 
     /// <summary>
     /// Extracts a palette from a source pixels array using an octree in SR
-    /// LAB 2. The size of the palette depends on the capacity of each node in the
-    /// octree. Does not retain alpha component of image pixels. The threshold
-    /// describes the minimum number of unique colors in the image beneath which
-    /// it is preferable to not engage the octree.
+    /// LAB 2. The size of the palette depends on the capacity of each node in
+    /// the octree. Doesn't retain alpha component of image pixels. The
+    /// threshold describes the minimum number of unique colors in the image
+    /// beneath which it is preferable to not engage the octree.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="capacity">node capacity</param>
@@ -1987,9 +1984,9 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Multiplies the red, green and blue color channels of a pixel array
-    /// by the alpha channel. If alpha is less than or equal to zero,
-    /// returns clear black.
+    /// Multiplies the red, green and blue color channels of a pixel array by
+    /// the alpha channel. If alpha is less than or equal to zero, returns
+    /// clear black.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
@@ -2005,10 +2002,9 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Replaces the colors in the source pixels that approximately
-    /// match the fromColor within a tolerance. Two colors are converted
-    /// to LAB, then the distance between them is compared against the
-    /// tolerance.
+    /// Replaces the colors in the source pixels that approximately match the
+    /// fromColor within a tolerance. Two colors are converted to LAB, then the
+    /// distance between them is compared against the tolerance.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
@@ -2051,8 +2047,8 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Replaces the colors in the source pixels that equal
-    /// the fromColor with the toColor.
+    /// Replaces the colors in the source pixels that equal the fromColor with
+    /// the toColor.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
@@ -2309,9 +2305,9 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Scales the source pixels. The scalar is expected
-    /// to be a non-zero positive value. Returns a tuple
-    /// containing the pixels, the new width and height.
+    /// Scales the source pixels. The scalar is expected to be a non-zero
+    /// positive value. Returns a tuple containing the pixels, the new width
+    /// and height.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="w">image width/param>
@@ -2328,9 +2324,9 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Scales the source pixels. The scalar is expected
-    /// to be a non-zero positive value. Returns a tuple
-    /// containing the pixels, the new width and height.
+    /// Scales the source pixels. The scalar is expected to be a non-zero
+    /// positive value. Returns a tuple containing the pixels, the new width
+    /// and height.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="w">image width/param>
@@ -2731,7 +2727,7 @@ public static class Pixels
                     return y * y * (3.0f - 2.0f * y);
                 };
 
-            case Tone.Shadow | Tone.Midtone: /* 1 | 2 = 3 */
+            case Tone.Shadow | Tone.Midtone: // 1 | 2 = 3
                 return x =>
                 {
                     if (x <= 0.0f) { return 1.0f; }
@@ -2740,7 +2736,7 @@ public static class Pixels
                     return y * y * (3.0f - 2.0f * y);
                 };
 
-            case Tone.Shadow | Tone.Highlight: /* 1 | 4 = 5 */
+            case Tone.Shadow | Tone.Highlight: // 1 | 4 = 5
                 return x =>
                 {
                     if (x <= 0.0f || x >= 1.0f) { return 1.0f; }
@@ -2748,7 +2744,7 @@ public static class Pixels
                     return y * y * (3.0f - 2.0f * y);
                 };
 
-            case Tone.Midtone | Tone.Highlight: /* 2 | 4 = 6 */
+            case Tone.Midtone | Tone.Highlight: // 2 | 4 = 6
                 return x =>
                 {
                     if (x <= 0.25f) { return 0.0f; }
@@ -2757,8 +2753,8 @@ public static class Pixels
                     return y * y * (3.0f - 2.0f * y);
                 };
 
-            case (Tone)~0: /* Due to how Unity handles flag enums. */
-            case Tone.Shadow | Tone.Midtone | Tone.Highlight: /* 1 | 2 | 4 = 7 */
+            case (Tone)~0: // Due to how Unity handles flag enums.
+            case Tone.Shadow | Tone.Midtone | Tone.Highlight: // 1 | 2 | 4 = 7
                 return x =>
                 {
                     if (x <= 0.0f) { return 0.0f; }
@@ -2811,8 +2807,8 @@ public static class Pixels
     /// <summary>
     /// Removes excess transparent pixels from an array of pixels. Adapted from
     /// the implementation by Oleg Mikhailov: https://stackoverflow.com/a/36938923 .
-    /// Returns a tuple with the trimmed image's pixels,
-    /// width, height and top-left corner.
+    /// Returns a tuple with the trimmed image's pixels, width, height and
+    /// top left corner.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="w">image width</param>
@@ -2931,9 +2927,9 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Divides the red, green and blue color channels of a pixel array
-    /// by the alpha channel. Reverses pre-multiplication. If alpha is
-    /// less than or equal to zero, returns clear black.
+    /// Divides the red, green and blue color channels of a pixel array by the
+    /// alpha channel. Reverses pre-multiplication. If alpha is less than or
+    /// equal to zero, returns clear black.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>

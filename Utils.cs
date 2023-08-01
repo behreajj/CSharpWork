@@ -46,9 +46,8 @@ public static class Utils
     public const int HashMul = 16777619;
 
     /// <summary>
-    /// Magnitude for orthogonal handles when four curve
-    /// knots are used to approximate an ellipse or circle
-    /// (90 degrees per knot), Derived from
+    /// Magnitude for orthogonal handles when four curve knots are used to
+    /// approximate an ellipse or circle (90 degrees per knot), Derived from
     /// (Math.Sqrt(2.0) - 1.0) * 4.0 / 3.0 .
     /// </summary>
     public const float Kappa = 0.552285f;
@@ -126,8 +125,8 @@ public static class Utils
     public const float Tau = 6.28318548f;
 
     /// <summary>
-    /// PI divided by 3.0 , 1.04719758 . Useful for describing the field of view
-    /// in a perspective camera.
+    /// PI divided by 3.0 , 1.04719758 . Useful for describing the field of
+    /// view in a perspective camera.
     /// </summary>
     public const float ThirdPi = 1.04719758f;
 
@@ -156,7 +155,10 @@ public static class Utils
     /// <param name="b">right comparisand</param>
     /// <param name="tolerance">tolerance</param>
     /// <returns>evaluation</returns>
-    public static bool Approx(in float a, in float b, in float tolerance = Utils.Epsilon)
+    public static bool Approx(
+        in float a,
+        in float b,
+        in float tolerance = Utils.Epsilon)
     {
         return Utils.Diff(a, b) <= tolerance;
     }
@@ -178,7 +180,10 @@ public static class Utils
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>clamped value</returns>
-    public static float Clamp(in float v, in float lb = 0.0f, in float ub = 1.0f)
+    public static float Clamp(
+        in float v,
+        in float lb = 0.0f,
+        in float ub = 1.0f)
     {
         return (v < lb) ? lb : (v > ub) ? ub : v;
     }
@@ -274,16 +279,15 @@ public static class Utils
     }
 
     /// <summary>
-    /// Finds the distance between two periodic values.
-    /// Example ranges are 360.0 for degrees, 1.0 for hues or
-    /// Tau for radians.
+    /// Finds the distance between two periodic values. Example ranges are
+    /// 360.0 for degrees, 1.0 for hues or Tau for radians.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>distance</returns>
-    public static float DistAngle(in float a, in float b, in float range)
+    public static float DistAngle(in float a, in float b, in float r)
     {
-        return Utils.DistAngleSigned(a, b, range);
+        return Utils.DistAngleSigned(a, b, r);
     }
 
     /// <summary>
@@ -300,24 +304,23 @@ public static class Utils
     }
 
     /// <summary>
-    /// Finds the signed distance between two periodic values.
-    /// Example ranges are 360.0 for degrees, 1.0 for hues or
-    /// Tau for radians.
+    /// Finds the signed distance between two periodic values. Example ranges
+    /// are 360.0 for degrees, 1.0 for hues or Tau for radians.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <param name="range">range</param>
+    /// <param name="r">range</param>
     /// <returns>signed distance</returns>
-    public static float DistAngleSigned(in float a, in float b, in float range)
+    public static float DistAngleSigned(in float a, in float b, in float r)
     {
-        float halfRange = range * 0.5f;
-        float diff = (a - b + halfRange) % range - halfRange;
-        return diff < -halfRange ? diff + range : diff;
+        float halfRange = r * 0.5f;
+        float diff = (a - b + halfRange) % r - halfRange;
+        return diff < -halfRange ? diff + r : diff;
     }
 
     /// <summary>
-    /// Finds the unsigned distance between two angles.
-    /// Angles are expected to be in radians.
+    /// Finds the unsigned distance between two angles. Angles are expected to
+    /// be in radians.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -329,20 +332,19 @@ public static class Utils
     }
 
     /// <summary>
-    /// Finds the unsigned distance between two periodic values.
-    /// Example ranges are 360.0 for degrees, 1.0 for hues or
-    /// Tau for radians.
+    /// Finds the unsigned distance between two periodic values. Example ranges
+    /// are 360.0 for degrees, 1.0 for hues or Tau for radians.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
-    /// <param name="range">range</param>
+    /// <param name="r">range</param>
     /// <returns>unsigned distance</returns>
-    public static float DistAngleUnsigned(in float a, in float b, in float range)
+    public static float DistAngleUnsigned(in float a, in float b, in float r)
     {
-        float halfRange = range * 0.5f;
+        float halfRange = r * 0.5f;
         return halfRange - MathF.Abs(MathF.Abs(
-            Utils.RemFloor(b, range) -
-            Utils.RemFloor(a, range)) - halfRange);
+            Utils.RemFloor(b, r) -
+            Utils.RemFloor(a, r)) - halfRange);
     }
 
     /// <summary>
@@ -413,8 +415,8 @@ public static class Utils
     }
 
     /// <summary>
-    /// Eases from an origin angle in radians to a destination angle according to
-    /// a factor in [0.0, 1.0] .
+    /// Eases from an origin angle in radians to a destination angle according
+    /// to a factor in [0.0, 1.0] .
     /// </summary>
     /// <param name="origin">origin angle</param>
     /// <param name="dest">destination angle</param>
@@ -590,7 +592,10 @@ public static class Utils
         in float x = 0.5f)
     {
         float denom = edge1 - edge0;
-        if (denom != 0.0f) { return Utils.Clamp((x - edge0) / denom, 0.0f, 1.0f); }
+        if (denom != 0.0f)
+        {
+            return Utils.Clamp((x - edge0) / denom, 0.0f, 1.0f);
+        }
         return 0.0f;
     }
 
@@ -715,11 +720,10 @@ public static class Utils
     }
 
     /// <summary>
-    /// Generates a random number with normal distribution.
-    /// Based on the Box-Muller transform as described here:
-    /// https://www.wikiwand.com/en/Box%E2%80%93Muller_transform
-    /// Could generate a tuple of numbers, but only returns the
-    /// x coordinate.
+    /// Generates a random number with normal distribution. Based on the
+    /// Box-Muller transform as described here:
+    /// https://www.wikiwand.com/en/Box%E2%80%93Muller_transform . Could
+    /// generate a tuple of numbers, but only returns the x coordinate.
     /// </summary>
     /// <param name="rng">input value</param>
     /// <param name="sigma">standard deviation</param>
@@ -745,9 +749,8 @@ public static class Utils
     }
 
     /// <summary>
-    /// Finds the next power of 2 for a signed integer, i.e., multiplies
-    /// the next power by the integer's sign. Returns zero if the input
-    /// is zero.
+    /// Finds the next power of 2 for a signed integer, i.e., multiplies the
+    /// next power by the integer's sign. Returns zero if the input is zero.
     /// </summary>
     /// <param name="v">value</param>
     /// <returns>next power of two</returns>
@@ -818,7 +821,11 @@ public static class Utils
     /// <param name="t">factor</param>
     /// <param name="pause">pause</param>
     /// <returns>oscillation</returns>
-    public static float PingPong(in float a, in float b, in float t, in float pause = 1.0f)
+    public static float PingPong(
+        in float a,
+        in float b,
+        in float t,
+        in float pause = 1.0f)
     {
         float x = 0.5f + 0.5f * pause * MathF.Sin(MathF.PI * (t - 0.5f));
         if (t <= 0.0f) { return a; }
@@ -1010,7 +1017,10 @@ public static class Utils
     /// <param name="v">input value</param>
     /// <param name="places">number of places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToFixed(in StringBuilder sb, in float v, in int places = 7)
+    public static StringBuilder ToFixed(
+        in StringBuilder sb,
+        in float v,
+        in int places = 7)
     {
         // Dispense with v and places edge cases.
         if (float.IsNaN(v)) { return sb.Append("0.0"); }
@@ -1021,8 +1031,7 @@ public static class Utils
             return sb.Append(v);
         }
 
-        // Find the sign, the unsigned v and the
-        // unsigned integral.
+        // Find the sign, the unsigned v and the unsigned integral.
         bool ltZero = v < 0.0f;
         int sign = ltZero ? -1 : (v > 0.0f) ? 1 : 0;
         float abs = ltZero ? -v : v;
@@ -1030,8 +1039,7 @@ public static class Utils
         int oldLen = sb.Length;
         int len;
 
-        // Start the string builder with the integral
-        // and the sign.
+        // Start the string builder with the integral and the sign.
         if (sign < 0)
         {
             sb.Append('-').Append(trunc);
@@ -1044,20 +1052,19 @@ public static class Utils
         }
         sb.Append('.');
 
-        // Find the number of places left to work with after the
-        // integral. Any more than 9 and single-precision's
-        // inaccuracy would make the effort worthless.
+        // Find the number of places left to work with after the integral.
+        // Any more than 9 and single-precision's inaccuracy would make the
+        // effort worthless.
         //
-        // For numbers with a big integral, there may not be much
-        // left to work with, and so fewer than the requested
-        // number of places will be used.
+        // For numbers with a big integral, there may not be much left to work
+        // with, and so fewer than the requested number of places will be used.
         int maxPlaces = 9 - len;
         if (maxPlaces < 1) { return sb.Append(v); }
         int vetPlaces = places < maxPlaces ? places : maxPlaces;
 
-        // Separate each digit by subtracting the truncation from
-        // the v (fract), then multiplying by 10 to shift the
-        // next digit past the decimal point.
+        // Separate each digit by subtracting the truncation from the value,
+        // then multiplying by 10 to shift the next digit past the decimal
+        // point.
         float frac = abs - trunc;
         for (int i = 0; i < vetPlaces; ++i)
         {
@@ -1081,18 +1088,21 @@ public static class Utils
     }
 
     /// <summary>
-    /// Appends a string representation of an integer
-    /// padded with initial zeroes to a string builder.
+    /// Appends a string representation of an integer padded with initial
+    /// zeroes to a string builder.
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="v">input value</param>
     /// <param name="padding">leading zeroes</param>
     /// <returns>string builder</returns>
-    public static String ToPadded(in StringBuilder sb, in int v, in int padding = 3)
+    public static String ToPadded(
+        in StringBuilder sb,
+        in int v,
+        in int padding = 3)
     {
-        // Double precision is needed to preserve accuracy. The max integer value
-        // is 2147483647, which is 10 digits long. The sign needs to be flipped
-        // because working with positive absolute value would allow
+        // Double precision is needed to preserve accuracy. The max integer
+        // value is 2147483647, which is 10 digits long. The sign needs to be
+        // flipped because working with positive absolute value would allow
         // the minimum value to overflow to zero.
         bool isNeg = v < 0;
         int nAbsVal = isNeg ? v : -v;
@@ -1118,10 +1128,10 @@ public static class Utils
     }
 
     /// <summary>
-    /// Finds an approximate integer ratio to reprsent a real number.
-    /// The steps defines the maximum iteration of a search loop,
-    /// while the tolerance governs an early return.
-    /// Returns a tuple containing the antecedent and consequent.
+    /// Finds an approximate integer ratio to reprsent a real number. The steps
+    /// defines the maximum iteration of a search loop, while the tolerance
+    /// governs an early return. Returns a tuple containing the antecedent and
+    /// consequent.
     /// </summary>
     /// <param name="number">input value</param>
     /// <param name="steps">lower bound</param>
@@ -1181,7 +1191,10 @@ public static class Utils
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>wrapped value</returns>
-    public static float Wrap(in float v, in float lb = -1.0f, in float ub = 1.0f)
+    public static float Wrap(
+        in float v,
+        in float lb = -1.0f,
+        in float ub = 1.0f)
     {
         float range = ub - lb;
         return (range != 0.0f) ? v - range * MathF.Floor((v - lb) / range) : v;
@@ -1210,7 +1223,8 @@ public static class Utils
     }
 
     /// <summary>
-    /// Evaluates two floats like booleans, using the exclusive or (XOR) logic gate.
+    /// Evaluates two floats like booleans, using the exclusive or (XOR) logic
+    /// gate.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>

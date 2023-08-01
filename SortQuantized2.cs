@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// Sorts 2D vectors by quantizing them such that nearby
-/// vectors will be treated as equal.
+/// Sorts 2D vectors by quantizing them such that nearby vectors will be
+/// treated as equal.
 /// </summary>
 public class SortQuantized2 : IComparer<Vec2>
 {

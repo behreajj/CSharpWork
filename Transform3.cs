@@ -237,8 +237,8 @@ public class Transform3
     /// <summary>
     /// Rotates this transform around the x axis by an angle in radians.
     ///
-    /// Beware that using sequences of orthonormal rotations will result in gimbal
-    /// lock.
+    /// Beware that using sequences of orthonormal rotations will result in
+    /// gimbal lock.
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>this transform</returns>
@@ -251,8 +251,8 @@ public class Transform3
     /// <summary>
     /// Rotates this transform around the y axis by an angle in radians.
     ///
-    /// Beware that using sequences of orthonormal rotations will result in gimbal
-    /// lock.
+    /// Beware that using sequences of orthonormal rotations will result in
+    /// gimbal lock.
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>this transform</returns>
@@ -265,8 +265,8 @@ public class Transform3
     /// <summary>
     /// Rotates this transform around the z axis by an angle in radians.
     ///
-    /// Beware that using sequences of orthonormal rotations will result in gimbal
-    /// lock.
+    /// Beware that using sequences of orthonormal rotations will result in
+    /// gimbal lock.
     /// </summary>
     /// <param name="radians">angle</param>
     /// <returns>this transform</returns>
@@ -356,7 +356,8 @@ public class Transform3
 
     /// <summary>
     /// Multiplies a normal by a transform's inverse. This rotates the normal by
-    /// the inverse quaternion, multiplies the normal by the scale, then normalizes.
+    /// the inverse quaternion, multiplies the normal by the scale,
+    /// then normalizes.
     /// </summary>
     /// <param name="transform">transform</param>
     /// <param name="normal">normal</param>
@@ -440,8 +441,8 @@ public class Transform3
     }
 
     /// <summary>
-    /// Multiplies a point by a transform. This rotates the point, multiplies the
-    /// point by the scale, then adds the translation.
+    /// Multiplies a point by a transform. This rotates the point, multiplies
+    /// the point by the scale, then adds the translation.
     /// </summary>
     /// <param name="transform">transform</param>
     /// <param name="point">point</param>
@@ -464,8 +465,8 @@ public class Transform3
     }
 
     /// <summary>
-    /// Converts a transform to two axes, which in turn may constitute a rotation
-    /// matrix.
+    /// Converts a transform to two axes, which in turn may constitute a
+    /// rotation matrix.
     ///
     /// Returns a named value tuple containing the right, forward and up axes.
     /// </summary>

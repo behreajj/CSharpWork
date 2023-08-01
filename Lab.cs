@@ -2,103 +2,91 @@ using System;
 using System.Text;
 
 /// <summary>
-/// A readonly struct. Represents colors in a perceptual
-/// color space, such as CIE LAB, SR LAB 2, OK LAB, etc.
-/// The a and b axes are signed, unbounded values.
-/// Negative a indicates a green hue; positive, magenta.
-/// Negative b indicates a blue hue; positive, yellow.
-/// Lightness falls in the range [0.0, 100.0]; for a and
-/// b, the practical range is roughly [-111.0, 111.0].
+/// A readonly struct. Represents colors in a perceptual color space, such as
+/// CIE LAB, SR LAB 2, OK LAB, etc. The a and b axes are signed, unbounded
+/// values. Negative a indicates a green hue; positive, magenta. Negative b
+/// indicates a blue hue; positive, yellow. Lightness falls in the range
+/// [0.0, 100.0]. For a and b, the practical range is roughly [-111.0, 111.0].
 /// Alpha is expected to be in [0.0, 1.0].
 /// </summary>
 [Serializable]
 public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
 {
     /// <summary>
-    /// The lower bound for the a color channel of a color
-    /// converted from standard RGB to SR LAB 2, sampled
-    /// without respect for lightness.
+    /// The lower bound for the a color channel of a color converted from
+    /// standard RGB to SR LAB 2, sampled without respect for lightness.
     /// </summary>
     public const float AbsMinA = -82.70919f;
 
     /// <summary>
-    /// The upper bound for the a color channel of a color
-    /// converted from standard RGB to SR LAB 2, sampled
-    /// without respect for lightness.
+    /// The upper bound for the a color channel of a color converted from
+    /// standard RGB to SR LAB 2, sampled without respect for lightness.
     /// </summary>
     public const float AbsMaxA = 104.18851f;
 
     /// <summary>
-    /// The lower bound for the b color channel of a color
-    /// converted from standard RGB to SR LAB 2, sampled
-    /// without respect for lightness.
+    /// The lower bound for the b color channel of a color converted from
+    /// standard RGB to SR LAB 2, sampled without respect for lightness.
     /// </summary>
     public const float AbsMinB = -110.47817f;
 
     /// <summary>
-    /// The upper bound for the b color channel of a color
-    /// converted from standard RGB to SR LAB 2, sampled
-    /// without respect for lightness.
+    /// The upper bound for the b color channel of a color converted from
+    /// standard RGB to SR LAB 2, sampled without respect for lightness.
     /// </summary>
     public const float AbsMaxB = 94.90346f;
 
     /// <summary>
-    /// A scalar to convert a number in [0, 255] to
-    /// lightness in [0, 100]. Equivalent to 100.0 / 255.0.
+    /// A scalar to convert a number in [0, 255] to lightness in [0, 100].
+    /// Equivalent to 100.0 / 255.0.
     /// </summary>
     public const float LFrom255 = 0.39215687f;
 
     /// <summary>
-    /// A scalar to convert lightness in [0, 100] to
-    /// a number in [0, 255]. Equivalent to 255.0 / 100.0.
+    /// A scalar to convert lightness in [0, 100] to a number in [0, 255].
+    /// Equivalent to 255.0 / 100.0.
     /// </summary>
     public const float LTo255 = 2.55f;
 
     /// <summary>
-    /// The scalar used to normalize the A channel in 
-    /// SR LCH 2 to a range [0.0, 1.0]. Equivalent to
-    /// 0.5 / max(abs(AbsMinA), abs(AbsMinA)). Takes the
-    /// larger number to center the range at 0.
+    /// The scalar used to normalize the A channel in SR LCH 2 to a range
+    /// [0.0, 1.0]. Equivalent to 0.5 / max(abs(AbsMinA), abs(AbsMinA)). Takes
+    /// the larger number to center the range at 0.
     /// </summary>
     public const float NormDenomA = 0.004798994f;
 
     /// <summary>
-    /// The offset added to normalize the A channel in 
-    /// SR LCH 2 to a range [0.0, 1.0]. Equivalent to
-    /// max(abs(AbsMinA), abs(AbsMinA). Takes the larger
-    /// number so as to center the range at 0.
+    /// The offset added to normalize the A channel in  SR LCH 2 to a range
+    /// [0.0, 1.0]. Equivalent to max(abs(AbsMinA), abs(AbsMinA). Takes the
+    /// larger number so as to center the range at 0.
     /// </summary>
     public const float NormOffsetA = 104.18851f;
 
     /// <summary>
-    /// The scalar used to restore the A channel in 
-    /// SR LCH 2 from a range [0.0, 1.0]. Equivalent to
-    /// 2.0 * max(abs(AbsMinA), abs(AbsMinA)). Takes the
-    /// larger number so as to center the range at 0.
+    /// The scalar used to restore the A channel in  SR LCH 2 from a range
+    /// [0.0, 1.0]. Equivalent to 2.0 * max(abs(AbsMinA), abs(AbsMinA)). Takes
+    /// the larger number so as to center the range at 0.
     /// </summary>
     public const float NormScaleA = 208.37701f;
 
     /// <summary>
-    /// The scalar used to normalize the B channel in 
-    /// SR LCH 2 to a range [0.0, 1.0]. Equivalent to
-    /// 0.5 / max(abs(AbsMinB), abs(AbsMinB)). Takes the
-    /// larger number to center the range at 0.
+    /// The scalar used to normalize the B channel in  SR LCH 2 to a range
+    /// [0.0, 1.0]. Equivalent to 0.5 / max(abs(AbsMinB), abs(AbsMinB)). Takes
+    /// the larger number to center the range at 0.
     /// </summary>
     public const float NormDenomB = 0.004525781f;
 
     /// <summary>
-    /// The offset added to normalize the B channel in 
-    /// SR LCH 2 to a range [0.0, 1.0]. Equivalent to
-    /// max(abs(AbsMinB), abs(AbsMinB). Takes the larger
-    /// number so as to center the range at 0.
+    /// The offset added to normalize the B channel in SR LCH 2 to a range
+    /// [0.0, 1.0]. Equivalent to max(abs(AbsMinB), abs(AbsMinB). Takes the
+    /// larger number so as to center the range at 0.
     /// </summary>
     public const float NormOffsetB = 110.47817f;
 
     /// <summary>
-    /// The scalar used to restore the B channel in 
-    /// SR LCH 2 from a range [0.0, 1.0]. Equivalent to
-    /// 2.0 * max(abs(AbsMinB), abs(AbsMinB)). Takes the
-    /// larger number so as to center the range at 0.
+    /// The scalar used to restore the B channel in  SR LCH 2 from a range
+    /// [0.0, 1.0]. Equivalent to 2.0 * max(abs(AbsMinB), abs(AbsMinB)). Takes
+    /// the larger number so as to center the range at 0.
     /// </summary>
     public const float NormScaleB = 220.95634f;
 
@@ -276,8 +264,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Adds two colors together for the purpose of
-    /// making an adjustment.
+    /// Adds two colors together for the purpose of making an adjustment.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -292,8 +279,8 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Subtracts the right color from the left
-    /// for the purpose of making an adjustment.
+    /// Subtracts the right color from the left for the purpose of making an
+    /// adjustment.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -329,9 +316,8 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Tests to see if a color's alpha and lightness are greater
-    /// than zero; tests to see if its a and b components are
-    /// not zero.
+    /// Tests to see if a color's alpha and lightness are greater than zero.
+    /// Tests to see if its a and b components are not zero.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>evaluation</returns>
@@ -354,9 +340,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         return c.alpha > 0.0f;
     }
 
-    ///<summary>
-    ///Finds the chroma of a color.
-    ///</summary>
+    /// <summary>
+    /// Finds the chroma of a color.
+    /// </summary>
     /// <param name="c">color</param>
     /// <returns>chroma squared</returns>
     public static float Chroma(in Lab c)
@@ -364,9 +350,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         return MathF.Sqrt(Lab.ChromaSq(c));
     }
 
-    ///<summary>
-    ///Finds the chroma squared of a color.
-    ///</summary>
+    /// <summary>
+    /// Finds the chroma squared of a color.
+    /// </summary>
     /// <param name="c">color</param>
     /// <returns>chroma squared</returns>
     public static float ChromaSq(in Lab c)
@@ -375,27 +361,25 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Returns the first color argument with the alpha
-    /// of the second.
+    /// Returns the first color argument with the alpha of the second.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>color</returns>
     public static Lab CopyAlpha(in Lab a, in Lab b)
     {
-        return new(a.l, a.a, a.b, b.alpha);
+        return new Lab(l: a.l, a: a.a, b: a.b, alpha: b.alpha);
     }
 
     /// <summary>
-    /// Returns the first color argument with the light
-    /// of the second.
+    /// Returns the first color argument with the light of the second.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
     /// <returns>color</returns>
     public static Lab CopyLight(in Lab a, in Lab b)
     {
-        return new(b.l, a.a, a.b, a.alpha);
+        return new Lab(l: b.l, a: a.a, b: a.b, alpha: a.alpha);
     }
 
     /// <summary>
@@ -417,11 +401,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Finds the Euclidean distance between two colors.
-    /// Includes the colors' alpha channel in the calculation.
-    /// Since the alpha range is considerably less than
-    /// that of the other channels, a scalar is provided
-    /// to increase its weight.
+    /// Finds the Euclidean distance between two colors. Includes the colors'
+    /// alpha channel in the calculation. Since the alpha range is  less than
+    /// that of the other channels, a scalar is provided to increase its weight.
     /// </summary>
     /// <param name="o">left operand</param>
     /// <param name="d">right operand</param>
@@ -471,8 +453,8 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Checks if two colors have equivalent l, a and b channels when
-    /// converted to bytes (unsigned for l, signed for a and b).
+    /// Checks if two colors have equivalent l, a and b channels when converted
+    /// to bytes (unsigned for l, signed for a and b).
     /// Uses saturation arithmetic.
     /// </summary>
     /// <param name="a">left comparisand</param>
@@ -489,9 +471,8 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Checks if two colors have equivalent l, a, b and alpha
-    /// channels when converted to bytes.
-    /// Uses saturation arithmetic.
+    /// Checks if two colors have equivalent l, a, b and alpha channels when
+    /// converted to bytes. Uses saturation arithmetic.
     /// </summary>
     /// <param name="a">left comparisand</param>
     /// <param name="b">right comparisand</param>
@@ -503,9 +484,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Converts a hexadecimal representation of a color into
-    /// LAB. Assumes the integer is packed in the order alpha
-    /// in the 0x18 place, l in 0x10, a in 0x08, b in 0x00.
+    /// Converts a hexadecimal representation of a color into LAB. Assumes the
+    /// integer is packed in the order alpha in the 0x18 place, l in 0x10,
+    /// a in 0x08, b in 0x00.
     /// Scales lightness from [0, 255] to [0.0, 100.0].
     /// Shifts a and b from [0, 255] to [-128, 127].
     /// Scales alpha from [0, 255] to [0.0, 1.0].
@@ -518,11 +499,11 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         int l = c >> 0x10 & 0xff;
         int a = c >> 0x08 & 0xff;
         int b = c >> 0x00 & 0xff;
-        return new(
-            l * Lab.LFrom255,
-            a - 128.0f,
-            b - 128.0f,
-            t / 255.0f);
+        return new Lab(
+            l: l * Lab.LFrom255,
+            a: a - 128.0f,
+            b: b - 128.0f,
+            alpha: t / 255.0f);
     }
 
     /// <summary>
@@ -561,22 +542,25 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         y = (y <= comparisand) ? y * scalar : Math.Pow(y, oneThird) * 1.16d - 0.16d;
         z = (z <= comparisand) ? z * scalar : Math.Pow(z, oneThird) * 1.16d - 0.16d;
 
-        return new(
-            (float)(37.0950d * x + 62.9054d * y - 0.0008d * z),
-            (float)(663.4684d * x - 750.5078d * y + 87.0328d * z),
-            (float)(63.9569d * x + 108.4576d * y - 172.4152d * z),
-            v.W);
+        return new Lab(
+            l: (float)(37.0950d * x + 62.9054d * y - 0.0008d * z),
+            a: (float)(663.4684d * x - 750.5078d * y + 87.0328d * z),
+            b: (float)(63.9569d * x + 108.4576d * y - 172.4152d * z),
+            alpha: v.W);
     }
 
     /// <summary>
-    /// Returns a gray version of the color, i.e.,
-    /// where a and b are zero.
+    /// Returns a gray version of the color, where a and b are zero.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>opaque</returns>
+    /// <returns>gray</returns>
     public static Lab Gray(in Lab c)
     {
-        return new Lab(c.l, 0.0f, 0.0f, c.alpha);
+        return new Lab(
+            l: c.l,
+            a: 0.0f,
+            b: 0.0f,
+            alpha: c.alpha);
     }
 
     /// <summary>
@@ -734,11 +718,11 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <returns>mix</returns>
     public static Lab Mix(in Lab o, in Lab d)
     {
-        return new(
-            0.5f * (o.l + d.l),
-            0.5f * (o.a + d.a),
-            0.5f * (o.b + d.b),
-            0.5f * (o.alpha + d.alpha));
+        return new Lab(
+            l: 0.5f * (o.l + d.l),
+            a: 0.5f * (o.a + d.a),
+            b: 0.5f * (o.b + d.b),
+            alpha: 0.5f * (o.alpha + d.alpha));
     }
 
     /// <summary>
@@ -752,11 +736,11 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     public static Lab Mix(in Lab o, in Lab d, in float t)
     {
         float u = 1.0f - t;
-        return new(
-            u * o.l + t * d.l,
-            u * o.a + t * d.a,
-            u * o.b + t * d.b,
-            u * o.alpha + t * d.alpha);
+        return new Lab(
+            l: u * o.l + t * d.l,
+            a: u * o.a + t * d.a,
+            b: u * o.b + t * d.b,
+            alpha: u * o.alpha + t * d.alpha);
     }
 
     /// <summary>
@@ -778,9 +762,8 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Mixes two colors by a step in the range [0.0, 1.0].
-    /// If the chroma of both colors is greater than zero,
-    /// interpolates by chroma and hue.
+    /// Mixes two colors by a step in the range [0.0, 1.0]. If the chroma of
+    /// both colors is greater than zero, interpolates by chroma and hue.
     /// </summary>
     /// <param name="o">origin color</param>
     /// <param name="d">destination color</param>
@@ -832,7 +815,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <returns>opaque</returns>
     public static Lab Opaque(in Lab c)
     {
-        return new Lab(c.l, c.a, c.b, 1.0f);
+        return new Lab(l: c.l, a: c.a, b: c.b, alpha: 1.0f);
     }
 
     /// <summary>
@@ -847,7 +830,11 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         if (cSq > Utils.Epsilon)
         {
             float scInv = scalar / MathF.Sqrt(cSq);
-            return new(c.l, c.a * scInv, c.b * scInv, c.alpha);
+            return new Lab(
+                l: c.l,
+                a: c.a * scInv,
+                b: c.b * scInv,
+                alpha: c.alpha);
         }
         return Lab.Gray(c);
     }
@@ -878,11 +865,11 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <returns>rotated color</returns>
     public static Lab RotateHue(in Lab c, in float cosa, in float sina)
     {
-        return new(
-            c.l,
-            cosa * c.a - sina * c.b,
-            cosa * c.b + sina * c.a,
-            c.alpha);
+        return new Lab(
+            l: c.l,
+            a: cosa * c.a - sina * c.b,
+            b: cosa * c.b + sina * c.a,
+            alpha: c.alpha);
     }
 
     /// <summary>
@@ -945,12 +932,11 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Converts a color to an integer. Clamps the a and b
-    /// components to [-127.5, 127.5], floors, then adds 128.
-    /// Scales lightness from [0.0, 100.0] to [0, 255].
-    /// Packs the integer, from most to least significant,
-    /// in the order alpha in the 0x18 place, l in 0x10,
-    /// a in 0x08, b in 0x00.
+    /// Converts a color to an integer. Clamps the a and b components to
+    /// [-127.5, 127.5], floors, then adds 128. Scales lightness from
+    /// [0.0, 100.0] to [0, 255]. Packs the integer, from most to least
+    /// significant, in the order alpha in the 0x18 place, l in 0x10, a in
+    /// 0x08, b in 0x00.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>integer</returns>

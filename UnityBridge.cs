@@ -8,11 +8,9 @@ using UnityEngine;
 public static class UnityBridge
 {
     /// <summary>
-    /// Converts from a Unity AnimationCurve to a Curve2.
-    /// If appendStems flag is true, then adds horizontal
-    /// segments in cases where the first key's time is
-    /// greater than zero or the last key's time is less
-    /// than one.
+    /// Converts from a Unity AnimationCurve to a Curve2. If the appendStems
+    /// flag is true, then adds horizontal segments in cases where the first
+    /// key's time is greater than zero or the last key's time is less than one.
     /// </summary>
     /// <param name="source">animation curve</param>
     /// <param name="tanLimit">tangent limit</param>
@@ -146,8 +144,7 @@ public static class UnityBridge
     }
 
     /// <summary>
-    /// Converts from an array of Unity colors to
-    /// an array of Rgbs.
+    /// Converts from an array of Unity colors to an array of Rgbs.
     /// </summary>
     /// <param name="cs">colors</param>
     /// <returns>conversion</returns>
@@ -173,9 +170,7 @@ public static class UnityBridge
     }
 
     /// <summary>
-    /// Converts from an array of Unity colors to
-    /// an array of integers. The ClrChannel enumeration
-    /// signals the order for how integers should be packed.
+    /// Converts from an array of Unity colors to an array of integers.
     /// </summary>
     /// <param name="cs">colors</param>
     /// <returns>conversion</returns>
@@ -308,8 +303,7 @@ public static class UnityBridge
     }
 
     /// <summary>
-    /// Converts to an array of Unity colors from
-    /// an array of Rgbs.
+    /// Converts to an array of Unity colors from an array of Rgbs.
     /// </summary>
     /// <param name="cs">colors</param>
     /// <returns>conversion</returns>
@@ -325,10 +319,9 @@ public static class UnityBridge
     }
 
     /// <summary>
-    /// Converts to an array of Unity colors from
-    /// an array of Labs.
+    /// Converts to an array of Unity colors from an array of Labs.
     /// </summary>
-    /// <param name="cs">colors</param>
+    /// <param name="labs">colors</param>
     /// <returns>conversion</returns>
     public static Color[] ToColor(in Lab[] labs)
     {
@@ -380,8 +373,7 @@ public static class UnityBridge
     }
 
     /// <summary>
-    /// Converts to an array of Unity Color32s from
-    /// an array of Rgbs.
+    /// Converts to an array of Unity Color32s from an array of Rgbs.
     /// </summary>
     /// <param name="cs">colors</param>
     /// <param name="tm">tone mapper</param>

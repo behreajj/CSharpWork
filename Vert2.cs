@@ -4,7 +4,7 @@ using System.Text;
 /// <summary>
 /// Organizes the components of a 2D mesh into a group of coordinate and
 /// texture coordinate such that they can be edited together. This is not used
-/// by a mesh internally; it is created upon retrieval from a mesh.
+/// by a mesh internally, it is created upon retrieval from a mesh.
 /// </summary>
 [Serializable]
 public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>
@@ -117,7 +117,10 @@ public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>
     /// <param name="v">vertex</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in Vert2 v, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Vert2 v,
+        in int places = 4)
     {
         sb.Append("{\"coord\":");
         Vec2.ToString(sb, v.coord, places);

@@ -634,8 +634,8 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Returns a point on a Bezier curve described by two anchor points and two
     /// control points according to a step in [0.0, 1.0] .
     ///
-    /// When the step is less than zero, returns the first anchor point. When the
-    /// step is greater than one, returns the second anchor point.
+    /// When the step is less than zero, returns the first anchor point. When
+    /// the step is greater than one, returns the second anchor point.
     /// </summary>
     /// <param name="ap0">first anchor point</param>
     /// <param name="cp0">first control point</param>
@@ -1015,8 +1015,7 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     }
 
     /// <summary>
-    /// Generates a 2D array of vectors representing
-    /// a Cartesian Grid.
+    /// Generates a 2D array of vectors representing a Cartesian Grid.
     /// </summary>
     /// <param name="lowerBound">lower bound</param>
     /// <param name="upperBound">upper bound</param>
@@ -1683,7 +1682,10 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="v">vector</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in Vec2 v, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Vec2 v,
+        in int places = 4)
     {
         sb.Append("{\"x\":");
         Utils.ToFixed(sb, v.x, places);
@@ -1711,7 +1713,10 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// <param name="arr">array</param>
     /// <param name="places">print precision</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in Vec2[] arr, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Vec2[] arr,
+        in int places = 4)
     {
         sb.Append('[');
         if (arr != null)

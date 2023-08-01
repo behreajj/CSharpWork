@@ -2,9 +2,8 @@ using System;
 using System.Text;
 
 /// <summary>
-/// A readonly struct to store colors in standard and linear
-/// red, green, blue and alpha. Supports conversion to and from
-/// integers.
+/// A readonly struct to store colors in standard and linear red, green, blue
+/// and alpha. Supports conversion to and from integers.
 /// </summary>
 [Serializable]
 public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
@@ -55,7 +54,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
 
     /// <summary>
     /// Creates a color from unsigned bytes. Converts each to a single precision
-    /// real number in the  range [0.0, 1.0] .
+    /// real number in the  range [0.0, 1.0].
     /// </summary>
     /// <param name="r">red channel</param>
     /// <param name="g">green channel</param>
@@ -71,7 +70,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
 
     /// <summary>
     /// Creates a color from signed bytes. Converts each to a single precision
-    /// real number in the  range [0.0, 1.0] .
+    /// real number in the range [0.0, 1.0].
     /// </summary>
     /// <param name="r">red channel</param>
     /// <param name="g">green channel</param>
@@ -177,8 +176,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// A color evaluates to false if its alpha channel is less than or equal to
-    /// zero.
+    /// A color evaluates to false if its alpha channel is less than or equal
+    /// to zero.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>evaluation</returns>
@@ -289,8 +288,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Returns the first color argument with the alpha
-    /// of the second.
+    /// Returns the first color argument with the alpha of the second.
     /// </summary>
     /// <param name="a">left operand</param>
     /// <param name="b">right operand</param>
@@ -345,9 +343,9 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Converts a 3D vector to a color, as used in normal maps.
-    /// If the vector's magnitude is less than or equal to zero,
-    /// returns the color representation of up.
+    /// Converts a 3D vector to a color, as used in normal maps. If the
+    /// vector's magnitude is less than or equal to zero, returns the color
+    /// representation of up.
     /// </summary>
     /// <param name="v">vector</param>
     /// <returns>color</returns>
@@ -370,11 +368,11 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// Converts a hexadecimal representation of a color into RGB.
     /// </summary>
     /// <param name="c">integer</param>
-    /// <param name="order">color channel order</param>
+    /// <param name="o">color channel order</param>
     /// <returns>color</returns>
-    public static Rgb FromHex(in int c, in ClrChannel order = ClrChannel.ARGB)
+    public static Rgb FromHex(in int c, in ClrChannel o = ClrChannel.ARGB)
     {
-        switch (order)
+        switch (o)
         {
             case ClrChannel.ABGR:
                 { return Rgb.FromHexAbgr(c); }
@@ -432,8 +430,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Generates a 3D array of colors representing
-    /// a grid in standard RGB.
+    /// Generates a 3D array of colors representing a grid in standard RGB.
     /// </summary>
     /// <param name="cols">number of columns</param>
     /// <param name="rows">number of rows</param>
@@ -480,9 +477,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Evaluates whether a color's red, green
-    /// and blue channels are within the range
-    /// [0.0, 1.0].
+    /// Evaluates whether a color's red, green and blue channels are within the
+    /// range [0.0, 1.0].
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>evaluation</returns>
@@ -706,7 +702,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     public static Rgb Premul(in Rgb c)
     {
         if (c.a <= 0.0f) { return Rgb.ClearBlack; }
-        if (c.a >= 1.0f) { return new(c.r, c.g, c.b, 1.0f); }
+        if (c.a >= 1.0f) { return Rgb.Opaque(c); }
         return new(
             c.r * c.a,
             c.g * c.a,
@@ -737,8 +733,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Reduces the signal, or granularity, of a color's red, green
-    /// and blue channels. Does not alter the alpha channel.
+    /// Reduces the signal, or granularity, of a color's red, green and blue
+    /// channels. Does not alter the alpha channel.
     /// </summary>
     /// <param name="c">color</param>
     /// <param name="rLevels">red levels</param>
@@ -781,8 +777,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Converts a color from SR LAB 2 to standard
-    /// RGB (sRGB).
+    /// Converts a color from SR LAB 2 to standard RGB (sRGB).
     /// </summary>
     /// <param name="lab">LAB color</param>
     /// <returns>sRGB color</returns>
@@ -794,8 +789,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Converts a color from SR LCH to standard
-    /// RGB (sRGB).
+    /// Converts a color from SR LCH to standard RGB (sRGB).
     /// </summary>
     /// <param name="lch">LCH color</param>
     /// <returns>LAB color</returns>
@@ -846,8 +840,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Converts a color from standard RGB (sRGB)
-    /// to SR LCH.
+    /// Converts a color from standard RGB (sRGB) to SR LCH.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>LCH color</returns>
@@ -909,7 +902,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Converts a color to an integer. Returns an integer ordered as 0xAABBGGRR.
+    /// Converts a color to an integer. Returns an integer ordered as
+    /// 0xAABBGGRR.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hexadecimal color</returns>
@@ -919,7 +913,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Converts a color to an integer. Returns an integer ordered as 0xAARRGGBB.
+    /// Converts a color to an integer. Returns an integer ordered as
+    /// 0xAARRGGBB.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hexadecimal color</returns>
@@ -929,7 +924,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Converts a color to an integer. Returns an integer ordered as 0xRRGGBBAA.
+    /// Converts a color to an integer. Returns an integer ordered as
+    /// 0xRRGGBBAA.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hexadecimal color</returns>
@@ -943,11 +939,11 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// are in a valid range, [0.0, 1.0].
     /// </summary>
     /// <param name="c">color</param>
-    /// <param name="order">color channel order</param>
+    /// <param name="o">color channel order</param>
     /// <returns>hexadecimal color</returns>
-    public static int ToHexUnchecked(in Rgb c, in ClrChannel order = ClrChannel.ARGB)
+    public static int ToHexUnchecked(in Rgb c, in ClrChannel o = ClrChannel.ARGB)
     {
-        switch (order)
+        switch (o)
         {
             case ClrChannel.ABGR:
                 { return Rgb.ToHexAbgrUnchecked(c); }
@@ -961,7 +957,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
 
     /// <summary>
     /// Converts a color to an integer. Does not check if the color's components
-    /// are in a valid range, [0.0, 1.0]. Returns an integer ordered as 0xAABBGGRR.
+    /// are in a valid range, [0.0, 1.0]. Returns an integer ordered as
+    /// 0xAABBGGRR.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hexadecimal color</returns>
@@ -975,7 +972,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
 
     /// <summary>
     /// Converts a color to an integer. Does not check if the color's components
-    /// are in a valid range, [0.0, 1.0]. Returns an integer ordered as 0xAARRGGBB.
+    /// are in a valid range, [0.0, 1.0]. Returns an integer ordered as
+    /// 0xAARRGGBB.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hexadecimal color</returns>
@@ -989,7 +987,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
 
     /// <summary>
     /// Converts a color to an integer. Does not check if the color's components
-    /// are in a valid range, [0.0, 1.0]. Returns an integer ordered as 0xRRGGBBAA.
+    /// are in a valid range, [0.0, 1.0]. Returns an integer ordered as
+    /// 0xRRGGBBAA.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hexadecimal color</returns>
@@ -1016,8 +1015,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
 
     /// <summary>
     /// Appends a string representation of a color in web-friendly hexadecimal
-    /// to a string builder. Does not prepend a hash tag. The tone mapper function
-    /// should bring the color into [0.0, 1.0].
+    /// to a string builder. Does not prepend a hash tag. The tone mapper
+    /// function should bring the color into [0.0, 1.0].
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="c">color</param>
@@ -1049,8 +1048,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// For colors which exceed the range [0.0, 1.0], applies ACES
-    /// tone mapping algorithm. See https://64.github.io/tonemapping/ .
+    /// For colors which exceed the range [0.0, 1.0], applies ACES tone mapping
+    /// algorithm. See https://64.github.io/tonemapping/ .
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>tone mapped color</returns>
@@ -1084,10 +1083,10 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// For colors which exceed the range [0.0, 1.0], applies ACES
-    /// tone mapping algorithm. See https://64.github.io/tonemapping/ .
-    /// Assumes that the input color is in gamma sRGB, and that the
-    /// expected return of should be as well.
+    /// For colors which exceed the range [0.0, 1.0], applies ACES tone mapping
+    /// algorithm. See https://64.github.io/tonemapping/ . Assumes that the
+    /// input color is in gamma sRGB, and that the expected return should be as
+    /// well.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>tone mapped color</returns>
@@ -1099,9 +1098,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// For colors which exceed the range [0.0, 1.0], applies
-    /// Uncharted 2, or Hable, tone mapping algorithm. See
-    /// https://64.github.io/tonemapping/ .
+    /// For colors which exceed the range [0.0, 1.0], applies Uncharted 2, or
+    /// Hable, tone mapping algorithm. See https://64.github.io/tonemapping/ .
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>tone mapped color</returns>
@@ -1122,9 +1120,12 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
         float eg = c.g * exposureBias;
         float eb = c.b * exposureBias;
 
-        float xr = ((er * (A * er + C * B) + D * E) / (er * (A * er + B) + D * F)) - E / F;
-        float xg = ((eg * (A * eg + C * B) + D * E) / (eg * (A * eg + B) + D * F)) - E / F;
-        float xb = ((eb * (A * eb + C * B) + D * E) / (eb * (A * eb + B) + D * F)) - E / F;
+        float xr = ((er * (A * er + C * B) + D * E)
+            / (er * (A * er + B) + D * F)) - E / F;
+        float xg = ((eg * (A * eg + C * B) + D * E)
+            / (eg * (A * eg + B) + D * F)) - E / F;
+        float xb = ((eb * (A * eb + C * B) + D * E)
+            / (eb * (A * eb + B) + D * F)) - E / F;
 
         return new(
             Utils.Clamp(xr * whiteScale, 0.0f, 1.0f),
@@ -1134,11 +1135,10 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// For colors which exceed the range [0.0, 1.0], applies
-    /// Uncharted 2, or Hable, tone mapping algorithm. See
-    /// https://64.github.io/tonemapping/ . Assumes that the
-    /// input color is in gamma sRGB, and that the
-    /// expected return of should be as well.
+    /// For colors which exceed the range [0.0, 1.0], applies Uncharted 2, or
+    /// Hable, tone mapping algorithm. See https://64.github.io/tonemapping/ .
+    /// Assumes that the input color is in gamma sRGB, and that the expected
+    /// return should be as well.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>tone mapped color</returns>
@@ -1185,16 +1185,16 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     }
 
     /// <summary>
-    /// Divides the red, green and blue color channels of a color by the
-    /// alpha channel. Reverses pre-multiplication. If alpha is less than
-    /// or equal to zero, returns  clear black.
+    /// Divides the red, green and blue color channels of a color by the alpha
+    /// channel. Reverses pre-multiplication. If alpha is less than or equal to
+    /// zero, returns  clear black.
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>unpremultiplied color</returns>
     public static Rgb Unpremul(in Rgb c)
     {
         if (c.a <= 0.0f) { return Rgb.ClearBlack; }
-        if (c.a >= 1.0f) { return new(c.r, c.g, c.b, 1.0f); }
+        if (c.a >= 1.0f) { return Rgb.Opaque(c); }
         float aInv = 1.0f / c.a;
         return new(
             c.r * aInv,
