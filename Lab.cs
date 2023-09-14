@@ -341,26 +341,6 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Finds the chroma of a color.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>chroma squared</returns>
-    public static float Chroma(in Lab c)
-    {
-        return MathF.Sqrt(Lab.ChromaSq(c));
-    }
-
-    /// <summary>
-    /// Finds the chroma squared of a color.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>chroma squared</returns>
-    public static float ChromaSq(in Lab c)
-    {
-        return c.a * c.a + c.b * c.b;
-    }
-
-    /// <summary>
     /// Returns the first color argument with the alpha of the second.
     /// </summary>
     /// <param name="a">left operand</param>
@@ -380,6 +360,26 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     public static Lab CopyLight(in Lab a, in Lab b)
     {
         return new Lab(l: b.l, a: a.a, b: a.b, alpha: a.alpha);
+    }
+
+    /// <summary>
+    /// Finds the chroma of a color.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>chroma squared</returns>
+    public static float Chroma(in Lab c)
+    {
+        return MathF.Sqrt(Lab.ChromaSq(c));
+    }
+
+    /// <summary>
+    /// Finds the chroma squared of a color.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>chroma squared</returns>
+    public static float ChromaSq(in Lab c)
+    {
+        return c.a * c.a + c.b * c.b;
     }
 
     /// <summary>
