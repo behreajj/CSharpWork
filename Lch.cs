@@ -154,7 +154,7 @@ public readonly struct Lch
         float cTrg = MathF.Max(0.0f, c.c);
         float hTrg = c.h - MathF.Floor(c.h);
         float alphaTrg = Utils.Clamp(c.alpha, 0.0f, 1.0f);
-        Lch target = new Lch(l: lTrg, c: cTrg, h: hTrg, alpha: alphaTrg);
+        Lch target = new(l: lTrg, c: cTrg, h: hTrg, alpha: alphaTrg);
 
         while (cTrg > 0.0f)
         {
@@ -360,8 +360,8 @@ public readonly struct Lch
     /// <summary>
     /// Mixes two colors by a step in the range [0.0, 1.0]. The easing function
     /// is expected to ease from an origin hue to a destination by a factor
-    /// according to a range. Mixes in LAB if the chroma of either origin or
-    /// destination is near zero.
+    /// according to a range [0.0, 1.0]. Mixes in LAB if the chroma of either
+    /// origin or destination is near zero.
     /// </summary>
     /// <param name="o">origin color</param>
     /// <param name="d">destination color</param>
@@ -424,6 +424,22 @@ public readonly struct Lch
     public static bool None(in Lch c)
     {
         return c.alpha <= 0.0f;
+    }
+
+    /// <summary>
+    /// Finds the saturation of a color as defined by Manfred Richter and Eva
+    /// Lubbe. See https://www.wikiwand.com/en/Colorfulness#CIELUV_and_CIELAB .
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>saturation</returns>
+    public static float Saturation(in Lch c)
+    {
+        double ld = c.l;
+        double cd = c.c;
+
+        double clsq = cd * cd + ld * ld;
+        if (clsq > 0.0d) { return (float)(cd / Math.Sqrt(clsq)); }
+        return 0.0f;
     }
 
     /// <summary>
@@ -526,59 +542,159 @@ public readonly struct Lch
     /// Returns the color black.
     /// </summary>
     /// <value>black</value>
-    public static Lch Black { get { return new Lch(0.0f, 0.0f, 0.0f, 1.0f); } }
+    public static Lch Black
+    {
+        get
+        {
+            return new Lch(
+                l: 0.0f,
+                c: 0.0f,
+                h: 0.0f,
+                alpha: 1.0f);
+        }
+    }
 
     /// <summary>
     /// Returns the color clear black.
     /// </summary>
     /// <value>clear black</value>
-    public static Lch ClearBlack { get { return new Lch(0.0f, 0.0f, 0.0f, 0.0f); } }
+    public static Lch ClearBlack
+    {
+        get
+        {
+            return new Lch(
+                l: 0.0f,
+                c: 0.0f,
+                h: 0.0f,
+                alpha: 0.0f);
+        }
+    }
 
     /// <summary>
     /// Returns the color clear white.
     /// </summary>
     /// <value>clear white</value>
-    public static Lch ClearWhite { get { return new Lch(100.0f, 0.0f, 0.0f, 0.0f); } }
-
-    /// <summary>
-    /// Returns the color red in SR LCH.
-    /// </summary>
-    /// <value>red</value>
-    public static Lch SrRed { get { return new(53.22598f, 103.4373f, 0.1135622f, 1.0f); } }
-
-    /// <summary>
-    /// Returns the color yellow in SR LCH.
-    /// </summary>
-    /// <value>yellow</value>
-    public static Lch SrYellow { get { return new(97.34526f, 102.1809f, 0.3092285f, 1.0f); } }
-
-    /// <summary>
-    /// Returns the color green in SR LCH.
-    /// </summary>
-    /// <value>green</value>
-    public static Lch SrGreen { get { return new(87.51519f, 117.3746f, 0.3749225f, 1.0f); } }
-
-    /// <summary>
-    /// Returns the color cyan in SR LCH.
-    /// </summary>
-    /// <value>cyan</value>
-    public static Lch SrCyan { get { return new(90.6247f, 46.30222f, 0.5525401f, 1.0f); } }
+    public static Lch ClearWhite
+    {
+        get
+        {
+            return new Lch(
+                l: 100.0f,
+                c: 0.0f,
+                h: 0.0f,
+                alpha: 0.0f);
+        }
+    }
 
     /// <summary>
     /// Returns the color blue in SR LCH.
     /// </summary>
     /// <value>blue</value>
-    public static Lch SrBlue { get { return new(30.64395f, 111.4585f, 0.7327945f, 1.0f); } }
+    public static Lch SrBlue
+    {
+        get
+        {
+            return new Lch(
+                l: 30.64395f,
+                c: 111.4585f,
+                h: 0.7327945f,
+                alpha: 1.0f);
+        }
+    }
+
+    /// <summary>
+    /// Returns the color cyan in SR LCH.
+    /// </summary>
+    /// <value>cyan</value>
+    public static Lch SrCyan
+    {
+        get
+        {
+            return new Lch(
+                l: 90.6247f,
+                c: 46.30222f,
+                h: 0.5525401f,
+                alpha: 1.0f);
+        }
+    }
+
+    /// <summary>
+    /// Returns the color green in SR LCH.
+    /// </summary>
+    /// <value>green</value>
+    public static Lch SrGreen
+    {
+        get
+        {
+            return new Lch(
+                l: 87.51519f,
+                c: 117.3746f,
+                h: 0.3749225f,
+                alpha: 1.0f);
+        }
+    }
 
     /// <summary>
     /// Returns the color magenta in SR LCH.
     /// </summary>
     /// <value>magenta</value>
-    public static Lch SrMagenta { get { return new(60.25521f, 119.4313f, 0.91468f, 1.0f); } }
+    public static Lch SrMagenta
+    {
+        get
+        {
+            return new Lch(
+                l: 60.25521f,
+                c: 119.4313f,
+                h: 0.91468f,
+                alpha: 1.0f);
+        }
+    }
+
+    /// <summary>
+    /// Returns the color red in SR LCH.
+    /// </summary>
+    /// <value>red</value>
+    public static Lch SrRed
+    {
+        get
+        {
+            return new Lch(
+                l: 53.22598f,
+                c: 103.4373f,
+                h: 0.1135622f,
+                alpha: 1.0f);
+        }
+    }
+
+    /// <summary>
+    /// Returns the color yellow in SR LCH.
+    /// </summary>
+    /// <value>yellow</value>
+    public static Lch SrYellow
+    {
+        get
+        {
+            return new Lch(
+                l: 97.34526f,
+                c: 102.1809f,
+                h: 0.3092285f,
+                alpha: 1.0f);
+        }
+    }
 
     /// <summary>
     /// Returns the color white.
     /// </summary>
     /// <value>white</value>
-    public static Lch White { get { return new Lch(100.0f, 0.0f, 0.0f, 1.0f); } }
+    public static Lch White
+    {
+        get
+        {
+            return new Lch(
+                l: 100.0f,
+                c: 0.0f,
+                h: 0.0f,
+                alpha: 1.0f);
+        }
+    }
 }

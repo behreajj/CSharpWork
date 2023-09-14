@@ -873,6 +873,27 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
+    /// Finds the saturation of a color as defined by Manfred Richter and Eva
+    /// Lubbe. See https://www.wikiwand.com/en/Colorfulness#CIELUV_and_CIELAB .
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>saturation</returns>
+    public static float Saturation(in Lab c)
+    {
+        // Alternative formula:
+        // s = sqrt(a ^ 2 + b ^ 2) / l
+
+        double ld = c.l;
+        double ad = c.a;
+        double bd = c.b;
+
+        double csq = ad * ad + bd * bd;
+        double clsq = csq + ld * ld;
+        if (clsq > 0.0d) { return (float)(Math.Sqrt(csq) / Math.Sqrt(clsq)); }
+        return 0.0f;
+    }
+
+    /// <summary>
     /// Converts from SR LAB 2 to SR XYZ.
     /// The z component of the input vector is
     /// expected to hold the luminance, while x
@@ -988,59 +1009,159 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// Returns the color black.
     /// </summary>
     /// <value>black</value>
-    public static Lab Black { get { return new(0.0f, 0.0f, 0.0f, 1.0f); } }
+    public static Lab Black
+    {
+        get
+        {
+            return new Lab(
+                l: 0.0f,
+                a: 0.0f,
+                b: 0.0f,
+                alpha: 1.0f);
+        }
+    }
 
     /// <summary>
     /// Returns the color clear black.
     /// </summary>
     /// <value>clear black</value>
-    public static Lab ClearBlack { get { return new(0.0f, 0.0f, 0.0f, 0.0f); } }
+    public static Lab ClearBlack
+    {
+        get
+        {
+            return new Lab(
+                l: 0.0f,
+                a: 0.0f,
+                b: 0.0f,
+                alpha: 0.0f);
+        }
+    }
 
     /// <summary>
     /// Returns the color clear white.
     /// </summary>
     /// <value>clear white</value>
-    public static Lab ClearWhite { get { return new(100.0f, 0.0f, 0.0f, 0.0f); } }
-
-    /// <summary>
-    /// Returns the color red in SR LAB 2.
-    /// </summary>
-    /// <value>red</value>
-    public static Lab SrRed { get { return new(53.22598f, 78.20428f, 67.70062f, 1.0f); } }
-
-    /// <summary>
-    /// Returns the color yellow in SR LAB 2.
-    /// </summary>
-    /// <value>yellow</value>
-    public static Lab SrYellow { get { return new(97.34526f, -37.15428f, 95.18662f, 1.0f); } }
-
-    /// <summary>
-    /// Returns the color green in SR LAB 2.
-    /// </summary>
-    /// <value>green</value>
-    public static Lab SrGreen { get { return new(87.51519f, -82.95599f, 83.03678f, 1.0f); } }
-
-    /// <summary>
-    /// Returns the color cyan in SR LAB 2.
-    /// </summary>
-    /// <value>cyan</value>
-    public static Lab SrCyan { get { return new(90.6247f, -43.80207f, -15.00912f, 1.0f); } }
+    public static Lab ClearWhite
+    {
+        get
+        {
+            return new Lab(
+                l: 100.0f,
+                a: 0.0f,
+                b: 0.0f,
+                alpha: 0.0f);
+        }
+    }
 
     /// <summary>
     /// Returns the color blue in SR LAB 2.
     /// </summary>
     /// <value>blue</value>
-    public static Lab SrBlue { get { return new(30.64395f, -12.02581f, -110.8078f, 1.0f); } }
+    public static Lab SrBlue
+    {
+        get
+        {
+            return new Lab(
+                l: 30.64395f,
+                a: -12.02581f,
+                b: -110.8078f,
+                alpha: 1.0f);
+        }
+    }
+
+    /// <summary>
+    /// Returns the color cyan in SR LAB 2.
+    /// </summary>
+    /// <value>cyan</value>
+    public static Lab SrCyan
+    {
+        get
+        {
+            return new Lab(
+                l: 90.6247f,
+                a: -43.80207f,
+                b: -15.00912f,
+                alpha: 1.0f);
+        }
+    }
+
+    /// <summary>
+    /// Returns the color green in SR LAB 2.
+    /// </summary>
+    /// <value>green</value>
+    public static Lab SrGreen
+    {
+        get
+        {
+            return new Lab(
+                l: 87.51519f,
+                a: -82.95599f,
+                b: 83.03678f,
+                alpha: 1.0f);
+        }
+    }
 
     /// <summary>
     /// Returns the color magenta in SR LAB 2.
     /// </summary>
     /// <value>magenta</value>
-    public static Lab SrMagenta { get { return new(60.25521f, 102.6771f, -61.00205f, 1.0f); } }
+    public static Lab SrMagenta
+    {
+        get
+        {
+            return new Lab(
+                l: 60.25521f,
+                a: 102.6771f,
+                b: -61.00205f,
+                alpha: 1.0f);
+        }
+    }
+
+    /// <summary>
+    /// Returns the color red in SR LAB 2.
+    /// </summary>
+    /// <value>red</value>
+    public static Lab SrRed
+    {
+        get
+        {
+            return new Lab(
+                l: 53.22598f,
+                a: 78.20428f,
+                b: 67.70062f,
+                alpha: 1.0f);
+        }
+    }
+
+    /// <summary>
+    /// Returns the color yellow in SR LAB 2.
+    /// </summary>
+    /// <value>yellow</value>
+    public static Lab SrYellow
+    {
+        get
+        {
+            return new Lab(
+                l: 97.34526f,
+                a: -37.15428f,
+                b: 95.18662f,
+                alpha: 1.0f);
+        }
+    }
 
     /// <summary>
     /// Returns the color white.
     /// </summary>
     /// <value>white</value>
-    public static Lab White { get { return new(100.0f, 0.0f, 0.0f, 1.0f); } }
+    public static Lab White
+    {
+        get
+        {
+            return new Lab(
+                l: 100.0f,
+                a: 0.0f,
+                b: 0.0f,
+                alpha: 1.0f);
+        }
+    }
 }

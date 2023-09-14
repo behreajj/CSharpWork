@@ -610,8 +610,8 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     }
 
     /// <summary>
-    /// Finds the square root of a real number which could be either positive or
-    /// negative.
+    /// Finds the square root of a real number which could be either positive
+    /// or negative.
     /// </summary>
     /// <param name="a">value</param>
     /// <returns>square root</returns>

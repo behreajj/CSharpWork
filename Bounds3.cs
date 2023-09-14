@@ -1,6 +1,6 @@
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
 
 /// <summary>
 /// An axis aligned bounding box (AABB) for a 3D volume, represented with a
@@ -35,7 +35,8 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     /// </summary>
     /// <param name="min">minimum</param>
     /// <param name="max">maximum</param>
-    public Bounds3(in float min = -0.5f, in float max = 0.5f) : this(min, min, min, max, max, max) { }
+    public Bounds3(in float min = -0.5f, in float max = 0.5f)
+        : this(min, min, min, max, max, max) { }
 
     /// <summary>
     /// Creats a bounds from a nonuniform
@@ -536,9 +537,9 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     }
 
     /// <summary>
-    /// Returns a bounds where all components of the minimum
-    /// are less than those of the maximum, and that the
-    /// edges of the bounds do not equal each other.
+    /// Returns a bounds where all components of the minimum are less than
+    /// those of the maximum, and that the edges of the bounds do not equal
+    /// each other.
     /// </summary>
     /// <param name="b">b</param>
     /// <returns>verified bounds</returns>

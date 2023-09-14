@@ -217,8 +217,7 @@ public class Transform2
     }
 
     /// <summary>
-    /// Eases the transform to a location by a step according to an easing
-    /// function.
+    /// Eases the transform to a location by a step according to a function.
     /// </summary>
     /// <param name="v">direction</param>
     /// <param name="step">step</param>
@@ -294,8 +293,7 @@ public class Transform2
     }
 
     /// <summary>
-    /// Eases the transform to a scale by a step according to an easing
-    /// function.
+    /// Eases the transform to a scale by a step according to a function.
     /// </summary>
     /// <param name="v">nonuniform scale</param>
     /// <param name="step">step</param>
@@ -334,7 +332,9 @@ public class Transform2
     /// <returns>point</returns>
     public static Vec2 InvMulPoint(in Transform2 transform, in Vec2 point)
     {
-        return Vec2.RotateZ((point - transform.location) / transform.scale, -transform.rotation);
+        return Vec2.RotateZ(
+            (point - transform.location) / transform.scale,
+            -transform.rotation);
     }
 
     /// <summary>
@@ -372,8 +372,8 @@ public class Transform2
     }
 
     /// <summary>
-    /// Multiplies a direction by a transform. This rotates the direction by the
-    /// transform's rotation.
+    /// Multiplies a direction by a transform. This rotates the direction by
+    /// the transform's rotation.
     /// </summary>
     /// <param name="transform">transform</param>
     /// <param name="dir">direction</param>
@@ -392,7 +392,8 @@ public class Transform2
     /// <returns>point</returns>
     public static Vec2 MulPoint(in Transform2 transform, in Vec2 point)
     {
-        return transform.location + transform.scale * Vec2.RotateZ(point, transform.rotation);
+        return transform.location + transform.scale * Vec2.RotateZ(
+            point, transform.rotation);
     }
 
     /// <summary>
@@ -429,7 +430,8 @@ public class Transform2
     /// <returns>string</returns>
     public static string ToString(in Transform2 tr, in int places = 4)
     {
-        return Transform2.ToString(new StringBuilder(256), tr, places).ToString();
+        return Transform2.ToString(
+            new StringBuilder(256), tr, places).ToString();
     }
 
     /// <summary>

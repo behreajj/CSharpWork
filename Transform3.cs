@@ -194,8 +194,7 @@ public class Transform3
     }
 
     /// <summary>
-    /// Eases the transform to a location by a step according to an easing
-    /// function.
+    /// Eases the transform to a location by a step according to a function.
     /// </summary>
     /// <param name="v">direction</param>
     /// <param name="step">step</param>
@@ -313,7 +312,7 @@ public class Transform3
     }
 
     /// <summary>
-    /// Eases the transform to a scale by a step according to an easing function.
+    /// Eases the transform to a scale by a step according to a function.
     /// </summary>
     /// <param name="v">nonuniform scale</param>
     /// <param name="step">step</param>
@@ -355,8 +354,8 @@ public class Transform3
     }
 
     /// <summary>
-    /// Multiplies a normal by a transform's inverse. This rotates the normal by
-    /// the inverse quaternion, multiplies the normal by the scale,
+    /// Multiplies a normal by a transform's inverse. This rotates the normal
+    /// by the inverse quaternion, multiplies the normal by the scale,
     /// then normalizes.
     /// </summary>
     /// <param name="transform">transform</param>
@@ -364,7 +363,8 @@ public class Transform3
     /// <returns>normal</returns>
     public static Vec3 InvMulNormal(in Transform3 transform, in Vec3 normal)
     {
-        return Vec3.Normalize(transform.scale * Quat.InvMulVector(transform.rotation, normal));
+        return Vec3.Normalize(transform.scale
+            * Quat.InvMulVector(transform.rotation, normal));
     }
 
     /// <summary>
@@ -416,8 +416,8 @@ public class Transform3
     }
 
     /// <summary>
-    /// Multiplies a direction by a transform. This rotates the direction by the
-    /// transform's rotation.
+    /// Multiplies a direction by a transform. This rotates the direction by
+    /// the transform's rotation.
     /// </summary>
     /// <param name="transform">transform</param>
     /// <param name="dir">direction</param>
@@ -437,7 +437,8 @@ public class Transform3
     /// <returns>normal</returns>
     public static Vec3 MulNormal(in Transform3 transform, in Vec3 normal)
     {
-        return Vec3.Normalize(Quat.MulVector(transform.rotation, normal / transform.scale));
+        return Vec3.Normalize(Quat.MulVector(
+            transform.rotation, normal / transform.scale));
     }
 
     /// <summary>
@@ -449,7 +450,8 @@ public class Transform3
     /// <returns>point</returns>
     public static Vec3 MulPoint(in Transform3 transform, in Vec3 point)
     {
-        return transform.location + transform.scale * Quat.MulVector(transform.rotation, point);
+        return transform.location + transform.scale
+            * Quat.MulVector(transform.rotation, point);
     }
 
     /// <summary>
@@ -485,7 +487,8 @@ public class Transform3
     /// <returns>string</returns>
     public static string ToString(in Transform3 tr, in int places = 4)
     {
-        return Transform3.ToString(new StringBuilder(354), tr, places).ToString();
+        return Transform3.ToString(
+            new StringBuilder(354), tr, places).ToString();
     }
 
     /// <summary>

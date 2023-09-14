@@ -372,6 +372,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>color</returns>
     public static Rgb FromHex(in int c, in ClrChannel o = ClrChannel.ARGB)
     {
+        // TODO: This needs to handle uints as well in C# otherwise have
+        // to use unchecked.
         switch (o)
         {
             case ClrChannel.ABGR:
@@ -512,10 +514,13 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>XYZ color</returns>
     public static Vec4 LinearToSrXyz(in Rgb c)
     {
+        double cr = c.r;
+        double cg = c.g;
+        double cb = c.b;
         return new(
-            0.32053f * c.r + 0.63692f * c.g + 0.04256f * c.b,
-            0.161987f * c.r + 0.756636f * c.g + 0.081376f * c.b,
-            0.017228f * c.r + 0.10866f * c.g + 0.874112f * c.b,
+            (float)(0.32053d * cr + 0.63692d * cg + 0.04256d * cb),
+            (float)(0.161987d * cr + 0.756636d * cg + 0.081376d * cb),
+            (float)(0.017228d * cr + 0.10866d * cg + 0.874112d * cb),
             c.a);
     }
 
@@ -809,10 +814,13 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>linear color</returns>
     public static Rgb SrXyzToLinear(in Vec4 v)
     {
+        double vx = v.X;
+        double vy = v.Y;
+        double vz = v.Z;
         return new(
-            5.435679f * v.X - 4.599131f * v.Y + 0.163593f * v.Z,
-            -1.16809f * v.X + 2.327977f * v.Y - 0.159798f * v.Z,
-            0.03784f * v.X - 0.198564f * v.Y + 1.160644f * v.Z,
+            (float)(5.435679d * vx - 4.599131d * vy + 0.163593d * vz),
+            (float)(-1.16809d * vx + 2.327977d * vy - 0.159798d * vz),
+            (float)(0.03784d * vx - 0.198564d * vy + 1.160644d * vz),
             v.W);
     }
 

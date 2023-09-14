@@ -1,15 +1,15 @@
 using System;
 
 /// <summary>
-/// Implements blend functions for two colors. Functions are to be
-/// supplied to an image blending function.
+/// Implements blend functions for two colors. Functions are to be supplied to
+/// an image blending function.
 /// </summary>
 public static class ClrBlends
 {
     /// <summary>
-    /// Blends two colors in LCH. The under color's lightness
-    /// is retained while its hue and saturation are blended according
-    /// to the transparency of the over and under color.
+    /// Blends two colors in LCH. The under color's lightness is retained while
+    /// its hue and saturation are blended according to the transparency of the
+    /// over and under color.
     /// </summary>
     /// <param name="under">under color</param>
     /// <param name="over">over color</param>
@@ -36,9 +36,9 @@ public static class ClrBlends
     }
 
     /// <summary>
-    /// Blends two colors in LCH. The under color's lightness
-    /// and chroma are retained while its hue is blended according
-    /// to the transparency of the over and under color.
+    /// Blends two colors in LCH. The under color's lightness and chroma are
+    /// retained while its hue is blended according to the transparency of the
+    /// over and under color.
     /// </summary>
     /// <param name="under">under color</param>
     /// <param name="over">over color</param>
@@ -64,9 +64,9 @@ public static class ClrBlends
     }
 
     /// <summary>
-    /// Blends two colors in LCH. The under color's hue
-    /// and chroma are retained while its lightness is blended
-    /// according to the transparency of the over and under color.
+    /// Blends two colors in LCH. The under color's hue and chroma are retained
+    /// while its lightness is blended according to the transparency of the
+    /// over and under color.
     /// </summary>
     /// <param name="under">under color</param>
     /// <param name="over">over color</param>
@@ -91,8 +91,8 @@ public static class ClrBlends
     }
 
     /// <summary>
-    /// Replaces the under color with the over color except
-    /// when the over color is transparent.
+    /// Replaces the under color with the over color except when the over color
+    /// is transparent.
     /// </summary>
     /// <param name="under">under color</param>
     /// <param name="over">over color</param>
@@ -104,9 +104,9 @@ public static class ClrBlends
     }
 
     /// <summary>
-    /// Blends two colors in LCH. The under color's hue
-    /// and lightness are retained while its chroma is blended
-    /// according to the transparency of the over and under color.
+    /// Blends two colors in LCH. The under color's hue and lightness are
+    /// retained while its chroma is blended according to the transparency of
+    /// the over and under color.
     /// </summary>
     /// <param name="under">under color</param>
     /// <param name="over">over color</param>

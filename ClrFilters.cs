@@ -1,9 +1,8 @@
 using System;
 
 /// <summary>
-/// Implements filter functions for a color. Functions are to be
-/// supplied to an image filter function. Both the lower and upper
-/// bounds are inclusive.
+/// Implements filter functions for a color. Functions are to be supplied to an
+/// image filter function. Both the lower and upper bounds are inclusive.
 /// </summary>
 public static class ClrFilters
 {
@@ -14,7 +13,10 @@ public static class ClrFilters
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>evaluation</returns>
-    public static bool FilterAlpha(in Rgb c, in float lb = 0.0f, in float ub = 1.0f)
+    public static bool FilterAlpha(
+        in Rgb c,
+        in float lb = 0.0f,
+        in float ub = 1.0f)
     {
         return c.Alpha >= lb && c.Alpha <= ub;
     }
@@ -26,7 +28,10 @@ public static class ClrFilters
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>evaluation</returns>
-    public static bool FilterBlue(in Rgb c, in float lb = 0.0f, in float ub = 1.0f)
+    public static bool FilterBlue(
+        in Rgb c,
+        in float lb = 0.0f,
+        in float ub = 1.0f)
     {
         return c.B >= lb && c.B <= ub;
     }
@@ -38,7 +43,10 @@ public static class ClrFilters
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>evaluation</returns>
-    public static bool FilterChroma(in Rgb c, in float lb = 0.0f, in float ub = 135.0f)
+    public static bool FilterChroma(
+        in Rgb c,
+        in float lb = 0.0f,
+        in float ub = 135.0f)
     {
         Lab lab = Rgb.StandardToSrLab2(c);
         float chromaSq = Lab.ChromaSq(lab);
@@ -52,7 +60,10 @@ public static class ClrFilters
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>evaluation</returns>
-    public static bool FilterGreen(in Rgb c, in float lb = 0.0f, in float ub = 1.0f)
+    public static bool FilterGreen(
+        in Rgb c,
+        in float lb = 0.0f,
+        in float ub = 1.0f)
     {
         return c.G >= lb && c.G <= ub;
     }
@@ -66,7 +77,10 @@ public static class ClrFilters
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>evaluation</returns>
-    public static bool FilterHue(in Rgb c, in float lb = 0.0f, in float ub = 1.0f)
+    public static bool FilterHue(
+        in Rgb c,
+        in float lb = 0.0f,
+        in float ub = 1.0f)
     {
         Lab lab = Rgb.StandardToSrLab2(c);
         float a = lab.A;
@@ -87,7 +101,10 @@ public static class ClrFilters
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>evaluation</returns>
-    public static bool FilterLightness(in Rgb c, in float lb = 0.0f, in float ub = 100.0f)
+    public static bool FilterLightness(
+        in Rgb c,
+        in float lb = 0.0f,
+        in float ub = 100.0f)
     {
         Lab lab = Rgb.StandardToSrLab2(c);
         return lab.L >= lb && lab.L <= ub;
@@ -100,7 +117,10 @@ public static class ClrFilters
     /// <param name="lb">lower bound</param>
     /// <param name="ub">upper bound</param>
     /// <returns>evaluation</returns>
-    public static bool FilterRed(in Rgb c, in float lb = 0.0f, in float ub = 1.0f)
+    public static bool FilterRed(
+        in Rgb c,
+        in float lb = 0.0f,
+        in float ub = 1.0f)
     {
         return c.R >= lb && c.R <= ub;
     }

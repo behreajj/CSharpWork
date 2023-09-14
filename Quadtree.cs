@@ -143,13 +143,11 @@ public class Quadtree
     }
 
     /// <summary>
-    /// Removes empty child nodes from the quadtree.
-    /// Returns true if this quadtree node should be
-    /// removed, i.e., it has no children and
-    /// its points array is empty.
+    /// Removes empty child nodes from the quadtree. Returns true if this
+    /// quadtree node should be removed, i.e., it has no children and its
+    /// points array is empty.
     /// 
-    /// This should only be called after all points
-    /// have been inserted into the tree.
+    /// This should only be called after all points have been inserted.
     /// </summary>
     /// <returns>evaluation</returns>
     public bool Cull()
@@ -171,8 +169,8 @@ public class Quadtree
 
     /// <summary>
     /// Inserts a point into the quadtree. Returns true if the point
-    /// was successfully inserted into the quadtree directly or indirectly through
-    /// one of its children. Returns false if the insertion was
+    /// was successfully inserted into the quadtree directly or indirectly
+    /// through one of its children. Returns false if the insertion was
     /// unsuccessful.
     /// </summary>
     /// <param name="v">point</param>

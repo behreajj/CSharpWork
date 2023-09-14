@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 /// <summary>
-/// Contains a list of keys which hold colors at steps in the range [0.0, 1.0] .
+/// Contains a list of keys which hold colors at steps in the range [0.0, 1.0].
 /// Allows for smooth color transitions to be evaluated by a factor.
 /// </summary>
 [Serializable]
@@ -63,8 +63,8 @@ public class ClrGradient : IEnumerable<ClrKey>
     }
 
     /// <summary>
-    /// Constructs a color gradient from a list of colors. The color keys will be
-    /// evenly distributed across the gradient.
+    /// Constructs a color gradient from a list of colors. The color keys will
+    /// be evenly distributed across the gradient.
     /// </summary>
     /// <param name="colors">colors</param>
     public ClrGradient(params Lab[] colors)
@@ -192,8 +192,8 @@ public class ClrGradient : IEnumerable<ClrKey>
     }
 
     /// <summary>
-    /// Helper function that shifts existing keys to the left when a new color is
-    /// appended to the gradient without a key.
+    /// Helper function that shifts existing keys to the left when a new color
+    /// is appended to the gradient without a key.
     /// </summary>
     /// <param name="added">number to add</param>
     /// <returns>this gradient</returns>
@@ -212,8 +212,8 @@ public class ClrGradient : IEnumerable<ClrKey>
     }
 
     /// <summary>
-    /// Helper function that shifts existing keys to the right when a new color is
-    /// prepended to the gradient without a key.
+    /// Helper function that shifts existing keys to the right when a new color
+    /// is prepended to the gradient without a key.
     /// </summary>
     /// <param name="added">number to add</param>
     /// <returns>this gradient</returns>
@@ -239,7 +239,8 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// <returns>evaluation</returns>
     public int ContainsKey(ClrKey key)
     {
-        return this.keys.FindIndex((ClrKey x) => Utils.Approx(x.Step, key.Step, 0.0005f));
+        return this.keys.FindIndex((ClrKey x) =>
+            Utils.Approx(x.Step, key.Step, 0.0005f));
     }
 
     /// <summary>
@@ -639,9 +640,9 @@ public class ClrGradient : IEnumerable<ClrKey>
     }
 
     /// <summary>
-    /// Finds the span, or range, of the color gradient, typically
-    /// [0.0, 1.0] and under. Equal to the step of the last color
-    /// key minus the step of the first.
+    /// Finds the span, or range, of the color gradient, typically [0.0, 1.0]
+    /// and under. Equal to the step of the last color key minus the step of
+    /// the first.
     /// </summary>
     /// <param name="cg">color gradient</param>
     /// <returns>range</returns>
@@ -658,7 +659,8 @@ public class ClrGradient : IEnumerable<ClrKey>
     /// <returns>string</returns>
     public static string ToString(in ClrGradient cg, in int places = 4)
     {
-        return ClrGradient.ToString(new StringBuilder(1024), cg, places).ToString();
+        return ClrGradient.ToString(
+            new StringBuilder(1024), cg, places).ToString();
     }
 
     /// <summary>

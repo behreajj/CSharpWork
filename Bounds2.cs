@@ -1,6 +1,6 @@
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
 
 /// <summary>
 /// An axis aligned bounding box (AABB) for a 2D area, represented with a
@@ -35,7 +35,8 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// </summary>
     /// <param name="min">minimum</param>
     /// <param name="max">maximum</param>
-    public Bounds2(in float min = -0.5f, in float max = 0.5f) : this(min, min, max, max) { }
+    public Bounds2(in float min = -0.5f, in float max = 0.5f)
+        : this(min, min, max, max) { }
 
     /// <summary>
     /// Creats a bounds from a nonuniform
@@ -483,7 +484,10 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     /// <param name="xFac">x factor</param>
     /// <param name="yFac">y factor</param>
     /// <returns>four children</returns>
-    public static Bounds2[] Split(in Bounds2 b, in float xFac = 0.5f, in float yFac = 0.5f)
+    public static Bounds2[] Split(
+        in Bounds2 b,
+        in float xFac = 0.5f,
+        in float yFac = 0.5f)
     {
         Vec2 bMin = b.min;
         Vec2 bMax = b.max;
@@ -535,9 +539,9 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
     }
 
     /// <summary>
-    /// Returns a bounds where all components of the minimum
-    /// are less than those of the maximum, and that the
-    /// edges of the bounds do not equal each other.
+    /// Returns a bounds where all components of the minimum are less than
+    /// those of the maximum, and that the edges of the bounds do not equal
+    /// each other.
     /// </summary>
     /// <param name="b">b</param>
     /// <returns>verified bounds</returns>

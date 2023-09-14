@@ -356,7 +356,7 @@ public static class Utils
     /// <returns>quotient</returns>
     public static int Div(in int a, in int b)
     {
-        return b != 0 ? a / b : 0;
+        return (b != 0) ? a / b : 0;
     }
 
     /// <summary>
@@ -368,7 +368,7 @@ public static class Utils
     /// <returns>quotient</returns>
     public static float Div(in float a, in float b)
     {
-        return b != 0.0f ? a / b : 0.0f;
+        return (b != 0.0f) ? a / b : 0.0f;
     }
 
     /// <summary>
@@ -912,7 +912,7 @@ public static class Utils
     /// <returns>result</returns>
     public static int RemFloor(in int a, in int b)
     {
-        return b != 0 ? (a % b + b) % b : a;
+        return (b != 0) ? (a % b + b) % b : a;
     }
 
     /// <summary>
@@ -924,7 +924,7 @@ public static class Utils
     /// <returns>result</returns>
     public static float RemFloor(in float a, in float b)
     {
-        return b != 0.0f ? a - b * MathF.Floor(a / b) : a;
+        return (b != 0.0f) ? a - b * MathF.Floor(a / b) : a;
     }
 
     /// <summary>
@@ -1143,7 +1143,7 @@ public static class Utils
         in float tol = 0.0005f)
     {
         int sgnNum = 0;
-        if (number == 0.0f) { return (0, 0); }
+        if (number == 0.0f) { return (antecedent: 0, consequent: 0); }
         if (number > 0.0f) { sgnNum = 1; }
         if (number < -0.0f) { sgnNum = -1; }
 
@@ -1184,8 +1184,8 @@ public static class Utils
     /// Wraps a value around a periodic range as defined by an upper and lower
     /// bound: lower bounds inclusive; upper bounds exclusive. Due to single
     /// precision accuracy, results will be inexact. In cases where the lower
-    /// bound is greater than the upper bound, the two will be swapped. In cases
-    /// where the range is 0.0, the value will be returned.
+    /// bound is greater than the upper bound, the two will be swapped. In
+    /// cases where the range is 0.0, the value will be returned.
     /// </summary>
     /// <param name="v">input value</param>
     /// <param name="lb">lower bound</param>
@@ -1202,7 +1202,7 @@ public static class Utils
 
     /// <summary>
     /// A specialized version of RemFloor which wraps an angle in degrees to the
-    /// range [0.0, 360.0) .
+    /// range [0.0, 360.0).
     /// </summary>
     /// <param name="deg">angle in degrees</param>
     /// <returns>output angle</returns>
@@ -1213,7 +1213,7 @@ public static class Utils
 
     /// <summary>
     /// A specialized version of RemFloor which wraps an angle in radians to the
-    /// range [0.0, TAU) .
+    /// range [0.0, TAU).
     /// </summary>
     /// <param name="rad">angle in radians</param>
     /// <returns>output angle</returns>

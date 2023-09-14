@@ -51,7 +51,8 @@ public class Palette : IEnumerable
             string trval = value.Trim();
             if (trval.Length > 0)
             {
-                this.author = trval[..Utils.Min(trval.Length, Palette.AuthorCharLimit)];
+                this.author = trval[..Utils.Min(
+                    trval.Length, Palette.AuthorCharLimit)];
             }
         }
     }
@@ -78,7 +79,8 @@ public class Palette : IEnumerable
             string trval = value.Trim();
             if (trval.Length > 0)
             {
-                this.name = trval[..Utils.Min(trval.Length, Palette.NameCharLimit)];
+                this.name = trval[..Utils.Min(
+                    trval.Length, Palette.NameCharLimit)];
             }
         }
     }

@@ -796,16 +796,20 @@ public class Curve3 : IEnumerable<Knot3>
         {
             Knot3 prev = knots[i - 1];
             Knot3 next = knots[i];
-            prev.ForeHandle = Vec3.Mix(prev.Coord, next.Coord, Utils.OneThird);
-            next.RearHandle = Vec3.Mix(next.Coord, prev.Coord, Utils.OneThird);
+            prev.ForeHandle = Vec3.Mix(
+                prev.Coord, next.Coord, Utils.OneThird);
+            next.RearHandle = Vec3.Mix(
+                next.Coord, prev.Coord, Utils.OneThird);
         }
 
         Knot3 first = knots[0];
         Knot3 last = knots[len - 1];
         if (target.closedLoop)
         {
-            first.RearHandle = Vec3.Mix(first.Coord, last.Coord, Utils.OneThird);
-            last.ForeHandle = Vec3.Mix(last.Coord, first.Coord, Utils.OneThird);
+            first.RearHandle = Vec3.Mix(
+                first.Coord, last.Coord, Utils.OneThird);
+            last.ForeHandle = Vec3.Mix(
+                last.Coord, first.Coord, Utils.OneThird);
         }
         else
         {

@@ -10,7 +10,7 @@ public static class UnityBridge
     /// <summary>
     /// Converts from a Unity AnimationCurve to a Curve2. If the appendStems
     /// flag is true, then adds horizontal segments in cases where the first
-    /// key's time is greater than zero or the last key's time is less than one.
+    /// key's time is greater than 0 or the last key's time is less than 1.
     /// </summary>
     /// <param name="source">animation curve</param>
     /// <param name="tanLimit">tangent limit</param>

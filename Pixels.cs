@@ -1996,7 +1996,10 @@ public static class Pixels
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            for (int i = 0; i < srcLen; ++i) { target[i] = Rgb.Premul(source[i]); }
+            for (int i = 0; i < srcLen; ++i)
+            {
+                target[i] = Rgb.Premul(source[i]);
+            }
         }
         return target;
     }
@@ -2939,7 +2942,10 @@ public static class Pixels
         int srcLen = source.Length;
         if (srcLen == target.Length)
         {
-            for (int i = 0; i < srcLen; ++i) { target[i] = Rgb.Unpremul(source[i]); }
+            for (int i = 0; i < srcLen; ++i)
+            {
+                target[i] = Rgb.Unpremul(source[i]);
+            }
         }
         return target;
     }
