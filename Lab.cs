@@ -894,6 +894,24 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
+    /// Converts a color to an integer. Clamps the a and b components to
+    /// [-127.5, 127.5], floors, then adds 128. Scales lightness from
+    /// [0.0, 100.0] to [0, 255]. Packs the integer, from most to least
+    /// significant, in the order alpha in the 0x18 place, l in 0x10, a in
+    /// 0x08, b in 0x00.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>integer</returns>
+    public static int ToHex(in Lab c)
+    {
+        int t = (int)(Utils.Clamp(c.a, 0.0f, 1.0f) * 255.0f + 0.5f);
+        int l = (int)(Utils.Clamp(c.l, 0.0f, 100.0f) * Lab.LTo255 + 0.5f);
+        int a = 128 + Utils.Floor(Utils.Clamp(c.a, -127.5f, 127.5f));
+        int b = 128 + Utils.Floor(Utils.Clamp(c.b, -127.5f, 127.5f));
+        return t << 0x18 | l << 0x10 | a << 0x08 | b;
+    }
+
+    /// <summary>
     /// Converts from SR LAB 2 to SR XYZ.
     /// The z component of the input vector is
     /// expected to hold the luminance, while x
@@ -950,24 +968,6 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
             y: (float)y,
             z: (float)z,
             w: lab.Alpha);
-    }
-
-    /// <summary>
-    /// Converts a color to an integer. Clamps the a and b components to
-    /// [-127.5, 127.5], floors, then adds 128. Scales lightness from
-    /// [0.0, 100.0] to [0, 255]. Packs the integer, from most to least
-    /// significant, in the order alpha in the 0x18 place, l in 0x10, a in
-    /// 0x08, b in 0x00.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>integer</returns>
-    public static int ToHex(in Lab c)
-    {
-        int t = (int)(Utils.Clamp(c.a, 0.0f, 1.0f) * 255.0f + 0.5f);
-        int l = (int)(Utils.Clamp(c.l, 0.0f, 100.0f) * Lab.LTo255 + 0.5f);
-        int a = 128 + Utils.Floor(Utils.Clamp(c.a, -127.5f, 127.5f));
-        int b = 128 + Utils.Floor(Utils.Clamp(c.b, -127.5f, 127.5f));
-        return t << 0x18 | l << 0x10 | a << 0x08 | b;
     }
 
     /// <summary>
@@ -1062,9 +1062,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         get
         {
             return new Lab(
-                l: 30.64395f,
-                a: -12.02581f,
-                b: -110.8078f,
+                l: 30.6439499148523f,
+                a: -12.0258048341643f,
+                b: -110.807801954524f,
                 alpha: 1.0f);
         }
     }
@@ -1078,9 +1078,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         get
         {
             return new Lab(
-                l: 90.6247f,
-                a: -43.80207f,
-                b: -15.00912f,
+                l: 90.624702543393f,
+                a: -43.802041438743f,
+                b: -15.0091246790041f,
                 alpha: 1.0f);
         }
     }
@@ -1094,9 +1094,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         get
         {
             return new Lab(
-                l: 87.51519f,
-                a: -82.95599f,
-                b: 83.03678f,
+                l: 87.5151869060628f,
+                a: -82.9559689892563f,
+                b: 83.0367796678485f,
                 alpha: 1.0f);
         }
     }
@@ -1110,9 +1110,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         get
         {
             return new Lab(
-                l: 60.25521f,
-                a: 102.6771f,
-                b: -61.00205f,
+                l: 60.2552107535831f,
+                a: 102.67709544511f,
+                b: -61.0020511842712f,
                 alpha: 1.0f);
         }
     }
@@ -1126,9 +1126,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         get
         {
             return new Lab(
-                l: 53.22598f,
-                a: 78.20428f,
-                b: 67.70062f,
+                l: 53.225973948503f,
+                a: 78.2042868749242f,
+                b: 67.7006179200894f,
                 alpha: 1.0f);
         }
     }
@@ -1142,9 +1142,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         get
         {
             return new Lab(
-                l: 97.34526f,
-                a: -37.15428f,
-                b: 95.18662f,
+                l: 97.3452582060733f,
+                a: -37.1542649676957f,
+                b: 95.1866226292217f,
                 alpha: 1.0f);
         }
     }

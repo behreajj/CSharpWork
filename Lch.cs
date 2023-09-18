@@ -378,20 +378,22 @@ public readonly struct Lch
         float cl = u * o.l + t * d.l;
         float calpha = u * o.alpha + t * d.alpha;
 
-        bool oGray = o.c < Utils.Epsilon;
-        bool dGray = d.c < Utils.Epsilon;
-        if (oGray && dGray)
+        bool oIsGray = o.c < Utils.Epsilon;
+        bool dIsGray = d.c < Utils.Epsilon;
+        if (oIsGray && dIsGray)
         {
             return new Lch(l: cl, c: 0.0f, h: 0.0f, alpha: calpha);
         }
 
-        if (oGray || dGray)
+        if (oIsGray || dIsGray)
         {
-            float oa = oGray ? 0.0f : o.c * MathF.Cos(o.h);
-            float ob = oGray ? 0.0f : o.c * MathF.Sin(o.h);
+            float ohRadians = o.h * Utils.Tau;
+            float oa = oIsGray ? 0.0f : o.c * MathF.Cos(ohRadians);
+            float ob = oIsGray ? 0.0f : o.c * MathF.Sin(ohRadians);
 
-            float da = dGray ? 0.0f : d.c * MathF.Cos(d.h);
-            float db = dGray ? 0.0f : d.c * MathF.Sin(d.h);
+            float dhRadians = d.h * Utils.Tau;
+            float da = dIsGray ? 0.0f : d.c * MathF.Cos(dhRadians);
+            float db = dIsGray ? 0.0f : d.c * MathF.Sin(dhRadians);
 
             // Mix in LAB.
             float ca = u * oa + t * da;
@@ -595,9 +597,9 @@ public readonly struct Lch
         get
         {
             return new Lch(
-                l: 30.64395f,
-                c: 111.4585f,
-                h: 0.7327945f,
+                l: 30.6439499148523f,
+                c: 111.458462917368f,
+                h: 0.73279449277552f,
                 alpha: 1.0f);
         }
     }
@@ -611,9 +613,9 @@ public readonly struct Lch
         get
         {
             return new Lch(
-                l: 90.6247f,
-                c: 46.30222f,
-                h: 0.5525401f,
+                l: 90.624702543393f,
+                c: 46.3021884777733f,
+                h: 0.55254010973227f,
                 alpha: 1.0f);
         }
     }
@@ -627,9 +629,9 @@ public readonly struct Lch
         get
         {
             return new Lch(
-                l: 87.51519f,
-                c: 117.3746f,
-                h: 0.3749225f,
+                l: 87.5151869060628f,
+                c: 117.374612112472f,
+                h: 0.37492251819407f,
                 alpha: 1.0f);
         }
     }
@@ -643,9 +645,9 @@ public readonly struct Lch
         get
         {
             return new Lch(
-                l: 60.25521f,
-                c: 119.4313f,
-                h: 0.91468f,
+                l: 60.2552107535831f,
+                c: 119.431303173551f,
+                h: 0.91467999408849f,
                 alpha: 1.0f);
         }
     }
@@ -659,9 +661,9 @@ public readonly struct Lch
         get
         {
             return new Lch(
-                l: 53.22598f,
-                c: 103.4373f,
-                h: 0.1135622f,
+                l: 53.225973948503f,
+                c: 103.437344089924f,
+                h: 0.11356219478123f,
                 alpha: 1.0f);
         }
     }
@@ -675,9 +677,9 @@ public readonly struct Lch
         get
         {
             return new Lch(
-                l: 97.34526f,
-                c: 102.1809f,
-                h: 0.3092285f,
+                l: 97.3452582060733f,
+                c: 102.180881444855f,
+                h: 0.30922841685654f,
                 alpha: 1.0f);
         }
     }
