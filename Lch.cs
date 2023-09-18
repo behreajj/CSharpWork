@@ -387,13 +387,23 @@ public readonly struct Lch
 
         if (oIsGray || dIsGray)
         {
-            float ohRadians = o.h * Utils.Tau;
-            float oa = oIsGray ? 0.0f : o.c * MathF.Cos(ohRadians);
-            float ob = oIsGray ? 0.0f : o.c * MathF.Sin(ohRadians);
+            float oa = 0.0f;
+            float ob = 0.0f;
+            if (oIsGray)
+            {
+                float ohRadians = o.h * Utils.Tau;
+                oa = o.c * MathF.Cos(ohRadians);
+                ob = o.c * MathF.Sin(ohRadians);
+            }
 
-            float dhRadians = d.h * Utils.Tau;
-            float da = dIsGray ? 0.0f : d.c * MathF.Cos(dhRadians);
-            float db = dIsGray ? 0.0f : d.c * MathF.Sin(dhRadians);
+            float da = 0.0f;
+            float db = 0.0f;
+            if (dIsGray)
+            {
+                float dhRadians = d.h * Utils.Tau;
+                da = d.c * MathF.Cos(dhRadians);
+                db = d.c * MathF.Sin(dhRadians);
+            }
 
             // Mix in LAB.
             float ca = u * oa + t * da;
