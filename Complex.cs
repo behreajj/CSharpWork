@@ -524,7 +524,7 @@ public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnu
     /// <returns>tuple</returns>
     public static (float r, float phi) Polar(in Complex z)
     {
-        return (r: Complex.Phase(z), phi: Complex.Abs(z));
+        return (r: Complex.Abs(z), phi: Complex.Phase(z));
     }
 
     /// <summary>
