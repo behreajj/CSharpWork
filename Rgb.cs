@@ -118,7 +118,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>hash code</returns>
     public override int GetHashCode()
     {
-        return Rgb.ToHexArgb(this);
+        return (int)Rgb.ToHexArgb(this);
     }
 
     /// <summary>
@@ -138,8 +138,8 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>evaluation</returns>
     public int CompareTo(Rgb c)
     {
-        int left = Rgb.ToHexArgb(this);
-        int right = Rgb.ToHexArgb(c);
+        uint left = Rgb.ToHexArgb(this);
+        uint right = Rgb.ToHexArgb(c);
         return (left < right) ? -1 : (left > right) ? 1 : 0;
     }
 
@@ -370,17 +370,15 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <param name="c">integer</param>
     /// <param name="o">color channel order</param>
     /// <returns>color</returns>
-    public static Rgb FromHex(in int c, in ClrChannel o = ClrChannel.ARGB)
+    public static Rgb FromHex(in uint c, in RgbFormat o = RgbFormat.ARGB)
     {
-        // TODO: This needs to handle uints as well in C# otherwise have
-        // to use unchecked.
         switch (o)
         {
-            case ClrChannel.ABGR:
+            case RgbFormat.ABGR:
                 { return Rgb.FromHexAbgr(c); }
-            case ClrChannel.RGBA:
+            case RgbFormat.RGBA:
                 { return Rgb.FromHexRgba(c); }
-            case ClrChannel.ARGB:
+            case RgbFormat.ARGB:
             default:
                 { return Rgb.FromHexArgb(c); }
         }
@@ -388,11 +386,11 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
 
     /// <summary>
     /// Converts a hexadecimal representation of a color into RGB.
-    /// The integer is expected to be ordered as 0xAABBGGRR.
+    /// The unsigned integer is expected to be ordered as 0xAABBGGRR.
     /// </summary>
     /// <param name="c">integer</param>
     /// <returns>color</returns>
-    public static Rgb FromHexAbgr(in int c)
+    public static Rgb FromHexAbgr(in uint c)
     {
         return new(
             (c & 0xff) / 255.0f,
@@ -403,11 +401,11 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
 
     /// <summary>
     /// Converts a hexadecimal representation of a color into RGB.
-    /// The integer is expected to be ordered as 0xAARRGGBB.
+    /// The unsigned integer is expected to be ordered as 0xAARRGGBB.
     /// </summary>
     /// <param name="c">integer</param>
     /// <returns>color</returns>
-    public static Rgb FromHexArgb(in int c)
+    public static Rgb FromHexArgb(in uint c)
     {
         return new(
             ((c >> 0x10) & 0xff) / 255.0f,
@@ -418,11 +416,11 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
 
     /// <summary>
     /// Converts a hexadecimal representation of a color into RGB.
-    /// The integer is expected to be ordered as 0xRRGGBBAA.
+    /// The unsigned integer is expected to be ordered as 0xRRGGBBAA.
     /// </summary>
     /// <param name="c">integer</param>
     /// <returns>color</returns>
-    public static Rgb FromHexRgba(in int c)
+    public static Rgb FromHexRgba(in uint c)
     {
         return new(
             ((c >> 0x18) & 0xff) / 255.0f,
@@ -483,12 +481,14 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// range [0.0, 1.0].
     /// </summary>
     /// <param name="c">color</param>
+    /// <param name="eps">tolerance</param>
     /// <returns>evaluation</returns>
-    public static bool IsInGamut(in Rgb c)
+    public static bool IsInGamut(in Rgb c, in float eps = 0.0f)
     {
-        return c.r >= 0.0f && c.r <= 1.0f
-            && c.g >= 0.0f && c.g <= 1.0f
-            && c.b >= 0.0f && c.b <= 1.0f;
+        float oneEps = 1.0f + eps;
+        return c.r >= -eps && c.r <= oneEps
+            && c.g >= -eps && c.g <= oneEps
+            && c.b >= -eps && c.b <= oneEps;
     }
 
     /// <summary>
@@ -895,15 +895,15 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <param name="c">the input color</param>
     /// <param name="order">color channel order</param>
     /// <returns>hexadecimal color</returns>
-    public static int ToHex(in Rgb c, in ClrChannel order = ClrChannel.ARGB)
+    public static uint ToHex(in Rgb c, in RgbFormat order = RgbFormat.ARGB)
     {
         switch (order)
         {
-            case ClrChannel.ABGR:
+            case RgbFormat.ABGR:
                 { return Rgb.ToHexAbgr(c); }
-            case ClrChannel.RGBA:
+            case RgbFormat.RGBA:
                 { return Rgb.ToHexRgba(c); }
-            case ClrChannel.ARGB:
+            case RgbFormat.ARGB:
             default:
                 { return Rgb.ToHexArgb(c); }
         }
@@ -915,7 +915,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hexadecimal color</returns>
-    public static int ToHexAbgr(in Rgb c)
+    public static uint ToHexAbgr(in Rgb c)
     {
         return Rgb.ToHexAbgrUnchecked(Rgb.Clamp(c, 0.0f, 1.0f));
     }
@@ -926,7 +926,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hexadecimal color</returns>
-    public static int ToHexArgb(in Rgb c)
+    public static uint ToHexArgb(in Rgb c)
     {
         return Rgb.ToHexArgbUnchecked(Rgb.Clamp(c, 0.0f, 1.0f));
     }
@@ -937,7 +937,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hexadecimal color</returns>
-    public static int ToHexRgba(in Rgb c)
+    public static uint ToHexRgba(in Rgb c)
     {
         return Rgb.ToHexRgbaUnchecked(Rgb.Clamp(c, 0.0f, 1.0f));
     }
@@ -949,15 +949,15 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <param name="c">color</param>
     /// <param name="o">color channel order</param>
     /// <returns>hexadecimal color</returns>
-    public static int ToHexUnchecked(in Rgb c, in ClrChannel o = ClrChannel.ARGB)
+    public static uint ToHexUnchecked(in Rgb c, in RgbFormat o = RgbFormat.ARGB)
     {
         switch (o)
         {
-            case ClrChannel.ABGR:
+            case RgbFormat.ABGR:
                 { return Rgb.ToHexAbgrUnchecked(c); }
-            case ClrChannel.RGBA:
+            case RgbFormat.RGBA:
                 { return Rgb.ToHexRgbaUnchecked(c); }
-            case ClrChannel.ARGB:
+            case RgbFormat.ARGB:
             default:
                 { return Rgb.ToHexArgbUnchecked(c); }
         }
@@ -970,12 +970,12 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hexadecimal color</returns>
-    public static int ToHexAbgrUnchecked(in Rgb c)
+    public static uint ToHexAbgrUnchecked(in Rgb c)
     {
-        return (int)(c.a * 255.0f + 0.5f) << 0x18 |
-               (int)(c.b * 255.0f + 0.5f) << 0x10 |
-               (int)(c.g * 255.0f + 0.5f) << 0x08 |
-               (int)(c.r * 255.0f + 0.5f);
+        return (uint)(c.a * 255.0f + 0.5f) << 0x18 |
+               (uint)(c.b * 255.0f + 0.5f) << 0x10 |
+               (uint)(c.g * 255.0f + 0.5f) << 0x08 |
+               (uint)(c.r * 255.0f + 0.5f);
     }
 
     /// <summary>
@@ -985,12 +985,12 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hexadecimal color</returns>
-    public static int ToHexArgbUnchecked(in Rgb c)
+    public static uint ToHexArgbUnchecked(in Rgb c)
     {
-        return (int)(c.a * 255.0f + 0.5f) << 0x18 |
-               (int)(c.r * 255.0f + 0.5f) << 0x10 |
-               (int)(c.g * 255.0f + 0.5f) << 0x08 |
-               (int)(c.b * 255.0f + 0.5f);
+        return (uint)(c.a * 255.0f + 0.5f) << 0x18 |
+               (uint)(c.r * 255.0f + 0.5f) << 0x10 |
+               (uint)(c.g * 255.0f + 0.5f) << 0x08 |
+               (uint)(c.b * 255.0f + 0.5f);
     }
 
     /// <summary>
@@ -1000,12 +1000,12 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>hexadecimal color</returns>
-    public static int ToHexRgbaUnchecked(in Rgb c)
+    public static uint ToHexRgbaUnchecked(in Rgb c)
     {
-        return (int)(c.r * 255.0f + 0.5f) << 0x18 |
-               (int)(c.g * 255.0f + 0.5f) << 0x10 |
-               (int)(c.b * 255.0f + 0.5f) << 0x08 |
-               (int)(c.a * 255.0f + 0.5f);
+        return (uint)(c.r * 255.0f + 0.5f) << 0x18 |
+               (uint)(c.g * 255.0f + 0.5f) << 0x10 |
+               (uint)(c.b * 255.0f + 0.5f) << 0x08 |
+               (uint)(c.a * 255.0f + 0.5f);
     }
 
     /// <summary>
