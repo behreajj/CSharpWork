@@ -50,42 +50,42 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
 
     /// <summary>
     /// The scalar used to normalize the A channel in SR LCH 2 to a range
-    /// [0.0, 1.0]. Equivalent to 0.5 / max(abs(AbsMinA), abs(AbsMinA)). Takes
+    /// [0.0, 1.0]. Equivalent to 0.5 / max(abs(AbsMinA), abs(AbsMaxA)). Takes
     /// the larger number to center the range at 0.
     /// </summary>
     public const float NormDenomA = 0.004798994f;
 
     /// <summary>
     /// The offset added to normalize the A channel in  SR LCH 2 to a range
-    /// [0.0, 1.0]. Equivalent to max(abs(AbsMinA), abs(AbsMinA). Takes the
+    /// [0.0, 1.0]. Equivalent to max(abs(AbsMinA), abs(AbsMaxA)). Takes the
     /// larger number so as to center the range at 0.
     /// </summary>
     public const float NormOffsetA = 104.18851f;
 
     /// <summary>
     /// The scalar used to restore the A channel in  SR LCH 2 from a range
-    /// [0.0, 1.0]. Equivalent to 2.0 * max(abs(AbsMinA), abs(AbsMinA)). Takes
+    /// [0.0, 1.0]. Equivalent to 2.0 * max(abs(AbsMinA), abs(AbsMaxA)). Takes
     /// the larger number so as to center the range at 0.
     /// </summary>
     public const float NormScaleA = 208.37701f;
 
     /// <summary>
     /// The scalar used to normalize the B channel in  SR LCH 2 to a range
-    /// [0.0, 1.0]. Equivalent to 0.5 / max(abs(AbsMinB), abs(AbsMinB)). Takes
+    /// [0.0, 1.0]. Equivalent to 0.5 / max(abs(AbsMinB), abs(AbsMaxB)). Takes
     /// the larger number to center the range at 0.
     /// </summary>
     public const float NormDenomB = 0.004525781f;
 
     /// <summary>
     /// The offset added to normalize the B channel in SR LCH 2 to a range
-    /// [0.0, 1.0]. Equivalent to max(abs(AbsMinB), abs(AbsMinB). Takes the
+    /// [0.0, 1.0]. Equivalent to max(abs(AbsMinB), abs(AbsMaxB)). Takes the
     /// larger number so as to center the range at 0.
     /// </summary>
     public const float NormOffsetB = 110.47817f;
 
     /// <summary>
     /// The scalar used to restore the B channel in  SR LCH 2 from a range
-    /// [0.0, 1.0]. Equivalent to 2.0 * max(abs(AbsMinB), abs(AbsMinB)). Takes
+    /// [0.0, 1.0]. Equivalent to 2.0 * max(abs(AbsMinB), abs(AbsMaxB)). Takes
     /// the larger number so as to center the range at 0.
     /// </summary>
     public const float NormScaleB = 220.95634f;
@@ -573,19 +573,15 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     {
         float lAna = (c.l * 2.0f + 50.0f) / 3.0f;
 
-        float cos30 = Utils.Sqrt32;
-        float sin30 = 0.5f;
-        float a30 = cos30 * c.a - sin30 * c.b;
-        float b30 = cos30 * c.b + sin30 * c.a;
-
-        float cos330 = Utils.Sqrt32;
-        float sin330 = -0.5f;
-        float a330 = cos330 * c.a - sin330 * c.b;
-        float b330 = cos330 * c.b + sin330 * c.a;
+        // 30, 330 degrees
+        float rt32ca = Utils.Sqrt32 * c.a;
+        float rt32cb = Utils.Sqrt32 * c.b;
+        float halfca = 0.5f * c.a;
+        float halfcb = 0.5f * c.b;
 
         return new Lab[] {
-            new(lAna, a30, b30, c.alpha),
-            new(lAna, a330, b330, c.alpha)
+            new(lAna, rt32ca - halfcb, rt32cb + halfca, c.alpha),
+            new(lAna, rt32ca + halfcb, rt32cb - halfca, c.alpha)
         };
     }
 
@@ -612,19 +608,15 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     {
         float lSpl = (250.0f - c.l * 2.0f) / 3.0f;
 
-        float cos150 = -Utils.Sqrt32;
-        float sin150 = 0.5f;
-        float a150 = cos150 * c.a - sin150 * c.b;
-        float b150 = cos150 * c.b + sin150 * c.a;
-
-        float cos210 = -Utils.Sqrt32;
-        float sin210 = -0.5f;
-        float a210 = cos210 * c.a - sin210 * c.b;
-        float b210 = cos210 * c.b + sin210 * c.a;
+        // 150, 210 degrees
+        float rt32ca = -Utils.Sqrt32 * c.a;
+        float rt32cb = -Utils.Sqrt32 * c.b;
+        float halfca = 0.5f * c.a;
+        float halfcb = 0.5f * c.b;
 
         return new Lab[] {
-            new(lSpl, a150, b150, c.alpha),
-            new(lSpl, a210, b210, c.alpha)
+            new(lSpl, rt32ca - halfcb, rt32cb + halfca, c.alpha),
+            new(lSpl, rt32ca + halfcb, rt32cb - halfca, c.alpha)
         };
     }
 
@@ -655,20 +647,16 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         float lCmp = 100.0f - c.l;
         float lTet = (100.0f + c.l) / 3.0f;
 
-        float cos120 = -0.5f;
-        float sin120 = Utils.Sqrt32;
-        float a120 = cos120 * c.a - sin120 * c.b;
-        float b120 = cos120 * c.b + sin120 * c.a;
-
-        float cos300 = 0.5f;
-        float sin300 = -Utils.Sqrt32;
-        float a300 = cos300 * c.a - sin300 * c.b;
-        float b300 = cos300 * c.b + sin300 * c.a;
+        // 120, 300 degrees
+        float rt32ca = Utils.Sqrt32 * c.a;
+        float rt32cb = Utils.Sqrt32 * c.b;
+        float halfca = 0.5f * c.a;
+        float halfcb = 0.5f * c.b;
 
         return new Lab[] {
-            new(lTri, a120, b120, c.alpha),
+            new(lTri, -halfca - rt32cb, -halfcb + rt32ca, c.alpha),
             new(lCmp, -c.a, -c.b, c.alpha),
-            new(lTet, a300, b300, c.alpha)
+            new(lTet, halfca + rt32cb,halfcb - rt32ca, c.alpha)
         };
     }
 
@@ -682,19 +670,15 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     {
         float lTri = (200.0f - c.l) / 3.0f;
 
-        float cos120 = -0.5f;
-        float sin120 = Utils.Sqrt32;
-        float a120 = cos120 * c.a - sin120 * c.b;
-        float b120 = cos120 * c.b + sin120 * c.a;
-
-        float cos240 = -0.5f;
-        float sin240 = -Utils.Sqrt32;
-        float a240 = cos240 * c.a - sin240 * c.b;
-        float b240 = cos240 * c.b + sin240 * c.a;
+        // 120, 240 degrees
+        float rt32ca = Utils.Sqrt32 * c.a;
+        float rt32cb = Utils.Sqrt32 * c.b;
+        float halfca = -0.5f * c.a;
+        float halfcb = -0.5f * c.b;
 
         return new Lab[] {
-            new(lTri, a120, b120, c.alpha),
-            new(lTri, a240, b240, c.alpha)
+            new(lTri, halfca - rt32cb, halfcb + rt32ca, c.alpha),
+            new(lTri, halfca + rt32cb, halfcb - rt32ca, c.alpha)
         };
     }
 
@@ -819,6 +803,39 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
+    /// Creates a random color.
+    /// </summary>
+    /// <param name="rng">random number generator</param>
+    /// <returns>random color</returns>
+    public static Lab Random(in System.Random rng)
+    {
+        return new Lab(
+            l: Utils.Mix(5.0f, 95.0f, (float)rng.NextDouble()),
+            a: Utils.Mix(Lab.AbsMinA, Lab.AbsMaxA, (float)rng.NextDouble()),
+            b: Utils.Mix(Lab.AbsMinB, Lab.AbsMaxB, (float)rng.NextDouble()),
+            alpha: 1.0f);
+    }
+
+    /// <summary>
+    /// Creates a random color given a lower and an upper bound.
+    /// </summary>
+    /// <param name="rng">random number generator</param>
+    /// <param name="lb">lower bound</param>
+    /// <param name="ub">upper bound</param>
+    /// <returns>random color</returns>
+    public static Lab Random(
+        in System.Random rng,
+        in Lab lb,
+        in Lab ub)
+    {
+        return new Lab(
+            l: Utils.Mix(lb.l, ub.l, (float)rng.NextDouble()),
+            a: Utils.Mix(lb.a, ub.a, (float)rng.NextDouble()),
+            b: Utils.Mix(lb.b, ub.b, (float)rng.NextDouble()),
+            alpha: Utils.Mix(lb.alpha, ub.alpha, (float)rng.NextDouble()));
+    }
+
+    /// <summary>
     /// Normalizes the color's a and b components, then multiplies
     /// by a scalar, in effect setting the color's chroma.
     /// </summary>
@@ -904,7 +921,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <returns>integer</returns>
     public static int ToHex(in Lab c)
     {
-        int t = (int)(Utils.Clamp(c.a, 0.0f, 1.0f) * 255.0f + 0.5f);
+        int t = (int)(Utils.Clamp(c.alpha, 0.0f, 1.0f) * 255.0f + 0.5f);
         int l = (int)(Utils.Clamp(c.l, 0.0f, 100.0f) * Lab.LTo255 + 0.5f);
         int a = 128 + Utils.Floor(Utils.Clamp(c.a, -127.5f, 127.5f));
         int b = 128 + Utils.Floor(Utils.Clamp(c.b, -127.5f, 127.5f));
