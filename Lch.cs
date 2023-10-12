@@ -29,7 +29,7 @@ public readonly struct Lch
     private readonly float alpha;
 
     /// <summary>
-    /// The chroma, or intensity of the hue.
+    /// The chroma, or vividness of the hue.
     /// </summary>
     private readonly float c;
 
@@ -50,7 +50,7 @@ public readonly struct Lch
     public float Alpha { get { return this.alpha; } }
 
     /// <summary>
-    /// The chroma, or intensity of the hue.
+    /// The chroma, or vividness of the hue.
     /// </summary>
     /// <value>chroma</value>
     public float C { get { return this.c; } }
@@ -389,7 +389,7 @@ public readonly struct Lch
         {
             float oa = 0.0f;
             float ob = 0.0f;
-            if (oIsGray)
+            if (!oIsGray)
             {
                 float ohRadians = o.h * Utils.Tau;
                 oa = o.c * MathF.Cos(ohRadians);
@@ -398,7 +398,7 @@ public readonly struct Lch
 
             float da = 0.0f;
             float db = 0.0f;
-            if (dIsGray)
+            if (!dIsGray)
             {
                 float dhRadians = d.h * Utils.Tau;
                 da = d.c * MathF.Cos(dhRadians);
@@ -436,22 +436,6 @@ public readonly struct Lch
     public static bool None(in Lch c)
     {
         return c.alpha <= 0.0f;
-    }
-
-    /// <summary>
-    /// Finds the saturation of a color as defined by Manfred Richter and Eva
-    /// Lubbe. See https://www.wikiwand.com/en/Colorfulness#CIELUV_and_CIELAB .
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>saturation</returns>
-    public static float Saturation(in Lch c)
-    {
-        double ld = c.l;
-        double cd = c.c;
-
-        double clsq = cd * cd + ld * ld;
-        if (clsq > 0.0d) { return (float)(cd / Math.Sqrt(clsq)); }
-        return 0.0f;
     }
 
     /// <summary>

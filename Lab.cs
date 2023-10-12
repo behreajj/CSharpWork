@@ -117,6 +117,18 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     public float A { get { return this.a; } }
 
     /// <summary>
+    /// Gets the a and b components as a vector.
+    /// </summary>
+    /// <value>2D vector</value>
+    public Vec2 AB
+    {
+        get
+        {
+            return new Vec2(this.a, this.b);
+        }
+    }
+
+    /// <summary>
     /// The alpha component.
     /// </summary>
     /// <value>alpha</value>
@@ -163,8 +175,8 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     public Lab(in byte l, in byte a, in byte b, in byte alpha = 255)
     {
         this.l = l * Lab.LFrom255;
-        this.a = a - 128.0f;
-        this.b = b - 128.0f;
+        this.a = a - 0x80;
+        this.b = b - 0x80;
         this.alpha = alpha / 255.0f;
     }
 
@@ -181,8 +193,8 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     public Lab(in sbyte l, in sbyte a, in sbyte b, in sbyte alpha = -1)
     {
         this.l = (l & 0xff) * Lab.LFrom255;
-        this.a = a;
-        this.b = b;
+        this.a = (a & 0xff) - 0x80;
+        this.b = (b & 0xff) - 0x80;
         this.alpha = (alpha & 0xff) / 255.0f;
     }
 
@@ -341,6 +353,26 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
+    /// Finds the chroma of a color.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>chroma squared</returns>
+    public static float Chroma(in Lab c)
+    {
+        return MathF.Sqrt(Lab.ChromaSq(c));
+    }
+
+    /// <summary>
+    /// Finds the chroma squared of a color.
+    /// </summary>
+    /// <param name="c">color</param>
+    /// <returns>chroma squared</returns>
+    public static float ChromaSq(in Lab c)
+    {
+        return c.a * c.a + c.b * c.b;
+    }
+
+    /// <summary>
     /// Returns the first color argument with the alpha of the second.
     /// </summary>
     /// <param name="a">left operand</param>
@@ -360,26 +392,6 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     public static Lab CopyLight(in Lab a, in Lab b)
     {
         return new Lab(l: b.l, a: a.a, b: a.b, alpha: a.alpha);
-    }
-
-    /// <summary>
-    /// Finds the chroma of a color.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>chroma squared</returns>
-    public static float Chroma(in Lab c)
-    {
-        return MathF.Sqrt(Lab.ChromaSq(c));
-    }
-
-    /// <summary>
-    /// Finds the chroma squared of a color.
-    /// </summary>
-    /// <param name="c">color</param>
-    /// <returns>chroma squared</returns>
-    public static float ChromaSq(in Lab c)
-    {
-        return c.a * c.a + c.b * c.b;
     }
 
     /// <summary>
@@ -841,7 +853,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>rescaled color</returns>
-    public static Lab RescaleChroma(in Lab c, in float scalar = 1.0f)
+    public static Lab RescaleChroma(in Lab c, in float scalar)
     {
         float cSq = Lab.ChromaSq(c);
         if (cSq > Utils.Epsilon)
@@ -890,24 +902,12 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     }
 
     /// <summary>
-    /// Finds the saturation of a color as defined by Manfred Richter and Eva
-    /// Lubbe. See https://www.wikiwand.com/en/Colorfulness#CIELUV_and_CIELAB .
+    /// Multiplies the color's a and b components by a scalar.
     /// </summary>
     /// <param name="c">color</param>
-    /// <returns>saturation</returns>
-    public static float Saturation(in Lab c)
-    {
-        // Alternative formula:
-        // s = sqrt(a ^ 2 + b ^ 2) / l
-
-        double ld = c.l;
-        double ad = c.a;
-        double bd = c.b;
-
-        double csq = ad * ad + bd * bd;
-        double clsq = csq + ld * ld;
-        if (clsq > 0.0d) { return (float)(Math.Sqrt(csq) / Math.Sqrt(clsq)); }
-        return 0.0f;
+    /// <returns>rescaled color</returns>
+    public static Lab ScaleChroma(in Lab c, in float scalar) {
+        return new Lab(l: c.l, a: c.a * scalar, b: c.b * scalar, alpha: c.alpha);
     }
 
     /// <summary>
@@ -930,9 +930,6 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
 
     /// <summary>
     /// Converts from SR LAB 2 to SR XYZ.
-    /// The z component of the input vector is
-    /// expected to hold the luminance, while x
-    /// is expected to hold a and y, b.
     /// </summary>
     /// <param name="lab">LAB color</param>
     /// <returns>XYZ color</returns>
@@ -984,7 +981,7 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
             x: (float)x,
             y: (float)y,
             z: (float)z,
-            w: lab.Alpha);
+            w: lab.alpha);
     }
 
     /// <summary>
