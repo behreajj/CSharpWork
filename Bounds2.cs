@@ -50,10 +50,9 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         in float xMin, in float yMin,
         in float xMax, in float yMax)
     {
-        // This used to verify each bounds to be nonzero with
-        // a positive area, but that prevented bounds from
-        // signalling that an intersection had a potentially
-        // negative area.
+        // This used to verify each bounds to be nonzero with positive area,
+        // but that prevented bounds from signalling that an intersection had
+        // a potentially negative area.
         this.min = new(xMin, yMin);
         this.max = new(xMax, yMax);
     }

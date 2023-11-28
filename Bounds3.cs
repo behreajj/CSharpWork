@@ -52,10 +52,9 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
         in float xMin, in float yMin, in float zMin,
         in float xMax, in float yMax, in float zMax)
     {
-        // This used to verify each bounds to be nonzero with
-        // a positive volume, but that prevented bounds from
-        // signalling that an intersection had a potentially
-        // negative volume.
+        // This used to verify each bounds to be nonzero with a positive
+        // volume, but that prevented bounds from signalling that an
+        // intersection had a potentially negative volume.
         this.min = new(xMin, yMin, zMin);
         this.max = new(xMax, yMax, zMax);
     }

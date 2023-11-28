@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
@@ -7,17 +8,18 @@ using System.Text;
 /// by a mesh internally, it is created upon retrieval from a mesh.
 /// </summary>
 [Serializable]
+[StructLayout(LayoutKind.Explicit, Pack = 16)]
 public readonly struct Vert2 : IComparable<Vert2>, IEquatable<Vert2>
 {
     /// <summary>
     /// The coordinate of the vertex in world space.
     /// </summary>
-    private readonly Vec2 coord;
+    [FieldOffset(0)] private readonly Vec2 coord;
 
     /// <summary>
     /// The texture (UV) coordinate for an image mapped onto the mesh.
     /// </summary>
-    private readonly Vec2 texCoord;
+    [FieldOffset(8)] private readonly Vec2 texCoord;
 
     /// <summary>
     /// The coordinate of the vertex in world space.

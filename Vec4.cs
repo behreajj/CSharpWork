@@ -1,38 +1,46 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
 /// A readonly struct influenced by GLSL and OSL.
 /// </summary>
 [Serializable]
+[StructLayout(LayoutKind.Explicit, Pack = 16)]
 public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
 {
     /// <summary>
+    /// Component on the w axis.
+    /// </summary>
+    [FieldOffset(12)] private readonly float w;
+
+    /// <summary>
     /// Component on the x axis.
     /// </summary>
-    private readonly float x;
+    [FieldOffset(0)] private readonly float x;
 
     /// <summary>
     /// Component on the y axis.
     /// </summary>
-    private readonly float y;
+    [FieldOffset(4)] private readonly float y;
 
     /// <summary>
     /// Component on the z axis.
     /// </summary>
-    private readonly float z;
-
-    /// <summary>
-    /// Component on the z axis.
-    /// </summary>
-    private readonly float w;
+    [FieldOffset(8)] private readonly float z;
 
     /// <summary>
     /// Returns the number of values (dimensions) in this vector.
     /// </summary>
     /// <value>length</value>
     public int Length { get { return 4; } }
+
+    /// <summary>
+    /// Component on the w axis.
+    /// </summary>
+    /// <value>w</value>
+    public float W { get { return this.w; } }
 
     /// <summary>
     /// Component on the x axis.
@@ -51,12 +59,6 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// </summary>
     /// <value>z</value>
     public float Z { get { return this.z; } }
-
-    /// <summary>
-    /// Component on the w axis.
-    /// </summary>
-    /// <value>w</value>
-    public float W { get { return this.w; } }
 
     /// <summary>
     /// Gets the first three components as a 3D vector.

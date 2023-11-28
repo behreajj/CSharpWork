@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
@@ -10,17 +11,18 @@ using System.Text;
 /// to another without suffering gimbal lock.
 /// </summary>
 [Serializable]
+[StructLayout(LayoutKind.Explicit)]
 public readonly struct Quat : IEquatable<Quat>, IEnumerable
 {
     /// <summary>
     /// The coefficients of the imaginary components i, j and k.
     /// </summary>
-    private readonly Vec3 imag;
+    [FieldOffset(4)] private readonly Vec3 imag;
 
     /// <summary>
     /// The real component.
     /// </summary>
-    private readonly float real;
+    [FieldOffset(0)] private readonly float real;
 
     /// <summary>
     /// The forward axis.

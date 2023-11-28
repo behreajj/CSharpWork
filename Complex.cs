@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
@@ -7,17 +8,18 @@ using System.Text;
 /// coefficient of i, or the square-root of negative one.
 /// </summary>
 [Serializable]
+[StructLayout(LayoutKind.Explicit, Pack = 8)]
 public readonly struct Complex : IComparable<Complex>, IEquatable<Complex>, IEnumerable
 {
     /// <summary>
     /// The coefficient of the imaginary component i.
     /// </summary>
-    private readonly float imag;
+    [FieldOffset(4)] private readonly float imag;
 
     /// <summary>
     /// The real component.
     /// </summary>
-    private readonly float real;
+    [FieldOffset(0)] private readonly float real;
 
     /// <summary>
     /// The coefficient of the imaginary component i.

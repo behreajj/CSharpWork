@@ -1,21 +1,23 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
 /// Organizes indices in a mesh that refer to data at a vertex.
 /// </summary>
+[StructLayout(LayoutKind.Explicit, Pack = 8)]
 public readonly struct Index2 : IEquatable<Index2>, IEnumerable
 {
     /// <summary>
     /// The coordinate index.
     /// </summary>
-    private readonly int v;
+    [FieldOffset(0)] private readonly int v;
 
     /// <summary>
     /// The texture coordinate index.
     /// </summary>
-    private readonly int vt;
+    [FieldOffset(4)] private readonly int vt;
 
     /// <summary>
     /// The number of array element indices held by this index.

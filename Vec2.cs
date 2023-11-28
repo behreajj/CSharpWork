@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
@@ -8,17 +9,18 @@ using System.Text;
 /// programs.
 /// </summary>
 [Serializable]
+[StructLayout(LayoutKind.Explicit, Pack = 8)]
 public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
 {
     /// <summary>
     /// Component on the x axis in the Cartesian coordinate system.
     /// </summary>
-    private readonly float x;
+    [FieldOffset(0)] private readonly float x;
 
     /// <summary>
     /// Component on the y axis in the Cartesian coordinate system.
     /// </summary>
-    private readonly float y;
+    [FieldOffset(4)] private readonly float y;
 
     /// <summary>
     /// The number of values (dimensions) in this vector.

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
@@ -9,6 +10,7 @@ using System.Text;
 /// expected to be in [0.0, 1.0].
 /// </summary>
 [Serializable]
+[StructLayout(LayoutKind.Explicit, Pack = 16)]
 public readonly struct Lch
 {
     /// <summary>
@@ -26,22 +28,22 @@ public readonly struct Lch
     /// <summary>
     /// The alpha (transparency) component.
     /// </summary>
-    private readonly float alpha;
+    [FieldOffset(0)] private readonly float alpha;
 
     /// <summary>
     /// The chroma, or vividness of the hue.
     /// </summary>
-    private readonly float c;
+    [FieldOffset(8)] private readonly float c;
 
     /// <summary>
     /// The hue, normalized to [0.0, 1.0].
     /// </summary>
-    private readonly float h;
+    [FieldOffset(12)] private readonly float h;
 
     /// <summary>
     /// The light component.
     /// </summary>
-    private readonly float l;
+    [FieldOffset(4)] private readonly float l;
 
     /// <summary>
     /// The alpha component.

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
@@ -10,6 +11,7 @@ using System.Text;
 /// Alpha is expected to be in [0.0, 1.0].
 /// </summary>
 [Serializable]
+[StructLayout(LayoutKind.Explicit, Pack = 16)]
 public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
 {
     /// <summary>
@@ -93,22 +95,22 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <summary>
     /// The green-magenta component.
     /// </summary>
-    private readonly float a;
+    [FieldOffset(8)] private readonly float a;
 
     /// <summary>
     /// The alpha (transparency) component.
     /// </summary>
-    private readonly float alpha;
+    [FieldOffset(0)] private readonly float alpha;
 
     /// <summary>
     /// The blue-yellow component.
     /// </summary>
-    private readonly float b;
+    [FieldOffset(12)] private readonly float b;
 
     /// <summary>
     /// The light component.
     /// </summary>
-    private readonly float l;
+    [FieldOffset(4)] private readonly float l;
 
     /// <summary>
     /// The green-magenta component.
@@ -546,9 +548,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         double y = v.Y;
         double z = v.Z;
 
-        double comparisand = 216.0d / 24389.0d;
-        double scalar = 24389.0d / 2700.0d;
-        double oneThird = 1.0d / 3.0d;
+        const double comparisand = 216.0d / 24389.0d;
+        const double scalar = 24389.0d / 2700.0d;
+        const double oneThird = 1.0d / 3.0d;
 
         x = (x <= comparisand) ? x * scalar : Math.Pow(x, oneThird) * 1.16d - 0.16d;
         y = (y <= comparisand) ? y * scalar : Math.Pow(y, oneThird) * 1.16d - 0.16d;
@@ -945,8 +947,8 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
 
         // 2700.0 / 24389.0 = 0.11070564598795
         // 1.0 / 1.16 = 0.86206896551724
-        double ltScale = 2700.0d / 24389.0d;
-        double gtScale = 1.0d / 1.16d;
+        const double ltScale = 2700.0d / 24389.0d;
+        const double gtScale = 1.0d / 1.16d;
         if (x <= 0.08d)
         {
             x *= ltScale;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
@@ -8,87 +9,88 @@ using System.Text;
 /// transform matrix, where the last row is (0.0, 0.0, 0.0, 1.0) .
 /// </summary>
 [Serializable]
+[StructLayout(LayoutKind.Explicit, Pack = 64)]
 public readonly struct Mat4 : IEquatable<Mat4>, IEnumerable
 {
     /// <summary>
     /// Component in row 0, column 0. The right axis x component.
     /// </summary>
-    private readonly float m00;
+    [FieldOffset(0)] private readonly float m00;
 
     /// <summary>
     /// Component in row 0, column 1. The forward axis x component.
     /// </summary>
-    private readonly float m01;
+    [FieldOffset(4)] private readonly float m01;
 
     /// <summary>
     /// Component in row 0, column 2. The up axis x component.
     /// </summary>
-    private readonly float m02;
+    [FieldOffset(8)] private readonly float m02;
 
     /// <summary>
     /// Component in row 0, column 3. The translation x component.
     /// </summary>
-    private readonly float m03;
+    [FieldOffset(12)] private readonly float m03;
 
     /// <summary>
     /// Component in row 1, column 0. The right axis y component.
     /// </summary>
-    private readonly float m10;
+    [FieldOffset(16)] private readonly float m10;
 
     /// <summary>
     /// Component in row 1, column 1. The forward axis y component.
     /// </summary>
-    private readonly float m11;
+    [FieldOffset(20)] private readonly float m11;
 
     /// <summary>
     /// Component in row 1, column 2. The up axis y component.
     /// </summary>
-    private readonly float m12;
+    [FieldOffset(24)] private readonly float m12;
 
     /// <summary>
     /// Component in row 1, column 3. The translation y component.
     /// </summary>
-    private readonly float m13;
+    [FieldOffset(28)] private readonly float m13;
 
     /// <summary>
     /// Component in row 2, column 0. The right axis z component.
     /// </summary>
-    private readonly float m20;
+    [FieldOffset(32)] private readonly float m20;
 
     /// <summary>
     /// Component in row 2, column 1. The forward axis z component.
     /// </summary>
-    private readonly float m21;
+    [FieldOffset(36)] private readonly float m21;
 
     /// <summary>
     /// Component in row 2, column 2. The up axis z component.
     /// </summary>
-    private readonly float m22;
+    [FieldOffset(40)] private readonly float m22;
 
     /// <summary>
     /// Component in row 2, column 3. The translation z component.
     /// </summary>
-    private readonly float m23;
+    [FieldOffset(44)] private readonly float m23;
 
     /// <summary>
     /// Component in row 3, column 0. The right axis w component.
     /// </summary>
-    private readonly float m30;
+    [FieldOffset(48)] private readonly float m30;
 
     /// <summary>
     /// Component in row 3, column 1. The forward axis w component.
     /// </summary>
-    private readonly float m31;
+    [FieldOffset(52)] private readonly float m31;
 
     /// <summary>
     /// Component in row 3, column 2. The up axis w component.
     /// </summary>
-    private readonly float m32;
+    [FieldOffset(56)] private readonly float m32;
 
     /// <summary>
     /// Component in row 3, column 3. The translation w component.
     /// </summary>
-    private readonly float m33;
+    [FieldOffset(60)] private readonly float m33;
 
     /// <summary>
     /// Returns the number of values in this matrix.

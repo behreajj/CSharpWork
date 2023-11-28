@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
@@ -6,27 +7,28 @@ using System.Text;
 /// and alpha. Supports conversion to and from integers.
 /// </summary>
 [Serializable]
+[StructLayout(LayoutKind.Explicit, Pack = 16)]
 public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
 {
     /// <summary>
     /// The alpha (transparency) channel.
     /// </summary>
-    private readonly float a;
+    [FieldOffset(0)] private readonly float a;
 
     /// <summary>
     /// The blue color channel.
     /// </summary>
-    private readonly float b;
+    [FieldOffset(12)] private readonly float b;
 
     /// <summary>
     /// The green color channel.
     /// </summary>
-    private readonly float g;
+    [FieldOffset(8)] private readonly float g;
 
     /// <summary>
     /// The red color channel.
     /// </summary>
-    private readonly float r;
+    [FieldOffset(4)] private readonly float r;
 
     /// <summary>
     /// The alpha channel.
@@ -533,7 +535,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>standard color</returns>
     public static Rgb LinearToStandard(in Rgb c, in bool alpha = false)
     {
-        float inv24 = 1.0f / 2.4f;
+        const float inv24 = 1.0f / 2.4f;
         return new(
             c.r > 0.0031308f ?
             MathF.Pow(c.r, inv24) * 1.055f - 0.055f :
@@ -869,7 +871,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>linear color</returns>
     public static Rgb StandardToLinear(in Rgb c, in bool alpha = false)
     {
-        float inv1055 = 1.0f / 1.055f;
+        const float inv1055 = 1.0f / 1.055f;
         return new(
             c.r > 0.04045f ?
             MathF.Pow((c.r + 0.055f) * inv1055, 2.4f) :
@@ -1113,17 +1115,17 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>tone mapped color</returns>
     public static Rgb ToneMapHableLinear(in Rgb c)
     {
-        float A = 0.15f;
-        float B = 0.50f;
-        float C = 0.10f;
-        float D = 0.20f;
-        float E = 0.02f;
-        float F = 0.30f;
-        float W = 11.2f;
+        const float A = 0.15f;
+        const float B = 0.50f;
+        const float C = 0.10f;
+        const float D = 0.20f;
+        const float E = 0.02f;
+        const float F = 0.30f;
+        const float W = 11.2f;
         float whiteScale = 1.0f / (((W * (A * W + C * B) + D * E)
             / (W * (A * W + B) + D * F)) - E / F);
 
-        float exposureBias = 2.0f;
+        const float exposureBias = 2.0f;
         float er = c.r * exposureBias;
         float eg = c.g * exposureBias;
         float eb = c.b * exposureBias;
