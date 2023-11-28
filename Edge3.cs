@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
@@ -7,17 +8,18 @@ using System.Text;
 /// retrieval from a mesh.
 /// </summary>
 [Serializable]
+[StructLayout(LayoutKind.Explicit, Pack = 64)]
 public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
 {
     /// <summary>
     /// The destination vertex.
     /// </summary>
-    private readonly Vert3 dest;
+    [FieldOffset(32)] private readonly Vert3 dest;
 
     /// <summary>
     /// The origin vertex.
     /// </summary>
-    private readonly Vert3 origin;
+    [FieldOffset(0)] private readonly Vert3 origin;
 
     /// <summary>
     /// The destination vertex.
@@ -225,7 +227,7 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
     public static StringBuilder ToString(
-        in StringBuilder sb, 
+        in StringBuilder sb,
         in Edge3 e,
         in int places = 4)
     {
@@ -258,7 +260,7 @@ public readonly struct Edge3 : IComparable<Edge3>, IEquatable<Edge3>
     /// <returns>string builder</returns>
     public static StringBuilder ToString(
         in StringBuilder sb,
-        in Edge3[] arr, 
+        in Edge3[] arr,
         in int places = 4)
     {
         sb.Append('[');

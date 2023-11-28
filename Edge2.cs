@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
@@ -7,17 +8,18 @@ using System.Text;
 /// retrieval from a mesh.
 /// </summary>
 [Serializable]
+[StructLayout(LayoutKind.Explicit, Pack = 32)]
 public readonly struct Edge2 : IComparable<Edge2>, IEquatable<Edge2>
 {
     /// <summary>
     /// The destination vertex.
     /// </summary>
-    private readonly Vert2 dest;
+    [FieldOffset(16)] private readonly Vert2 dest;
 
     /// <summary>
     /// The origin vertex.
     /// </summary>
-    private readonly Vert2 origin;
+    [FieldOffset(0)] private readonly Vert2 origin;
 
     /// <summary>
     /// The destination vertex.
