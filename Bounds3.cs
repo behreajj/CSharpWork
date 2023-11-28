@@ -1,22 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
 /// An axis aligned bounding box (AABB) for a 3D volume, represented with a
 /// minimum and maximum coordinate.
 /// </summary>
+[StructLayout(LayoutKind.Explicit)]
 public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
 {
     /// <summary>
     /// The maximum corner.
     /// </summary>
-    private readonly Vec3 max;
+    [FieldOffset(12)] private readonly Vec3 max;
 
     /// <summary>
     /// The minimum corner.
     /// </summary>
-    private readonly Vec3 min;
+    [FieldOffset(0)] private readonly Vec3 min;
 
     /// <summary>
     /// Gets the maximum corner.
