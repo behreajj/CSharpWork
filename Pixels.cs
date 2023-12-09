@@ -677,9 +677,8 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Adjusts a source pixels array's colors in CIE LCH. Assigns the results
-    /// to a target array. Adds the adjustment to the pixel's
-    /// CIE LCH representation.
+    /// Adjusts a source pixels array's colors in LCH. Assigns the results
+    /// to a target array.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="target">target pixels</param>
@@ -887,10 +886,9 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Blends backdrop and overlay pixels in SR LAB 2. Forms a union
-    /// of the bounding area of the two inputs. Returns a tuple
-    /// containing the blended pixels, the image's width and height,
-    /// and the top left corner x and y.
+    /// Blends backdrop and overlay pixels in SR LAB 2. Forms a union of the
+    /// bounding area of the two inputs. Returns a tuple containing the blended
+    /// pixels, the image's width and height, and the top left corner x and y.
     /// </summary>
     /// <param name="apx">under image pixels</param>
     /// <param name="bpx">over image pixels</param>
@@ -921,10 +919,9 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Blends backdrop and overlay pixels in SR LAB 2. Forms a union
-    /// of the bounding area of the two inputs. Returns a tuple
-    /// containing the blended pixels, the image's width and height,
-    /// and the top left corner x and y.
+    /// Blends backdrop and overlay pixels in SR LAB 2. Forms a union of the
+    /// bounding area of the two inputs. Returns a tuple containing the blended
+    /// pixels, the image's width and height, and the top left corner x and y.
     /// </summary>
     /// <param name="apx">under image pixels</param>
     /// <param name="bpx">over image pixels</param>
@@ -1163,12 +1160,10 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Filters an array of colors according to a filter
-    /// function. The lower bound and upper bound are both
-    /// inclusive. Returns a dictionary wherein the key
-    /// is a color that passed the filter and the value
-    /// is an array of indices that reference that color's
-    /// occurrence in the source array.
+    /// Filters an array of colors according to a filter function. The lower
+    /// bound and upper bound are both inclusive. Returns a dictionary wherein
+    /// the key is a color that passed the filter and the value is an array of
+    /// indices that reference that color's occurrence in the source array.
     /// </summary>
     /// <param name="source">source pixels</param>
     /// <param name="lb">lower bound</param>
@@ -1586,9 +1581,9 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Masks backdrop according to overlay pixels.
-    /// Returns a tuple containing the blended pixels, the
-    /// image's width and height, and the top left corner x and y.
+    /// Masks backdrop according to overlay pixels. Returns a tuple containing
+    /// the blended pixels, the image's width and height, and the top left
+    /// corner x and y.
     /// </summary>
     /// <param name="apx">under image pixels</param>
     /// <param name="bpx">over image pixels</param>
@@ -1619,9 +1614,9 @@ public static class Pixels
     }
 
     /// <summary>
-    /// Masks backdrop according to overlay pixels.
-    /// Returns a tuple containing the blended pixels, the
-    /// image's width and height, and the top left corner x and y.
+    /// Masks backdrop according to overlay pixels. Returns a tuple containing
+    /// the blended pixels, the image's width and height, and the top left
+    /// corner x and y.
     /// </summary>
     /// <param name="apx">under image pixels</param>
     /// <param name="bpx">over image pixels</param>
