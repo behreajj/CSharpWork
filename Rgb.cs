@@ -1122,7 +1122,7 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
         const float E = 0.02f;
         const float F = 0.30f;
         const float W = 11.2f;
-        float whiteScale = 1.0f / (((W * (A * W + C * B) + D * E)
+        const float whiteScale = 1.0f / (((W * (A * W + C * B) + D * E)
             / (W * (A * W + B) + D * F)) - E / F);
 
         const float exposureBias = 2.0f;

@@ -15,14 +15,14 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     [FieldOffset(0)] private readonly int v;
 
     /// <summary>
-    /// The texture coordinate index.
-    /// </summary>
-    [FieldOffset(4)] private readonly int vt;
-
-    /// <summary>
     /// The normal index.
     /// </summary>
     [FieldOffset(8)] private readonly int vn;
+
+    /// <summary>
+    /// The texture coordinate index.
+    /// </summary>
+    [FieldOffset(4)] private readonly int vt;
 
     /// <summary>
     /// The number of array element indices held by this index.
@@ -37,16 +37,16 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
     public int V { get { return this.v; } }
 
     /// <summary>
-    /// The texture coordinate index.
-    /// </summary>
-    /// <value>texture coordinate index</value>
-    public int VT { get { return this.vt; } }
-
-    /// <summary>
     /// The normal index.
     /// </summary>
     /// <value>normal index</value>
     public int VN { get { return this.vn; } }
+
+    /// <summary>
+    /// The texture coordinate index.
+    /// </summary>
+    /// <value>texture coordinate index</value>
+    public int VT { get { return this.vt; } }
 
     /// <summary>
     /// Retrieves a component by index.
@@ -142,7 +142,6 @@ public readonly struct Index3 : IEquatable<Index3>, IEnumerable
         yield return this.v;
         yield return this.vt;
         yield return this.vn;
-
     }
 
     /// <summary>

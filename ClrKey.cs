@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
@@ -6,17 +7,18 @@ using System.Text;
 /// Equality and hash are based solely on the step, not on the color it holds.
 /// </summary>
 [Serializable]
+[StructLayout(LayoutKind.Explicit)]
 public readonly struct ClrKey : IComparable<ClrKey>, IEquatable<ClrKey>
 {
     /// <summary>
     /// The key's color.
     /// </summary>
-    private readonly Lab color;
+    [FieldOffset(4)] private readonly Lab color;
 
     /// <summary>
     /// The key's step, expected to be in the range [0.0, 1.0] .
     /// </summary>
-    private readonly float step;
+    [FieldOffset(0)] private readonly float step;
 
     /// <summary>
     /// The key's step, expected to be in the range [0.0, 1.0] .

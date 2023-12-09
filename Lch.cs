@@ -454,13 +454,13 @@ public readonly struct Lch
         in float chromaStep = 7.5f,
         in float hueStep = 0.5f)
     {
+        const float hViolet = 0.80922841685655f + Utils.Epsilon;
+        const float hYellow = hViolet - 0.5f;
+
         float hueStepVrf = MathF.Max(0.0f, MathF.Abs(hueStep));
         float chromaStepVrf = MathF.Max(0.0f, MathF.Abs(chromaStep));
         float lightStepVrf = MathF.Max(0.0f, MathF.Abs(lightStep));
         int countVrf = count < 3 ? 3 : count;
-
-        float hViolet = 0.80922841685655f + Utils.Epsilon;
-        float hYellow = hViolet - 0.5f;
 
         float minLight = MathF.Max(0.25f, c.l - lightStepVrf);
         float maxLight = MathF.Min(99.75f, c.l + lightStepVrf);

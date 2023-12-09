@@ -1049,7 +1049,10 @@ public class Knot3
     /// <param name="kn">knot</param>
     /// <param name="places">number of decimal places</param>
     /// <returns>string builder</returns>
-    public static StringBuilder ToString(in StringBuilder sb, in Knot3 kn, in int places = 4)
+    public static StringBuilder ToString(
+        in StringBuilder sb,
+        in Knot3 kn,
+        in int places = 4)
     {
         sb.Append("{\"coord\":");
         Vec3.ToString(sb, kn.coord, places);
