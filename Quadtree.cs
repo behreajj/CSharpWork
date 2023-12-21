@@ -36,8 +36,7 @@ public class Quadtree
     protected readonly List<Quadtree> children = new(Quadtree.ChildCount);
 
     /// <summary>
-    /// The number of elements a node can hold before
-    /// it is split into child nodes.
+    /// The number of elements a node can hold before it is split into children.
     /// </summary>
     protected int capacity;
 
@@ -69,8 +68,7 @@ public class Quadtree
     }
 
     /// <summary>
-    /// The number of elements a node can hold before
-    /// it is split into child nodes.
+    /// The number of elements a node can hold before it is split into children.
     /// </summary>
     /// <value>capacity</value>
     public int Capacity
@@ -265,8 +263,8 @@ public class Quadtree
 
     /// <summary>
     /// Finds the average center in each leaf node.
-    /// If include empty is true, then empty
-    /// leaf nodes will append the center of their bounds instead.
+    /// If include empty is true, then empty leaf nodes will append the center
+    /// of their bounds instead.
     /// </summary>
     /// <param name="q">quadtree</param>
     /// <param name="includeEmpty">include empty</param>
@@ -282,8 +280,8 @@ public class Quadtree
 
     /// <summary>
     /// Finds the average center in each leaf node.
-    /// If include empty is true, then empty
-    /// leaf nodes will append the center of their bounds instead.
+    /// If include empty is true, then empty leaf nodes will append the center
+    /// of their bounds instead.
     /// </summary>
     /// <param name="q">quadtree</param>
     /// <param name="target">target</param>
@@ -372,7 +370,7 @@ public class Quadtree
 
     /// <summary>
     /// Evaluates whether the node has any children.
-    /// Returns true if no; otherwise false.
+    /// Returns true if no; otherwise, false.
     /// </summary>
     /// <param name="q">quadtree</param>
     /// <returns>evaluation</returns>
@@ -484,9 +482,8 @@ public class Quadtree
 
     /// <summary>
     /// Queries a node with a rectangular range.
-    /// Appends results to a sorted collection where
-    /// the Chebyshev distance is the key and the point
-    /// is the value.
+    /// Appends results to a sorted collection where the Chebyshev distance is
+    /// the key and the point is the value.
     /// </summary>
     /// <param name="q">quadtree</param>
     /// <param name="range">bounds</param>
@@ -522,9 +519,8 @@ public class Quadtree
 
     /// <summary>
     /// Queries a node with a circular range.
-    /// Appends results to a sorted collection where 
-    /// the distance squared is the key and the point 
-    /// is the value.
+    /// Appends results to a sorted collection where  the distance squared is
+    /// the key and the point is the value.
     /// </summary>
     /// <param name="q">quadtree</param>
     /// <param name="center">sphere center</param>
@@ -562,7 +558,7 @@ public class Quadtree
     }
 
     /// <summary>
-    /// Appendsa a representation of a quadtree to a string builder.
+    /// Appends a representation of a quadtree to a string builder.
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="q">quadtree</param>
@@ -613,8 +609,8 @@ public class Quadtree
     }
 
     /// <summary>
-    /// Counts the total capacity of a node, including
-    /// the summed capacities of its children.
+    /// Counts the total capacity of a node, including the summed capacities
+    /// of its children.
     /// </summary>
     /// <param name="q">quadtree</param>
     /// <returns>capacity</returns>

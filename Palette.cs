@@ -712,8 +712,7 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
-    /// Returns a representation of the palette as a
-    /// GPL file string.
+    /// Returns a representation of the palette as a GPL file string.
     /// </summary>
     /// <param name="pal">palette</param>
     /// <returns>string</returns>
@@ -725,8 +724,8 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
-    /// Appends a representation of this palette as a
-    /// GPL file to a string builder.
+    /// Appends a representation of this palette as a GPL file to a string
+    /// builder.
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="pal">palette</param>
@@ -765,8 +764,7 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
-    /// Returns a representation of the palette as a
-    /// PAL file string.
+    /// Returns a representation of the palette as a PAL file string.
     /// </summary>
     /// <param name="pal">palette</param>
     /// <returns>string</returns>
@@ -778,8 +776,8 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
-    /// Appends a representation of this palette as a
-    /// PAL file to a string builder.
+    /// Appends a representation of this palette as a PAL file to a string
+    /// builder.
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="pal">palette</param>
@@ -819,7 +817,7 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
-    /// Appendsa a representation of a palette to a string builder.
+    /// Appends a representation of a palette to a string builder.
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="pal">palette</param>
@@ -903,8 +901,8 @@ public class Palette : IEnumerable
     }
 
     /// <summary>
-    /// Returns a palette with 16 samples of the Viridis
-    /// color palette, used for data visualization.
+    /// Returns a palette with 16 samples of the Viridis color palette, used
+    /// for data visualization.
     /// </summary>
     /// <param name="target">palette</param>
     /// <returns>palette</returns>

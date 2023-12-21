@@ -37,8 +37,7 @@ public class Octree
     protected readonly List<Octree> children = new(Octree.ChildCount);
 
     /// <summary>
-    /// The number of elements a node can hold before
-    /// it is split into child nodes.
+    /// The number of elements a node can hold before it is split into children.
     /// </summary>
     protected int capacity;
 
@@ -70,8 +69,7 @@ public class Octree
     }
 
     /// <summary>
-    /// The number of elements a node can hold before
-    /// it is split into child nodes.
+    /// The number of elements a node can hold before it is split into children.
     /// </summary>
     /// <value>capacity</value>
     public int Capacity
@@ -303,8 +301,8 @@ public class Octree
 
     /// <summary>
     /// Finds the average center in each leaf node.
-    /// If include empty is true, then empty
-    /// leaf nodes will append the center of their bounds instead.
+    /// If include empty is true, then empty leaf nodes will append the center
+    /// of their bounds instead.
     /// </summary>
     /// <param name="o">octree</param>
     /// <param name="includeEmpty">include empty</param>
@@ -320,8 +318,8 @@ public class Octree
 
     /// <summary>
     /// Finds the average center in each leaf node.
-    /// If include empty is true, then empty
-    /// leaf nodes will append the center of their bounds instead.
+    /// If include empty is true, then empty leaf nodes will append the center
+    /// of their bounds instead.
     /// </summary>
     /// <param name="o">octree</param>
     /// <param name="target">target</param>
@@ -410,7 +408,7 @@ public class Octree
 
     /// <summary>
     /// Evaluates whether the node has any children.
-    /// Returns true if no; otherwise false.
+    /// Returns true if no; otherwise, false.
     /// </summary>
     /// <param name="o">octree</param>
     /// <returns>evaluation</returns>
@@ -531,9 +529,8 @@ public class Octree
 
     /// <summary>
     /// Queries a node with a spherical range.
-    /// Appends results to a sorted collection where
-    /// the distance squared is the key and the point
-    /// is the value.
+    /// Appends results to a sorted collection where the distance squared is
+    /// the key and the point is the value.
     /// </summary>
     /// <param name="o">octree</param>
     /// <param name="center">sphere center</param>
@@ -584,7 +581,7 @@ public class Octree
     }
 
     /// <summary>
-    /// Appendsa a representation of an octree to a string builder.
+    /// Appends a representation of an octree to a string builder.
     /// </summary>
     /// <param name="sb">string builder</param>
     /// <param name="o">octree</param>
@@ -635,8 +632,8 @@ public class Octree
     }
 
     /// <summary>
-    /// Counts the total capacity of a node, including
-    /// the summed capacities of its children.
+    /// Counts the total capacity of a node, including the summed capacities
+    /// of its children.
     /// </summary>
     /// <param name="o">octree</param>
     /// <returns>capacity</returns>

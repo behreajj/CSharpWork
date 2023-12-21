@@ -2098,15 +2098,19 @@ public static class Pixels
             return sameSize;
         }
 
-        float tx = (wSrc - 1.0f) / (wTrg - 1.0f);
-        float ty = (hSrc - 1.0f) / (hTrg - 1.0f);
+        float wDenom = wTrg - 1.0f;
+        float hDenom = hTrg - 1.0f;
+        float tx = wDenom != 0.0f ? ( wSrc - 1.0f ) / wDenom : 0.0f;
+        float ty = hDenom != 0.0f ? ( hSrc - 1.0f ) / hDenom : 0.0f;
+        float ox = wDenom != 0.0f ? 0.0f : 0.5f;
+        float oy = hDenom != 0.0f ? 0.0f : 0.5f;
 
         int trgLen = wTrg * hTrg;
         Rgb[] target = new Rgb[trgLen];
         for (int i = 0; i < trgLen; ++i)
         {
             target[i] = Pixels.SampleBilinear(source,
-                tx * (i % wTrg), ty * (i / wTrg),
+                (i % wTrg) * tx + ox, (i / wTrg) * ty + oy,
                 wSrc, hSrc);
         }
         return target;
