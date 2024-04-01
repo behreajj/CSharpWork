@@ -109,6 +109,34 @@ public static class Pixels
     }
 
     /// <summary>
+    /// Transposes and flips the source array. The flipped transposition is
+    /// stored in the target pixel array. The transposed image's width and
+    /// height are swapped.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">target pixels</param>
+    /// <param name="w">image width</param>
+    /// <param name="h">image height</param>
+    /// <returns>transposed pixels</returns>
+    public static T[] FlipAll<T>(
+        in T[] source, in T[] target,
+        in int w, in int h)
+    {
+        int srcLen = source.Length;
+        if (srcLen == target.Length)
+        {
+            int wn1 = w - 1;
+            int hn1 = h - 1;
+            for (int i = 0; i < srcLen; ++i)
+            {
+                // TODO: Multiply wn1 * h before the loop then just x * h within?
+                target[(wn1 - i % w) * h + hn1 - i / w] = source[i];
+            }
+        }
+        return target;
+    }
+
+    /// <summary>
     /// Flips the pixels source array horizontally, on the x axis, and stores
     /// the result in the target array.
     /// </summary>
@@ -173,6 +201,7 @@ public static class Pixels
             int hn1 = h - 1;
             for (int i = 0; i < srcLen; ++i)
             {
+                // TODO: Multiply hn1 * w before the loop then just y * w within?
                 target[(hn1 - i / w) * w + i % w] = source[i];
             }
         }
@@ -602,6 +631,30 @@ public static class Pixels
         }
 
         return (pixels: target, w: wSrc, h: hTrg);
+    }
+
+    /// <summary>
+    /// Transposes the source array. The transposition is stored in the target
+    /// pixel array. The transposed image's width and height are swapped.
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <param name="target">target pixels</param>
+    /// <param name="w">image width</param>
+    /// <param name="h">image height</param>
+    /// <returns>transposed pixels</returns>
+    public static T[] Transpose<T>(
+        in T[] source, in T[] target,
+        in int w, in int h)
+    {
+        int srcLen = source.Length;
+        if (srcLen == target.Length)
+        {
+            for (int i = 0; i < srcLen; ++i)
+            {
+                target[i % w * h + i / w] = source[i];
+            }
+        }
+        return target;
     }
 
     /// <summary>
@@ -2100,8 +2153,8 @@ public static class Pixels
 
         float wDenom = wTrg - 1.0f;
         float hDenom = hTrg - 1.0f;
-        float tx = wDenom != 0.0f ? ( wSrc - 1.0f ) / wDenom : 0.0f;
-        float ty = hDenom != 0.0f ? ( hSrc - 1.0f ) / hDenom : 0.0f;
+        float tx = wDenom != 0.0f ? (wSrc - 1.0f) / wDenom : 0.0f;
+        float ty = hDenom != 0.0f ? (hSrc - 1.0f) / hDenom : 0.0f;
         float ox = wDenom != 0.0f ? 0.0f : 0.5f;
         float oy = hDenom != 0.0f ? 0.0f : 0.5f;
 
@@ -2231,17 +2284,17 @@ public static class Pixels
         // Find the truncation, floor and ceiling.
         int yi = (int)ySrc;
         int yf = (ySrc > 0.0f) ? yi : (ySrc < -0.0f) ? yi - 1 : 0;
-        int yc = yf + 1;
+        int yc = (ySrc > 0.0f) ? yi + 1 : (ySrc < -0.0f) ? yi : 0;
 
-        bool yfInBounds = yf > -1 && yf < hSrc;
-        bool ycInBounds = yc > -1 && yc < hSrc;
+        bool yfInBounds = yf >= 0 && yf < hSrc;
+        bool ycInBounds = yc >= 0 && yc < hSrc;
 
         int xi = (int)xSrc;
         int xf = (xSrc > 0.0f) ? xi : (xSrc < -0.0f) ? xi - 1 : 0;
-        int xc = xf + 1;
+        int xc = (xSrc > 0.0f) ? xi + 1 : (xSrc < -0.0f) ? xi : 0;
 
-        bool xfInBounds = xf > -1 && xf < wSrc;
-        bool xcInBounds = xc > -1 && xc < wSrc;
+        bool xfInBounds = xf >= 0 && xf < wSrc;
+        bool xcInBounds = xc >= 0 && xc < wSrc;
 
         // Pixel corners colors.
         Rgb c00 = yfInBounds && xfInBounds ? source[yf * wSrc + xf] : Rgb.ClearBlack;
@@ -2369,6 +2422,20 @@ public static class Pixels
                     System.Array.Copy(source, 0, t0, 0, srcLen);
                     return (pixels: t0, w, h);
                 }
+            case 26:
+            case 27:
+                {
+                    return Pixels.SkewXInteger(source, w, h, 1, 2);
+                }
+            case 45:
+                {
+                    return Pixels.SkewXInteger(source, w, h, 1, 1);
+                }
+            case 63:
+            case 64:
+                {
+                    return Pixels.SkewXInteger(source, w, h, 2, 1);
+                }
             case 88:
             case 89:
             case 90:
@@ -2377,6 +2444,20 @@ public static class Pixels
                 {
                     Rgb[] t90 = Pixels.Fill(Rgb.ClearBlack, new Rgb[srcLen]);
                     return (pixels: t90, w, h);
+                }
+            case 116:
+            case 117:
+                {
+                    return Pixels.SkewXInteger(source, w, h, -2, 1);
+                }
+            case 135:
+                {
+                    return Pixels.SkewXInteger(source, w, h, -1, 1);
+                }
+            case 153:
+            case 154:
+                {
+                    return Pixels.SkewXInteger(source, w, h, -1, 2);
                 }
             default:
                 {
@@ -2429,6 +2510,20 @@ public static class Pixels
                     System.Array.Copy(source, 0, t0, 0, srcLen);
                     return (pixels: t0, w, h);
                 }
+            case 26:
+            case 27:
+                {
+                    return Pixels.SkewYInteger(source, w, h, 1, 2);
+                }
+            case 45:
+                {
+                    return Pixels.SkewYInteger(source, w, h, 1, 1);
+                }
+            case 63:
+            case 64:
+                {
+                    return Pixels.SkewYInteger(source, w, h, 2, 1);
+                }
             case 88:
             case 89:
             case 90:
@@ -2437,6 +2532,20 @@ public static class Pixels
                 {
                     Rgb[] t90 = Pixels.Fill(Rgb.ClearBlack, new Rgb[srcLen]);
                     return (pixels: t90, w, h);
+                }
+            case 116:
+            case 117:
+                {
+                    return Pixels.SkewYInteger(source, w, h, -2, 1);
+                }
+            case 135:
+                {
+                    return Pixels.SkewYInteger(source, w, h, -1, 1);
+                }
+            case 153:
+            case 154:
+                {
+                    return Pixels.SkewYInteger(source, w, h, -1, 2);
                 }
             default:
                 {
@@ -2486,6 +2595,8 @@ public static class Pixels
                 return target;
             }
 
+            // Beware MinValue in C# differs from MIN_VALUE in Java.
+            // https://learn.microsoft.com/en-us/dotnet/api/system.single.minvalue
             float lumMin = float.MaxValue;
             float lumMax = float.MinValue;
             float lumSum = 0.0f;

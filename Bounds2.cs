@@ -308,6 +308,8 @@ public readonly struct Bounds2 : IComparable<Bounds2>, IEquatable<Bounds2>
         float lbx = float.MaxValue;
         float lby = float.MaxValue;
 
+        // Beware MinValue in C# differs from MIN_VALUE in Java.
+        // https://learn.microsoft.com/en-us/dotnet/api/system.single.minvalue
         float ubx = float.MinValue;
         float uby = float.MinValue;
 

@@ -1176,10 +1176,13 @@ public class Mesh3
     {
         Vec3[] coords = mesh.coords;
         int len = coords.Length;
+
         float lbx = float.MaxValue;
         float lby = float.MaxValue;
         float lbz = float.MaxValue;
 
+        // Beware MinValue in C# differs from MIN_VALUE in Java.
+        // https://learn.microsoft.com/en-us/dotnet/api/system.single.minvalue
         float ubx = float.MinValue;
         float uby = float.MinValue;
         float ubz = float.MinValue;

@@ -871,23 +871,24 @@ public readonly struct Rgb : IComparable<Rgb>, IEquatable<Rgb>
     /// <returns>linear color</returns>
     public static Rgb StandardToLinear(in Rgb c, in bool alpha = false)
     {
-        const float inv1055 = 1.0f / 1.055f;
+        const float inv1_055 = 1.0f / 1.055f;
+        const float inv12_92 = 1.0f / 12.92f;
         return new(
             c.r > 0.04045f ?
-            MathF.Pow((c.r + 0.055f) * inv1055, 2.4f) :
-            c.r * 0.07739938f,
+            MathF.Pow((c.r + 0.055f) * inv1_055, 2.4f) :
+            c.r * inv12_92,
 
             c.g > 0.04045f ?
-            MathF.Pow((c.g + 0.055f) * inv1055, 2.4f) :
-            c.g * 0.07739938f,
+            MathF.Pow((c.g + 0.055f) * inv1_055, 2.4f) :
+            c.g * inv12_92,
 
             c.b > 0.04045f ?
-            MathF.Pow((c.b + 0.055f) * inv1055, 2.4f) :
-            c.b * 0.07739938f,
+            MathF.Pow((c.b + 0.055f) * inv1_055, 2.4f) :
+            c.b * inv12_92,
 
             alpha ? c.a > 0.04045f ?
-            MathF.Pow((c.a + 0.055f) * inv1055, 2.4f) :
-            c.a * 0.07739938f :
+            MathF.Pow((c.a + 0.055f) * inv1_055, 2.4f) :
+            c.a * inv12_92 :
             c.a);
     }
 

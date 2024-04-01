@@ -644,6 +644,9 @@ public static class Utils
     {
         int len = values.Length;
         if (len < 1) { return 0.0f; }
+
+        // Beware MinValue in C# differs from MIN_VALUE in Java.
+        // https://learn.microsoft.com/en-us/dotnet/api/system.single.minvalue
         float result = float.MinValue;
         for (int i = 0; i < len; ++i)
         {
@@ -742,7 +745,7 @@ public static class Utils
         double u2 = rng.NextDouble();
 
         double mag = sigma * Math.Sqrt(-2.0d * Math.Log(u1));
-        double tau = 6.283185307179586d;
+        const double tau = 6.283185307179586d;
         double x = mag * Math.Cos(tau * u2) + mu;
         // double y = mag * Math.Sin(tau * u2) + mu;
         return (float)x;

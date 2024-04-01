@@ -1233,10 +1233,15 @@ public class Mesh2
     {
         Vec2[] coords = mesh.coords;
         int len = coords.Length;
+
         float lbx = float.MaxValue;
         float lby = float.MaxValue;
+
+        // Beware MinValue in C# differs from MIN_VALUE in Java.
+        // https://learn.microsoft.com/en-us/dotnet/api/system.single.minvalue
         float ubx = float.MinValue;
         float uby = float.MinValue;
+
         for (int i = 0; i < len; ++i)
         {
             Vec2 coord = coords[i];
