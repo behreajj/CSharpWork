@@ -1634,22 +1634,22 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// Maps an input vector from an original range to a target range.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <param name="lbOrigin">lower bound of original range</param>
-    /// <param name="ubOrigin">upper bound of original range</param>
+    /// <param name="lbOrig">lower bound of original range</param>
+    /// <param name="ubOrig">upper bound of original range</param>
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
     /// <returns>mapped value</returns>
     public static Vec3 Remap(
         in Vec3 v,
-        in Vec3 lbOrigin,
-        in Vec3 ubOrigin,
+        in Vec3 lbOrig,
+        in Vec3 ubOrig,
         in Vec3 lbDest,
         in Vec3 ubDest)
     {
         return new(
-            Utils.Remap(v.x, lbOrigin.x, ubOrigin.x, lbDest.x, ubDest.x),
-            Utils.Remap(v.y, lbOrigin.y, ubOrigin.y, lbDest.y, ubDest.y),
-            Utils.Remap(v.z, lbOrigin.z, ubOrigin.z, lbDest.z, ubDest.z));
+            Utils.Remap(v.x, lbOrig.x, ubOrig.x, lbDest.x, ubDest.x),
+            Utils.Remap(v.y, lbOrig.y, ubOrig.y, lbDest.y, ubDest.y),
+            Utils.Remap(v.z, lbOrig.z, ubOrig.z, lbDest.z, ubDest.z));
     }
 
     /// <summary>

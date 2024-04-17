@@ -1466,21 +1466,21 @@ public readonly struct Vec2 : IComparable<Vec2>, IEquatable<Vec2>, IEnumerable
     /// Maps an input vector from an original range to a target range.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <param name="lbOrigin">lower bound of original range</param>
-    /// <param name="ubOrigin">upper bound of original range</param>
+    /// <param name="lbOrig">lower bound of original range</param>
+    /// <param name="ubOrig">upper bound of original range</param>
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
     /// <returns>mapped value</returns>
     public static Vec2 Remap(
         in Vec2 v,
-        in Vec2 lbOrigin,
-        in Vec2 ubOrigin,
+        in Vec2 lbOrig,
+        in Vec2 ubOrig,
         in Vec2 lbDest,
         in Vec2 ubDest)
     {
         return new(
-            Utils.Remap(v.x, lbOrigin.x, ubOrigin.x, lbDest.x, ubDest.x),
-            Utils.Remap(v.y, lbOrigin.y, ubOrigin.y, lbDest.y, ubDest.y));
+            Utils.Remap(v.x, lbOrig.x, ubOrig.x, lbDest.x, ubDest.x),
+            Utils.Remap(v.y, lbOrig.y, ubOrig.y, lbDest.y, ubDest.y));
     }
 
     /// <summary>

@@ -888,22 +888,60 @@ public static class Utils
     /// value unchanged.
     /// </summary>
     /// <param name="v">input value</param>
-    /// <param name="lbOrigin">lower bound of origin range</param>
-    /// <param name="ubOrigin">upper bound of origin range</param>
+    /// <param name="lbOrig">lower bound of origin range</param>
+    /// <param name="ubOrig">upper bound of origin range</param>
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
     /// <returns>mapped value</returns>
     public static float Remap(
         in float v,
-        in float lbOrigin = -1.0f,
-        in float ubOrigin = 1.0f,
+        in float lbOrig = -1.0f,
+        in float ubOrig = 1.0f,
         in float lbDest = 0.0f,
         in float ubDest = 1.0f)
     {
-        float denom = ubOrigin - lbOrigin;
-        return (denom != 0.0f) ?
-            lbDest + (ubDest - lbDest) *
-            ((v - lbOrigin) / denom) : v;
+        float denom = ubOrig - lbOrig;
+        if (denom == 0.0f) { return v; }
+        return lbDest + (ubDest - lbDest) *
+            Utils.Clamp((v - lbOrig) / denom, 0.0f, 1.0f);
+    }
+
+    /// <summary>
+    /// Maps an input value from an original range to a target range. If the
+    /// upper and lower bound of the original range are equal, will return
+    /// the value unchanged. If gamma is zero, returns the linear remap of v.
+    /// </summary>
+    /// <param name="v">input value</param>
+    /// <param name="lbOrig">lower bound of origin range</param>
+    /// <param name="ubOrig">upper bound of origin range</param>
+    /// <param name="lbDest">lower bound of destination range</param>
+    /// <param name="ubDest">upper bound of destination range</param>
+    /// <param name="g">gamma, exponent</param>
+    /// <returns>mapped value</returns>
+    public static float Remap(
+        in float v,
+        in float lbOrig = -1.0f,
+        in float ubOrig = 1.0f,
+        in float lbDest = 0.0f,
+        in float ubDest = 1.0f,
+        in float g = 1.0f)
+    {
+        if (g == 0.0f)
+        {
+            return Utils.Remap(v, lbOrig, ubOrig, lbDest, ubDest);
+        }
+
+        double denom = ubOrig - lbOrig;
+        if (denom == 0.0d) { return v; }
+
+        // TODO: Test multiple cases.
+        double y = Math.Pow(Math.Min(Math.Max(
+            (v - lbOrig) / denom, 0.0d), 1.0d), 1.0d / g);
+        // if (ubDest < lbDest)
+        // {
+        //     return (float)(lbDest - y * (lbDest - ubDest));
+        // }
+        return (float)(lbDest + y * (ubDest - lbDest));
     }
 
     /// <summary>

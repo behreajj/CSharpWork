@@ -1519,23 +1519,23 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// Maps an input vector from an original range to a target range.
     /// </summary>
     /// <param name="v">vector</param>
-    /// <param name="lbOrigin">lower bound of original range</param>
-    /// <param name="ubOrigin">upper bound of original range</param>
+    /// <param name="lbOrig">lower bound of original range</param>
+    /// <param name="ubOrig">upper bound of original range</param>
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
     /// <returns>mapped value</returns>
     public static Vec4 Remap(
         in Vec4 v,
-        in Vec4 lbOrigin,
-        in Vec4 ubOrigin,
+        in Vec4 lbOrig,
+        in Vec4 ubOrig,
         in Vec4 lbDest,
         in Vec4 ubDest)
     {
         return new(
-            Utils.Remap(v.x, lbOrigin.x, ubOrigin.x, lbDest.x, ubDest.x),
-            Utils.Remap(v.y, lbOrigin.y, ubOrigin.y, lbDest.y, ubDest.y),
-            Utils.Remap(v.z, lbOrigin.z, ubOrigin.z, lbDest.z, ubDest.z),
-            Utils.Remap(v.w, lbOrigin.w, ubOrigin.w, lbDest.w, ubDest.w));
+            Utils.Remap(v.x, lbOrig.x, ubOrig.x, lbDest.x, ubDest.x),
+            Utils.Remap(v.y, lbOrig.y, ubOrig.y, lbDest.y, ubDest.y),
+            Utils.Remap(v.z, lbOrig.z, ubOrig.z, lbDest.z, ubDest.z),
+            Utils.Remap(v.w, lbOrig.w, ubOrig.w, lbDest.w, ubDest.w));
     }
 
     /// <summary>
