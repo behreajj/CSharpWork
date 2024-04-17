@@ -940,7 +940,7 @@ public static class Utils
 
         double w = Math.Min((v - lbOrig) / denom, 1.0d);
         return w > 0.0d ? (float)(lbDest + Math.Pow(w, 1.0d / Math.Abs(gamma))
-            * (ubDest - lbDest)) : 0.0f;
+            * (ubDest - lbDest)) : lbDest;
     }
 
     /// <summary>
