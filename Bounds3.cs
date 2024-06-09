@@ -631,8 +631,8 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
         get
         {
             return new(
-                -111.0f, -111.0f, -1.0f,
-                111.0f, 111.0f, 101.0f);
+                -111.0f, -111.0f, 0.0f,
+                111.0f, 111.0f, 100.0f);
         }
     }
 
@@ -645,9 +645,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     {
         get
         {
-            return new(
-                -1.0f - Utils.Epsilon * 2.0f,
-                1.0f + Utils.Epsilon * 2.0f);
+            return new(-1.0f, 1.0f);
         }
     }
 
@@ -660,9 +658,7 @@ public readonly struct Bounds3 : IComparable<Bounds3>, IEquatable<Bounds3>
     {
         get
         {
-            return new(
-                -Utils.Epsilon * 2.0f,
-                1.0f + Utils.Epsilon * 2.0f);
+            return new(0.0f, 1.0f);
         }
     }
 }

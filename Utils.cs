@@ -883,10 +883,10 @@ public static class Utils
     }
 
     /// <summary>
-    /// Maps an input value from an original range to a target range.
-    /// Clamps the input value to the original range.
-    /// If the upper and lower bound of the original range are equal, then
-    /// returns the value unchanged.
+    /// Maps an input value from an original range to a target range. If the
+    /// upper and lower bound of the original range are equal, will return the
+    /// value unchanged. Clamps the result to the lower and upper bounds of the
+    /// target range.
     /// </summary>
     /// <param name="v">input value</param>
     /// <param name="lbOrig">lower bound of origin range</param>
@@ -901,26 +901,27 @@ public static class Utils
         in float lbDest = 0.0f,
         in float ubDest = 1.0f)
     {
-        float denom = ubOrig - lbOrig;
-        if (denom == 0.0f) { return v; }
-        return lbDest + (ubDest - lbDest) *
-            Utils.Clamp((v - lbOrig) / denom, 0.0f, 1.0f);
+        float d = ubOrig - lbOrig;
+        if (d == 0.0f) { return v; }
+        float n = ( v - lbOrig ) / d;
+        if (n <= 0.0f) { return lbDest; }
+        if (n >= 1.0f) { return ubDest; }
+        return lbDest + n * (ubDest - lbDest);
     }
 
     /// <summary>
-    /// Maps an input value from an original range to a target range.
-    /// Clamps the input value to the original range.
-    /// If the upper and lower bound of the original range are equal, then
-    /// returns the value unchanged.
-    /// Takes the absolute value of gamma.
-    /// If gamma is zero, returns the linear remap of v.
+    /// Maps an input value from an original range to a target range. If the
+    /// upper and lower bound of the original range are equal, will return the
+    /// value unchanged. Clamps the result to the lower and upper bounds of the
+    /// target range. If gamma is zero, returns the linear remap. Takes the
+    /// absolute of gamma.
     /// </summary>
     /// <param name="v">input value</param>
     /// <param name="lbOrig">lower bound of origin range</param>
     /// <param name="ubOrig">upper bound of origin range</param>
     /// <param name="lbDest">lower bound of destination range</param>
     /// <param name="ubDest">upper bound of destination range</param>
-    /// <param name="gamma">gamma</param>
+    /// <param name="g">gamma</param>
     /// <returns>mapped value</returns>
     public static float Remap(
         in float v,
@@ -928,19 +929,22 @@ public static class Utils
         in float ubOrig = 1.0f,
         in float lbDest = 0.0f,
         in float ubDest = 1.0f,
-        in float gamma = 1.0f)
+        in float g = 1.0f)
     {
-        if (gamma == 0.0f)
+        if (g == 0.0f)
         {
             return Utils.Remap(v, lbOrig, ubOrig, lbDest, ubDest);
         }
+        
+        double d = ubOrig - lbOrig;
+        if (d == 0.0d) { return v; }
 
-        double denom = ubOrig - lbOrig;
-        if (denom == 0.0d) { return v; }
-
-        double w = Math.Min((v - lbOrig) / denom, 1.0d);
-        return w > 0.0d ? (float)(lbDest + Math.Pow(w, 1.0d / Math.Abs(gamma))
-            * (ubDest - lbDest)) : lbDest;
+        double n = ( v - lbOrig ) / d;
+        if (n <= 0.0d) { return lbDest; }
+        if (n >= 1.0d) { return ubDest; }
+        
+        return (float)(lbDest +
+            Math.Pow(n, 1.0d / Math.Abs(g)) * (ubDest - lbDest));
     }
 
     /// <summary>
