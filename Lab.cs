@@ -280,32 +280,63 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <summary>
     /// Adds two colors together for the purpose of making an adjustment.
     /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
     /// <returns>adjustment</returns>
-    public static Lab operator +(in Lab a, in Lab b)
+    public static Lab operator +(in Lab o, in Lab d)
     {
         return new Lab(
-            l: a.l + b.l,
-            a: a.a + b.a,
-            b: a.b + b.b,
-            alpha: a.alpha + b.alpha);
+            l: o.l + d.l,
+            a: o.a + d.a,
+            b: o.b + d.b,
+            alpha: o.alpha + d.alpha);
+    }
+
+    /// <summary>
+    /// Adds two colors together for the purpose of making an adjustment.
+    /// </summary>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
+    /// <returns>adjustment</returns>
+    public static Lab operator +(in Lab o, in Vec2 d)
+    {
+        return new Lab(
+            l: o.l,
+            a: o.a + d.X,
+            b: o.b + d.Y,
+            alpha: o.alpha);
     }
 
     /// <summary>
     /// Subtracts the right color from the left for the purpose of making an
     /// adjustment.
     /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
     /// <returns>adjustment</returns>
-    public static Lab operator -(in Lab a, in Lab b)
+    public static Lab operator -(in Lab o, in Lab d)
     {
         return new Lab(
-            l: a.l - b.l,
-            a: a.a - b.a,
-            b: a.b - b.b,
-            alpha: a.alpha - b.alpha);
+            l: o.l - d.l,
+            a: o.a - d.a,
+            b: o.b - d.b,
+            alpha: o.alpha - d.alpha);
+    }
+
+    /// <summary>
+    /// Subtracts the right color from the left for the purpose of making an
+    /// adjustment.
+    /// </summary>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
+    /// <returns>adjustment</returns>
+    public static Lab operator -(in Lab o, in Vec2 d)
+    {
+        return new Lab(
+            l: o.l,
+            a: o.a - d.X,
+            b: o.b - d.Y,
+            alpha: o.alpha);
     }
 
     /// <summary>
@@ -377,23 +408,77 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <summary>
     /// Returns the first color argument with the alpha of the second.
     /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
     /// <returns>color</returns>
-    public static Lab CopyAlpha(in Lab a, in Lab b)
+    public static Lab CopyAlpha(in Lab o, in Lab d)
     {
-        return new Lab(l: a.l, a: a.a, b: a.b, alpha: b.alpha);
+        return new Lab(l: o.l, a: o.a, b: o.b, alpha: d.alpha);
+    }
+
+    /// <summary>
+    /// Returns the first color argument with the chroma of the second.
+    /// </summary>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
+    /// <returns>color</returns>
+    public static Lab CopyChroma(in Lab o, in Lab d)
+    {
+        double oa = o.a;
+        double ob = o.b;
+        double ocSq = oa * oa + ob * ob;
+        if (ocSq > Utils.Epsilon)
+        {
+            double da = d.a;
+            double db = d.b;
+            double dcSq = da * da + db * db;
+
+            double s = Math.Sqrt(dcSq) / Math.Sqrt(ocSq);
+            return new Lab(
+                l: o.l,
+                a: (float)(s * oa),
+                b: (float)(s * ob),
+                alpha: o.alpha);
+        }
+        return Lab.Gray(o);
+    }
+
+    /// <summary>
+    /// Returns the first color argument with the hue of the second.
+    /// </summary>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
+    /// <returns>color</returns>
+    public static Lab CopyHue(in Lab o, in Lab d)
+    {
+        double da = d.a;
+        double db = d.b;
+        double dcSq = da * da + db * db;
+        if (dcSq > Utils.Epsilon)
+        {
+            double oa = o.a;
+            double ob = o.b;
+            double ocSq = oa * oa + ob * ob;
+
+            double s = Math.Sqrt(ocSq) / Math.Sqrt(dcSq);
+            return new Lab(
+                l: o.l,
+                a: (float)(s * da),
+                b: (float)(s * db),
+                alpha: o.alpha);
+        }
+        return Lab.Gray(o);
     }
 
     /// <summary>
     /// Returns the first color argument with the light of the second.
     /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
     /// <returns>color</returns>
-    public static Lab CopyLight(in Lab a, in Lab b)
+    public static Lab CopyLight(in Lab o, in Lab d)
     {
-        return new Lab(l: b.l, a: a.a, b: a.b, alpha: a.alpha);
+        return new Lab(l: d.l, a: o.a, b: o.b, alpha: o.alpha);
     }
 
     /// <summary>
@@ -409,8 +494,8 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
 
         float da = d.a - o.a;
         float db = d.b - o.b;
-        return Math.Abs(100.0f * (d.alpha - o.alpha))
-            + Math.Abs(d.l - o.l)
+        return MathF.Abs(100.0f * (d.alpha - o.alpha))
+            + MathF.Abs(d.l - o.l)
             + MathF.Sqrt(da * da + db * db);
     }
 
@@ -593,10 +678,10 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         float halfca = 0.5f * c.a;
         float halfcb = 0.5f * c.b;
 
-        return new Lab[] {
+        return [
             new(lAna, rt32ca - halfcb, rt32cb + halfca, c.alpha),
             new(lAna, rt32ca + halfcb, rt32cb - halfca, c.alpha)
-        };
+        ];
     }
 
     /// <summary>
@@ -607,9 +692,9 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <returns>complement</returns>
     public static Lab[] HarmonyComplement(in Lab c)
     {
-        return new Lab[] {
+        return [
             new(100.0f - c.l, -c.a, -c.b, c.alpha)
-        };
+        ];
     }
 
     /// <summary>
@@ -628,10 +713,10 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         float halfca = 0.5f * c.a;
         float halfcb = 0.5f * c.b;
 
-        return new Lab[] {
+        return [
             new(lSpl, rt32ca - halfcb, rt32cb + halfca, c.alpha),
             new(lSpl, rt32ca + halfcb, rt32cb - halfca, c.alpha)
-        };
+        ];
     }
 
     /// <summary>
@@ -642,11 +727,11 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// <returns>square</returns>
     public static Lab[] HarmonySquare(in Lab c)
     {
-        return new Lab[] {
+        return [
             new(50.0f, -c.b, c.a, c.alpha),
             new(100.0f - c.l, -c.a, -c.b, c.alpha),
             new(50.0f, c.b, -c.a, c.alpha)
-        };
+        ];
     }
 
     /// <summary>
@@ -667,11 +752,11 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         float halfca = 0.5f * c.a;
         float halfcb = 0.5f * c.b;
 
-        return new Lab[] {
+        return [
             new(lTri, -halfca - rt32cb, -halfcb + rt32ca, c.alpha),
             new(lCmp, -c.a, -c.b, c.alpha),
             new(lTet, halfca + rt32cb,halfcb - rt32ca, c.alpha)
-        };
+        ];
     }
 
     /// <summary>
@@ -690,10 +775,10 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         float halfca = -0.5f * c.a;
         float halfcb = -0.5f * c.b;
 
-        return new Lab[] {
+        return [
             new(lTri, halfca - rt32cb, halfcb + rt32ca, c.alpha),
             new(lTri, halfca + rt32cb, halfcb - rt32ca, c.alpha)
-        };
+        ];
     }
 
     /// <summary>
@@ -706,6 +791,33 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
         float h = MathF.Atan2(c.b, c.a);
         h = h < -0.0f ? h + Utils.Tau : h;
         return h * Utils.OneTau;
+    }
+
+    /// <summary>
+    /// Finds the hue distance between two colors.
+    /// Returns zero when either color is gray.
+    /// Otherwise, returns a value in the range [0.0, 0.5].
+    /// </summary>
+    /// <param name="o">origin</param>
+    /// <param name="d">destination</param>
+    /// <returns>hue distance</returns>
+    public static float HueDist(in Lab o, in Lab d)
+    {
+        double oa = o.a;
+        double ob = o.b;
+        double ocSq = oa * oa + ob * ob;
+        bool oIsGray = ocSq < Utils.Epsilon;
+
+        double da = d.a;
+        double db = d.b;
+        double dcSq = da * da + db * db;
+        bool dIsGray = dcSq < Utils.Epsilon;
+
+        if (oIsGray || dIsGray) { return 0.0f; }
+
+        double num = oa * da + ob * db;
+        double denom = Math.Sqrt(ocSq) * Math.Sqrt(dcSq);
+        return (float)(Math.Acos(num / denom) / (Math.PI * 2.0d));
     }
 
     /// <summary>
@@ -908,7 +1020,8 @@ public readonly struct Lab : IComparable<Lab>, IEquatable<Lab>
     /// </summary>
     /// <param name="c">color</param>
     /// <returns>rescaled color</returns>
-    public static Lab ScaleChroma(in Lab c, in float scalar) {
+    public static Lab ScaleChroma(in Lab c, in float scalar)
+    {
         return new Lab(l: c.l, a: c.a * scalar, b: c.b * scalar, alpha: c.alpha);
     }
 

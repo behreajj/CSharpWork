@@ -120,23 +120,23 @@ public readonly struct Lch
     /// <summary>
     /// Returns the first color argument with the alpha of the second.
     /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
     /// <returns>color</returns>
-    public static Lch CopyAlpha(in Lch a, in Lch b)
+    public static Lch CopyAlpha(in Lch o, in Lch d)
     {
-        return new Lch(l: a.l, c: a.c, h: a.h, alpha: b.alpha);
+        return new Lch(l: o.l, c: o.c, h: o.h, alpha: d.alpha);
     }
 
     /// <summary>
     /// Returns the first color argument with the light of the second.
     /// </summary>
-    /// <param name="a">left operand</param>
-    /// <param name="b">right operand</param>
+    /// <param name="o">left operand</param>
+    /// <param name="d">right operand</param>
     /// <returns>color</returns>
-    public static Lch CopyLight(in Lch a, in Lch b)
+    public static Lch CopyLight(in Lch o, in Lch d)
     {
-        return new Lch(l: b.l, c: a.c, h: a.h, alpha: a.alpha);
+        return new Lch(l: d.l, c: o.c, h: o.h, alpha: o.alpha);
     }
 
     /// <summary>
@@ -230,10 +230,10 @@ public readonly struct Lch
         float h30 = c.h + 0.083333333f;
         float h330 = c.h - 0.083333333f;
 
-        return new Lch[] {
+        return [
             new(lAna, c.c, h30 - MathF.Floor(h30), c.alpha),
             new(lAna, c.c, h330 - MathF.Floor(h330), c.alpha)
-        };
+        ];
     }
 
     /// <summary>
@@ -248,9 +248,9 @@ public readonly struct Lch
 
         float h180 = c.h + 0.5f;
 
-        return new Lch[] {
+        return [
             new(lCmp, c.c, h180 - MathF.Floor(h180), c.alpha)
-        };
+        ];
     }
 
     /// <summary>
@@ -266,10 +266,10 @@ public readonly struct Lch
         float h150 = c.h + 0.41666667f;
         float h210 = c.h - 0.41666667f;
 
-        return new Lch[] {
+        return [
             new(lSpl, c.c, h150 - MathF.Floor(h150), c.alpha),
             new(lSpl, c.c, h210 - MathF.Floor(h210), c.alpha)
-        };
+        ];
     }
 
     /// <summary>
@@ -286,11 +286,11 @@ public readonly struct Lch
         float h180 = c.h + 0.5f;
         float h270 = c.h - 0.25f;
 
-        return new Lch[] {
+        return [
             new(50.0f, c.c, h90 - MathF.Floor(h90), c.alpha),
             new(lCmp, c.c, h180 - MathF.Floor(h180), c.alpha),
             new(50.0f, c.c, h270 - MathF.Floor(h270), c.alpha)
-        };
+        ];
     }
 
     /// <summary>
@@ -309,11 +309,11 @@ public readonly struct Lch
         float h180 = c.h + 0.5f;
         float h300 = c.h - 0.16666667f;
 
-        return new Lch[] {
+        return [
             new(lTri, c.c, h120 - MathF.Floor(h120), c.alpha),
             new(lCmp, c.c, h180 - MathF.Floor(h180), c.alpha),
             new(lTet, c.c, h300 - MathF.Floor(h300), c.alpha)
-        };
+        ];
     }
 
     /// <summary>
@@ -329,10 +329,10 @@ public readonly struct Lch
         float h120 = c.h + Utils.OneThird;
         float h240 = c.h - Utils.OneThird;
 
-        return new Lch[] {
+        return [
             new(lTri, c.c, h120 - MathF.Floor(h120), c.alpha),
             new(lTri, c.c, h240 - MathF.Floor(h240), c.alpha)
-        };
+        ];
     }
 
     /// <summary>

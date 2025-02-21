@@ -28,12 +28,6 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     [FieldOffset(8)] private readonly float z;
 
     /// <summary>
-    /// The number of values (dimensions) in this vector.
-    /// </summary>
-    /// <value>length</value>
-    public int Length { get { return 3; } }
-
-    /// <summary>
     /// Component on the z axis in the Cartesian coordinate system.
     /// </summary>
     /// <value>x</value>
@@ -1047,7 +1041,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>Minkowski distance</returns>
     public static float DistMinkowski(in Vec3 a, in Vec3 b, in float c = 2.0f)
     {
-        if (c != 0.0f)
+        if (c < -0.0f || c > 0.0f)
         {
             double cd = c;
             return (float)Math.Pow(
@@ -1488,7 +1482,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     public static float ProjectScalar(in Vec3 a, in Vec3 b)
     {
         float bSq = Vec3.MagSq(b);
-        if (bSq != 0.0f) { return Vec3.Dot(a, b) / bSq; }
+        if (bSq > 0.0f) { return Vec3.Dot(a, b) / bSq; }
         return 0.0f;
     }
 
@@ -1594,7 +1588,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
         float y = Utils.NextGaussian(rng);
         float z = Utils.NextGaussian(rng);
         float mSq = x * x + y * y + z * z;
-        if (mSq != 0.0f)
+        if (mSq > 0.0f)
         {
             float scalar = radius / MathF.Sqrt(mSq);
             return new(x * scalar, y * scalar, z * scalar);
@@ -1957,7 +1951,7 @@ public readonly struct Vec3 : IComparable<Vec3>, IEquatable<Vec3>, IEnumerable
     /// <returns>array</returns>
     public static float[] ToArray(in Vec3 v)
     {
-        return Vec3.ToArray(v, new float[v.Length], 0);
+        return Vec3.ToArray(v, new float[3], 0);
     }
 
     /// <summary>

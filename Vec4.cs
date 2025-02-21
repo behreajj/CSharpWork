@@ -31,12 +31,6 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     [FieldOffset(8)] private readonly float z;
 
     /// <summary>
-    /// Returns the number of values (dimensions) in this vector.
-    /// </summary>
-    /// <value>length</value>
-    public int Length { get { return 4; } }
-
-    /// <summary>
     /// Component on the w axis.
     /// </summary>
     /// <value>w</value>
@@ -977,7 +971,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>Minkowski distance</returns>
     public static float DistMinkowski(in Vec4 a, in Vec4 b, in float c = 2.0f)
     {
-        if (c != 0.0f)
+        if (c < -0.0f || c > 0.0f)
         {
             double cd = c;
             return (float)Math.Pow(
@@ -1392,7 +1386,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     public static float ProjectScalar(in Vec4 a, in Vec4 b)
     {
         float bSq = Vec4.MagSq(b);
-        if (bSq != 0.0f) { return Vec4.Dot(a, b) / bSq; }
+        if (bSq > 0.0f) { return Vec4.Dot(a, b) / bSq; }
         return 0.0f;
     }
 
@@ -1648,7 +1642,7 @@ public readonly struct Vec4 : IComparable<Vec4>, IEquatable<Vec4>, IEnumerable
     /// <returns>array</returns>
     public static float[] ToArray(in Vec4 v)
     {
-        return Vec4.ToArray(v, new float[v.Length], 0);
+        return Vec4.ToArray(v, new float[4], 0);
     }
 
     /// <summary>

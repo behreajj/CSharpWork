@@ -256,7 +256,7 @@ public static class Pixels
             return (pixels: target, w: wTrg, h: hTrg, x: xtlVrf, y: ytlVrf);
         }
 
-        return (pixels: new T[0], w: 0, h: 0, x: 0, y: 0);
+        return (pixels: [], w: 0, h: 0, x: 0, y: 0);
     }
 
     /// <summary>
@@ -1253,6 +1253,34 @@ public static class Pixels
     }
 
     /// <summary>
+    /// Generates a 64 bit unsigned integer hash from the input pixels.
+    /// Uses the Fowler Noll Vo hashing method. See:
+    /// https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function .
+    /// </summary>
+    /// <param name="source">source pixels</param>
+    /// <returns>hash</returns>
+    public static ulong FnvHash(in Rgb[] source)
+    {
+        ulong h = 0xcbf29ce484222325L;
+        int srcLen = source.Length;
+        for (int i = 0; i < srcLen; ++i)
+        {
+            Rgb c = source[i];
+
+            byte r8 = (byte)(c.R * 255.0f + 0.5f);
+            byte g8 = (byte)(c.G * 255.0f + 0.5f);
+            byte b8 = (byte)(c.B * 255.0f + 0.5f);
+            byte a8 = (byte)(c.Alpha * 255.0f + 0.5f);
+
+            h = (h ^ r8) * 0x100000001b3L;
+            h = (h ^ g8) * 0x100000001b3L;
+            h = (h ^ b8) * 0x100000001b3L;
+            h = (h ^ a8) * 0x100000001b3L;
+        }
+        return h;
+    }
+
+    /// <summary>
     /// Generates a linear gradient from an origin point to a destination point.
     /// The origin and destination should be in the range [-1.0, 1.0]. The
     /// scalar projection is clamped to [0.0, 1.0].
@@ -1899,7 +1927,7 @@ public static class Pixels
         in int capacity,
         in int threshold)
     {
-        SortedSet<Rgb> uniqueRgbs = new();
+        SortedSet<Rgb> uniqueRgbs = [];
         int srcLen = source.Length;
         for (int h = 0; h < srcLen; ++h)
         {
@@ -1985,7 +2013,7 @@ public static class Pixels
             }
             oct.Cull();
 
-            Dictionary<Rgb, Rgb> dict = new();
+            Dictionary<Rgb, Rgb> dict = [];
             SortedList<float, Vec3> found = new(32);
             static float distFunc(Vec3 o, Vec3 d)
             {
@@ -2076,7 +2104,7 @@ public static class Pixels
         if (srcLen == target.Length)
         {
             Lab fromLab = Rgb.StandardToSrLab2(fromColor);
-            Dictionary<Rgb, Rgb> dict = new();
+            Dictionary<Rgb, Rgb> dict = [];
             for (int i = 0; i < srcLen; ++i)
             {
                 Rgb srcClr = source[i];
@@ -2601,7 +2629,7 @@ public static class Pixels
             float lumMax = float.MinValue;
             float lumSum = 0.0f;
 
-            Dictionary<Rgb, Lab> dict = new();
+            Dictionary<Rgb, Lab> dict = [];
             for (int i = 0; i < srcLen; ++i)
             {
                 Rgb c = source[i];

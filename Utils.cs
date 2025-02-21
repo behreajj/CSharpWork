@@ -211,7 +211,6 @@ public static class Utils
     {
         // Don't use abs * sign, as the latter has more
         // flexibility in terms of how you deal with zero sign.
-        // return Utils.Abs (mag) * Utils.Sign (sign);
         return (sign < -0.0f) ? -MathF.Abs(mag) :
             (sign > 0.0f) ? MathF.Abs(mag) :
             0.0f;
@@ -925,11 +924,11 @@ public static class Utils
     /// <returns>mapped value</returns>
     public static float Remap(
         in float v,
-        in float lbOrig = -1.0f,
-        in float ubOrig = 1.0f,
-        in float lbDest = 0.0f,
-        in float ubDest = 1.0f,
-        in float g = 1.0f)
+        in float lbOrig,
+        in float ubOrig,
+        in float lbDest,
+        in float ubDest,
+        in float g)
     {
         if (g == 0.0f)
         {
